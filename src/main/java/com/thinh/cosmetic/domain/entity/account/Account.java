@@ -1,4 +1,4 @@
-package com.thinh.cosmetic.entity.account;
+package com.thinh.cosmetic.domain.entity.account;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductRequestDTO {
-    private Long brand;
+public class ProductRequest {
+    private Long brandId;
 
-    private Long category;
+    private Long categoryId;
 
     private String name;
 
@@ -28,6 +28,4 @@ public class ProductRequestDTO {
     private String uses;
 
     private ActiveStatus status;
-
-    private LocalDateTime createdAt;
 }

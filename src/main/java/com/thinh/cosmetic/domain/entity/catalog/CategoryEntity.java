@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "categories")
-public class Category {
+public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,5 +22,6 @@ public class Category {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private ActiveStatus status;
 }
