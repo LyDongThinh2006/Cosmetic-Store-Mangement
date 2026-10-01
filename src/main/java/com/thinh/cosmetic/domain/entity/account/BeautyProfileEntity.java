@@ -21,7 +21,7 @@ public class BeautyProfileEntity {
 
     @OneToOne
     @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
+    private CustomerEntity customerEntity;
 
     private String skinType;
 

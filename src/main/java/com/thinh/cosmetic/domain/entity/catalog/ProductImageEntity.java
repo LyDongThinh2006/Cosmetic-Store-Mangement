@@ -17,11 +17,14 @@ public class ProductImageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_sku_id")
+    private ProductSkuEntity productSku;
+
     private String imageUrl;
 
     private Boolean isPrimary;

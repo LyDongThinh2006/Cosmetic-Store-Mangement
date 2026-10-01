@@ -18,14 +18,13 @@ public class StockTransferItemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "transfer_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "stock_transfer_id")
     private StockTransferEntity stockTransfer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id", nullable = false)
-    private ProductSkuEntity sku;
+    @ManyToOne
+    @JoinColumn(name = "product_sku_id")
+    private ProductSkuEntity productSku;
 
-    @Column(nullable = false)
     private Integer quantity;
 }

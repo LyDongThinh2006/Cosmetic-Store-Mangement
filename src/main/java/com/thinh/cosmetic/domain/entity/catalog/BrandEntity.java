@@ -20,10 +20,6 @@ public class BrandEntity {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private BrandEntity parent;
-
     private String description;
 
     private ActiveStatus status;

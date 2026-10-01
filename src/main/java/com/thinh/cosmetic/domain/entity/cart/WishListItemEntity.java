@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,23 +14,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "wishlist_items", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"wishlist_id", "product_id"})
-})
+@Table(name = "wishlist_items")
 public class WishListItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wishlist_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "wish_list_id")
     private WishListEntity wishList;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
     private LocalDateTime addedAt;
 }

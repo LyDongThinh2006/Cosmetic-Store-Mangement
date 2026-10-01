@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,22 +18,19 @@ public class ProductSkuEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "product_id")
     private ProductEntity product;
 
-    @Column(unique = true, nullable = false, length = 50)
     private String skuCode;
 
     private String variantName;
 
-    private String shade;
+    private Double sellingPrice;
 
-    private String volume;
+    private Double listPrice;
 
-    @Column(nullable = false, precision = 18, scale = 2)
-    private BigDecimal price;
+    private String barcode;
 
-    @Enumerated(EnumType.STRING)
     private ActiveStatus status;
 }

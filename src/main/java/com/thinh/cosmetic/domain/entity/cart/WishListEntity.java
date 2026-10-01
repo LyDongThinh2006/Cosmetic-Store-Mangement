@@ -6,8 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -20,10 +21,11 @@ public class WishListEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", unique = true, nullable = false)
+    @OneToOne
+    @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
 
-    @OneToMany(mappedBy = "wishList", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WishListItemEntity> items;
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

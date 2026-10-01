@@ -11,7 +11,6 @@ import org.mapstruct.*;
 )
 public interface BrandMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "parent", ignore = true)
     BrandEntity toEntity(BrandRequest request);
 
     BrandResponse toResponse(BrandEntity entity);
@@ -20,6 +19,5 @@ public interface BrandMapper {
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
     )
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "parent", ignore = true)
     void updateEntity(BrandRequest request, @MappingTarget BrandEntity entity);
 }

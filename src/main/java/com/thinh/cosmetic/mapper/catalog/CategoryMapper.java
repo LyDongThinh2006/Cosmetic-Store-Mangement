@@ -11,13 +11,16 @@ import org.mapstruct.*;
 )
 public interface CategoryMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "parent", ignore = true)
     CategoryEntity toEntity(CategoryRequest request);
+
+    @Mapping(target = "parentId", source = "parent.id")
+    CategoryResponse toResponse(CategoryEntity entity);
 
     @BeanMapping(
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
     )
-    CategoryResponse toResponse(CategoryEntity entity);
-
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "parent", ignore = true)
     void updateEntity(CategoryRequest request, @MappingTarget CategoryEntity entity);
 }

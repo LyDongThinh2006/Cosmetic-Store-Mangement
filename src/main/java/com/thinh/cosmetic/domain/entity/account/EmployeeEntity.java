@@ -20,7 +20,7 @@ public class EmployeeEntity {
 
     @OneToOne
     @JoinColumn(name = "account_id")
-    private AccountEntity account;
+    private AccountEntity accountEntity;
 
     private String fullName;
 

@@ -22,28 +22,25 @@ public class InventoryAdjustmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "store_id")
     private StoreEntity store;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id", nullable = false)
-    private ProductSkuEntity sku;
+    @ManyToOne
+    @JoinColumn(name = "product_sku_id")
+    private ProductSkuEntity productSku;
 
-    @Column(nullable = false)
     private Integer quantityBefore;
 
-    @Column(nullable = false)
     private Integer quantityAfter;
 
-    @Column(nullable = false)
     private String reason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "performed_by")
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
     private EmployeeEntity performedBy;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime performedAt;
+    private LocalDateTime adjustedAt;
 }

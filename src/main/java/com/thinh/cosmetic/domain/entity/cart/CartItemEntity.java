@@ -12,22 +12,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "cart_items", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"cart_id", "sku_id"})
-})
+@Table(name = "cart_items")
 public class CartItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
     private CartEntity cart;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id", nullable = false)
-    private ProductSkuEntity sku;
+    @ManyToOne
+    @JoinColumn(name = "product_sku_id")
+    private ProductSkuEntity productSku;
 
-    @Column(nullable = false)
     private Integer quantity;
 }

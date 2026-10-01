@@ -12,15 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "employee_roles")
-@IdClass(EmployeeRoleId.class)
 public class EmployeeRoleEntity {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id")
-    private EmployeeEntity employee;
-
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 }

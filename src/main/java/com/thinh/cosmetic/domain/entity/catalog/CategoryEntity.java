@@ -1,5 +1,6 @@
 package com.thinh.cosmetic.domain.entity.catalog;
 
+import com.thinh.cosmetic.domain.dto.request.catalog.CategoryRequest;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,10 @@ public class CategoryEntity {
     private Long id;
 
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private CategoryEntity parent;
 
     private String description;
 

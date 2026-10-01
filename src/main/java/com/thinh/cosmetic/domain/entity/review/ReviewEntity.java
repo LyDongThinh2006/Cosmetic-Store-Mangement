@@ -2,7 +2,7 @@ package com.thinh.cosmetic.domain.entity.review;
 
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderEntity;
+import com.thinh.cosmetic.domain.entity.order.OrderItemEntity;
 import com.thinh.cosmetic.domain.enums.ReviewModerationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,28 +24,24 @@ public class ReviewEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private OrderEntity order;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
 
-    @Column(nullable = false)
+    //private OrderItemEntity orderItem;
+
     private Integer rating;
 
-    private String comment;
+    private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ReviewModerationStatus moderationStatus;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime reviewDate;
 }

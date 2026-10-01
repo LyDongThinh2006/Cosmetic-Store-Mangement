@@ -23,6 +23,15 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse create(CategoryRequest request) throws Exception {
         CategoryEntity category = categoryMapper.toEntity(request);
 
+        if (request.getParentId() != null) {
+            CategoryEntity parent = categoryRepository.findById(request.getParentId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Parent category not found: " + request.getParentId())
+                    );
+
+            category.setParent(parent);
+        }
+
         CategoryEntity savedCategory = categoryRepository.save(category);
 
         return categoryMapper.toResponse(savedCategory);

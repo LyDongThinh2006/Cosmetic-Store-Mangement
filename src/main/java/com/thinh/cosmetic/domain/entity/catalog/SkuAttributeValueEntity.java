@@ -17,14 +17,13 @@ public class SkuAttributeValueEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "sku_id")
     private ProductSkuEntity sku;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attribute_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "attribute_id")
     private AttributeEntity attribute;
 
-    @Column(nullable = false)
     private String value;
 }

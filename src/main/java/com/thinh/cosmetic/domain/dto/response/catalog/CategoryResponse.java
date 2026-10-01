@@ -17,5 +17,7 @@ public class CategoryResponse {
 
     private String description;
 
+    private Long parentId;
+
     private ActiveStatus status;
 }

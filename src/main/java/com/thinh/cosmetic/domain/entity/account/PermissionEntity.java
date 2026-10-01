@@ -17,10 +17,8 @@ public class PermissionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 100)
     private String code;
 
-    @Column(nullable = false, length = 150)
     private String name;
 
     private String description;

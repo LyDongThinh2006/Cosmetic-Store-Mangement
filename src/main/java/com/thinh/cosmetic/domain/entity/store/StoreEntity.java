@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,14 +20,15 @@ public class StoreEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
     private String address;
 
     private String phone;
 
-    private String operatingHours;
+    private LocalTime openTime;
+
+    private LocalTime closeTime;
 
     private Double latitude;
 

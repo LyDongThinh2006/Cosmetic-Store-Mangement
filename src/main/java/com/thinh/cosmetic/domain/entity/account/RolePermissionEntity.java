@@ -12,15 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "role_permissions")
-@IdClass(RolePermissionId.class)
 public class RolePermissionEntity {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
-
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "permission_id")
-    private PermissionEntity permission;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 }

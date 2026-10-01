@@ -7,32 +7,32 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "inventory", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"store_id", "sku_id"})
-})
+@Table(name = "inventories")
 public class InventoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "store_id")
     private StoreEntity store;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sku_id", nullable = false)
-    private ProductSkuEntity sku;
+    @ManyToOne
+    @JoinColumn(name = "product_sku_id")
+    private ProductSkuEntity productSku;
 
-    @Column(nullable = false)
     private Integer actualStock;
 
-    @Column(nullable = false)
     private Integer heldQuantity;
 
-    private Integer minimumStock;
+    private Integer lowStockThreshold;
+
+    private LocalDateTime updatedAt;
 }
