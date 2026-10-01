@@ -11,7 +11,7 @@ import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.domain.entity.order.OrderEntity;
 import com.thinh.cosmetic.domain.entity.order.OrderItemEntity;
 import com.thinh.cosmetic.domain.entity.order.OrderStockHoldEntity;
-import com.thinh.cosmetic.domain.entity.order.VoucherEntity;
+
 import com.thinh.cosmetic.domain.entity.store.InventoryEntity;
 import com.thinh.cosmetic.domain.entity.store.StoreEntity;
 import com.thinh.cosmetic.domain.enums.HoldStatus;
@@ -23,11 +23,11 @@ import com.thinh.cosmetic.repository.cart.CartRepository;
 import com.thinh.cosmetic.repository.order.OrderItemRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
 import com.thinh.cosmetic.repository.order.OrderStockHoldRepository;
-import com.thinh.cosmetic.repository.order.VoucherRepository;
+
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
 import com.thinh.cosmetic.service.order.OrderService;
-import com.thinh.cosmetic.service.order.VoucherService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +50,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final StoreRepository storeRepository;
     private final InventoryRepository inventoryRepository;
-    private final VoucherRepository voucherRepository;
-    private final VoucherService voucherService;
+
 
     @Override
     public OrderResponse placeOrder(Long customerId, OrderRequest request) throws Exception {
@@ -76,15 +75,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         BigDecimal discountAmount = BigDecimal.ZERO;
-        VoucherEntity voucher = null;
-        if (request.getVoucherCode() != null && !request.getVoucherCode().trim().isEmpty()) {
-            discountAmount = voucherService.calculateDiscount(request.getVoucherCode().trim(), subtotal);
-            voucher = voucherRepository.findByCode(request.getVoucherCode().trim()).orElse(null);
-            if (voucher != null) {
-                voucher.setUsedQuantity(voucher.getUsedQuantity() + 1);
-                voucherRepository.save(voucher);
-            }
-        }
 
         // Free shipping if subtotal >= 500,000 VND; else 30,000 VND
         BigDecimal freeShippingThreshold = new BigDecimal("500000");
@@ -108,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
                 .totalAmount(totalAmount)
                 .status(OrderStatus.PENDING_CONFIRMATION)
                 .paymentMethod(request.getPaymentMethod())
-                .voucher(voucher)
+
                 .note(request.getNote())
                 .build();
         order = orderRepository.save(order);
@@ -266,7 +256,7 @@ public class OrderServiceImpl implements OrderService {
                 .totalAmount(o.getTotalAmount())
                 .status(o.getStatus())
                 .paymentMethod(o.getPaymentMethod())
-                .voucherCode(o.getVoucher() != null ? o.getVoucher().getCode() : null)
+
                 .note(o.getNote())
                 .createdAt(o.getCreatedAt())
                 .items(itemResponses)

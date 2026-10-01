@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Data @AllArgsConstructor @NoArgsConstructor @Builder
 public class OrderRequest {
     @NotNull private Long customerAddressId;
-    private String voucherCode;
     @NotNull private PaymentMethod paymentMethod;
     private String note;
 }

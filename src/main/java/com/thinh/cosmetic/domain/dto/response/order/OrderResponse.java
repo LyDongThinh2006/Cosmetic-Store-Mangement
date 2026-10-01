@@ -23,7 +23,6 @@ public class OrderResponse {
     private BigDecimal totalAmount;
     private OrderStatus status;
     private PaymentMethod paymentMethod;
-    private String voucherCode;
     private String note;
     private LocalDateTime createdAt;
     private List<OrderItemResponse> items;
