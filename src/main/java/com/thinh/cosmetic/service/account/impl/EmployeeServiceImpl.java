@@ -107,7 +107,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (request.getStoreIds() != null) {
-            employeeStoreRepository.deleteByEmployeeId(employee.getId());
+            employeeStoreRepository.deleteById(employee.getId());
             for (Long storeId : request.getStoreIds()) {
                 StoreEntity store = storeRepository.findById(storeId).orElse(null);
                 if (store != null) {
@@ -131,7 +131,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeResponse toResponse(EmployeeEntity e) {
         List<String> roles = employeeRoleRepository.findByEmployeeId(e.getId())
                 .stream().map(r -> r.getRole().getName()).toList();
-        List<String> stores = employeeStoreRepository.findByEmployeeId(e.getId())
+        List<String> stores = employeeStoreRepository.findById(e.getId())
                 .stream().map(s -> s.getStore().getName()).toList();
 
         return EmployeeResponse.builder()
