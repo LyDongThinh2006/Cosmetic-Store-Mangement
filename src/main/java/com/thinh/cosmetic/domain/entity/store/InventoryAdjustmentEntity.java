@@ -28,7 +28,7 @@ public class InventoryAdjustmentEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_sku_id")
-    private ProductSkuEntity productSku;
+    private ProductSkuEntity sku;
 
     private Integer quantityBefore;
 
