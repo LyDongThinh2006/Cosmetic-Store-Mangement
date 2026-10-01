@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "beauty_profiles")
-public class BeautyProfile {
+public class BeautyProfileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private CustomerEntity customer;
 
     private String skinType;
 

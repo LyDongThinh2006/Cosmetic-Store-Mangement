@@ -15,14 +15,14 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "customers")
-public class Customer {
+public class CustomerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "account_id")
-    private Account account;
+    private AccountEntity account;
 
     private String fullName;
 

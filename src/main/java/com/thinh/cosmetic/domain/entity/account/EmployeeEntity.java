@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "employees")
-public class Employee {
+public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "account_id")
-    private Account account;
+    private AccountEntity account;
 
     private String fullName;
 
