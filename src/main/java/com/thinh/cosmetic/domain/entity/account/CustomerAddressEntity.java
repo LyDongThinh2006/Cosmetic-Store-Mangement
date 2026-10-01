@@ -11,19 +11,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "accounts")
-public class Account {
+@Table(name = "customer_addresses")
+public class CustomerAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customerEntity;
 
-    private String passwordHash;
-
-    private String email;
+    private String recientName;
 
     private String phone;
 
-    private String accountType;
+    private String addressDetail;
+
+    private String ward;
+
+    private String district;
+
+    private String province;
+
+    private Boolean isDefault;
 }

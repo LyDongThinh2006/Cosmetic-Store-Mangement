@@ -1,4 +1,4 @@
 package com.thinh.cosmetic.domain.entity.account;
 
-public class Employee {
+public class RolePermission {
 }
