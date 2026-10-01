@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -67,13 +68,17 @@ public class BrandTests {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.id").isNumber()
+                        MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.CREATED.value())
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.name").value("Perfume")
+                        MockMvcResultMatchers.jsonPath("$.message").value("Brand created successfully")
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.description").value("This perfume is good")
+                        MockMvcResultMatchers.jsonPath("$.data.id").isNumber()
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.status").value("ACTIVE")
-                );
+                        MockMvcResultMatchers.jsonPath("$.data.name").value("Perfume")
+                ).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data.name").value("Perfume")
+                ).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE")
+        );
     }
 }
