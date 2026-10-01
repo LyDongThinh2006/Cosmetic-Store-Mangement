@@ -16,4 +16,12 @@ public class EmployeeRoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private EmployeeEntity employee;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 }

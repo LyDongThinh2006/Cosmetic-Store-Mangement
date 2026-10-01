@@ -3,6 +3,7 @@ package com.thinh.cosmetic.domain.entity.review;
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductEntity;
 import com.thinh.cosmetic.domain.entity.order.OrderItemEntity;
+import com.thinh.cosmetic.domain.entity.order.OrderEntity;
 import com.thinh.cosmetic.domain.enums.ReviewModerationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,10 +39,16 @@ public class ReviewEntity {
 
     private String content;
 
+    private String comment;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
+
     @Enumerated(EnumType.STRING)
     private ReviewModerationStatus moderationStatus;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime reviewDate;
+    private LocalDateTime createdAt;
 }

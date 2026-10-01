@@ -24,7 +24,7 @@ public class CartItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_sku_id")
-    private ProductSkuEntity productSku;
+    private ProductSkuEntity sku;
 
     private Integer quantity;
 }

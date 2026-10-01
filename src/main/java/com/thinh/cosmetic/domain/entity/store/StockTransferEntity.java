@@ -9,7 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -23,30 +24,30 @@ public class StockTransferEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Cửa hàng gửi hàng
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_store_id", nullable = false)
-    private StoreEntity fromStore;
+    private StoreEntity sourceStore;
 
-    // Cửa hàng nhận hàng
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_store_id", nullable = false)
-    private StoreEntity toStore;
+    private StoreEntity destinationStore;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StockTransferStatus status;
 
-    // Nhân viên tạo phiếu chuyển
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     private EmployeeEntity createdBy;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDate createdDate;
+    private LocalDateTime createdAt;
 
-    private LocalDate shippedDate;
+    private LocalDateTime shippedAt;
 
-    private LocalDate receivedDate;
+    private LocalDateTime receivedAt;
+
+    @OneToMany(mappedBy = "stockTransfer", cascade = CascadeType.ALL)
+    private List<StockTransferItemEntity> items;
 }

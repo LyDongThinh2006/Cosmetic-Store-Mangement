@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,9 +28,9 @@ public class ProductSkuEntity {
 
     private String variantName;
 
-    private Double sellingPrice;
+    private BigDecimal price;
 
-    private Double listPrice;
+    private BigDecimal listPrice;
 
     private String barcode;
 

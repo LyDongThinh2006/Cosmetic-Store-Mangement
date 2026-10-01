@@ -22,7 +22,7 @@ public class CustomerEntity {
 
     @OneToOne
     @JoinColumn(name = "account_id")
-    private AccountEntity accountEntity;
+    private AccountEntity account;
 
     private String fullName;
 
