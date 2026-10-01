@@ -4,7 +4,7 @@ services:
     container_name: lunea-db
     environment:
       POSTGRES_DB: lunea
-      POSTGRES_USER: lune
+      POSTGRES_USER: lunea
       POSTGRES_PASSWORD: 12345
     ports:
       - "5432:5432"
