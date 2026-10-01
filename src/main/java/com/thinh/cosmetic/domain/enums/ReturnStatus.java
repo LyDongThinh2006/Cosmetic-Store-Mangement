@@ -1,4 +1,4 @@
-package com.thinh.cosmetic.enums;
+package com.thinh.cosmetic.domain.enums;
 
 public enum ReturnStatus {
     REQUESTED,
