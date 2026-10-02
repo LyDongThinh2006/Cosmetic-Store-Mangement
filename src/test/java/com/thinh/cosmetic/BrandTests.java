@@ -15,16 +15,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@Transactional
 public class BrandTests {
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-    private BrandService brandService;
+    private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
+    private final BrandService brandService;
 
     @Autowired
     public BrandTests(MockMvc mockMvc, BrandService brandService) {
@@ -34,7 +36,7 @@ public class BrandTests {
     }
 
     @Test
-    public void testThatReturn201WhenCreateBrand() throws Exception {
+    public void testThatReturn201WhenPostBrand() throws Exception {
         BrandRequest request = BrandRequest.builder()
                 .name("Perfume")
                 .description("This perfume is good")
@@ -54,7 +56,7 @@ public class BrandTests {
     }
 
     @Test
-    public void testThatReturnBrandWhenCreateBrand() throws Exception {
+    public void testThatReturnBrandWhenPostBrand() throws Exception {
         BrandRequest request = BrandRequest.builder()
                 .name("Perfume")
                 .description("This perfume is good")
@@ -79,6 +81,133 @@ public class BrandTests {
                         MockMvcResultMatchers.jsonPath("$.data.name").value("Perfume")
                 ).andExpect(
                         MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE")
+        );
+    }
+
+    @Test
+    public void testThatReturn200WhenGetBrand() throws Exception {
+        brandService.create(
+                BrandRequest.builder()
+                        .name("Perfume")
+                        .description("This perfume is good")
+                        .status(ActiveStatus.ACTIVE)
+                        .build()
+        );
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/api/brands/" + 1)
+                ).andExpect(
+                        MockMvcResultMatchers.status().isOk()
+                );
+    }
+
+    @Test
+    public void testThatReturnBrandWhenGetBrand() throws Exception {
+        brandService.create(
+                BrandRequest.builder()
+                        .name("Perfume")
+                        .description("This perfume is good")
+                        .status(ActiveStatus.ACTIVE)
+                        .build()
+        );
+
+        brandService.create(
+                BrandRequest.builder()
+                        .name("Skincare")
+                        .description("Skincare brand")
+                        .status(ActiveStatus.ACTIVE)
+                        .build()
+        );
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/brands")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.status").value(200)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.message").value("Brands retrieved successfully")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data").isArray()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data.length()").value(2)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data.[0].name").value("Perfume")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data.[1].name").value("Skincare")
+        );
+    }
+
+    @Test
+    public void testThatReturn200WhenPutBrand() throws Exception {
+        brandService.create(
+                BrandRequest.builder()
+                        .name("Perfume")
+                        .description("This perfume is good")
+                        .status(ActiveStatus.ACTIVE)
+                        .build()
+        );
+
+        BrandRequest request = BrandRequest.builder()
+                .name("Skincare")
+                .description("Skincare brand")
+                .status(ActiveStatus.INACTIVE)
+                .build();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/brands/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatReturnBrandWhenPutBrand() throws Exception {
+        brandService.create(
+                BrandRequest.builder()
+                        .name("Perfume")
+                        .description("This perfume is good")
+                        .status(ActiveStatus.ACTIVE)
+                        .build()
+        );
+
+        BrandRequest request = BrandRequest.builder()
+                .name("Skincare")
+                .description("Skincare brand")
+                .status(ActiveStatus.INACTIVE)
+                .build();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/brands/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.status").value(200)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.message").value("Brand updated successfully")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data.name").value("Skincare")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data.description").value("Skincare brand")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.data.status").value("INACTIVE")
+        );
+    }
+
+    @Test
+    public void testThatReturn204WhenDeleteBrand() throws Exception {
+        brandService.create(
+                BrandRequest.builder()
+                        .name("Perfume")
+                        .description("This perfume is good")
+                        .status(ActiveStatus.ACTIVE)
+                        .build()
+        );
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/brands/1")
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
         );
     }
 }
