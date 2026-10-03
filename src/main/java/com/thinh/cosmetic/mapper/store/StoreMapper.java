@@ -2,7 +2,7 @@ package com.thinh.cosmetic.mapper.store;
 
 import com.thinh.cosmetic.domain.dto.request.store.StoreRequest;
 import com.thinh.cosmetic.domain.dto.response.store.StoreResponse;
-import com.thinh.cosmetic.domain.entity.store.StoreEntity;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
