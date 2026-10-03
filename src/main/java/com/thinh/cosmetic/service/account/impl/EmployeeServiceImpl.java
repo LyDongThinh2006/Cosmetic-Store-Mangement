@@ -3,13 +3,14 @@ package com.thinh.cosmetic.service.account.impl;
 import com.thinh.cosmetic.domain.dto.request.account.EmployeeRequest;
 import com.thinh.cosmetic.domain.dto.response.account.EmployeeResponse;
 import com.thinh.cosmetic.domain.entity.account.*;
-import com.thinh.cosmetic.domain.entity.store.StoreEntity;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
 import com.thinh.cosmetic.domain.enums.AccountType;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.repository.account.*;
 import com.thinh.cosmetic.repository.store.StoreRepository;
 import com.thinh.cosmetic.service.account.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final StoreRepository storeRepository;
     private final EmployeeRoleRepository employeeRoleRepository;
     private final EmployeeStoreRepository employeeStoreRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public EmployeeResponse create(EmployeeRequest request) throws Exception {
@@ -33,11 +35,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new Exception("Email already exists: " + request.getInternalEmail());
         }
 
+        String rawPassword = (request.getPassword() != null && !request.getPassword().isBlank()) 
+                ? request.getPassword() 
+                : "123456";
+
         AccountEntity account = AccountEntity.builder()
                 .username(request.getInternalEmail())
                 .email(request.getInternalEmail())
                 .phone(request.getPhone())
-                .passwordHash("123456") // default password
+                .passwordHash(passwordEncoder.encode(rawPassword))
                 .accountType(AccountType.EMPLOYEE)
                 .build();
         account = accountRepository.save(account);
@@ -95,6 +101,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (request.getFullName() != null) employee.setFullName(request.getFullName());
         if (request.getPhone() != null) employee.setPhone(request.getPhone());
 
+        if (request.getPassword() != null && !request.getPassword().isBlank() && employee.getAccount() != null) {
+            employee.getAccount().setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        }
+
         if (request.getRoleIds() != null) {
             employeeRoleRepository.deleteByEmployeeId(employee.getId());
             for (Long roleId : request.getRoleIds()) {
@@ -107,7 +117,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (request.getStoreIds() != null) {
-            employeeStoreRepository.deleteById(employee.getId());
+            employeeStoreRepository.deleteByEmployeeId(employee.getId());
             for (Long storeId : request.getStoreIds()) {
                 StoreEntity store = storeRepository.findById(storeId).orElse(null);
                 if (store != null) {
@@ -131,7 +141,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeResponse toResponse(EmployeeEntity e) {
         List<String> roles = employeeRoleRepository.findByEmployeeId(e.getId())
                 .stream().map(r -> r.getRole().getName()).toList();
-        List<String> stores = employeeStoreRepository.findById(e.getId())
+        List<String> stores = employeeStoreRepository.findByEmployeeId(e.getId())
                 .stream().map(s -> s.getStore().getName()).toList();
 
         return EmployeeResponse.builder()

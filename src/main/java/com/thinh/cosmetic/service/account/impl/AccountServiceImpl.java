@@ -11,6 +11,7 @@ import com.thinh.cosmetic.repository.account.AccountRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.service.account.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public CustomerResponse register(RegisterRequest request) throws Exception {
@@ -31,10 +33,10 @@ public class AccountServiceImpl implements AccountService {
         }
 
         AccountEntity account = AccountEntity.builder()
-                .username(request.getEmail())
+                .username(request.getFullName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .passwordHash(request.getPassword())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .accountType(AccountType.CUSTOMER)
                 .build();
         account = accountRepository.save(account);
@@ -56,7 +58,7 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity account = accountRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new Exception("Invalid email or password"));
 
-        if (!account.getPasswordHash().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), account.getPasswordHash())) {
             throw new Exception("Invalid email or password");
         }
 
