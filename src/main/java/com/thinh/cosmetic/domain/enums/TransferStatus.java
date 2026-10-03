@@ -1,7 +1,8 @@
 package com.thinh.cosmetic.domain.enums;
 
-public enum StockTransferStatus {
+public enum TransferStatus {
     PENDING,
+    PENDING_EXPORT,
     IN_TRANSIT,
     RECEIVED
 }
