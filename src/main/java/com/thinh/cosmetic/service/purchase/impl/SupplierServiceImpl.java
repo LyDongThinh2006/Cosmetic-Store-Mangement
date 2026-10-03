@@ -2,7 +2,7 @@ package com.thinh.cosmetic.service.purchase.impl;
 
 import com.thinh.cosmetic.domain.dto.request.purchase.SupplierRequest;
 import com.thinh.cosmetic.domain.dto.response.purchase.SupplierResponse;
-import com.thinh.cosmetic.domain.entity.purchase.SupplierEntity;
+import com.thinh.cosmetic.domain.entity.inventory.SupplierEntity;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.mapper.purchase.SupplierMapper;
 import com.thinh.cosmetic.repository.purchase.SupplierRepository;

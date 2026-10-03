@@ -5,16 +5,15 @@ import com.thinh.cosmetic.domain.dto.response.order.OrderItemResponse;
 import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
 import com.thinh.cosmetic.domain.entity.account.CustomerAddressEntity;
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
-import com.thinh.cosmetic.domain.entity.cart.CartEntity;
-import com.thinh.cosmetic.domain.entity.cart.CartItemEntity;
+import com.thinh.cosmetic.domain.entity.sales.CartEntity;
+import com.thinh.cosmetic.domain.entity.sales.CartItemEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderItemEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderStockHoldEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderItemEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderReservationEntity;
 
-import com.thinh.cosmetic.domain.entity.store.InventoryEntity;
-import com.thinh.cosmetic.domain.entity.store.StoreEntity;
-import com.thinh.cosmetic.domain.enums.HoldStatus;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.domain.enums.ReservationStatus;
 import com.thinh.cosmetic.domain.enums.OrderStatus;
 import com.thinh.cosmetic.repository.account.CustomerAddressRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
@@ -22,7 +21,7 @@ import com.thinh.cosmetic.repository.cart.CartItemRepository;
 import com.thinh.cosmetic.repository.cart.CartRepository;
 import com.thinh.cosmetic.repository.order.OrderItemRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
-import com.thinh.cosmetic.repository.order.OrderStockHoldRepository;
+import com.thinh.cosmetic.repository.order.OrderReservationRepository;
 
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
@@ -43,7 +42,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final OrderStockHoldRepository stockHoldRepository;
+    private final OrderReservationRepository stockHoldRepository;
     private final CustomerRepository customerRepository;
     private final CustomerAddressRepository addressRepository;
     private final CartRepository cartRepository;
@@ -86,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity order = OrderEntity.builder()
                 .customer(customer)
                 .assignedStore(assignedStore)
-                .recipientName(address.getRecientName())
+                .recipientName(address.getRecipientName())
                 .recipientPhone(address.getPhone())
                 .shippingAddress(address.getAddressDetail())
                 .ward(address.getWard())
@@ -96,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
                 .discountAmount(discountAmount)
                 .shippingFee(shippingFee)
                 .totalAmount(totalAmount)
-                .status(OrderStatus.PENDING_CONFIRMATION)
+                .status(OrderStatus.PENDING)
                 .paymentMethod(request.getPaymentMethod())
 
                 .note(request.getNote())
@@ -122,12 +121,12 @@ public class OrderServiceImpl implements OrderService {
 
             // Reserve stock (inventory hold)
             if (assignedStore != null) {
-                stockHoldRepository.save(OrderStockHoldEntity.builder()
+                stockHoldRepository.save(OrderReservationEntity.builder()
                         .order(order)
                         .sku(sku)
                         .store(assignedStore)
                         .quantity(item.getQuantity())
-                        .status(HoldStatus.HELD)
+                        .status(ReservationStatus.HELD)
                         .build());
 
                 inventoryRepository.findByStoreIdAndSkuId(assignedStore.getId(), sku.getId())
@@ -179,10 +178,10 @@ public class OrderServiceImpl implements OrderService {
         } else if (status == OrderStatus.COMPLETED) {
             order.setCompletedAt(LocalDateTime.now());
             // Deduct stock
-            List<OrderStockHoldEntity> holds = stockHoldRepository.findByOrderId(id);
-            for (OrderStockHoldEntity hold : holds) {
-                if (hold.getStatus() == HoldStatus.HELD) {
-                    hold.setStatus(HoldStatus.COMMITTED);
+            List<OrderReservationEntity> holds = stockHoldRepository.findByOrderId(id);
+            for (OrderReservationEntity hold : holds) {
+                if (hold.getStatus() == ReservationStatus.HELD) {
+                    hold.setStatus(ReservationStatus.COMMITTED);
                     stockHoldRepository.save(hold);
 
                     inventoryRepository.findByStoreIdAndSkuId(hold.getStore().getId(), hold.getSku().getId())
@@ -196,10 +195,10 @@ public class OrderServiceImpl implements OrderService {
         } else if (status == OrderStatus.CANCELLED) {
             order.setCancelledAt(LocalDateTime.now());
             // Release stock hold
-            List<OrderStockHoldEntity> holds = stockHoldRepository.findByOrderId(id);
-            for (OrderStockHoldEntity hold : holds) {
-                if (hold.getStatus() == HoldStatus.HELD) {
-                    hold.setStatus(HoldStatus.RELEASED);
+            List<OrderReservationEntity> holds = stockHoldRepository.findByOrderId(id);
+            for (OrderReservationEntity hold : holds) {
+                if (hold.getStatus() == ReservationStatus.HELD) {
+                    hold.setStatus(ReservationStatus.RELEASED);
                     stockHoldRepository.save(hold);
 
                     inventoryRepository.findByStoreIdAndSkuId(hold.getStore().getId(), hold.getSku().getId())
@@ -222,7 +221,7 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getCustomer().getId().equals(customerId)) {
             throw new Exception("You do not have permission to cancel this order");
         }
-        if (order.getStatus() != OrderStatus.PENDING_CONFIRMATION) {
+        if (order.getStatus() != OrderStatus.PENDING) {
             throw new Exception("Only pending orders can be cancelled");
         }
 

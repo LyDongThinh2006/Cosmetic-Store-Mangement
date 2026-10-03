@@ -3,7 +3,7 @@ package com.thinh.cosmetic.service.review.impl;
 import com.thinh.cosmetic.domain.dto.request.review.ReviewRequest;
 import com.thinh.cosmetic.domain.dto.response.review.ReviewResponse;
 import com.thinh.cosmetic.domain.entity.review.ReviewEntity;
-import com.thinh.cosmetic.domain.enums.ReviewModerationStatus;
+import com.thinh.cosmetic.domain.enums.ReviewStatus;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.repository.catalog.ProductRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
@@ -33,8 +33,8 @@ public class ReviewServiceImpl implements ReviewService {
                         .orElseThrow(() -> new Exception("Customer not found: " + customerId)))
                 .order(request.getOrderId() != null ? orderRepository.findById(request.getOrderId()).orElse(null) : null)
                 .rating(request.getRating())
-                .comment(request.getComment())
-                .moderationStatus(ReviewModerationStatus.VISIBLE)
+                .content(request.getComment())
+                .moderationStatus(ReviewStatus.VISIBLE)
                 .build();
         return toResponse(reviewRepository.save(review));
     }
@@ -43,7 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(readOnly = true)
     public List<ReviewResponse> getByProduct(Long productId) {
         return reviewRepository.findByProductId(productId).stream()
-                .filter(r -> r.getModerationStatus() == ReviewModerationStatus.VISIBLE)
+                .filter(r -> r.getModerationStatus() == ReviewStatus.VISIBLE)
                 .map(this::toResponse).toList();
     }
 
@@ -54,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewResponse updateModerationStatus(Long id, ReviewModerationStatus status) throws Exception {
+    public ReviewResponse updateModerationStatus(Long id, ReviewStatus status) throws Exception {
         ReviewEntity review = reviewRepository.findById(id)
                 .orElseThrow(() -> new Exception("Review not found: " + id));
         review.setModerationStatus(status);

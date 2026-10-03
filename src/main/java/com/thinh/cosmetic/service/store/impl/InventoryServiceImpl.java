@@ -2,8 +2,8 @@ package com.thinh.cosmetic.service.store.impl;
 
 import com.thinh.cosmetic.domain.dto.request.store.InventoryAdjustmentRequest;
 import com.thinh.cosmetic.domain.dto.response.store.InventoryResponse;
-import com.thinh.cosmetic.domain.entity.store.InventoryAdjustmentEntity;
-import com.thinh.cosmetic.domain.entity.store.InventoryEntity;
+import com.thinh.cosmetic.domain.entity.inventory.InventoryAdjustmentEntity;
+import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
 import com.thinh.cosmetic.repository.store.InventoryAdjustmentRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;

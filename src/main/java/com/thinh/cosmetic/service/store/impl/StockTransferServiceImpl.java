@@ -3,8 +3,8 @@ package com.thinh.cosmetic.service.store.impl;
 import com.thinh.cosmetic.domain.dto.request.store.StockTransferRequest;
 import com.thinh.cosmetic.domain.dto.response.store.StockTransferResponse;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
-import com.thinh.cosmetic.domain.entity.store.*;
-import com.thinh.cosmetic.domain.enums.StockTransferStatus;
+import com.thinh.cosmetic.domain.entity.inventory.*;
+import com.thinh.cosmetic.domain.enums.TransferStatus;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
 import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
 import com.thinh.cosmetic.repository.store.*;
@@ -38,7 +38,7 @@ public class StockTransferServiceImpl implements StockTransferService {
         StockTransferEntity transfer = StockTransferEntity.builder()
                 .sourceStore(source)
                 .destinationStore(destination)
-                .status(StockTransferStatus.PENDING)
+                .status(TransferStatus.PENDING)
                 .createdBy(employeeRepository.findById(employeeId).orElse(null))
                 .build();
         transfer = stockTransferRepository.save(transfer);
@@ -63,7 +63,7 @@ public class StockTransferServiceImpl implements StockTransferService {
     public StockTransferResponse confirmShipment(Long id) throws Exception {
         StockTransferEntity transfer = stockTransferRepository.findById(id)
                 .orElseThrow(() -> new Exception("Transfer not found: " + id));
-        if (transfer.getStatus() != StockTransferStatus.PENDING) {
+        if (transfer.getStatus() != TransferStatus.PENDING) {
             throw new Exception("Can only ship pending transfers");
         }
 
@@ -78,7 +78,7 @@ public class StockTransferServiceImpl implements StockTransferService {
             inventoryRepository.save(inv);
         }
 
-        transfer.setStatus(StockTransferStatus.IN_TRANSIT);
+        transfer.setStatus(TransferStatus.IN_TRANSIT);
         transfer.setShippedAt(LocalDateTime.now());
         return toResponse(stockTransferRepository.save(transfer));
     }
@@ -87,7 +87,7 @@ public class StockTransferServiceImpl implements StockTransferService {
     public StockTransferResponse confirmReceipt(Long id) throws Exception {
         StockTransferEntity transfer = stockTransferRepository.findById(id)
                 .orElseThrow(() -> new Exception("Transfer not found: " + id));
-        if (transfer.getStatus() != StockTransferStatus.IN_TRANSIT) {
+        if (transfer.getStatus() != TransferStatus.IN_TRANSIT) {
             throw new Exception("Can only receive transfers that are in transit");
         }
 
@@ -105,7 +105,7 @@ public class StockTransferServiceImpl implements StockTransferService {
             inventoryRepository.save(inv);
         }
 
-        transfer.setStatus(StockTransferStatus.RECEIVED);
+        transfer.setStatus(TransferStatus.RECEIVED);
         transfer.setReceivedAt(LocalDateTime.now());
         return toResponse(stockTransferRepository.save(transfer));
     }
