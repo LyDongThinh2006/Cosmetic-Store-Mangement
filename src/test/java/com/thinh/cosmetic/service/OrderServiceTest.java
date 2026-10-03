@@ -4,16 +4,15 @@ import com.thinh.cosmetic.domain.dto.request.order.OrderRequest;
 import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
 import com.thinh.cosmetic.domain.entity.account.CustomerAddressEntity;
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
-import com.thinh.cosmetic.domain.entity.cart.CartEntity;
-import com.thinh.cosmetic.domain.entity.cart.CartItemEntity;
+import com.thinh.cosmetic.domain.entity.sales.CartEntity;
+import com.thinh.cosmetic.domain.entity.sales.CartItemEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderItemEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderStockHoldEntity;
-import com.thinh.cosmetic.domain.entity.store.InventoryEntity;
-import com.thinh.cosmetic.domain.entity.store.StoreEntity;
-import com.thinh.cosmetic.domain.enums.HoldStatus;
+import com.thinh.cosmetic.domain.entity.sales.OrderEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderItemEntity;
+import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.domain.enums.ReservationStatus;
 import com.thinh.cosmetic.domain.enums.OrderStatus;
 import com.thinh.cosmetic.domain.enums.PaymentMethod;
 import com.thinh.cosmetic.repository.account.CustomerAddressRepository;
@@ -22,11 +21,11 @@ import com.thinh.cosmetic.repository.cart.CartItemRepository;
 import com.thinh.cosmetic.repository.cart.CartRepository;
 import com.thinh.cosmetic.repository.order.OrderItemRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
-import com.thinh.cosmetic.repository.order.OrderStockHoldRepository;
-import com.thinh.cosmetic.repository.order.VoucherRepository;
+import com.thinh.cosmetic.repository.order.OrderReservationRepository;
+
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
-import com.thinh.cosmetic.service.order.VoucherService;
+
 import com.thinh.cosmetic.service.order.impl.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,15 +49,14 @@ class OrderServiceTest {
 
     @Mock private OrderRepository orderRepository;
     @Mock private OrderItemRepository orderItemRepository;
-    @Mock private OrderStockHoldRepository stockHoldRepository;
+    @Mock private OrderReservationRepository stockHoldRepository;
     @Mock private CustomerRepository customerRepository;
     @Mock private CustomerAddressRepository addressRepository;
     @Mock private CartRepository cartRepository;
     @Mock private CartItemRepository cartItemRepository;
     @Mock private StoreRepository storeRepository;
     @Mock private InventoryRepository inventoryRepository;
-    @Mock private VoucherRepository voucherRepository;
-    @Mock private VoucherService voucherService;
+
 
     @InjectMocks
     private OrderServiceImpl orderService;
@@ -76,7 +74,7 @@ class OrderServiceTest {
         address = CustomerAddressEntity.builder()
                 .id(10L)
                 .customerEntity(customer)
-                .recientName("Nguyen Van A")
+                .recipientName("Nguyen Van A")
                 .phone("0987654321")
                 .addressDetail("123 Le Loi")
                 .ward("Phuong Ben Nghe")
@@ -140,10 +138,10 @@ class OrderServiceTest {
         assertEquals(new BigDecimal("400000"), response.getSubtotal()); // 2 * 200,000
         assertEquals(new BigDecimal("30000"), response.getShippingFee()); // < 500,000 threshold
         assertEquals(new BigDecimal("430000"), response.getTotalAmount());
-        assertEquals(OrderStatus.PENDING_CONFIRMATION, response.getStatus());
+        assertEquals(OrderStatus.PENDING, response.getStatus());
 
         // Verify stock hold was created
-        verify(stockHoldRepository).save(argThat(h -> h.getQuantity() == 2 && h.getStatus() == HoldStatus.HELD));
+        verify(stockHoldRepository).save(argThat(h -> h.getQuantity() == 2 && h.getStatus() == ReservationStatus.HELD));
         // Verify inventory heldQuantity was increased
         assertEquals(2, inventory.getHeldQuantity());
         // Verify cart was cleared
