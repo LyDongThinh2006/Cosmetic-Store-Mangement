@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.domain.enums;
 
-public enum HoldStatus {
+public enum ReservationStatus {
     HELD,
     RELEASED,
     COMMITTED

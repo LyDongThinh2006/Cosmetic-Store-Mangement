@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.domain.enums;
 
-public enum ReviewModerationStatus {
+public enum ReviewStatus {
     VISIBLE,
     HIDDEN,
     PENDING
