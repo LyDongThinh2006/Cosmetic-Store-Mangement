@@ -1,9 +1,13 @@
 package com.thinh.cosmetic.domain.entity.returns;
 
+import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
 import com.thinh.cosmetic.domain.entity.account.EmployeeEntity;
-import com.thinh.cosmetic.domain.entity.order.OrderEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderEntity;
 import com.thinh.cosmetic.domain.enums.ReturnStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,23 +28,38 @@ public class ReturnRequestEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @NotNull(message = "Order cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private OrderEntity order;
 
+    @NotNull(message = "Customer cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private CustomerEntity customer;
+
+    @NotBlank(message = "Reason cannot be blank")
+    @Size(max = 255, message = "Reason must not exceed 255 characters")
+    @Column(name = "reason", nullable = false, length = 255)
     private String reason;
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @NotNull(message = "Status cannot be null")
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
     private ReturnStatus status;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(name = "requested_at", nullable = false, updatable = false)
     private LocalDateTime requestedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "processed_by")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "handled_by")
     private EmployeeEntity processedBy;
 
+    @Column(name = "processed_at")
     private LocalDateTime processedAt;
 
     @OneToMany(mappedBy = "returnRequest", cascade = CascadeType.ALL)
