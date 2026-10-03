@@ -1,8 +1,9 @@
-package com.thinh.cosmetic.domain.entity.store;
+package com.thinh.cosmetic.domain.entity.inventory;
 
 import com.thinh.cosmetic.domain.entity.account.EmployeeEntity;
-import com.thinh.cosmetic.domain.enums.StockTransferStatus;
+import com.thinh.cosmetic.domain.enums.TransferStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,28 +25,34 @@ public class StockTransferEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "Source store cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "from_store_id", nullable = false)
     private StoreEntity sourceStore;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "Destination store cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "to_store_id", nullable = false)
     private StoreEntity destinationStore;
 
+    @NotNull(message = "Status cannot be null")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StockTransferStatus status;
+    @Column(name = "status", nullable = false, length = 20)
+    private TransferStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "Created by employee cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_id", nullable = false)
     private EmployeeEntity createdBy;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "shipped_at")
     private LocalDateTime shippedAt;
 
+    @Column(name = "received_at")
     private LocalDateTime receivedAt;
 
     @OneToMany(mappedBy = "stockTransfer", cascade = CascadeType.ALL)
