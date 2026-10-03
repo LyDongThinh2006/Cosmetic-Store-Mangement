@@ -1,13 +1,13 @@
 services:
   postgres:
     image: postgres:16
-    container_name: lunea-db
+    container_name: lunea
     environment:
       POSTGRES_DB: lunea
       POSTGRES_USER: lunea
       POSTGRES_PASSWORD: 12345
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - lunea_pgdata:/var/lib/postgresql/data
 
