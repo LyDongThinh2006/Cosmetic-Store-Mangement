@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.repository.cart;
 
-import com.thinh.cosmetic.domain.entity.cart.WishListItemEntity;
+import com.thinh.cosmetic.domain.entity.catalog.WishListItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
