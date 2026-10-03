@@ -1,7 +1,7 @@
 package com.thinh.cosmetic.domain.enums;
 
 public enum OrderStatus {
-    PENDING_CONFIRMATION,
+    PENDING,
     CONFIRMED,
     PREPARING,
     SHIPPING,
