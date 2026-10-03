@@ -6,14 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+import java.math.BigDecimal;
+import java.time.LocalTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class StoreResponse {
     private Long id;
     private String name;
     private String address;
+    private String province;
     private String phone;
+    private LocalTime openTime;
+    private LocalTime closeTime;
     private String operatingHours;
-    private Double latitude;
-    private Double longitude;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private ActiveStatus status;
 }

@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.domain.dto.response.review;
 
-import com.thinh.cosmetic.domain.enums.ReviewModerationStatus;
+import com.thinh.cosmetic.domain.enums.ReviewStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +16,6 @@ public class ReviewResponse {
     private String customerName;
     private Integer rating;
     private String comment;
-    private ReviewModerationStatus moderationStatus;
+    private ReviewStatus moderationStatus;
     private LocalDateTime createdAt;
 }

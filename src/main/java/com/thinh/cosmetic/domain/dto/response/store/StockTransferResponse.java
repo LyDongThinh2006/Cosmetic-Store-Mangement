@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.domain.dto.response.store;
 
-import com.thinh.cosmetic.domain.enums.StockTransferStatus;
+import com.thinh.cosmetic.domain.enums.TransferStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class StockTransferResponse {
     private Long id;
     private String sourceStoreName;
     private String destinationStoreName;
-    private StockTransferStatus status;
+    private TransferStatus status;
     private String createdByName;
     private LocalDateTime createdAt;
     private LocalDateTime shippedAt;

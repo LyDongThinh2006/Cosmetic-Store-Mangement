@@ -8,10 +8,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RegisterRequest {
-    @NotBlank private String fullName;
-    @NotBlank @Email private String email;
+    @NotBlank(message = "Full name cannot be blank")
+    @Size(max = 150, message = "Full name must not exceed 150 characters")
+    private String fullName;
+
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Email format is invalid")
+    @Size(max = 150, message = "Email must not exceed 150 characters")
+    private String email;
+
+    @Size(max = 20, message = "Phone must not exceed 20 characters")
     private String phone;
-    @NotBlank @Size(min = 6) private String password;
+
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
 }

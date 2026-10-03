@@ -6,8 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class LoginRequest {
-    @NotBlank private String email;
-    @NotBlank private String password;
+    @NotBlank(message = "Email/Username cannot be blank")
+    private String email;
+
+    @NotBlank(message = "Password cannot be blank")
+    private String password;
 }
