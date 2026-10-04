@@ -14,6 +14,7 @@ public enum ErrorCode {
 
     // 401 & 403
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "User is unauthenticated"),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Email/SĐT hoặc mật khẩu không đúng, hoặc tài khoản đã bị khóa"),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access is denied"),
 
     // 404 Not Found
