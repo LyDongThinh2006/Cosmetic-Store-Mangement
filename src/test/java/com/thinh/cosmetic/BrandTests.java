@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -47,6 +46,7 @@ public class BrandTests {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/brands")
+                                .header("X-Requested-With", "fetch")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
                 )
@@ -67,6 +67,7 @@ public class BrandTests {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/brands")
+                                .header("X-Requested-With", "fetch")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
                 ).andExpect(
@@ -144,6 +145,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/brands/1")
+                        .header("X-Requested-With", "fetch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(
@@ -169,6 +171,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/brands/1")
+                        .header("X-Requested-With", "fetch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(
@@ -192,6 +195,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/brands/1")
+                        .header("X-Requested-With", "fetch")
         ).andExpect(
                 MockMvcResultMatchers.status().isNoContent()
         );
