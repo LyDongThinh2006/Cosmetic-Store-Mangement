@@ -11,9 +11,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LoginRequest {
-    @NotBlank(message = "Email/Username cannot be blank")
+
+    private String identifier;
+
     private String email;
 
     @NotBlank(message = "Password cannot be blank")
     private String password;
+
+    public String getLoginIdentifier() {
+        if (identifier != null && !identifier.isBlank()) {
+            return identifier.trim();
+        }
+        if (email != null && !email.isBlank()) {
+            return email.trim();
+        }
+        return "";
+    }
 }
