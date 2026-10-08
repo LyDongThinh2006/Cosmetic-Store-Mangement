@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- Admin Sidebar Fragment -->
+<aside th:fragment="sidebar(activeMenu)" class="admin-sidebar" id="adminSidebar">
+    <!-- Brand -->
+    <a href="/admin" class="admin-brand">
+        <div class="admin-brand-logo">L</div>
+        <div class="admin-brand-info">
+            <h1>LUNEA</h1>
+            <span>Back-office Portal</span>
+        </div>
+    </a>
+
+    <!-- Staff Profile Card -->
+    <div class="admin-staff-card">
+        <div class="admin-staff-avatar">
+            <i class="bi bi-person-fill"></i>
+        </div>
+        <div class="admin-staff-meta">
+            <div class="admin-staff-name" th:text="${currentUser != null ? currentUser.displayName : 'Nhân Viên Quản Trị'}">Nguyễn Quản Trị</div>
+            <div class="admin-staff-role" th:text="${primaryStoreName != null ? primaryStoreName : 'Toàn hệ thống'}">Chi nhánh HCM</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="admin-nav">
+        <div class="admin-nav-heading">Quản trị chuỗi</div>
+
+        <!-- Dashboard -->
+        <a href="/admin" class="admin-nav-link" th:classappend="${activeMenu == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-speedometer2"></i>
+            <span>Tổng Quan</span>
+        </a>
+
+        <!-- Orders -->
+        <a href="/admin/orders" class="admin-nav-link" th:classappend="${activeMenu == 'orders' ? 'active' : ''}">
+            <i class="bi bi-box-seam"></i>
+            <span>Xử Lý Đơn Hàng</span>
+        </a>
+
+        <!-- Inventory -->
+        <a href="/admin/inventory" class="admin-nav-link" th:classappend="${activeMenu == 'inventory' ? 'active' : ''}">
+            <i class="bi bi-boxes"></i>
+            <span>Quản Lý Tồn Kho</span>
+        </a>
+
+        <!-- Products -->
+        <a href="/admin/products" class="admin-nav-link" th:classappend="${activeMenu == 'products' ? 'active' : ''}">
+            <i class="bi bi-tags"></i>
+            <span>Sản Phẩm & SKU</span>
+        </a>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="admin-sidebar-footer">
+        <a href="/" target="_blank" class="admin-nav-link" style="color: var(--color-gold-light);">
+            <i class="bi bi-shop"></i>
+            <span>Xem Web Khách Hàng</span>
+        </a>
+        <button type="button" onclick="LUNEA.logout()" class="admin-nav-link" style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left;">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Đăng Xuất</span>
+        </button>
+    </div>
+</aside>
+</html>

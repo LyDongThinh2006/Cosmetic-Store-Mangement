@@ -1,14 +1,263 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-<body data-page="admin-products">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Quản Lý Danh Mục & Sản Phẩm</h1>
-        </header>
-        <main>
-            <p>Trang quản lý danh sách sản phẩm, SKU và giá niêm yết</p>
-        </main>
-    </div>
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('products')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Danh Mục & Sản Phẩm', 'Quản lý thông tin mỹ phẩm, thương hiệu và biến thể SKU toàn chuỗi')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Search Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên sản phẩm, thương hiệu..." oninput="filterProducts()" style="padding-left: 36px; min-width: 280px;">
+                    </div>
+
+                    <select id="brandFilter" class="admin-select" onchange="filterProducts()" style="min-width: 170px;">
+                        <option value="">Tất cả Thương hiệu</option>
+                    </select>
+
+                    <select id="categoryFilter" class="admin-select" onchange="filterProducts()" style="min-width: 170px;">
+                        <option value="">Tất cả Danh mục</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadProducts()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards for Products -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Sản Phẩm Chuỗi</span>
+                        <div class="kpi-icon gold"><i class="bi bi-tag-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalProducts">0</div>
+                    <div class="kpi-sub"><span>Mặt hàng trong hệ thống</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Biến Thể SKUs</span>
+                        <div class="kpi-icon blue"><i class="bi bi-layers-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalSkus">0</div>
+                    <div class="kpi-sub"><span>Dung tích & phiên bản</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Sản Phẩm Nổi Bật</span>
+                        <div class="kpi-icon amber"><i class="bi bi-star-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiFeatured" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Hiển thị trang chủ</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Kinh Doanh</span>
+                        <div class="kpi-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiActive" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Trạng thái ACTIVE</span></div>
+                </div>
+            </div>
+
+            <!-- Products Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-collection-fill"></i>
+                        <span>Danh Sách Sản Phẩm Mỹ Phẩm</span>
+                    </h3>
+                    <span id="productsCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 sản phẩm</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">Ảnh</th>
+                                <th>Tên Sản Phẩm & Xuất Xứ</th>
+                                <th>Thương Hiệu</th>
+                                <th>Danh Mục</th>
+                                <th>Biến Thể SKU & Khoảng Giá</th>
+                                <th style="text-align: center;">Tồn Khả Dụng</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right;">Storefront</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                                    <i class="bi bi-hourglass" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu sản phẩm...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let allProducts = [];
+
+        async function loadProducts() {
+            try {
+                // Parallel fetch products, brands, categories
+                const [products, brands, categories] = await Promise.all([
+                    LUNEA.apiFetch('/api/products'),
+                    LUNEA.apiFetch('/api/brands').catch(() => []),
+                    LUNEA.apiFetch('/api/categories').catch(() => [])
+                ]);
+
+                allProducts = products || [];
+                populateBrandOptions(brands);
+                populateCategoryOptions(categories);
+                updateProductsKPI(allProducts);
+                filterProducts();
+            } catch (err) {
+                console.error("Error loading products:", err);
+                document.getElementById('productsTableBody').innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-danger); padding: 32px;">Lỗi tải dữ liệu sản phẩm</td></tr>
+                `;
+            }
+        }
+
+        function populateBrandOptions(brands) {
+            const select = document.getElementById('brandFilter');
+            select.innerHTML = '<option value="">Tất cả Thương hiệu</option>' + 
+                (brands || []).map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+        }
+
+        function populateCategoryOptions(categories) {
+            const select = document.getElementById('categoryFilter');
+            select.innerHTML = '<option value="">Tất cả Danh mục</option>' + 
+                (categories || []).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        function updateProductsKPI(products) {
+            let totalSkus = 0;
+            let featuredCount = 0;
+            let activeCount = 0;
+
+            products.forEach(p => {
+                totalSkus += (p.skus ? p.skus.length : 1);
+                if (p.isFeatured) featuredCount++;
+                if (p.status === 'ACTIVE') activeCount++;
+            });
+
+            document.getElementById('kpiTotalProducts').textContent = products.length;
+            document.getElementById('kpiTotalSkus').textContent = totalSkus;
+            document.getElementById('kpiFeatured').textContent = featuredCount;
+            document.getElementById('kpiActive').textContent = activeCount;
+            document.getElementById('productsCountBadge').textContent = `${products.length} sản phẩm`;
+        }
+
+        function filterProducts() {
+            const term = document.getElementById('searchInput').value.trim().toLowerCase();
+            const brand = document.getElementById('brandFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+
+            let filtered = allProducts;
+
+            if (brand) {
+                filtered = filtered.filter(p => p.brand && p.brand.name === brand);
+            }
+            if (category) {
+                filtered = filtered.filter(p => p.category && p.category.name === category);
+            }
+            if (term) {
+                filtered = filtered.filter(p => {
+                    const name = (p.name || '').toLowerCase();
+                    const bName = (p.brand && p.brand.name ? p.brand.name : '').toLowerCase();
+                    const origin = (p.origin || '').toLowerCase();
+                    return name.includes(term) || bName.includes(term) || origin.includes(term);
+                });
+            }
+
+            renderProductsTable(filtered);
+        }
+
+        function renderProductsTable(products) {
+            const tbody = document.getElementById('productsTableBody');
+            if (!products || products.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                        Không có sản phẩm nào phù hợp với bộ lọc
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => {
+                const img = p.imageUrl || (p.imageUrls && p.imageUrls.length ? p.imageUrls[0] : 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=200&auto=format&fit=crop&q=80');
+                const skus = p.skus || [];
+                const skuNames = skus.map(s => s.variantName || 'Mặc định').join(' · ');
+                const priceRange = (p.minPrice && p.maxPrice && p.minPrice !== p.maxPrice)
+                    ? `${LUNEA.formatVND(p.minPrice)} - ${LUNEA.formatVND(p.maxPrice)}`
+                    : LUNEA.formatVND(p.minPrice || p.listPrice || 0);
+
+                const inStockBadge = (p.totalAvailableStock > 0)
+                    ? `<span class="status-pill completed">${p.totalAvailableStock} sp</span>`
+                    : `<span class="status-pill cancelled">Hết hàng</span>`;
+
+                return `
+                    <tr>
+                        <td>
+                            <img src="${img}" alt="${p.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-border-subtle);">
+                        </td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--color-text-primary); font-size: 0.9rem;">
+                                ${p.name}
+                                ${p.isFeatured ? '<i class="bi bi-star-fill" style="color: var(--color-gold-primary); font-size: 0.75rem; margin-left: 4px;" title="Nổi bật"></i>' : ''}
+                            </div>
+                            <div style="font-size: 0.76rem; color: var(--color-text-muted); margin-top: 2px;">
+                                Xuất xứ: <span style="color: var(--color-text-secondary);">${p.origin || 'Việt Nam'}</span>
+                            </div>
+                        </td>
+                        <td><span style="font-size: 0.84rem; color: var(--color-gold-light); font-weight: 600;">${p.brand ? p.brand.name : 'N/A'}</span></td>
+                        <td><span style="font-size: 0.82rem; color: var(--color-text-secondary);">${p.category ? p.category.name : 'N/A'}</span></td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--color-text-primary);">${priceRange}</div>
+                            <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                                ${skus.length} SKUs (${skuNames})
+                            </div>
+                        </td>
+                        <td style="text-align: center;">${inStockBadge}</td>
+                        <td style="text-align: center;">
+                            <span class="status-pill ${p.status === 'ACTIVE' ? 'confirmed' : 'cancelled'}" style="font-size: 0.72rem;">
+                                ${p.status === 'ACTIVE' ? 'Đang bán' : 'Ngừng bán'}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <a href="/products/${p.id}" target="_blank" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem;">
+                                Xem web <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
+    </script>
 </body>
 </html>

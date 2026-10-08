@@ -1,6 +1,9 @@
 package com.thinh.cosmetic.controller;
 
+import com.thinh.cosmetic.domain.dto.response.store.StoreResponse;
 import com.thinh.cosmetic.security.AuthPrincipal;
+import com.thinh.cosmetic.security.StoreScope;
+import com.thinh.cosmetic.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,18 +12,50 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AdminPageController {
 
+    private final StoreService storeService;
+    private final StoreScope storeScope;
+
+    private void populateCommonAdminAttributes(AuthPrincipal principal, Model model) {
+        List<StoreResponse> allStores = storeService.getAll();
+        model.addAttribute("allStores", allStores);
+
+        if (principal != null) {
+            model.addAttribute("currentUser", principal);
+            List<Long> accessibleIds = storeScope.getAccessibleStoreIds(principal);
+            if (accessibleIds == null) {
+                model.addAttribute("isAllStoresAdmin", true);
+                model.addAttribute("accessibleStores", allStores);
+                model.addAttribute("primaryStoreName", "Toàn hệ thống (Admin)");
+                model.addAttribute("primaryStoreId", null);
+            } else {
+                model.addAttribute("isAllStoresAdmin", false);
+                List<StoreResponse> staffStores = allStores.stream()
+                        .filter(s -> accessibleIds.contains(s.getId()))
+                        .toList();
+                model.addAttribute("accessibleStores", staffStores);
+                if (!staffStores.isEmpty()) {
+                    model.addAttribute("primaryStoreName", staffStores.get(0).getName());
+                    model.addAttribute("primaryStoreId", staffStores.get(0).getId());
+                } else {
+                    model.addAttribute("primaryStoreName", "Chưa gán chi nhánh");
+                    model.addAttribute("primaryStoreId", null);
+                }
+            }
+        }
+    }
+
     @GetMapping("/admin")
     public String dashboard(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Tổng Quan Quản Trị | LUNEA Back-office");
         model.addAttribute("activeMenu", "dashboard");
-        if (principal != null) {
-            model.addAttribute("currentUser", principal);
-        }
+        populateCommonAdminAttributes(principal, model);
         return "admin/dashboard";
     }
 
@@ -28,9 +63,7 @@ public class AdminPageController {
     public String orders(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Đơn Hàng Chi Nhánh | LUNEA Back-office");
         model.addAttribute("activeMenu", "orders");
-        if (principal != null) {
-            model.addAttribute("currentUser", principal);
-        }
+        populateCommonAdminAttributes(principal, model);
         return "admin/orders";
     }
 
@@ -43,9 +76,7 @@ public class AdminPageController {
         model.addAttribute("pageTitle", "Chi Tiết Đơn Hàng #" + id + " | LUNEA Back-office");
         model.addAttribute("activeMenu", "orders");
         model.addAttribute("orderId", id);
-        if (principal != null) {
-            model.addAttribute("currentUser", principal);
-        }
+        populateCommonAdminAttributes(principal, model);
         return "admin/order-detail";
     }
 
@@ -53,9 +84,7 @@ public class AdminPageController {
     public String inventory(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Tồn Kho Chi Nhánh | LUNEA Back-office");
         model.addAttribute("activeMenu", "inventory");
-        if (principal != null) {
-            model.addAttribute("currentUser", principal);
-        }
+        populateCommonAdminAttributes(principal, model);
         return "admin/inventory";
     }
 
@@ -63,9 +92,7 @@ public class AdminPageController {
     public String products(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Sản Phẩm Chuỗi | LUNEA Back-office");
         model.addAttribute("activeMenu", "products");
-        if (principal != null) {
-            model.addAttribute("currentUser", principal);
-        }
+        populateCommonAdminAttributes(principal, model);
         return "admin/products";
     }
 }

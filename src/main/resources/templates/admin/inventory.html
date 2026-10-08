@@ -1,14 +1,362 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-<body data-page="admin-inventory">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Quản Lý Tồn Kho Chi Nhánh</h1>
-        </header>
-        <main>
-            <p>Tra cứu và điều chỉnh số lượng tồn kho theo chi nhánh</p>
-        </main>
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('inventory')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Quản Lý Tồn Kho', 'Tra cứu số lượng thực tế, số lượng giữ và điều chỉnh kiểm kê')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Search Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <label style="font-size: 0.82rem; color: var(--color-text-secondary); font-weight: 600;">
+                        <i class="bi bi-geo-alt-fill" style="color: var(--color-gold-primary); margin-right: 4px;"></i>Kho Chi nhánh:
+                    </label>
+                    <select id="branchFilter" class="admin-select" onchange="loadInventory()" style="min-width: 260px;">
+                        <option th:each="st : ${accessibleStores}" th:value="${st.id}" th:text="${st.name}" th:selected="${primaryStoreId != null and primaryStoreId == st.id}">LUNEA Quận 1</option>
+                        <option th:if="${isAllStoresAdmin}" th:each="st : ${allStores}" th:unless="${accessibleStores.contains(st)}" th:value="${st.id}" th:text="${st.name}">Chi nhánh khác</option>
+                    </select>
+
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm kiếm SKU, tên sản phẩm..." oninput="filterInventory()" style="padding-left: 36px; min-width: 260px;">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadInventory()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards for Inventory -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Mặt Hàng (SKUs)</span>
+                        <div class="kpi-icon blue"><i class="bi bi-boxes"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalSkus">0</div>
+                    <div class="kpi-sub"><span>Mã SKU trong danh mục kho</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Tồn Thực Tế</span>
+                        <div class="kpi-icon gold"><i class="bi bi-box"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiActualStock">0</div>
+                    <div class="kpi-sub"><span>Số lượng hiện có tại kệ</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Giữ Chờ Giao (Held)</span>
+                        <div class="kpi-icon amber"><i class="bi bi-lock-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiHeldStock" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Giữ cho các đơn chưa giao</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tồn Khả Dụng (Available)</span>
+                        <div class="kpi-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiAvailableStock" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Khách hàng có thể đặt mua</span></div>
+                </div>
+            </div>
+
+            <!-- Inventory Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-table"></i>
+                        <span>Bảng Dữ Liệu Tồn Kho Chi Nhánh</span>
+                    </h3>
+                    <span id="stockCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 mặt hàng</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Mã SKU</th>
+                                <th>Tên Sản Phẩm</th>
+                                <th style="text-align: center;">Tồn Thực Tế</th>
+                                <th style="text-align: center;">Đang Giữ</th>
+                                <th style="text-align: center;">Khả Dụng</th>
+                                <th style="text-align: center;">Mức Tối Thiểu</th>
+                                <th style="text-align: center;">Tình Trạng</th>
+                                <th style="text-align: right;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                                    <i class="bi bi-hourglass" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu tồn kho...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Adjustment Modal -->
+    <div class="admin-modal-backdrop" id="adjustModal">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title">
+                    <i class="bi bi-pencil-square" style="color: var(--color-gold-primary); margin-right: 6px;"></i>
+                    Điều Chỉnh Tồn Kho
+                </h3>
+                <button type="button" class="admin-modal-close" onclick="closeAdjustModal()">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <div style="background: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px; border: 1px solid var(--color-border-subtle);">
+                    <div style="font-size: 0.76rem; color: var(--color-gold-primary); text-transform: uppercase; font-weight: 700;">Sản phẩm điều chỉnh</div>
+                    <div style="font-weight: 700; font-size: 1rem; color: var(--color-text-primary); margin-top: 2px;" id="modalProductName">---</div>
+                    <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 4px; font-family: monospace;">Mã SKU: <span id="modalSkuCode">---</span></div>
+                    <div style="display: flex; gap: 20px; margin-top: 12px; font-size: 0.84rem; border-top: 1px dashed var(--color-border-subtle); padding-top: 10px;">
+                        <div>Tồn thực tế hiện tại: <strong id="modalCurrentActual" style="color: var(--color-text-primary);">0</strong></div>
+                        <div>Đang giữ cho khách: <strong id="modalCurrentHeld" style="color: var(--color-warning);">0</strong></div>
+                    </div>
+                </div>
+
+                <form id="adjustForm" onsubmit="submitAdjustment(event)">
+                    <input type="hidden" id="modalStoreId">
+                    <input type="hidden" id="modalSkuId">
+                    <input type="hidden" id="modalHeldQty">
+
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 6px; color: var(--color-text-primary);">
+                            Số lượng tồn thực tế mới (Actual Stock) <span style="color: var(--color-danger);">*</span>:
+                        </label>
+                        <input type="number" id="modalNewQuantity" class="admin-input" style="width: 100%; font-size: 1rem; font-weight: 700;" min="0" required>
+                        <small style="font-size: 0.76rem; color: var(--color-text-muted); display: block; margin-top: 4px;">
+                            * Lưu ý: Không được nhỏ hơn số lượng đang giữ cho khách (<span id="modalHeldWarn">0</span> sản phẩm).
+                        </small>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 6px; color: var(--color-text-primary);">
+                            Lý do điều chỉnh (Bắt buộc ghi nhận log) <span style="color: var(--color-danger);">*</span>:
+                        </label>
+                        <select id="modalReasonPreset" class="admin-select" style="width: 100%; margin-bottom: 8px;" onchange="onReasonPresetChange(this)">
+                            <option value="Kiểm kê định kỳ thực tế">Kiểm kê định kỳ thực tế</option>
+                            <option value="Nhập bổ sung từ kho tổng">Nhập bổ sung từ kho tổng</option>
+                            <option value="Hàng lỗi / hỏng bao bì cần hủy">Hàng lỗi / hỏng bao bì cần hủy</option>
+                            <option value="Điều chuyển nội bộ giữa các chi nhánh">Điều chuyển nội bộ giữa các chi nhánh</option>
+                            <option value="other">Lý do khác (tự nhập)...</option>
+                        </select>
+                        <input type="text" id="modalCustomReason" class="admin-input" style="width: 100%; display: none;" placeholder="Nhập lý do cụ thể...">
+                    </div>
+
+                    <div class="admin-modal-footer" style="padding-left: 0; padding-right: 0; padding-bottom: 0;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeAdjustModal()">Hủy bỏ</button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="btnSubmitAdjust">
+                            <i class="bi bi-check-lg"></i>
+                            <span>Lưu Điều Chỉnh</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let inventoryData = [];
+
+        async function loadInventory() {
+            const storeId = document.getElementById('branchFilter').value;
+            if (!storeId) return;
+
+            try {
+                const data = await LUNEA.apiFetch(`/api/inventory/store/${storeId}`);
+                inventoryData = data || [];
+                updateInventoryKPI(inventoryData);
+                filterInventory();
+            } catch (err) {
+                console.error("Error loading inventory:", err);
+                document.getElementById('inventoryTableBody').innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-danger); padding: 32px;">Lỗi tải dữ liệu tồn kho</td></tr>
+                `;
+            }
+        }
+
+        function updateInventoryKPI(items) {
+            let totalActual = 0;
+            let totalHeld = 0;
+            let totalAvailable = 0;
+
+            items.forEach(i => {
+                totalActual += (i.actualStock || 0);
+                totalHeld += (i.heldQuantity || 0);
+                totalAvailable += (i.availableStock || 0);
+            });
+
+            document.getElementById('kpiTotalSkus').textContent = items.length;
+            document.getElementById('kpiActualStock').textContent = totalActual;
+            document.getElementById('kpiHeldStock').textContent = totalHeld;
+            document.getElementById('kpiAvailableStock').textContent = totalAvailable;
+            document.getElementById('stockCountBadge').textContent = `${items.length} mặt hàng SKU`;
+        }
+
+        function filterInventory() {
+            const term = document.getElementById('searchInput').value.trim().toLowerCase();
+            let filtered = inventoryData;
+
+            if (term) {
+                filtered = filtered.filter(i => {
+                    const code = (i.skuCode || '').toLowerCase();
+                    const name = (i.productName || '').toLowerCase();
+                    return code.includes(term) || name.includes(term);
+                });
+            }
+
+            renderInventoryTable(filtered);
+        }
+
+        function renderInventoryTable(items) {
+            const tbody = document.getElementById('inventoryTableBody');
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                        Không có mặt hàng nào phù hợp với tìm kiếm
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map(i => {
+                let statusBadge = '';
+                if (i.availableStock <= 0) {
+                    statusBadge = '<span class="status-pill cancelled"><i class="bi bi-x-circle"></i> Hết hàng</span>';
+                } else if (i.actualStock <= i.minimumStock) {
+                    statusBadge = '<span class="status-pill pending"><i class="bi bi-exclamation-triangle"></i> Sắp hết</span>';
+                } else {
+                    statusBadge = '<span class="status-pill completed"><i class="bi bi-check2"></i> Còn hàng</span>';
+                }
+
+                return `
+                    <tr>
+                        <td><strong style="color: var(--color-gold-light); font-family: monospace;">${i.skuCode}</strong></td>
+                        <td>
+                            <div style="font-weight: 600; color: var(--color-text-primary);">${i.productName}</div>
+                        </td>
+                        <td style="text-align: center; font-weight: 700;">${i.actualStock}</td>
+                        <td style="text-align: center; color: var(--color-warning); font-weight: 600;">${i.heldQuantity}</td>
+                        <td style="text-align: center; font-weight: 800; color: ${i.availableStock <= 0 ? 'var(--color-danger)' : 'var(--color-success)'};">${i.availableStock}</td>
+                        <td style="text-align: center; color: var(--color-text-muted); font-size: 0.8rem;">${i.minimumStock}</td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.78rem;" onclick='openAdjustModal(${JSON.stringify(i)})'>
+                                <i class="bi bi-pencil"></i> Chỉnh kho
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openAdjustModal(item) {
+            document.getElementById('modalStoreId').value = item.storeId;
+            document.getElementById('modalSkuId').value = item.skuId;
+            document.getElementById('modalHeldQty').value = item.heldQuantity;
+            document.getElementById('modalProductName').textContent = item.productName;
+            document.getElementById('modalSkuCode').textContent = item.skuCode;
+            document.getElementById('modalCurrentActual').textContent = item.actualStock;
+            document.getElementById('modalCurrentHeld').textContent = item.heldQuantity;
+            document.getElementById('modalHeldWarn').textContent = item.heldQuantity;
+
+            const input = document.getElementById('modalNewQuantity');
+            input.value = item.actualStock;
+            input.min = item.heldQuantity;
+
+            document.getElementById('modalReasonPreset').value = 'Kiểm kê định kỳ thực tế';
+            document.getElementById('modalCustomReason').style.display = 'none';
+            document.getElementById('modalCustomReason').value = '';
+
+            document.getElementById('adjustModal').classList.add('show');
+        }
+
+        function closeAdjustModal() {
+            document.getElementById('adjustModal').classList.remove('show');
+        }
+
+        function onReasonPresetChange(select) {
+            const customInput = document.getElementById('modalCustomReason');
+            if (select.value === 'other') {
+                customInput.style.display = 'block';
+                customInput.required = true;
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.required = false;
+            }
+        }
+
+        async function submitAdjustment(event) {
+            event.preventDefault();
+
+            const storeId = parseInt(document.getElementById('modalStoreId').value);
+            const skuId = parseInt(document.getElementById('modalSkuId').value);
+            const heldQty = parseInt(document.getElementById('modalHeldQty').value);
+            const newQuantity = parseInt(document.getElementById('modalNewQuantity').value);
+
+            if (newQuantity < heldQty) {
+                LUNEA.toastError(`Số lượng thực tế không được nhỏ hơn số lượng đang giữ cho khách (${heldQty} sản phẩm)!`);
+                return;
+            }
+
+            const preset = document.getElementById('modalReasonPreset').value;
+            const custom = document.getElementById('modalCustomReason').value.trim();
+            const reason = preset === 'other' ? custom : preset;
+
+            if (!reason) {
+                LUNEA.toastError("Vui lòng nhập lý do điều chỉnh");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitAdjust');
+            btn.disabled = true;
+
+            try {
+                await LUNEA.apiFetch('/api/inventory/adjust', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        storeId: storeId,
+                        skuId: skuId,
+                        newQuantity: newQuantity,
+                        reason: reason
+                    })
+                });
+
+                LUNEA.toastSuccess("Đã điều chỉnh tồn kho thành công!");
+                closeAdjustModal();
+                loadInventory();
+            } catch (err) {
+                console.error("Adjustment error:", err);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInventory();
+        });
+    </script>
 </body>
 </html>

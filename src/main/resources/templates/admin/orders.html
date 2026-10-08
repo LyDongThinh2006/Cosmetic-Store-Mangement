@@ -1,14 +1,237 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-<body data-page="admin-orders">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Quản Lý Đơn Hàng</h1>
-        </header>
-        <main>
-            <p>Trang xử lý và chuyển trạng thái đơn hàng theo chi nhánh</p>
-        </main>
-    </div>
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('orders')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Quản Lý Đơn Hàng', 'Xử lý, duyệt và điều phối đơn hàng theo chi nhánh')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Search Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <label style="font-size: 0.82rem; color: var(--color-text-secondary); font-weight: 600;">
+                        <i class="bi bi-geo-alt-fill" style="color: var(--color-gold-primary); margin-right: 4px;"></i>Chi nhánh:
+                    </label>
+                    <select id="branchFilter" class="admin-select" onchange="loadOrders()" style="min-width: 240px;">
+                        <option th:if="${isAllStoresAdmin}" value="">Tất cả Chi nhánh (Toàn chuỗi)</option>
+                        <option th:each="st : ${accessibleStores}" th:value="${st.id}" th:text="${st.name}">LUNEA Quận 1</option>
+                    </select>
+
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo mã đơn, tên, SĐT..." oninput="filterOrders()" style="padding-left: 36px; min-width: 260px;">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadOrders()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Tabs -->
+            <div class="admin-tabs" id="statusTabs" style="margin-bottom: 20px;">
+                <button type="button" class="admin-tab-btn active" data-status="ALL" onclick="switchStatusTab('ALL', this)">
+                    Tất cả <span id="count-ALL" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-status="PENDING" onclick="switchStatusTab('PENDING', this)">
+                    Chờ xác nhận <span id="count-PENDING" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-status="CONFIRMED" onclick="switchStatusTab('CONFIRMED', this)">
+                    Đã xác nhận <span id="count-CONFIRMED" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-status="PREPARING" onclick="switchStatusTab('PREPARING', this)">
+                    Đang đóng gói <span id="count-PREPARING" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-status="SHIPPING" onclick="switchStatusTab('SHIPPING', this)">
+                    Đang giao <span id="count-SHIPPING" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-status="COMPLETED" onclick="switchStatusTab('COMPLETED', this)">
+                    Hoàn thành <span id="count-COMPLETED" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-status="CANCELLED" onclick="switchStatusTab('CANCELLED', this)">
+                    Đã hủy <span id="count-CANCELLED" style="font-size: 0.72rem; opacity: 0.8;">(0)</span>
+                </button>
+            </div>
+
+            <!-- Orders Table Card -->
+            <div class="admin-card">
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Mã Đơn Hàng</th>
+                                <th>Thời Gian Đặt</th>
+                                <th>Khách Hàng & Liên Hệ</th>
+                                <th>Chi Nhánh Phụ Trách</th>
+                                <th>Số Mặt Hàng</th>
+                                <th>Tổng Tiền</th>
+                                <th>Trạng Thái</th>
+                                <th style="text-align: right;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                                    <i class="bi bi-hourglass" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải danh sách đơn hàng...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let allOrdersData = [];
+        let currentStatusFilter = 'ALL';
+
+        function getStatusBadge(status) {
+            const map = {
+                'PENDING': { label: 'Chờ xác nhận', cls: 'pending', icon: 'bi-hourglass' },
+                'CONFIRMED': { label: 'Đã xác nhận', cls: 'confirmed', icon: 'bi-check2' },
+                'PREPARING': { label: 'Đang đóng gói', cls: 'preparing', icon: 'bi-box-seam' },
+                'SHIPPING': { label: 'Đang giao hàng', cls: 'shipping', icon: 'bi-truck' },
+                'COMPLETED': { label: 'Hoàn thành', cls: 'completed', icon: 'bi-check-circle-fill' },
+                'CANCELLED': { label: 'Đã hủy', cls: 'cancelled', icon: 'bi-x-circle-fill' }
+            };
+            const item = map[status] || { label: status, cls: 'pending', icon: 'bi-circle' };
+            return `<span class="status-pill ${item.cls}"><i class="bi ${item.icon}"></i> ${item.label}</span>`;
+        }
+
+        async function loadOrders() {
+            const storeId = document.getElementById('branchFilter').value;
+            const url = storeId ? `/api/orders?storeId=${storeId}` : '/api/orders';
+
+            try {
+                const orders = await LUNEA.apiFetch(url);
+                allOrdersData = orders || [];
+                updateTabCounters(allOrdersData);
+                filterOrders();
+            } catch (err) {
+                console.error("Error loading orders:", err);
+                document.getElementById('ordersTableBody').innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-danger); padding: 32px;">Lỗi tải danh sách đơn hàng</td></tr>
+                `;
+            }
+        }
+
+        function updateTabCounters(orders) {
+            const counts = {
+                'ALL': orders.length,
+                'PENDING': 0,
+                'CONFIRMED': 0,
+                'PREPARING': 0,
+                'SHIPPING': 0,
+                'COMPLETED': 0,
+                'CANCELLED': 0
+            };
+
+            orders.forEach(o => {
+                if (counts[o.status] !== undefined) {
+                    counts[o.status]++;
+                }
+            });
+
+            for (const key in counts) {
+                const el = document.getElementById(`count-${key}`);
+                if (el) el.textContent = `(${counts[key]})`;
+            }
+        }
+
+        function switchStatusTab(status, btn) {
+            currentStatusFilter = status;
+            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterOrders();
+        }
+
+        function filterOrders() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            let filtered = allOrdersData;
+
+            // Filter by status tab
+            if (currentStatusFilter !== 'ALL') {
+                filtered = filtered.filter(o => o.status === currentStatusFilter);
+            }
+
+            // Filter by search term
+            if (searchTerm) {
+                filtered = filtered.filter(o => {
+                    const code = (o.orderCode || '').toLowerCase();
+                    const name = (o.recipientName || '').toLowerCase();
+                    const phone = (o.recipientPhone || '').toLowerCase();
+                    return code.includes(searchTerm) || name.includes(searchTerm) || phone.includes(searchTerm);
+                });
+            }
+
+            renderOrdersTable(filtered);
+        }
+
+        function renderOrdersTable(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                        Không tìm thấy đơn hàng nào phù hợp với bộ lọc
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(o => {
+                const itemCount = (o.items && o.items.length) ? o.items.length : 1;
+                const formattedDate = o.createdAt ? new Date(o.createdAt).toLocaleString('vi-VN', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                }) : 'N/A';
+
+                return `
+                    <tr>
+                        <td>
+                            <a href="/admin/orders/${o.id}" style="color: var(--color-gold-light); font-weight: 700; font-family: monospace; text-decoration: none;">
+                                ${o.orderCode}
+                            </a>
+                        </td>
+                        <td style="font-size: 0.8rem; color: var(--color-text-secondary);">${formattedDate}</td>
+                        <td>
+                            <div style="font-weight: 600;">${o.recipientName || 'Khách vãng lai'}</div>
+                            <div style="font-size: 0.74rem; color: var(--color-text-muted);">${o.recipientPhone || ''}</div>
+                        </td>
+                        <td>
+                            <span style="font-size: 0.82rem; color: var(--color-text-secondary);">
+                                <i class="bi bi-geo-alt" style="color: var(--color-gold-primary); margin-right: 2px;"></i>
+                                ${o.fulfillmentStoreName || 'Chưa phân bổ'}
+                            </span>
+                        </td>
+                        <td><span style="font-weight: 600;">${itemCount}</span> sản phẩm</td>
+                        <td><strong style="color: var(--color-text-primary);">${LUNEA.formatVND(o.totalAmount)}</strong></td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td style="text-align: right;">
+                            <a href="/admin/orders/${o.id}" class="admin-btn admin-btn-outline" style="padding: 5px 12px; font-size: 0.78rem;">
+                                Xem chi tiết <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+        });
+    </script>
 </body>
 </html>

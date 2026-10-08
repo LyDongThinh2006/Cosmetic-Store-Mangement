@@ -1,14 +1,390 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-<body data-page="admin-order-detail" th:data-order-id="${orderId}">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Chi Tiết Đơn Hàng</h1>
-        </header>
-        <main>
-            <p>Mã đơn hàng: <span th:text="${orderId}">1</span></p>
-        </main>
-    </div>
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body" th:attr="data-order-id=${orderId}">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('orders')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Chi Tiết Đơn Hàng', 'Xử lý và cập nhật tiến độ giao dịch')}"></header>
+
+        <div class="admin-container">
+            <!-- Back navigation & header -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                <a href="/admin/orders" class="admin-btn admin-btn-outline" style="font-size: 0.82rem;">
+                    <i class="bi bi-arrow-left"></i> Quay lại danh sách đơn
+                </a>
+                <div id="orderStatusHeaderBadge"></div>
+            </div>
+
+            <!-- Order Header Card -->
+            <div class="admin-card" style="margin-bottom: 24px;">
+                <div class="admin-card-header" style="flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.1em;">ĐƠN HÀNG HỆ THỐNG</div>
+                        <h2 style="font-size: 1.4rem; color: var(--color-gold-light); font-family: monospace; margin: 4px 0 0 0;" id="orderCodeDisplay">LUN-......</h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; color: var(--color-text-secondary);" id="orderCreatedAtDisplay">Ngày đặt: --/--/----</div>
+                        <div style="font-size: 0.82rem; color: var(--color-gold-primary); margin-top: 4px;" id="orderFulfillmentStoreDisplay">Chi nhánh: Đang tải...</div>
+                    </div>
+                </div>
+
+                <!-- Stepper Progress Bar -->
+                <div class="admin-card-body" id="stepperContainer" style="padding-bottom: 10px;">
+                    <div class="order-stepper" id="orderStepper">
+                        <div class="stepper-step" id="step-PENDING">
+                            <div class="step-circle"><i class="bi bi-receipt"></i></div>
+                            <div class="step-label">Chờ duyệt</div>
+                        </div>
+                        <div class="stepper-step" id="step-CONFIRMED">
+                            <div class="step-circle"><i class="bi bi-check-lg"></i></div>
+                            <div class="step-label">Đã duyệt</div>
+                        </div>
+                        <div class="stepper-step" id="step-PREPARING">
+                            <div class="step-circle"><i class="bi bi-box-seam"></i></div>
+                            <div class="step-label">Đóng gói</div>
+                        </div>
+                        <div class="stepper-step" id="step-SHIPPING">
+                            <div class="step-circle"><i class="bi bi-truck"></i></div>
+                            <div class="step-label">Đang giao</div>
+                        </div>
+                        <div class="stepper-step" id="step-COMPLETED">
+                            <div class="step-circle"><i class="bi bi-check2-all"></i></div>
+                            <div class="step-label">Hoàn thành</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-column Layout -->
+            <div style="display: grid; grid-template-columns: 7fr 5fr; gap: 24px;">
+                <!-- Left Column: Items snapshot & Financial summary -->
+                <div>
+                    <!-- Items Snapshot -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">
+                                <i class="bi bi-bag-check"></i>
+                                <span>Danh Sách Mặt Hàng (Snapshot đơn)</span>
+                            </h3>
+                            <span id="itemsCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 mặt hàng</span>
+                        </div>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sản Phẩm & Biến Thể</th>
+                                        <th style="text-align: right;">Đơn Giá</th>
+                                        <th style="text-align: center;">SL</th>
+                                        <th style="text-align: right;">Thành Tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderItemsTableBody">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: var(--color-text-muted); padding: 32px;">
+                                            Đang tải dữ liệu sản phẩm...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Financial Summary -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">
+                                <i class="bi bi-receipt-cutoff"></i>
+                                <span>Tổng Hợp Tài Chính & Thanh Toán</span>
+                            </h3>
+                        </div>
+                        <div class="admin-card-body">
+                            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem;">
+                                <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary);">
+                                    <span>Tạm tính hàng hóa:</span>
+                                    <strong style="color: var(--color-text-primary);" id="subtotalDisplay">0 ₫</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary);">
+                                    <span>Giảm giá khuyến mãi / Voucher:</span>
+                                    <strong style="color: var(--color-gold-primary);" id="discountDisplay">- 0 ₫</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary);">
+                                    <span>Phí giao hàng:</span>
+                                    <strong style="color: var(--color-text-primary);" id="shippingFeeDisplay">0 ₫</strong>
+                                </div>
+                                <div style="border-top: 1px dashed var(--color-border-subtle); padding-top: 12px; margin-top: 4px; display: flex; justify-content: space-between; align-items: baseline;">
+                                    <span style="font-size: 1.05rem; font-weight: 700;">Tổng thanh toán COD:</span>
+                                    <span style="font-size: 1.45rem; font-weight: 800; color: var(--color-gold-light);" id="totalAmountDisplay">0 ₫</span>
+                                </div>
+                                <div style="margin-top: 6px; font-size: 0.8rem; color: var(--color-text-muted);">
+                                    <i class="bi bi-shield-check" style="color: var(--color-success); margin-right: 4px;"></i>
+                                    Phương thức thanh toán: <strong>Thanh toán khi nhận hàng (COD)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Workflow Actions & Delivery Details -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <!-- Workflow Action Card -->
+                    <div class="admin-card" style="border-color: var(--color-border-gold);">
+                        <div class="admin-card-header" style="background: rgba(212, 175, 55, 0.08);">
+                            <h3 class="admin-card-title" style="color: var(--color-gold-light);">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                                <span>Thao Tác Duyệt Đơn Hàng</span>
+                            </h3>
+                        </div>
+                        <div class="admin-card-body" id="workflowActionsContainer">
+                            <div style="text-align: center; color: var(--color-text-muted); padding: 16px;">
+                                Đang tải thao tác khả dụng...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer & Shipping Card -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">
+                                <i class="bi bi-person-lines-fill"></i>
+                                <span>Người Nhận & Địa Chỉ Giao Hàng</span>
+                            </h3>
+                        </div>
+                        <div class="admin-card-body" style="font-size: 0.88rem; line-height: 1.7;">
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-size: 0.76rem; color: var(--color-text-muted); text-transform: uppercase;">Người nhận hàng</div>
+                                <div style="font-weight: 700; color: var(--color-text-primary); font-size: 1rem;" id="customerNameDisplay">---</div>
+                                <div style="color: var(--color-text-secondary);"><i class="bi bi-telephone" style="margin-right: 6px;"></i><span id="customerPhoneDisplay">---</span></div>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-size: 0.76rem; color: var(--color-text-muted); text-transform: uppercase;">Địa chỉ nhận hàng</div>
+                                <div style="color: var(--color-text-primary);" id="customerAddressDisplay">---</div>
+                            </div>
+
+                            <div>
+                                <div style="font-size: 0.76rem; color: var(--color-text-muted); text-transform: uppercase;">Ghi chú giao hàng</div>
+                                <div style="color: var(--color-text-secondary); font-style: italic;" id="orderNoteDisplay">Không có ghi chú</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        const orderId = document.body.getAttribute('data-order-id');
+        let currentOrder = null;
+
+        function getStatusBadge(status) {
+            const map = {
+                'PENDING': { label: 'Chờ xác nhận', cls: 'pending', icon: 'bi-hourglass' },
+                'CONFIRMED': { label: 'Đã xác nhận', cls: 'confirmed', icon: 'bi-check2' },
+                'PREPARING': { label: 'Đang đóng gói', cls: 'preparing', icon: 'bi-box-seam' },
+                'SHIPPING': { label: 'Đang giao hàng', cls: 'shipping', icon: 'bi-truck' },
+                'COMPLETED': { label: 'Hoàn thành', cls: 'completed', icon: 'bi-check-circle-fill' },
+                'CANCELLED': { label: 'Đã hủy đơn', cls: 'cancelled', icon: 'bi-x-circle-fill' }
+            };
+            const item = map[status] || { label: status, cls: 'pending', icon: 'bi-circle' };
+            return `<span class="status-pill ${item.cls}" style="font-size: 0.88rem; padding: 6px 14px;"><i class="bi ${item.icon}"></i> ${item.label}</span>`;
+        }
+
+        async function loadOrderDetail() {
+            try {
+                const order = await LUNEA.apiFetch(`/api/orders/${orderId}`);
+                currentOrder = order;
+                renderOrderView(order);
+            } catch (err) {
+                console.error("Error loading order detail:", err);
+                LUNEA.toastError("Không thể tải chi tiết đơn hàng");
+            }
+        }
+
+        function renderOrderView(order) {
+            // Header
+            document.getElementById('orderCodeDisplay').textContent = order.orderCode;
+            document.getElementById('orderStatusHeaderBadge').innerHTML = getStatusBadge(order.status);
+            document.getElementById('orderCreatedAtDisplay').textContent = `Ngày đặt: ${new Date(order.createdAt).toLocaleString('vi-VN')}`;
+            document.getElementById('orderFulfillmentStoreDisplay').innerHTML = `
+                <i class="bi bi-geo-alt-fill"></i> Chi nhánh xử lý: <strong>${order.fulfillmentStoreName || 'Chưa phân bổ'}</strong>
+            `;
+
+            // Customer
+            document.getElementById('customerNameDisplay').textContent = order.recipientName || 'Khách hàng';
+            document.getElementById('customerPhoneDisplay').textContent = order.recipientPhone || 'Chưa có SĐT';
+            document.getElementById('customerAddressDisplay').textContent = order.shippingAddress || 'Chưa cung cấp';
+            document.getElementById('orderNoteDisplay').textContent = order.note ? `"${order.note}"` : 'Không có ghi chú';
+
+            // Items
+            const items = order.items || [];
+            document.getElementById('itemsCountBadge').textContent = `${items.length} mặt hàng`;
+            const tbody = document.getElementById('orderItemsTableBody');
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600; color: var(--color-text-primary);">${item.productName}</div>
+                        <div style="font-size: 0.78rem; color: var(--color-gold-light); margin-top: 2px;">
+                            Biến thể: <strong>${item.variantName || 'Mặc định'}</strong>
+                        </div>
+                    </td>
+                    <td style="text-align: right; color: var(--color-text-secondary);">${LUNEA.formatVND(item.price)}</td>
+                    <td style="text-align: center; font-weight: 700;">${item.quantity}</td>
+                    <td style="text-align: right; font-weight: 700; color: var(--color-text-primary);">${LUNEA.formatVND(item.subtotal)}</td>
+                </tr>
+            `).join('');
+
+            // Financials
+            document.getElementById('subtotalDisplay').textContent = LUNEA.formatVND(order.subtotal);
+            document.getElementById('discountDisplay').textContent = `- ${LUNEA.formatVND(order.discountAmount)}`;
+            document.getElementById('shippingFeeDisplay').textContent = LUNEA.formatVND(order.shippingFee);
+            document.getElementById('totalAmountDisplay').textContent = LUNEA.formatVND(order.totalAmount);
+
+            // Update Stepper
+            updateStepper(order.status);
+
+            // Update Workflow Action Card
+            renderWorkflowActions(order.status);
+        }
+
+        function updateStepper(status) {
+            const steps = ['PENDING', 'CONFIRMED', 'PREPARING', 'SHIPPING', 'COMPLETED'];
+            const container = document.getElementById('stepperContainer');
+
+            if (status === 'CANCELLED') {
+                container.innerHTML = `
+                    <div style="padding: 14px 20px; border-radius: var(--radius-sm); background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); color: #fb7185; display: flex; align-items: center; gap: 12px;">
+                        <i class="bi bi-x-circle-fill" style="font-size: 1.4rem;"></i>
+                        <div>
+                            <div style="font-weight: 700;">ĐƠN HÀNG ĐÃ BỊ HỦY</div>
+                            <div style="font-size: 0.8rem; opacity: 0.9;">Toàn bộ số lượng tồn kho giữ trước cho đơn này đã được hoàn trả về kho chi nhánh.</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const activeIdx = steps.indexOf(status);
+            steps.forEach((step, idx) => {
+                const el = document.getElementById(`step-${step}`);
+                if (!el) return;
+                el.classList.remove('completed', 'active');
+                if (idx < activeIdx) {
+                    el.classList.add('completed');
+                } else if (idx === activeIdx) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        function renderWorkflowActions(status) {
+            const container = document.getElementById('workflowActionsContainer');
+
+            if (status === 'PENDING') {
+                container.innerHTML = `
+                    <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 16px;">
+                        Đơn hàng đang ở trạng thái <strong>Chờ xác nhận</strong>. Vui lòng kiểm tra thông tin liên lạc và bấm xác nhận đơn để chuyển sang bộ phận đóng gói.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-primary" onclick="changeStatus('CONFIRMED')">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Xác Nhận Đơn Hàng</span>
+                        </button>
+                        <button type="button" class="admin-btn admin-btn-danger" onclick="changeStatus('CANCELLED')">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Đơn Hàng (Giải phóng tồn)</span>
+                        </button>
+                    </div>
+                `;
+            } else if (status === 'CONFIRMED') {
+                container.innerHTML = `
+                    <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 16px;">
+                        Đơn đã được xác nhận. Bấm để thông báo nhân viên kho bắt đầu chuẩn bị và đóng gói sản phẩm.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-primary" onclick="changeStatus('PREPARING')">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Chuyển Sang Đóng Gói (PREPARING)</span>
+                        </button>
+                        <button type="button" class="admin-btn admin-btn-danger" onclick="changeStatus('CANCELLED')">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Đơn Hàng</span>
+                        </button>
+                    </div>
+                `;
+            } else if (status === 'PREPARING') {
+                container.innerHTML = `
+                    <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 16px;">
+                        Hàng hóa đã được đóng gói xong. Bấm giao hàng sẽ <strong style="color: var(--color-gold-light);">tự động khấu trừ tồn kho thực tế (Actual Stock)</strong> tại chi nhánh.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-primary" onclick="changeStatus('SHIPPING')">
+                            <i class="bi bi-truck"></i>
+                            <span>Bắt Đầu Giao Hàng (SHIPPING)</span>
+                        </button>
+                        <button type="button" class="admin-btn admin-btn-danger" onclick="changeStatus('CANCELLED')">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Đơn Hàng</span>
+                        </button>
+                    </div>
+                `;
+            } else if (status === 'SHIPPING') {
+                container.innerHTML = `
+                    <p style="font-size: 0.84rem; color: var(--color-text-secondary); margin-bottom: 16px;">
+                        Đơn hàng đang trên đường giao tới tay khách hàng. Xác nhận hoàn tất sau khi nhân viên giao hàng thu đủ tiền COD.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-success" onclick="changeStatus('COMPLETED')">
+                            <i class="bi bi-check2-all"></i>
+                            <span>Xác Nhận Đã Giao Thành Công (COMPLETED)</span>
+                        </button>
+                    </div>
+                `;
+            } else if (status === 'COMPLETED') {
+                container.innerHTML = `
+                    <div style="padding: 16px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; text-align: center;">
+                        <i class="bi bi-patch-check-fill" style="font-size: 2rem; display: block; margin-bottom: 6px;"></i>
+                        <strong>ĐƠN HÀNG ĐÃ HOÀN TẤT</strong>
+                        <div style="font-size: 0.8rem; margin-top: 4px; opacity: 0.9;">Tiền COD đã thu, tồn kho đã trừ chính thức.</div>
+                    </div>
+                `;
+            } else if (status === 'CANCELLED') {
+                container.innerHTML = `
+                    <div style="padding: 16px; border-radius: var(--radius-sm); background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); color: #fb7185; text-align: center;">
+                        <i class="bi bi-slash-circle-fill" style="font-size: 2rem; display: block; margin-bottom: 6px;"></i>
+                        <strong>ĐƠN HÀNG ĐÃ BỊ HỦY</strong>
+                        <div style="font-size: 0.8rem; margin-top: 4px; opacity: 0.9;">Không còn thao tác duyệt nào cho đơn này.</div>
+                    </div>
+                `;
+            }
+        }
+
+        async function changeStatus(newStatus) {
+            const confirmMsg = newStatus === 'CANCELLED' 
+                ? 'Bạn có chắc chắn muốn hủy đơn hàng này? Tồn kho đang giữ sẽ được giải phóng ngay lập tức.'
+                : `Xác nhận chuyển đơn sang trạng thái "${newStatus}"?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const res = await LUNEA.apiFetch(`/api/orders/${orderId}/status?status=${newStatus}`, {
+                    method: 'PUT'
+                });
+                LUNEA.toastSuccess(`Đã cập nhật trạng thái đơn sang ${newStatus}!`);
+                renderOrderView(res);
+            } catch (err) {
+                console.error("Update status error:", err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrderDetail();
+        });
+    </script>
 </body>
 </html>

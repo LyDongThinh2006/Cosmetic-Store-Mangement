@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<!-- Admin Topbar Fragment -->
+<header th:fragment="topbar(pageHeading, pageSubheading)" class="admin-topbar">
+    <div class="admin-topbar-title">
+        <h2 th:text="${pageHeading != null ? pageHeading : 'Bảng Điều Khiển'}">Tổng Quan Quản Trị</h2>
+        <p th:text="${pageSubheading != null ? pageSubheading : 'Hệ thống vận hành chuỗi mỹ phẩm LUNEA'}">Chuỗi cửa hàng mỹ phẩm cao cấp</p>
+    </div>
+
+    <div class="admin-topbar-actions">
+        <div class="admin-branch-badge">
+            <span class="live-dot"></span>
+            <span th:text="${primaryStoreName != null ? primaryStoreName : 'Toàn hệ thống LUNEA'}">LUNEA Chi nhánh HCM</span>
+        </div>
+
+        <a href="/" target="_blank" class="admin-btn admin-btn-outline" style="font-size: 0.8rem; padding: 6px 12px;">
+            <i class="bi bi-box-arrow-up-right"></i>
+            <span>Mở Storefront</span>
+        </a>
+    </div>
+</header>
+</html>

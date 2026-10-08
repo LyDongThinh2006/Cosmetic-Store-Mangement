@@ -1,14 +1,310 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-<body data-page="admin-dashboard">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">LUNEA Back-office Dashboard</h1>
-        </header>
-        <main>
-            <p>Bảng điều khiển quản trị chuỗi cửa hàng mỹ phẩm LUNEA</p>
-        </main>
-    </div>
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('dashboard')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Tổng Quan Quản Trị', 'Trung tâm điều hành & theo dõi chuỗi cửa hàng LUNEA')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter Bar for Branch Scope -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <label style="font-size: 0.82rem; color: var(--color-text-secondary); font-weight: 600;">
+                        <i class="bi bi-geo-alt-fill" style="color: var(--color-gold-primary); margin-right: 4px;"></i>Phạm vi Chi nhánh:
+                    </label>
+                    <select id="branchFilter" class="admin-select" onchange="loadDashboardData()" style="min-width: 260px;">
+                        <option th:if="${isAllStoresAdmin}" value="">Tất cả Chi nhánh (Toàn chuỗi LUNEA)</option>
+                        <option th:each="st : ${accessibleStores}" th:value="${st.id}" th:text="${st.name}">LUNEA Quận 1</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadDashboardData()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới dữ liệu</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="admin-kpi-grid">
+                <!-- KPI 1: Doanh Thu -->
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Doanh Thu Đơn Hoàn Thành</span>
+                        <div class="kpi-icon gold"><i class="bi bi-cash-stack"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiRevenue">0 ₫</div>
+                    <div class="kpi-sub">
+                        <i class="bi bi-check2-circle" style="color: var(--color-success);"></i>
+                        <span id="kpiCompletedOrders">0 đơn thành công</span>
+                    </div>
+                </div>
+
+                <!-- KPI 2: Đơn Chờ Xử Lý -->
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đơn Chờ Duyệt (Pending)</span>
+                        <div class="kpi-icon amber"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiPending" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub">
+                        <i class="bi bi-exclamation-circle" style="color: #fbbf24;"></i>
+                        <span>Cần xác nhận đơn mới</span>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Đang Giao & Đóng Gói -->
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Đóng Gói & Vận Chuyển</span>
+                        <div class="kpi-icon blue"><i class="bi bi-truck"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiProcessing">0</div>
+                    <div class="kpi-sub">
+                        <i class="bi bi-box-seam" style="color: var(--color-info);"></i>
+                        <span id="kpiShippingBreakdown">0 chuẩn bị · 0 đang giao</span>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Cảnh Báo Tồn Kho -->
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Cảnh Báo Tồn Kho Thấp</span>
+                        <div class="kpi-icon rose"><i class="bi bi-exclamation-triangle"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiLowStock" style="color: #fb7185;">0</div>
+                    <div class="kpi-sub">
+                        <i class="bi bi-shield-alert" style="color: #fb7185;"></i>
+                        <span>Mặt hàng dưới định mức</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-column Section -->
+            <div style="display: grid; grid-template-columns: 7fr 5fr; gap: 24px;">
+                <!-- Column Left: Recent Orders -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Đơn Hàng Gần Đây</span>
+                        </h3>
+                        <a href="/admin/orders" class="admin-btn admin-btn-outline" style="font-size: 0.78rem; padding: 5px 12px;">
+                            Xem tất cả đơn <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã Đơn</th>
+                                    <th>Khách Hàng</th>
+                                    <th>Chi Nhánh</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 32px;">
+                                        <i class="bi bi-hourglass" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                        Đang tải dữ liệu đơn hàng...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Column Right: Low Stock & Demo Cheatsheet -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <!-- Low Stock Alerts Card -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h3 class="admin-card-title">
+                                <i class="bi bi-shield-exclamation"></i>
+                                <span>Cảnh Báo Tồn Kho Chi Nhánh</span>
+                            </h3>
+                            <a href="/admin/inventory" class="admin-btn admin-btn-outline" style="font-size: 0.78rem; padding: 5px 12px;">
+                                Quản lý kho <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="admin-table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã SKU / Tên</th>
+                                        <th>Tồn TT</th>
+                                        <th>Khả Dụng</th>
+                                        <th>Hành Động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lowStockBody">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: var(--color-text-muted); padding: 24px;">
+                                            Đang kiểm tra tồn kho...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Demo Guide Card -->
+                    <div class="admin-card" style="border-color: var(--color-border-gold);">
+                        <div class="admin-card-header" style="background: rgba(212, 175, 55, 0.05);">
+                            <h3 class="admin-card-title" style="color: var(--color-gold-light);">
+                                <i class="bi bi-award"></i>
+                                <span>Kịch Bản Demo Nghiệp Vụ Chuỗi</span>
+                            </h3>
+                        </div>
+                        <div class="admin-card-body" style="font-size: 0.84rem; line-height: 1.6; color: var(--color-text-secondary);">
+                            <p style="margin-bottom: 10px;">
+                                🏢 <strong style="color: var(--color-gold-light);">Nhân viên Chi nhánh HCM (order_hcm):</strong> Chỉ thấy và duyệt các đơn được phân bổ cho Chi nhánh Q1 - TP.HCM.
+                            </p>
+                            <p style="margin-bottom: 10px;">
+                                🚚 <strong style="color: var(--color-gold-light);">Máy trạng thái đơn hàng:</strong> Khi chuyển từ <em>Chuẩn bị hàng (PREPARING)</em> sang <em>Đang giao (SHIPPING)</em>, hệ thống tự động trừ tồn kho thực tế của SKU tại chi nhánh.
+                            </p>
+                            <p style="margin-bottom: 0;">
+                                📦 <strong style="color: var(--color-gold-light);">Thủ kho HCM (warehouse_hcm):</strong> Vào mục <em>Quản Lý Tồn Kho</em> để tra cứu và điều chỉnh số lượng thực tế kèm lý do kiểm kê.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        function getStatusBadge(status) {
+            const map = {
+                'PENDING': { label: 'Chờ xác nhận', cls: 'pending', icon: 'bi-hourglass' },
+                'CONFIRMED': { label: 'Đã xác nhận', cls: 'confirmed', icon: 'bi-check2' },
+                'PREPARING': { label: 'Đang đóng gói', cls: 'preparing', icon: 'bi-box-seam' },
+                'SHIPPING': { label: 'Đang giao hàng', cls: 'shipping', icon: 'bi-truck' },
+                'COMPLETED': { label: 'Hoàn thành', cls: 'completed', icon: 'bi-check-circle-fill' },
+                'CANCELLED': { label: 'Đã hủy', cls: 'cancelled', icon: 'bi-x-circle-fill' }
+            };
+            const item = map[status] || { label: status, cls: 'pending', icon: 'bi-circle' };
+            return `<span class="status-pill ${item.cls}"><i class="bi ${item.icon}"></i> ${item.label}</span>`;
+        }
+
+        async function loadDashboardData() {
+            const storeId = document.getElementById('branchFilter').value;
+            const ordersUrl = storeId ? `/api/orders?storeId=${storeId}` : '/api/orders';
+
+            try {
+                // 1. Fetch Orders
+                const orders = await LUNEA.apiFetch(ordersUrl);
+                renderOrdersKPI(orders);
+                renderRecentOrders(orders);
+
+                // 2. Fetch Low Stock
+                const lowStockStoreId = storeId || (document.getElementById('branchFilter').options[1] ? document.getElementById('branchFilter').options[1].value : 1);
+                loadLowStock(lowStockStoreId);
+            } catch (err) {
+                console.error("Dashboard error:", err);
+            }
+        }
+
+        function renderOrdersKPI(orders) {
+            if (!orders) return;
+
+            let totalRevenue = 0;
+            let completedCount = 0;
+            let pendingCount = 0;
+            let preparingCount = 0;
+            let shippingCount = 0;
+
+            orders.forEach(o => {
+                if (o.status === 'COMPLETED') {
+                    totalRevenue += (o.totalAmount || 0);
+                    completedCount++;
+                } else if (o.status === 'PENDING') {
+                    pendingCount++;
+                } else if (o.status === 'PREPARING') {
+                    preparingCount++;
+                } else if (o.status === 'SHIPPING') {
+                    shippingCount++;
+                }
+            });
+
+            document.getElementById('kpiRevenue').textContent = LUNEA.formatVND(totalRevenue);
+            document.getElementById('kpiCompletedOrders').textContent = `${completedCount} đơn thành công`;
+            document.getElementById('kpiPending').textContent = pendingCount;
+            document.getElementById('kpiProcessing').textContent = preparingCount + shippingCount;
+            document.getElementById('kpiShippingBreakdown').textContent = `${preparingCount} chuẩn bị · ${shippingCount} đang giao`;
+        }
+
+        function renderRecentOrders(orders) {
+            const tbody = document.getElementById('recentOrdersBody');
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 32px;">Không có đơn hàng nào trong phạm vi này</td></tr>`;
+                return;
+            }
+
+            const recent = orders.slice(0, 6);
+            tbody.innerHTML = recent.map(o => `
+                <tr>
+                    <td><strong style="color: var(--color-gold-light); font-family: monospace;">${o.orderCode}</strong></td>
+                    <td>
+                        <div style="font-weight: 600;">${o.recipientName || 'Khách vãng lai'}</div>
+                        <div style="font-size: 0.76rem; color: var(--color-text-muted);">${o.recipientPhone || ''}</div>
+                    </td>
+                    <td><span style="font-size: 0.8rem; color: var(--color-text-secondary);">${o.fulfillmentStoreName || 'Chưa gán'}</span></td>
+                    <td><strong>${LUNEA.formatVND(o.totalAmount)}</strong></td>
+                    <td>${getStatusBadge(o.status)}</td>
+                    <td>
+                        <a href="/admin/orders/${o.id}" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem;">
+                            Chi tiết
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadLowStock(storeId) {
+            const tbody = document.getElementById('lowStockBody');
+            try {
+                const items = await LUNEA.apiFetch(`/api/inventory/store/${storeId}/low-stock`);
+                document.getElementById('kpiLowStock').textContent = items ? items.length : 0;
+
+                if (!items || items.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--color-success); padding: 20px;"><i class="bi bi-check-circle"></i> Tồn kho chi nhánh đều trên mức định mức</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = items.slice(0, 5).map(i => `
+                    <tr>
+                        <td>
+                            <div style="font-weight: 600; font-size: 0.82rem;">${i.productName}</div>
+                            <div style="font-size: 0.72rem; color: var(--color-text-muted); font-family: monospace;">${i.skuCode}</div>
+                        </td>
+                        <td>${i.actualStock}</td>
+                        <td><span style="color: ${i.availableStock <= 0 ? 'var(--color-danger)' : 'var(--color-warning)'}; font-weight: 700;">${i.availableStock}</span></td>
+                        <td>
+                            <a href="/admin/inventory?storeId=${i.storeId}" class="admin-btn admin-btn-outline" style="padding: 3px 8px; font-size: 0.74rem;">
+                                Chỉnh kho
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--color-text-muted); padding: 20px;">Chưa có dữ liệu tồn kho</td></tr>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+        });
+    </script>
 </body>
 </html>
