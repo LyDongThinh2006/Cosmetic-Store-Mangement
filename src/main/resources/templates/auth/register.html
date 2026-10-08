@@ -1,78 +1,90 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-<body data-page="auth-register" style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
-    <!-- Minimal Header -->
-    <header style="padding: 24px 0; text-align: center;">
-        <a th:href="@{/}" href="/" class="brand-logo" style="justify-content: center;">
-            <span class="brand-emblem">L</span>
-            <span>LUNEA</span>
-        </a>
-    </header>
+<body data-page="auth-register">
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
 
-    <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px;">
-        <div class="card-shell" style="width: 100%; max-width: 480px;">
-            <div class="card-core" style="padding: 36px 32px;">
-                <div style="text-align: center; margin-bottom: 28px;">
-                    <div class="eyebrow-tag" style="margin-bottom: 10px;">Thành Viên Mới</div>
-                    <h1 style="font-size: 1.8rem; margin-bottom: 6px;">Đăng Ký Tài Khoản</h1>
-                    <p style="font-size: 0.88rem; color: var(--color-text-secondary);">
-                        Gia nhập LUNEA để tích lũy điểm thưởng và nhận ưu đãi độc quyền
-                    </p>
+    <main class="site-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
+        <div class="auth-split-wrapper reveal-on-scroll">
+            <!-- Left Side: Brand & Crescent Moon Visual (Page 7 PDF) -->
+            <div class="auth-story-col">
+                <span class="hero-brand-title" style="font-size: 2rem; margin-bottom: 12px;">LUNEA</span>
+                <h1 style="font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; line-height: 1.25; margin-bottom: 16px;">
+                    Một tài khoản.<br>Trọn trải nghiệm.
+                </h1>
+                <p style="font-size: 1rem; color: var(--color-text-secondary); max-width: 380px; line-height: 1.7; font-weight: 300;">
+                    Lưu địa chỉ, theo dõi đơn hàng và tiếp tục mua sắm thuận tiện hơn.
+                </p>
+                <div class="auth-moon-visual">
+                    <img th:src="@{/images/moon-crescent.jpg}" src="/images/moon-crescent.jpg" 
+                         alt="LUNEA Moonlight" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
+            </div>
 
-                <!-- Register Form -->
+            <!-- Right Side: Dark Luxury Register Form (Page 7 PDF) -->
+            <div class="auth-form-card">
+                <h2 class="auth-title" style="margin-bottom: 8px;">Tạo tài khoản</h2>
+                <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">Các trường có dấu * là bắt buộc.</p>
+
                 <form id="registerForm" onsubmit="handleRegister(event)">
                     <div class="form-group">
-                        <label class="form-label" for="regFullName">Họ và Tên <span style="color: var(--color-danger);">*</span></label>
+                        <label class="form-label" for="regFullName">Họ và tên *</label>
                         <input type="text" id="regFullName" class="form-control-lunea" required 
-                               placeholder="Ví dụ: Nguyễn Minh Anh">
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
-                        <div>
-                            <label class="form-label" for="regEmail">Email <span style="color: var(--color-danger);">*</span></label>
-                            <input type="email" id="regEmail" class="form-control-lunea" required 
-                                   placeholder="minhanh@gmail.com">
-                        </div>
-                        <div>
-                            <label class="form-label" for="regPhone">Số Điện Thoại</label>
-                            <input type="tel" id="regPhone" class="form-control-lunea" 
-                                   placeholder="0912345678">
-                        </div>
+                               placeholder="Nhập họ và tên">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="regPassword">Mật Khẩu <span style="color: var(--color-danger);">*</span></label>
-                        <input type="password" id="regPassword" class="form-control-lunea" required minlength="6" 
-                               placeholder="Tối thiểu 6 ký tự">
+                        <label class="form-label" for="regEmail">Email *</label>
+                        <input type="email" id="regEmail" class="form-control-lunea" required 
+                               placeholder="Nhập email">
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 28px;">
-                        <label class="form-label" for="regConfirmPassword">Xác Nhận Mật Khẩu <span style="color: var(--color-danger);">*</span></label>
+                    <div class="form-group">
+                        <label class="form-label" for="regPhone">Số điện thoại</label>
+                        <input type="tel" id="regPhone" class="form-control-lunea" 
+                               placeholder="Nhập số điện thoại (không bắt buộc)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="regPassword">Mật khẩu *</label>
+                        <input type="password" id="regPassword" class="form-control-lunea" required minlength="6" 
+                               placeholder="Tạo mật khẩu">
+                        <span style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 4px; display: block;">
+                            Ít nhất 6 ký tự, gồm chữ và số.
+                        </span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label" for="regConfirmPassword">Xác nhận mật khẩu *</label>
                         <input type="password" id="regConfirmPassword" class="form-control-lunea" required minlength="6" 
                                placeholder="Nhập lại mật khẩu">
                     </div>
 
-                    <button type="submit" id="btnRegSubmit" class="btn-lunea-gold" style="width: 100%; justify-content: center; padding: 13px;">
-                        <span>Hoàn Tất Đăng Ký</span>
-                        <span class="btn-icon-bubble"><i class="bi bi-arrow-right"></i></span>
+                    <div style="margin-bottom: 24px; font-size: 0.82rem; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 8px;">
+                        <input type="checkbox" id="regAgreeTerms" required style="margin-top: 3px; accent-color: var(--color-gold-primary);">
+                        <label for="regAgreeTerms" style="cursor: pointer; line-height: 1.4;">
+                            Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.
+                        </label>
+                    </div>
+
+                    <button type="submit" id="btnRegSubmit" class="btn-lunea-gold" style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
+                        <span>Tạo tài khoản</span>
                     </button>
                 </form>
 
                 <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
                     Đã có tài khoản? 
-                    <a th:href="@{/login}" href="/login" style="color: var(--color-gold-light); font-weight: 700; text-decoration: underline;">Đăng nhập ngay</a>
+                    <a th:href="@{/login}" href="/login" style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng nhập</a>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer style="padding: 24px 0; text-align: center; font-size: 0.8rem; color: var(--color-text-muted);">
-        © 2026 LUNEA Beauty Chain · Cam kết bảo mật thông tin khách hàng
-    </footer>
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-    <!-- Client-side Registration Script -->
+    <!-- Client-side Register Script -->
     <script th:inline="javascript">
         async function handleRegister(e) {
             e.preventDefault();
@@ -81,38 +93,41 @@
             const phone = document.getElementById('regPhone').value.trim();
             const password = document.getElementById('regPassword').value;
             const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const agree = document.getElementById('regAgreeTerms').checked;
+            const btn = document.getElementById('btnRegSubmit');
 
-            if (password !== confirmPassword) {
-                LUNEA.toastError('Mật khẩu xác nhận không khớp! Vui lòng kiểm tra lại.');
+            if (!agree) {
+                LUNEA.showToast('Vui lòng đồng ý với điều khoản để tiếp tục!', 'warning');
                 return;
             }
 
-            const btn = document.getElementById('btnRegSubmit');
-            const originalHtml = btn.innerHTML;
+            if (password !== confirmPassword) {
+                LUNEA.showToast('Mật khẩu xác nhận không khớp!', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang khởi tạo tài khoản...</span>';
 
             try {
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang tạo tài khoản...';
-
                 await LUNEA.apiFetch('/api/auth/register', {
                     method: 'POST',
-                    body: JSON.stringify({ fullName, email, phone, password })
+                    body: JSON.stringify({
+                        displayName: fullName,
+                        email: email,
+                        phone: phone,
+                        password: password
+                    })
                 });
 
-                LUNEA.toastSuccess('Đăng ký tài khoản thành công! Đang tự động đăng nhập...');
-
-                // Auto login
-                await LUNEA.apiFetch('/api/auth/login', {
-                    method: 'POST',
-                    body: JSON.stringify({ identifier: email, password })
-                });
+                LUNEA.showToast('Đăng ký tài khoản thành công! Tự động đăng nhập...', 'success');
 
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 800);
             } catch (err) {
                 btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                btn.innerHTML = '<span>Tạo tài khoản</span>';
             }
         }
     </script>

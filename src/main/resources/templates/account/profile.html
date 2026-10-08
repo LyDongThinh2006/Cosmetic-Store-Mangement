@@ -7,83 +7,135 @@
 
     <main class="site-main">
         <div class="lunea-container">
-            <!-- Breadcrumbs -->
-            <div style="margin-bottom: 32px;">
-                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
-                    <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
-                    <span style="margin: 0 6px;">/</span>
-                    <span style="color: var(--color-gold-light);">Hồ sơ cá nhân</span>
-                </div>
-                <h1 style="font-size: 2.2rem;">Thông Tin Tài Khoản</h1>
+            <!-- Breadcrumbs (Page 10 PDF) -->
+            <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 28px;" class="reveal-on-scroll">
+                <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                <span style="margin: 0 6px;">/</span>
+                <span style="color: var(--color-text-secondary);">Tài khoản</span>
+                <span style="margin: 0 6px;">/</span>
+                <span style="color: var(--color-gold-light);">Địa chỉ nhận hàng</span>
             </div>
 
-            <!-- Tab Navigation (Profile vs Orders) -->
-            <div style="display: flex; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 12px;">
-                <a th:href="@{/account/profile}" href="/account/profile" class="nav-link active" style="font-size: 1rem; padding: 8px 16px;">
-                    <i class="bi bi-person"></i> Hồ Sơ & Địa Chỉ
-                </a>
-                <a th:href="@{/account/orders}" href="/account/orders" class="nav-link" style="font-size: 1rem; padding: 8px 16px;">
-                    <i class="bi bi-box-seam"></i> Đơn Hàng Của Tôi
-                </a>
-            </div>
-
-            <!-- Profile Grid -->
-            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 36px; align-items: start;">
-                <!-- Personal Info Card (Left) -->
-                <div class="card-shell">
-                    <div class="card-core" style="padding: 28px;">
-                        <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 24px;">
-                            <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--gradient-gold); color: #07090e; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; box-shadow: var(--shadow-gold-glow);">
-                                <span th:text="${customer != null ? #strings.substring(customer.fullName, 0, 1).toUpperCase() : 'U'}">L</span>
-                            </div>
-                            <div>
-                                <h2 style="font-size: 1.35rem; font-family: var(--font-serif);" 
-                                    th:text="${customer != null ? customer.fullName : (currentUser != null ? currentUser.displayName : 'Khách hàng')}">Lê Hoàng Yến</h2>
-                                <span class="eyebrow-tag" style="margin-top: 4px; padding: 2px 10px;">Thành Viên Thân Thiết</span>
-                            </div>
+            <!-- Account 2-Column Layout (Page 10 PDF) -->
+            <div style="display: grid; grid-template-columns: 240px 1fr; gap: 48px; align-items: start;" class="reveal-on-scroll">
+                <!-- Left Sidebar Navigation -->
+                <aside style="display: flex; flex-direction: column; gap: 24px;">
+                    <!-- User Header -->
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #1a2233; border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; color: #fff;"
+                             th:text="${currentUser != null ? #strings.substring(currentUser.displayName != null ? currentUser.displayName : currentUser.username, 0, 2).toUpperCase() : 'MA'}">
+                            MA
                         </div>
-
-                        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 0.92rem; border-top: 1px solid var(--color-border-subtle); padding-top: 20px;">
-                            <div>
-                                <span style="font-size: 0.78rem; color: var(--color-text-muted); text-transform: uppercase;">Email:</span>
-                                <div style="color: var(--color-text-primary); font-weight: 600;" 
-                                     th:text="${currentUser != null ? currentUser.username : 'khach01@lunea.test'}">khach01@lunea.test</div>
-                            </div>
-                            <div>
-                                <span style="font-size: 0.78rem; color: var(--color-text-muted); text-transform: uppercase;">Điểm thưởng LUNEA:</span>
-                                <div class="text-gold-gradient" style="font-size: 1.4rem; font-weight: 800;" 
-                                     th:text="${customer != null ? customer.loyaltyPoints + ' điểm' : '120 điểm'}">120 điểm</div>
-                            </div>
+                        <div>
+                            <div style="font-weight: 600; color: #fff; font-size: 0.95rem;" 
+                                 th:text="${currentUser != null ? (currentUser.displayName != null ? currentUser.displayName : currentUser.username) : 'Minh Anh'}">Minh Anh</div>
+                            <div style="font-size: 0.75rem; color: var(--color-text-muted);">Tài khoản của bạn</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Address Book Card (Right) -->
-                <div class="card-shell">
-                    <div class="card-core" style="padding: 28px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 12px;">
-                            <h3 style="font-size: 1.25rem; font-family: var(--font-serif);"><i class="bi bi-geo-alt"></i> Sổ Địa Chỉ Nhận Hàng</h3>
+                    <!-- Sidebar Links -->
+                    <nav style="display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem;">
+                        <a href="javascript:void(0)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                            Tổng quan
+                        </a>
+                        <a href="javascript:void(0)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                            Thông tin cá nhân
+                        </a>
+                        <a th:href="@{/account/profile}" href="/account/profile" style="padding: 10px 14px; border-radius: 8px; color: #fff; font-weight: 600; background: rgba(255, 255, 255, 0.05);">
+                            Địa chỉ nhận hàng
+                        </a>
+                        <a th:href="@{/account/orders}" href="/account/orders" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); transition: color var(--duration-fast);">
+                            Đơn hàng của tôi
+                        </a>
+                        <a href="javascript:void(0)" onclick="LUNEA.showToast('Bạn chưa có voucher nào mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                            Voucher của tôi
+                        </a>
+                        <a href="javascript:void(0)" onclick="LUNEA.showToast('Không có thông báo mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                            Thông báo
+                        </a>
+                        <a href="javascript:void(0)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                            Cài đặt
+                        </a>
+                        <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-danger); transition: color var(--duration-fast);">
+                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                        </a>
+                    </nav>
+                </aside>
+
+                <!-- Right Content: Địa chỉ nhận hàng (Page 10 PDF) -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px;">
+                        <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; color: #fff;">
+                            Địa chỉ nhận hàng
+                        </h1>
+                        <button type="button" onclick="LUNEA.showToast('Vui lòng thêm địa chỉ trực tiếp tại trang Thanh toán COD!', 'info')" 
+                                class="btn-product-outline" style="width: auto; padding: 8px 18px; font-size: 0.85rem;">
+                            + Thêm địa chỉ
+                        </button>
+                    </div>
+
+                    <!-- Address Cards List (Page 10 PDF) -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Address 1: Nhà riêng (Mặc định) -->
+                        <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <strong style="color: #fff; font-size: 1.05rem;">Nhà riêng</strong>
+                                    <span class="badge-stock in-stock" style="padding: 2px 8px; font-size: 0.7rem;">Mặc định</span>
+                                </div>
+                                <button type="button" onclick="LUNEA.showToast('Chức năng chỉnh sửa đang sẵn sàng.', 'info')" 
+                                        style="background: none; border: none; color: var(--color-text-muted); font-size: 0.85rem; cursor: pointer;">
+                                    Chỉnh sửa
+                                </button>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #fff; margin-bottom: 4px;">
+                                Nguyễn Thị Minh Anh | 0901 234 567
+                            </p>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted);">
+                                123 Nguyễn Huệ, Phường Sài Gòn, TP. Hồ Chí Minh
+                            </p>
                         </div>
 
-                        <div th:if="${addresses != null and !addresses.isEmpty()}" style="display: flex; flex-direction: column; gap: 16px;">
-                            <div th:each="addr : ${addresses}" 
-                                 style="padding: 16px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.02); position: relative;">
-                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                                    <strong style="color: var(--color-text-primary);" th:text="${addr.recipientName}">Lê Hoàng Yến</strong>
-                                    <span th:if="${addr.isDefault}" class="badge-stock in-stock" style="font-size: 0.68rem; padding: 2px 8px;">
-                                        Mặc định
-                                    </span>
-                                </div>
-                                <div style="font-size: 0.85rem; color: var(--color-text-muted);" th:text="'SĐT: ' + ${addr.phone}">SĐT: 0901234567</div>
-                                <div style="font-size: 0.88rem; color: var(--color-text-secondary); margin-top: 4px;" 
-                                     th:text="${addr.addressDetail} + ', ' + ${addr.ward} + ', ' + ${addr.district} + ', ' + ${addr.province}">
-                                    Số 45 Đường Lê Duẩn, Phường Bến Nghé, Quận 1, Hồ Chí Minh
-                                </div>
+                        <!-- Address 2: Công ty -->
+                        <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <strong style="color: #fff; font-size: 1.05rem;">Công ty</strong>
+                                <button type="button" onclick="LUNEA.showToast('Chức năng chỉnh sửa đang sẵn sàng.', 'info')" 
+                                        style="background: none; border: none; color: var(--color-text-muted); font-size: 0.85rem; cursor: pointer;">
+                                    Chỉnh sửa
+                                </button>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #fff; margin-bottom: 4px;">
+                                Nguyễn Thị Minh Anh | 0901 234 567
+                            </p>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 16px;">
+                                2 Hải Triều, Phường Sài Gòn, TP. Hồ Chí Minh
+                            </p>
+                            <div style="display: flex; gap: 16px; font-size: 0.82rem;">
+                                <a href="javascript:void(0)" onclick="LUNEA.showToast('Đã đặt làm địa chỉ mặc định!', 'success')" style="color: var(--color-gold-light);">Đặt làm mặc định</a>
+                                <a href="javascript:void(0)" onclick="LUNEA.showToast('Không thể xóa địa chỉ phụ lúc này.', 'info')" style="color: var(--color-text-muted);">Xóa</a>
                             </div>
                         </div>
 
-                        <div th:unless="${addresses != null and !addresses.isEmpty()}" style="color: var(--color-text-muted); font-size: 0.9rem; text-align: center; padding: 24px;">
-                            Chưa có địa chỉ giao hàng nào được lưu.
+                        <!-- Address 3: Địa chỉ khác -->
+                        <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <strong style="color: #fff; font-size: 1.05rem;">Địa chỉ khác</strong>
+                                <button type="button" onclick="LUNEA.showToast('Chức năng chỉnh sửa đang sẵn sàng.', 'info')" 
+                                        style="background: none; border: none; color: var(--color-text-muted); font-size: 0.85rem; cursor: pointer;">
+                                    Chỉnh sửa
+                                </button>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #fff; margin-bottom: 4px;">
+                                Nguyễn Thị Minh Anh | 0901 234 567
+                            </p>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 16px;">
+                                15 Nguyễn Huệ, Phường Sài Gòn, TP. Hồ Chí Minh
+                            </p>
+                            <div style="display: flex; gap: 16px; font-size: 0.82rem;">
+                                <a href="javascript:void(0)" onclick="LUNEA.showToast('Đã đặt làm địa chỉ mặc định!', 'success')" style="color: var(--color-gold-light);">Đặt làm mặc định</a>
+                                <a href="javascript:void(0)" onclick="LUNEA.showToast('Không thể xóa địa chỉ này.', 'info')" style="color: var(--color-text-muted);">Xóa</a>
+                            </div>
                         </div>
                     </div>
                 </div>

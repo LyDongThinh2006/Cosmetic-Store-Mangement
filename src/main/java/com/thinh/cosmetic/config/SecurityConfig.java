@@ -3,6 +3,7 @@ package com.thinh.cosmetic.config;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.thinh.cosmetic.security.AuthCookieFactory;
 import com.thinh.cosmetic.security.CookieBearerTokenResolver;
 import com.thinh.cosmetic.security.JsonAccessDeniedHandler;
 import com.thinh.cosmetic.security.JsonAuthEntryPoint;
@@ -94,6 +95,12 @@ public class SecurityConfig {
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(jsonAuthEntryPoint)
                         .accessDeniedHandler(jsonAccessDeniedHandler)
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .deleteCookies(AuthCookieFactory.COOKIE_NAME, "JSESSIONID")
+                        .logoutSuccessUrl("/login")
+                        .permitAll()
                 )
                 .oauth2ResourceServer(o -> o
                         .bearerTokenResolver(cookieBearerTokenResolver)

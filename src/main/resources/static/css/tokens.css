@@ -1,40 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+/* ==========================================================================
+   LUNEA Design Tokens - European Luxury & Moonlight Aesthetic
+   ========================================================================== */
 
-/**
- * LUNEA Design Tokens - Moonlight Luxury Aesthetic
- */
+/* Google Fonts: Cinzel (Luxury Roman), Playfair Display (Editorial High-Contrast Serif), Plus Jakarta Sans (Modern Grotesk), Be Vietnam Pro (Flawless Native Vietnamese Diacritics) */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
 :root {
-    /* Color Palette - Midnight Obsidian & Moonlight Gold */
-    --color-bg-base: #07090e;
-    --color-bg-elevated: #0d111a;
-    --color-bg-card: #121824;
-    --color-bg-card-hover: #172030;
-    --color-bg-glass: rgba(18, 24, 36, 0.75);
-    --color-bg-glass-heavy: rgba(11, 15, 23, 0.88);
-    --color-bg-subtle: rgba(255, 255, 255, 0.04);
+    /* Color Palette - Midnight Obsidian & Moonlight Champagne Gold */
+    --color-bg-base: #07080c;
+    --color-bg-surface: #0c0f17;
+    --color-bg-elevated: #111622;
+    --color-bg-card: #0f141f;
+    --color-bg-card-hover: #141b2a;
+    --color-bg-glass: rgba(10, 13, 20, 0.78);
+    --color-bg-glass-heavy: rgba(7, 9, 14, 0.92);
+    --color-bg-subtle: rgba(255, 255, 255, 0.03);
     
-    /* Hairline Borders */
-    --color-border-subtle: rgba(255, 255, 255, 0.08);
-    --color-border-medium: rgba(255, 255, 255, 0.14);
-    --color-border-gold: rgba(212, 175, 55, 0.35);
-    --color-border-gold-glow: rgba(212, 175, 55, 0.7);
+    /* Hairline Luxury Borders */
+    --color-border-subtle: rgba(255, 255, 255, 0.07);
+    --color-border-medium: rgba(255, 255, 255, 0.12);
+    --color-border-gold: rgba(226, 197, 138, 0.35);
+    --color-border-gold-glow: rgba(226, 197, 138, 0.75);
 
-    /* Gold Gradient & Accents */
-    --color-gold-light: #fae8a4;
-    --color-gold-primary: #d4af37;
-    --color-gold-dark: #a67c1e;
-    --color-gold-glow: rgba(212, 175, 55, 0.22);
-    --gradient-gold: linear-gradient(135deg, #fae8a4 0%, #d4af37 50%, #aa7c11 100%);
-    --gradient-gold-subtle: linear-gradient(135deg, rgba(250, 232, 164, 0.12) 0%, rgba(212, 175, 55, 0.05) 100%);
-    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
-    --gradient-hero: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.15), rgba(7, 9, 14, 0));
+    /* European Luxury Champagne Gold Accents */
+    --color-gold-light: #fbeac0;
+    --color-gold-primary: #dfbe7b;
+    --color-gold-rich: #c5a059;
+    --color-gold-dark: #8e6d24;
+    --color-gold-glow: rgba(223, 190, 123, 0.22);
+    
+    /* Refined Gradients */
+    --gradient-gold: linear-gradient(135deg, #fcebc3 0%, #dfbe7b 45%, #b98e32 100%);
+    --gradient-gold-champagne: linear-gradient(135deg, #f7eccf 0%, #dfbe7b 100%);
+    --gradient-gold-subtle: linear-gradient(135deg, rgba(251, 234, 192, 0.12) 0%, rgba(223, 190, 123, 0.04) 100%);
+    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
+    --gradient-hero-aura: radial-gradient(ellipse 70% 50% at 75% 20%, rgba(223, 190, 123, 0.14), transparent 70%);
 
     /* Typography Colors */
     --color-text-primary: #f8fafc;
     --color-text-secondary: #94a3b8;
     --color-text-muted: #64748b;
-    --color-text-gold: #d4af37;
-    --color-text-gold-light: #fae8a4;
+    --color-text-gold: #dfbe7b;
+    --color-text-gold-light: #fcebc3;
 
     /* Semantic Accents */
     --color-success: #10b981;
@@ -53,34 +60,38 @@
     --color-info-bg: rgba(56, 189, 248, 0.12);
     --color-info-border: rgba(56, 189, 248, 0.3);
 
-    /* Typography Scales - Native Vietnamese diacritics (Chống 100% lỗi nhảy dấu tiếng Việt) */
-    --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-serif: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Typography Scales */
+    --font-brand: 'Cinzel', 'Times New Roman', serif;
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-    /* Radii - Double Bezel Archetype */
-    --radius-sm: 8px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
+    /* Radii */
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 30px;
     --radius-full: 9999px;
-    --radius-outer-shell: 24px;
-    --radius-inner-core: 18px;
+    --radius-outer-shell: 20px;
+    --radius-inner-core: 16px;
 
     /* Elevation & Shadows */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-    --shadow-gold-glow: 0 0 25px rgba(212, 175, 55, 0.25);
-    --shadow-gold-glow-lg: 0 0 45px rgba(212, 175, 55, 0.35);
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.7);
+    --shadow-gold-glow: 0 0 30px rgba(223, 190, 123, 0.22);
+    --shadow-gold-glow-lg: 0 0 55px rgba(223, 190, 123, 0.35);
 
-    /* Motion & Transitions */
+    /* Motion & Transitions - Custom Agency Cubic-Beziers */
     --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-    --duration-fast: 150ms;
-    --duration-base: 250ms;
-    --duration-slow: 400ms;
+    --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-editorial: cubic-bezier(0.32, 0.72, 0, 1);
+    --duration-fast: 180ms;
+    --duration-base: 320ms;
+    --duration-slow: 600ms;
+    --duration-reveal: 900ms;
 
     /* Spacing & Layout */
     --container-max-width: 1240px;
-    --header-height: 76px;
+    --header-height: 84px;
 }

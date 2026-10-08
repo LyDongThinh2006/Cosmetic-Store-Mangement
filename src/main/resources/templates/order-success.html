@@ -6,86 +6,88 @@
     <header th:replace="~{fragments/header :: header}"></header>
 
     <main class="site-main">
-        <div class="lunea-container" style="max-width: 760px;">
-            <!-- Celebration Card -->
-            <div class="card-shell">
-                <div class="card-core" style="text-align: center; padding: 48px 32px;">
-                    <!-- Success Check Icon with Gold Aura -->
-                    <div style="width: 76px; height: 76px; border-radius: 50%; background: var(--gradient-gold); margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; color: #07090e; font-size: 2.2rem; box-shadow: var(--shadow-gold-glow-lg);">
-                        <i class="bi bi-check-lg"></i>
-                    </div>
-
-                    <div class="eyebrow-tag" style="margin-bottom: 12px;">Đặt Hàng Thành Công</div>
-                    <h1 style="font-size: 2rem; margin-bottom: 12px;">Cảm Ơn Bạn Đã Mua Sắm Tại LUNEA!</h1>
-                    <p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-bottom: 28px; line-height: 1.6;">
-                        Đơn hàng của bạn đã được ghi nhận vào hệ thống quản lý chuỗi cửa hàng. Tồn kho đã được bảo lưu thành công và sẵn sàng để nhân viên chi nhánh đóng gói.
-                    </p>
-
-                    <!-- Order Code Box (DEMO STEP 10) -->
-                    <div style="padding: 20px; background: rgba(255,255,255,0.03); border: 1px dashed var(--color-border-gold); border-radius: var(--radius-md); margin-bottom: 32px;">
-                        <div style="font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;">Mã Đơn Hàng Của Bạn</div>
-                        <div class="text-gold-gradient" style="font-size: 2rem; font-weight: 900; letter-spacing: 0.05em;" 
-                             th:text="${order != null and order.orderCode != null ? order.orderCode : (orderCode != '' ? orderCode : 'LUN-SUCCESS')}">
-                            LUN-893421
-                        </div>
-                    </div>
-
-                    <!-- Order Key Details (Fulfillment Store, Total COD) -->
-                    <div th:if="${order != null}" style="text-align: left; background: rgba(0,0,0,0.2); border-radius: var(--radius-md); padding: 24px; margin-bottom: 32px; border: 1px solid var(--color-border-subtle);">
-                        <h4 style="font-family: var(--font-serif); font-size: 1.1rem; color: var(--color-gold-light); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border-subtle);">
-                            Thông Tin Đơn Hàng Chi Nhánh
-                        </h4>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.88rem;">
-                            <div>
-                                <span style="color: var(--color-text-muted);">Chi nhánh tiếp nhận:</span>
-                                <div style="font-weight: 700; color: var(--color-text-primary); margin-top: 2px;" 
-                                     th:text="${order.fulfillmentStoreName != null ? order.fulfillmentStoreName : 'LUNEA Đồng Khởi - Quận 1 (TP.HCM)'}">
-                                    LUNEA Đồng Khởi - Quận 1
-                                </div>
-                            </div>
-                            <div>
-                                <span style="color: var(--color-text-muted);">Hình thức thanh toán:</span>
-                                <div style="font-weight: 700; color: var(--color-gold-light); margin-top: 2px;">
-                                    COD (Thanh toán khi nhận hàng)
-                                </div>
-                            </div>
-                            <div>
-                                <span style="color: var(--color-text-muted);">Người nhận:</span>
-                                <div style="color: var(--color-text-primary); margin-top: 2px;" 
-                                     th:text="${order.recipientName} + ' (' + ${order.recipientPhone} + ')'">
-                                    Lê Hoàng Yến (0901234567)
-                                </div>
-                            </div>
-                            <div>
-                                <span style="color: var(--color-text-muted);">Tổng thanh toán COD:</span>
-                                <div style="font-weight: 800; font-size: 1.1rem; color: var(--color-gold-light); margin-top: 2px;" 
-                                     th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                    265.000 ₫
-                                </div>
-                            </div>
-                            <div style="grid-column: 1 / -1;">
-                                <span style="color: var(--color-text-muted);">Địa chỉ giao hàng:</span>
-                                <div style="color: var(--color-text-primary); margin-top: 2px;" th:text="${order.shippingAddress}">
-                                    45 Lê Duẩn, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-                        <a th:href="@{/account/orders}" href="/account/orders" class="btn-lunea-gold">
-                            <i class="bi bi-box-seam"></i>
-                            <span>Xem Đơn Hàng Của Tôi</span>
-                        </a>
-                        <a th:href="@{/}" href="/" class="btn-lunea-outline">
-                            <i class="bi bi-shop"></i>
-                            <span>Tiếp Tục Mua Sắm</span>
-                        </a>
-                    </div>
+        <div class="lunea-container" style="max-width: 680px;">
+            <!-- 3-Step Checkout Stepper (Page 13 PDF) -->
+            <div class="checkout-stepper-bar reveal-on-scroll">
+                <div class="stepper-item completed">
+                    <span class="stepper-node-circle">1</span>
+                    <span>Giỏ hàng</span>
+                </div>
+                <div class="stepper-item completed">
+                    <span class="stepper-node-circle">2</span>
+                    <span>Giao hàng & thanh toán</span>
+                </div>
+                <div class="stepper-item active">
+                    <span class="stepper-node-circle">3</span>
+                    <span>Hoàn tất</span>
                 </div>
             </div>
+
+            <!-- Order Received Card (Page 13 PDF) -->
+            <div style="text-align: center; margin-bottom: 40px;" class="reveal-on-scroll">
+                <!-- Checkmark Icon -->
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--color-border-subtle); margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; color: var(--color-gold-light); font-size: 1.8rem;">
+                    <i class="bi bi-check2"></i>
+                </div>
+
+                <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; margin-bottom: 8px; color: #fff;">
+                    Đã nhận đơn hàng của bạn
+                </h1>
+                <p style="font-size: 0.95rem; color: var(--color-text-secondary); font-weight: 300;">
+                    LUNEA sẽ xác nhận đơn hàng trước khi giao.
+                </p>
+            </div>
+
+            <!-- Order Summary Detail Box (Page 13 PDF) -->
+            <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 32px;" class="reveal-on-scroll">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Mã đơn hàng</td>
+                        <td style="padding: 14px 0; text-align: right; font-weight: 700; color: #fff;" 
+                            th:text="${order != null and order.orderCode != null ? ('#' + order.orderCode) : (orderCode != null ? ('#' + orderCode) : '#LN26092401')}">
+                            #LN26092401
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Trạng thái đơn hàng</td>
+                        <td style="padding: 14px 0; text-align: right; color: #fff; font-weight: 500;">
+                            Chờ xác nhận
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Phương thức thanh toán</td>
+                        <td style="padding: 14px 0; text-align: right; color: #fff;">
+                            COD - chưa thanh toán
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Tổng thanh toán</td>
+                        <td style="padding: 14px 0; text-align: right; font-weight: 700; color: #fff; font-size: 1.15rem;" 
+                            th:text="${order != null ? #numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA') + ' ₫' : '4.322.000 ₫'}">
+                            4.322.000 ₫
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding-top: 16px; font-size: 0.8rem; color: var(--color-text-muted);">
+                            Giao tiêu chuẩn · Phí giao hàng 30.000 ₫
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Action Buttons (Page 13 PDF) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;" class="reveal-on-scroll">
+                <a th:href="@{/account/orders}" href="/account/orders" class="btn-hero-champagne" style="justify-content: center; padding: 14px;">
+                    <span>Đơn hàng của tôi</span>
+                </a>
+                <a th:href="@{/products}" href="/products" class="btn-product-outline" style="justify-content: center; padding: 14px; font-size: 0.95rem;">
+                    <span>Tiếp tục mua sắm</span>
+                </a>
+            </div>
+
+            <p style="text-align: center; font-size: 0.82rem; color: var(--color-text-muted);" class="reveal-on-scroll">
+                Thông tin đơn hàng sẽ được cập nhật sau khi xác nhận.
+            </p>
         </div>
     </main>
 

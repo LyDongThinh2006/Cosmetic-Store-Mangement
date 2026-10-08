@@ -4,70 +4,71 @@
     <div class="lunea-container">
         <div class="footer-grid">
             <!-- Brand Column -->
-            <div>
-                <a th:href="@{/}" href="/" class="brand-logo" style="margin-bottom: 16px;">
-                    <span class="brand-emblem">L</span>
-                    <span>LUNEA</span>
+            <div class="footer-brand-col">
+                <a th:href="@{/}" href="/" class="brand-logo footer-logo">
+                    <span class="brand-emblem-crescent">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="url(#footerGoldGrad)" stroke="#fae8a4" stroke-width="1.2"/>
+                            <defs>
+                                <linearGradient id="footerGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fae8a4"/>
+                                    <stop offset="50%" stop-color="#dfbe7b"/>
+                                    <stop offset="100%" stop-color="#b98e32"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </span>
+                    <span class="brand-title-text">LUNEA</span>
                 </a>
-                <p style="color: var(--color-text-secondary); font-size: 0.88rem; line-height: 1.6; margin-bottom: 20px; max-width: 380px;">
-                    Hệ thống chuỗi bán lẻ mỹ phẩm chính hãng và giải pháp chăm sóc làn da chuẩn khoa học. Trải nghiệm không gian mua sắm sang trọng với hơn 1.000+ sản phẩm tuyển chọn từ các thương hiệu hàng đầu thế giới.
-                </p>
-                <div style="display: flex; gap: 12px;">
-                    <a href="#" class="nav-icon-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="nav-icon-btn" title="Instagram"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="nav-icon-btn" title="TikTok"><i class="bi bi-tiktok"></i></a>
-                    <a href="#" class="nav-icon-btn" title="YouTube"><i class="bi bi-youtube"></i></a>
+                <p class="footer-tagline">Tỏa sáng vẻ đẹp thật.</p>
+                <div class="footer-moon-phases">
+                    <span class="moon-phase" title="New Moon">☾</span>
+                    <span class="moon-phase" title="First Quarter">◐</span>
+                    <span class="moon-phase active" title="Full Moon">◯</span>
+                    <span class="moon-phase" title="Last Quarter">◑</span>
+                    <span class="moon-phase" title="Waning Crescent">☽</span>
                 </div>
             </div>
 
-            <!-- Quick Links -->
+            <!-- Col 1: Mua sắm -->
             <div>
-                <h4 class="footer-title">Khám Phá</h4>
+                <h4 class="footer-title">Mua sắm</h4>
                 <ul class="footer-links">
-                    <li><a th:href="@{/products}" href="/products" class="footer-link">Tất Cả Sản Phẩm</a></li>
-                    <li><a th:href="@{/products(concern='Trị Mụn')}" href="/products?concern=Trị+Mụn" class="footer-link">Sản Phẩm Trị Mụn</a></li>
-                    <li><a th:href="@{/products(concern='Phục Hồi Da')}" href="/products?concern=Phục+Hồi+Da" class="footer-link">Phục Hồi & Tái Tạo</a></li>
-                    <li><a th:href="@{/brands}" href="/brands" class="footer-link">Thương Hiệu Nổi Bật</a></li>
-                    <li><a th:href="@{/stores}" href="/stores" class="footer-link">Tìm Chuỗi Cửa Hàng</a></li>
+                    <li><a th:href="@{/products}" href="/products" class="footer-link">Chăm sóc da</a></li>
+                    <li><a th:href="@{/brands}" href="/brands" class="footer-link">Thương hiệu</a></li>
+                    <li><a th:href="@{/products(concern='Trị Mụn')}" href="/products?concern=Trị+Mụn" class="footer-link">Khuyến mãi đặc quyền</a></li>
                 </ul>
             </div>
 
-            <!-- Policies -->
+            <!-- Col 2: Chăm sóc khách hàng -->
             <div>
-                <h4 class="footer-title">Chính Sách</h4>
+                <h4 class="footer-title">Chăm sóc khách hàng</h4>
                 <ul class="footer-links">
-                    <li><a href="javascript:void(0)" class="footer-link">Cam Kết 100% Chính Hãng</a></li>
-                    <li><a href="javascript:void(0)" class="footer-link">Miễn Phí Vận Chuyển Đơn 500k</a></li>
-                    <li><a href="javascript:void(0)" class="footer-link">Chính Sách Đổi Trả 7 Ngày</a></li>
-                    <li><a href="javascript:void(0)" class="footer-link">Bảo Mật Thông Tin Khách Hàng</a></li>
-                    <li><a href="javascript:void(0)" class="footer-link">Điều Khoản & Điều Kiện Mua Hàng</a></li>
+                    <li><a href="javascript:void(0)" onclick="LUNEA.showToast('Chính sách giao hàng miễn phí đơn từ 500.000 ₫ và đổi trả trong 7 ngày.', 'info')" class="footer-link">Giao hàng & đổi trả</a></li>
+                    <li><a href="tel:02838229999" class="footer-link">Liên hệ hỗ trợ</a></li>
+                    <li><a th:href="@{/stores}" href="/stores" class="footer-link">Hệ thống showroom</a></li>
                 </ul>
             </div>
 
-            <!-- Store Locations Summary -->
+            <!-- Col 3: Tài khoản -->
             <div>
-                <h4 class="footer-title">Hệ Thống Chuỗi Cửa Hàng</h4>
-                <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.85rem; color: var(--color-text-secondary);">
-                    <div>
-                        <strong style="color: var(--color-gold-light);">LUNEA TP. Hồ Chí Minh</strong>
-                        <p style="color: var(--color-text-muted); margin-top: 2px;">123 Đồng Khởi, P. Bến Nghé, Quận 1 · 028.3822.9999</p>
-                    </div>
-                    <div>
-                        <strong style="color: var(--color-gold-light);">LUNEA Hà Nội</strong>
-                        <p style="color: var(--color-text-muted); margin-top: 2px;">68 Cầu Giấy, P. Quan Hoa, Q. Cầu Giấy · 024.3766.8888</p>
-                    </div>
-                    <div>
-                        <strong style="color: var(--color-gold-light);">LUNEA Đà Nẵng</strong>
-                        <p style="color: var(--color-text-muted); margin-top: 2px;">186 Bạch Đằng, P. Hải Châu 1, Q. Hải Châu · 0236.3888.777</p>
-                    </div>
-                </div>
+                <h4 class="footer-title">Tài khoản</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/account/orders}" href="/account/orders" class="footer-link">Đơn hàng của tôi</a></li>
+                    <li><a th:href="@{/account/profile}" href="/account/profile" class="footer-link">Địa chỉ nhận hàng</a></li>
+                    <li><a th:href="@{/login}" href="/login" class="footer-link">Đăng nhập / Đăng ký</a></li>
+                </ul>
             </div>
         </div>
 
-        <!-- Bottom Copyright -->
+        <!-- Bottom Copyright & Legal Links -->
         <div class="footer-bottom">
-            <p>© 2026 LUNEA Beauty Chain Inc. Tất cả quyền được bảo lưu. Đồ án Công nghệ phần mềm (CNPM).</p>
-            <p>Phát triển trên nền tảng Spring Boot 4.1.1 & Microsoft SQL Server 2022.</p>
+            <p class="footer-copy">© LUNEA</p>
+            <div class="footer-legal">
+                <a href="javascript:void(0)" class="footer-legal-link">Điều khoản sử dụng</a>
+                <span class="footer-dot">•</span>
+                <a href="javascript:void(0)" class="footer-legal-link">Chính sách bảo mật</a>
+            </div>
         </div>
     </div>
 </footer>

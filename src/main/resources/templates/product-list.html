@@ -7,126 +7,114 @@
 
     <main class="site-main">
         <div class="lunea-container">
-            <!-- Breadcrumb & Page Heading -->
-            <div style="margin-bottom: 32px;">
-                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
+            <!-- Breadcrumbs & Editorial Header (Page 2 PDF) -->
+            <div class="editorial-catalog-header reveal-on-scroll" style="margin-bottom: 36px;">
+                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 12px; font-family: var(--font-sans);">
                     <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
                     <span style="margin: 0 6px;">/</span>
-                    <span style="color: var(--color-gold-light);">Sản phẩm</span>
+                    <a th:href="@{/products}" href="/products" style="color: var(--color-text-secondary);">Sản phẩm</a>
+                    <span th:if="${category != null}">
+                        <span style="margin: 0 6px;">/</span>
+                        <span style="color: var(--color-gold-light);" th:text="${category.name}">Chăm sóc da</span>
+                    </span>
                 </div>
-                <h1 style="font-size: 2.2rem;">Danh Sách Mỹ Phẩm & Chăm Sóc Sắc Đẹp</h1>
-                <p style="font-size: 0.92rem; color: var(--color-text-secondary); margin-top: 4px;">
-                    Tìm kiếm sản phẩm phù hợp nhất với loại da và nhu cầu cải thiện làn da của bạn
+                <h1 style="font-size: clamp(2.2rem, 4vw, 3.2rem); font-family: var(--font-serif); font-weight: 500; margin-bottom: 8px;"
+                    th:text="${category != null ? category.name : 'Chăm sóc da'}">Chăm sóc da</h1>
+                <p style="font-size: 0.98rem; color: var(--color-text-secondary); max-width: 600px; font-weight: 300;">
+                    Khám phá những lựa chọn phù hợp với làn da và thói quen chăm sóc của bạn.
                 </p>
             </div>
 
-            <!-- Layout: Sidebar Filter (Left) + Product Grid (Right) -->
-            <div style="display: grid; grid-template-columns: 280px 1fr; gap: 36px; align-items: start;">
-                <!-- Filter Sidebar -->
-                <aside class="card-shell">
-                    <div class="card-core" style="padding: 24px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h3 style="font-size: 1.15rem; font-family: var(--font-serif);"><i class="bi bi-funnel"></i> Bộ Lọc</h3>
-                            <a th:href="@{/products}" href="/products" style="font-size: 0.8rem; color: var(--color-gold-primary); text-decoration: underline;">Đặt lại</a>
+            <!-- Layout: Sidebar Filter (Left) + Luxury Product Grid (Right) -->
+            <div class="catalog-layout">
+                <!-- Filter Sidebar (Page 2 PDF) -->
+                <aside class="filter-sidebar reveal-on-scroll">
+                    <div class="filter-header">
+                        <h3 class="filter-heading">Bộ lọc</h3>
+                        <a th:href="@{/products}" href="/products" class="filter-reset-link">Xóa bộ lọc</a>
+                    </div>
+
+                    <form id="filterForm" th:action="@{/products}" method="GET">
+                        <!-- Keyword preserve -->
+                        <input type="hidden" name="keyword" th:value="${keyword}">
+
+                        <!-- 1. Thương Hiệu -->
+                        <div class="filter-group">
+                            <label class="filter-group-title">Thương hiệu</label>
+                            <select name="brandId" class="form-control-lunea" onchange="this.form.submit()">
+                                <option value="">Tất cả thương hiệu</option>
+                                <option th:each="b : ${brands}" 
+                                        th:value="${b.id}" 
+                                        th:text="${b.name}" 
+                                        th:selected="${brandId != null and brandId == b.id}">La Roche-Posay</option>
+                            </select>
                         </div>
 
-                        <form id="filterForm" th:action="@{/products}" method="GET">
-                            <!-- Keyword hidden input to maintain search query -->
-                            <input type="hidden" name="keyword" th:value="${keyword}">
+                        <!-- 2. Khoảng Giá -->
+                        <div class="filter-group">
+                            <label class="filter-group-title">Khoảng giá</label>
+                            <select name="priceRange" class="form-control-lunea" onchange="this.form.submit()">
+                                <option value="" th:selected="${priceRange == null or priceRange == ''}">Tất cả mức giá</option>
+                                <option value="under300" th:selected="${priceRange == 'under300'}">Dưới 500.000 ₫</option>
+                                <option value="300to600" th:selected="${priceRange == '300to600'}">500.000 ₫ – 1.000.000 ₫</option>
+                                <option value="above1000" th:selected="${priceRange == 'above1000'}">Trên 1.000.000 ₫</option>
+                            </select>
+                        </div>
 
-                            <!-- 1. Danh Mục -->
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label class="form-label">Danh Mục</label>
-                                <select name="categoryId" class="form-control-lunea" onchange="this.form.submit()">
-                                    <option value="">Tất cả danh mục</option>
-                                    <option th:each="c : ${categories}" 
-                                            th:value="${c.id}" 
-                                            th:text="${c.name}" 
-                                            th:selected="${categoryId != null and categoryId == c.id}">Chăm sóc da</option>
-                                </select>
-                            </div>
+                        <!-- 3. Loại Da -->
+                        <div class="filter-group">
+                            <label class="filter-group-title">Loại da</label>
+                            <select name="skinType" class="form-control-lunea" onchange="this.form.submit()">
+                                <option value="" th:selected="${skinType == null or skinType == ''}">Mọi loại da</option>
+                                <option value="Da Khô" th:selected="${skinType == 'Da Khô'}">Da khô</option>
+                                <option value="Da Dầu" th:selected="${skinType == 'Da Dầu'}">Da dầu / hỗn hợp</option>
+                                <option value="Da Nhạy Cảm" th:selected="${skinType == 'Da Nhạy Cảm'}">Da nhạy cảm</option>
+                            </select>
+                        </div>
 
-                            <!-- 2. Thương Hiệu -->
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label class="form-label">Thương Hiệu</label>
-                                <select name="brandId" class="form-control-lunea" onchange="this.form.submit()">
-                                    <option value="">Tất cả thương hiệu</option>
-                                    <option th:each="b : ${brands}" 
-                                            th:value="${b.id}" 
-                                            th:text="${b.name}" 
-                                            th:selected="${brandId != null and brandId == b.id}">Cocoon Vietnam</option>
-                                </select>
-                            </div>
+                        <!-- 4. Nhu Cầu -->
+                        <div class="filter-group">
+                            <label class="filter-group-title">Nhu cầu</label>
+                            <select name="concern" class="form-control-lunea" onchange="this.form.submit()">
+                                <option value="" th:selected="${concern == null or concern == ''}">Tất cả nhu cầu</option>
+                                <option value="Dưỡng Ẩm Chuyên Sâu" th:selected="${concern == 'Dưỡng Ẩm Chuyên Sâu'}">Dưỡng ẩm</option>
+                                <option value="Trị Mụn" th:selected="${concern == 'Trị Mụn'}">Làm sạch & trị mụn</option>
+                                <option value="Phục Hồi Da" th:selected="${concern == 'Phục Hồi Da'}">Phục hồi chuyên sâu</option>
+                                <option value="Dưỡng Sáng Mờ Thâm" th:selected="${concern == 'Dưỡng Sáng Mờ Thâm'}">Dưỡng sáng & đều màu</option>
+                            </select>
+                        </div>
 
-                            <!-- 3. Khoảng Giá -->
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label class="form-label">Khoảng Giá</label>
-                                <select name="priceRange" class="form-control-lunea" onchange="this.form.submit()">
-                                    <option value="" th:selected="${priceRange == null or priceRange == ''}">Tất cả mức giá</option>
-                                    <option value="under300" th:selected="${priceRange == 'under300'}">Dưới 300.000 ₫</option>
-                                    <option value="300to600" th:selected="${priceRange == '300to600'}">300.000 ₫ – 600.000 ₫</option>
-                                    <option value="500to1000" th:selected="${priceRange == '500to1000'}">500.000 ₫ – 1.000.000 ₫</option>
-                                    <option value="above1000" th:selected="${priceRange == 'above1000'}">Trên 1.000.000 ₫</option>
-                                </select>
-                            </div>
-
-                            <!-- 4. Loại Da -->
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label class="form-label">Loại Da</label>
-                                <select name="skinType" class="form-control-lunea" onchange="this.form.submit()">
-                                    <option value="" th:selected="${skinType == null or skinType == ''}">Mọi loại da</option>
-                                    <option value="Da Dầu" th:selected="${skinType == 'Da Dầu'}">Da Dầu</option>
-                                    <option value="Da Khô" th:selected="${skinType == 'Da Khô'}">Da Khô</option>
-                                    <option value="Da Nhạy Cảm" th:selected="${skinType == 'Da Nhạy Cảm'}">Da Nhạy Cảm</option>
-                                    <option value="Da Hỗn Hợp" th:selected="${skinType == 'Da Hỗn Hợp'}">Da Hỗn Hợp</option>
-                                </select>
-                            </div>
-
-                            <!-- 5. Nhu Cầu -->
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label class="form-label">Nhu Cầu Cải Thiện</label>
-                                <select name="concern" class="form-control-lunea" onchange="this.form.submit()">
-                                    <option value="" th:selected="${concern == null or concern == ''}">Tất cả nhu cầu</option>
-                                    <option value="Trị Mụn" th:selected="${concern == 'Trị Mụn'}">Trị Mụn</option>
-                                    <option value="Phục Hồi Da" th:selected="${concern == 'Phục Hồi Da'}">Phục Hồi Da</option>
-                                    <option value="Dưỡng Sáng Mờ Thâm" th:selected="${concern == 'Dưỡng Sáng Mờ Thâm'}">Dưỡng Sáng Mờ Thâm</option>
-                                    <option value="Chống Lão Hóa" th:selected="${concern == 'Chống Lão Hóa'}">Chống Lão Hóa</option>
-                                    <option value="Dưỡng Ẩm Chuyên Sâu" th:selected="${concern == 'Dưỡng Ẩm Chuyên Sâu'}">Dưỡng Ẩm Chuyên Sâu</option>
-                                </select>
-                            </div>
-
-                            <button type="submit" class="btn-lunea-gold" style="width: 100%; justify-content: center; font-size: 0.88rem; padding: 11px;">
-                                <span>Áp Dụng Bộ Lọc</span>
-                            </button>
-                        </form>
-                    </div>
+                        <button type="submit" class="btn-lunea-gold" style="width: 100%; justify-content: center; font-size: 0.85rem; padding: 11px;">
+                            <span>Áp dụng bộ lọc</span>
+                        </button>
+                    </form>
                 </aside>
 
-                <!-- Products Main Section -->
+                <!-- Products Main Section (Page 2 PDF) -->
                 <div>
-                    <!-- Top Bar: Result Count + Sort -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-subtle); flex-wrap: wrap; gap: 12px;">
+                    <!-- Top Bar: Result Count + Sort Dropdown -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); flex-wrap: wrap; gap: 12px;">
                         <div style="font-size: 0.92rem; color: var(--color-text-secondary);">
-                            Hiển thị <strong style="color: var(--color-text-primary);" id="productCount" th:text="${products != null ? products.size() : 0}">0</strong> sản phẩm
-                            <span th:if="${keyword != null and !keyword.isBlank()}" th:text="' cho từ khóa: \'' + ${keyword} + '\''" style="color: var(--color-gold-light);"></span>
+                            <span id="productCount" th:text="${products != null ? products.size() : 0}" style="font-weight: 600; color: #fff;">8</span> sản phẩm
+                            <span th:if="${keyword != null and !keyword.isBlank()}" th:text="' cho từ khóa \'' + ${keyword} + '\''" style="color: var(--color-gold-light);"></span>
                         </div>
 
-                        <!-- Sort Dropdown -->
-                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <!-- Sort Dropdown (Matching Page 2 PDF) -->
+                        <div style="display: flex; align-items: center; gap: 8px;">
                             <label for="sortSelect" style="font-size: 0.85rem; color: var(--color-text-muted);">Sắp xếp:</label>
-                            <select id="sortSelect" class="form-control-lunea" style="padding: 7px 14px; font-size: 0.85rem; width: auto;"
+                            <select id="sortSelect" class="form-control-lunea" style="padding: 6px 14px; font-size: 0.85rem; width: auto;"
                                     onchange="handleSortChange(this.value)">
+                                <option value="featured" th:selected="${sortBy == 'featured'}">Nổi bật</option>
                                 <option value="newest" th:selected="${sortBy == 'newest'}">Mới nhất</option>
                                 <option value="price-asc" th:selected="${sortBy == 'price-asc'}">Giá tăng dần</option>
                                 <option value="price-desc" th:selected="${sortBy == 'price-desc'}">Giá giảm dần</option>
-                                <option value="featured" th:selected="${sortBy == 'featured'}">Nổi bật nhất</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Products Grid -->
-                    <div id="productGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;">
-                        <div th:each="p : ${products}" class="card-shell product-item-card"
+                    <!-- Products Grid (Matching Page 2 PDF) -->
+                    <div id="productGrid" class="product-luxury-grid stagger-cards" style="grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
+                        <div th:each="p : ${products}" class="luxury-product-card product-item-card"
                              th:data-id="${p.id}"
                              th:data-name="${p.name}"
                              th:data-brand-id="${p.brand != null ? p.brand.id : ''}"
@@ -136,50 +124,54 @@
                              th:data-instock="${p.inStock}"
                              th:data-skin-types="${p.skinTypes != null ? #strings.listJoin(p.skinTypes, ',') : ''}"
                              th:data-concerns="${p.concerns != null ? #strings.listJoin(p.concerns, ',') : ''}">
-                            <div class="card-core product-card">
-                                <div class="product-thumb-wrap">
+                            
+                            <!-- Badges & Wishlist -->
+                            <div class="product-top-bar">
+                                <div class="product-badge-group">
+                                    <span th:if="${p.inStock and p.isFeatured}" class="badge-pill badge-gold">Nổi bật</span>
+                                    <span th:unless="${p.inStock}" class="badge-pill badge-muted">Tạm hết hàng</span>
+                                </div>
+                                <button type="button" class="wishlist-heart-btn" aria-label="Lưu vào yêu thích" 
+                                        onclick="LUNEA.toggleWishlist(this)">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+
+                            <!-- Product Image -->
+                            <div class="product-image-box">
+                                <a th:href="@{/products/{id}(id=${p.id})}">
                                     <img th:src="${p.imageUrl}" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600" 
-                                         th:alt="${p.name}" class="product-thumb" loading="lazy">
-                                    <div class="product-badges">
-                                        <!-- Real-time In-Stock / Out-of-Stock Badge (DEMO STEP 1 & 4) -->
-                                        <span th:if="${p.inStock}" class="badge-stock in-stock">
-                                            <i class="bi bi-check-circle-fill"></i> Còn hàng
-                                        </span>
-                                        <span th:unless="${p.inStock}" class="badge-stock out-of-stock">
-                                            <i class="bi bi-x-circle-fill"></i> Tạm hết hàng
-                                        </span>
-                                        <span th:if="${p.isFeatured}" class="badge-discount">Bán chạy</span>
-                                    </div>
-                                </div>
+                                         th:alt="${p.name}" class="product-image-img" loading="lazy">
+                                </a>
+                            </div>
 
-                                <div class="product-brand" th:text="${p.brand != null ? p.brand.name : 'LUNEA'}">Cocoon Vietnam</div>
-                                <h3 class="product-title">
-                                    <a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.name}">Tên sản phẩm</a>
+                            <!-- Product Info -->
+                            <div class="product-details-box">
+                                <span class="product-brand-tag" th:text="${p.brand != null ? p.brand.name : 'LUNEA'}">LA ROCHE-POSAY</span>
+                                <h3 class="product-name-heading">
+                                    <a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.name}">Hyalu B5 Serum</a>
                                 </h3>
-
-                                <div class="product-price-row">
-                                    <span class="product-price" th:text="${#numbers.formatDecimal(p.minPrice != null ? p.minPrice : 0, 0, 'POINT', 0, 'COMMA')} + ' ₫'">265.000 ₫</span>
-                                    <span th:if="${p.listPrice != null and p.listPrice.compareTo(p.minPrice) > 0}" 
-                                          class="product-price-original" 
-                                          th:text="${#numbers.formatDecimal(p.listPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'">295.000 ₫</span>
+                                <div class="product-volume-line">
+                                    <span th:text="${p.skus != null and !p.skus.isEmpty() ? p.skus[0].variantName : '30 ml'}">30 ml</span>
                                 </div>
-
-                                <div style="margin-top: 18px; display: flex; gap: 8px;">
-                                    <a th:href="@{/products/{id}(id=${p.id})}" class="btn-lunea-outline" style="flex: 1; padding: 9px 12px; font-size: 0.82rem; justify-content: center;">
-                                        <span>Xem Chi Tiết</span>
-                                    </a>
-                                    <button th:if="${p.inStock and p.skus != null and !p.skus.isEmpty()}" 
-                                            type="button" 
-                                            th:onclick="'LUNEA.addToCart(' + ${p.skus[0].id} + ', 1)'" 
-                                            class="btn-lunea-gold" style="padding: 9px 14px; font-size: 0.85rem;" title="Thêm vào giỏ">
-                                        <i class="bi bi-bag-plus"></i>
-                                    </button>
+                                <div class="product-price-line">
+                                    <span class="product-current-price" 
+                                          th:text="${#numbers.formatDecimal(p.minPrice != null ? p.minPrice : 0, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                        892.000 ₫
+                                    </span>
                                 </div>
+                            </div>
+
+                            <!-- Product Action -->
+                            <div class="product-action-row">
+                                <a th:href="@{/products/{id}(id=${p.id})}" class="btn-product-outline">
+                                    <span>Xem sản phẩm</span>
+                                </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Empty State if No Product Found -->
+                    <!-- Empty State -->
                     <div id="noProductsAlert" class="card-shell" style="margin-top: 24px; display: none;">
                         <div class="card-core" style="text-align: center; padding: 48px;">
                             <div style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 16px;"><i class="bi bi-search"></i></div>
@@ -188,7 +180,7 @@
                                 Hãy thử thay đổi bộ lọc hoặc tìm kiếm bằng từ khóa khác.
                             </p>
                             <a th:href="@{/products}" href="/products" class="btn-lunea-gold" style="display: inline-flex;">
-                                <span>Xem Lại Tất Cả Sản Phẩm</span>
+                                <span>Xem lại tất cả sản phẩm</span>
                             </a>
                         </div>
                     </div>
@@ -199,102 +191,11 @@
 
     <!-- Client-side filter & sort controller -->
     <script th:inline="javascript">
-        /* Client-side filter execution to support instant multi-criteria and URL query string */
-        function applyClientFilters() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const keyword = (urlParams.get('keyword') || '').trim().toLowerCase();
-            const brandId = urlParams.get('brandId');
-            const categoryId = urlParams.get('categoryId');
-            const skinType = urlParams.get('skinType');
-            const concern = urlParams.get('concern');
-            const priceRange = urlParams.get('priceRange');
-            const sortBy = urlParams.get('sortBy') || 'newest';
-
-            const items = Array.from(document.querySelectorAll('.product-item-card'));
-            let visibleCount = 0;
-
-            items.forEach(card => {
-                const name = (card.dataset.name || '').toLowerCase();
-                const bId = card.dataset.brandId;
-                const cId = card.dataset.categoryId;
-                const price = parseFloat(card.dataset.price) || 0;
-                const cardSkinTypes = card.dataset.skinTypes || '';
-                const cardConcerns = card.dataset.concerns || '';
-
-                let match = true;
-
-                // Keyword filter
-                if (keyword && !name.includes(keyword)) {
-                    match = false;
-                }
-                // Brand filter
-                if (match && brandId && bId !== brandId) {
-                    match = false;
-                }
-                // Category filter
-                if (match && categoryId && cId !== categoryId) {
-                    match = false;
-                }
-                // Skin type filter
-                if (match && skinType && !cardSkinTypes.includes(skinType)) {
-                    match = false;
-                }
-                // Concern filter
-                if (match && concern && !cardConcerns.includes(concern)) {
-                    match = false;
-                }
-                // Price range filter
-                if (match && priceRange) {
-                    if (priceRange === 'under300' && price >= 300000) match = false;
-                    else if (priceRange === '300to600' && (price < 300000 || price > 600000)) match = false;
-                    else if (priceRange === '500to1000' && (price < 500000 || price > 1000000)) match = false;
-                    else if (priceRange === 'above1000' && price <= 1000000) match = false;
-                }
-
-                if (match) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            // Sorting visible items
-            const grid = document.getElementById('productGrid');
-            const visibleItems = items.filter(card => card.style.display !== 'none');
-            visibleItems.sort((a, b) => {
-                const priceA = parseFloat(a.dataset.price) || 0;
-                const priceB = parseFloat(b.dataset.price) || 0;
-                const idA = parseInt(a.dataset.id) || 0;
-                const idB = parseInt(b.dataset.id) || 0;
-
-                if (sortBy === 'price-asc') return priceA - priceB;
-                if (sortBy === 'price-desc') return priceB - priceA;
-                if (sortBy === 'featured') {
-                    const featA = a.dataset.featured === 'true' ? 1 : 0;
-                    const featB = b.dataset.featured === 'true' ? 1 : 0;
-                    return featB - featA;
-                }
-                return idA - idB; // newest
-            });
-
-            visibleItems.forEach(item => grid.appendChild(item));
-
-            // Count and Empty state
-            document.getElementById('productCount').textContent = visibleCount;
-            const emptyAlert = document.getElementById('noProductsAlert');
-            if (emptyAlert) {
-                emptyAlert.style.display = visibleCount === 0 ? '' : 'none';
-            }
-        }
-
         function handleSortChange(sortVal) {
             const url = new URL(window.location.href);
             url.searchParams.set('sortBy', sortVal);
             window.location.href = url.toString();
         }
-
-        document.addEventListener('DOMContentLoaded', applyClientFilters);
     </script>
 
     <!-- Footer Fragment -->
