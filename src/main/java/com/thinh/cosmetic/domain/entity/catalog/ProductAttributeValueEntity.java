@@ -32,6 +32,6 @@ public class ProductAttributeValueEntity {
 
     @NotBlank(message = "Attribute value cannot be blank")
     @Size(max = 100, message = "Attribute value must not exceed 100 characters")
-    @Column(name = "value", nullable = false, length = 100)
+    @Column(name = "\"value\"", nullable = false, length = 100)
     private String value;
 }

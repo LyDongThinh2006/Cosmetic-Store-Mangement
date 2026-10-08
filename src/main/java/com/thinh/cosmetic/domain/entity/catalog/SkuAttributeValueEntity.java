@@ -32,6 +32,6 @@ public class SkuAttributeValueEntity {
 
     @NotBlank(message = "Attribute value cannot be blank")
     @Size(max = 255, message = "Attribute value must not exceed 255 characters")
-    @Column(name = "value", nullable = false, length = 255)
+    @Column(name = "\"value\"", nullable = false, length = 255)
     private String value;
 }
