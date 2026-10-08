@@ -37,9 +37,9 @@
 ### 1.2. Khoảng trống cần hoàn thiện để chạy Web cục bộ
 - [x] **DataSeeder tự động:** Đã có `DataSeeder.java` nạp đủ 5 tài khoản demo, 3 chi nhánh, 5 thương hiệu, 10 sản phẩm, 16 SKUs, 48 bản ghi tồn kho và 3 voucher.
 - [x] **Web Page Controllers (`@Controller`):** Đã tạo đầy đủ 7 Controller điều hướng Thymeleaf (`HomeController`, `ProductPageController`, `AuthPageController`, `CartPageController`, `CheckoutPageController`, `AccountPageController`, `AdminPageController`, `CustomErrorController`).
-- [ ] **Giao diện Khách hàng (Thymeleaf Templates):** Thư mục `src/main/resources/templates/` đang trống. Cần tạo 8 màn hình khách hàng theo thiết kế Moonlight Dark Theme.
+- [x] **Giao diện Khách hàng (Thymeleaf Templates):** Đã hoàn thành 10 màn hình khách hàng theo thiết kế Moonlight Dark Luxury (`home`, `product-list`, `product-detail`, `cart`, `checkout`, `order-success`, `stores`, `brands`, `orders`, `order-detail`, `profile`, `login`, `register`).
 - [ ] **Giao diện Quản trị Back-office:** Cần tạo layout Admin và các trang xử lý đơn hàng theo chi nhánh, điều chỉnh tồn kho có log, quản lý sản phẩm.
-- [ ] **Static Assets:** Cần tạo bảng màu CSS Tokens (`tokens.css`), client JS API wrapper (`api.js`), dữ liệu vị trí hành chính (`vn-locations.json`).
+- [x] **Static Assets:** Đã tạo bảng màu CSS Tokens (`tokens.css`), stylesheet Moonlight (`site.css`), client JS API wrapper (`api.js`), dữ liệu vị trí hành chính (`vn-locations.json`).
 
 ---
 
@@ -194,18 +194,18 @@ Bảng dưới đây được cấu hình dạng Checklist (`- [x]` và `- [ ]`)
 | **P2: Web Controller** | `CheckoutPageController.java` (`/checkout`, `/order-success`) | - [x] | Yêu cầu `ROLE_CUSTOMER`, hiển thị orderCode |
 | **P2: Web Controller** | `AccountPageController.java` (`/account/**`) | - [x] | Quản lý profile, orders, order-detail |
 | **P2: Web Controller** | `AdminPageController.java` (`/admin/**`) | - [x] | Yêu cầu `ROLE_EMPLOYEE`, 403 đối với Customer |
-| **P3: Assets** | `tokens.css` & `site.css` (Moonlight Dark theme) | - [ ] | Tone đen, vàng gold sang trọng |
-| **P3: Assets** | `api.js` (Fetch wrapper + CSRF Header + Toast) | - [ ] | Bắt lỗi 401/403/409 tự động |
-| **P3: Assets** | `vn-locations.json` | - [ ] | Dropdown địa chỉ tỉnh / xã |
-| **P3: Templates** | `fragments/head.html`, `header.html`, `footer.html`, `toast.html` | - [ ] | Layout dùng chung |
-| **P3: Templates** | `home.html` | - [ ] | Trang chủ, banner, sản phẩm nổi bật |
-| **P3: Templates** | `product-list.html` | - [ ] | Danh sách + Bộ lọc đa tiêu chí + Sắp xếp |
-| **P3: Templates** | `product-detail.html` | - [ ] | Chi tiết, chọn SKU đổi giá, thêm giỏ |
-| **P3: Templates** | `cart.html` | - [ ] | Quản lý giỏ hàng, cập nhật số lượng |
-| **P3: Templates** | `checkout.html` | - [ ] | Thanh toán COD, địa chỉ, áp voucher |
-| **P3: Templates** | `order-success.html` | - [ ] | Hiển thị mã đơn hàng vừa tạo |
-| **P3: Templates** | `account/orders.html` & `account/order-detail.html` | - [ ] | Lịch sử mua hàng, nút hủy đơn |
-| **P3: Templates** | `auth/login.html` & `auth/register.html` | - [ ] | Đăng nhập/Đăng ký tài khoản |
+| **P3: Assets** | `tokens.css` & `site.css` (Moonlight Dark theme) | - [x] | Tone đen, vàng gold sang trọng, Doppelrand cards |
+| **P3: Assets** | `api.js` (Fetch wrapper + CSRF Header + Toast) | - [x] | Bắt lỗi 401/403/409 tự động, format tiền VND |
+| **P3: Assets** | `vn-locations.json` | - [x] | Dropdown địa chỉ tỉnh / quận / phường |
+| **P3: Templates** | `fragments/head.html`, `header.html`, `footer.html`, `toast.html` | - [x] | Layout floating island dùng chung |
+| **P3: Templates** | `home.html` | - [x] | Trang chủ, banner, sản phẩm nổi bật, nhãn tồn kho |
+| **P3: Templates** | `product-list.html` | - [x] | Danh sách + Bộ lọc đa tiêu chí + Sắp xếp mượt |
+| **P3: Templates** | `product-detail.html` | - [x] | Chi tiết, chọn SKU đổi giá, thêm giỏ, stepper |
+| **P3: Templates** | `cart.html` | - [x] | Quản lý giỏ hàng, cập nhật số lượng có check tồn |
+| **P3: Templates** | `checkout.html` | - [x] | Thanh toán COD, địa chỉ động, áp voucher LUNEA10 |
+| **P3: Templates** | `order-success.html` | - [x] | Hiển thị mã đơn LUN-XXXXXX và chi nhánh giữ hàng |
+| **P3: Templates** | `account/orders.html` & `account/order-detail.html` | - [x] | Lịch sử mua hàng, nút hủy đơn giải phóng tồn |
+| **P3: Templates** | `auth/login.html` & `auth/register.html` | - [x] | Đăng nhập/Đăng ký tài khoản, nút điền nhanh demo |
 | **P4: Back-office** | `admin/_layout.html` & `admin.css` | - [ ] | Layout sidebar phân quyền |
 | **P4: Back-office** | `admin/orders.html` & `order-detail.html` | - [ ] | Xử lý đơn hàng theo chi nhánh |
 | **P4: Back-office** | `admin/inventory.html` | - [ ] | Tra cứu tồn kho & modal điều chỉnh |
