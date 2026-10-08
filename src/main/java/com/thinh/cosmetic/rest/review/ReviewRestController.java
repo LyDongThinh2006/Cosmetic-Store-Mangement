@@ -2,7 +2,7 @@ package com.thinh.cosmetic.rest.review;
 
 import com.thinh.cosmetic.domain.dto.request.review.ReviewRequest;
 import com.thinh.cosmetic.domain.dto.response.review.ReviewResponse;
-import com.thinh.cosmetic.domain.enums.ReviewModerationStatus;
+import com.thinh.cosmetic.domain.enums.ReviewStatus;
 import com.thinh.cosmetic.service.review.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class ReviewRestController {
     @PutMapping("/{id}/status")
     public ResponseEntity<ReviewResponse> updateModerationStatus(
             @PathVariable Long id,
-            @RequestParam ReviewModerationStatus status
+            @RequestParam ReviewStatus status
     ) throws Exception {
         return ResponseEntity.ok(reviewService.updateModerationStatus(id, status));
     }

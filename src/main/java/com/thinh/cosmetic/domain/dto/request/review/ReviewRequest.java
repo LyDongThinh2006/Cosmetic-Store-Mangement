@@ -8,10 +8,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ReviewRequest {
-    @NotNull private Long productId;
-    @NotNull private Long orderId;
-    @NotNull @Min(1) @Max(5) private Integer rating;
+    @NotNull(message = "Product ID cannot be null")
+    private Long productId;
+
+    @NotNull(message = "Order ID cannot be null")
+    private Long orderId;
+
+    @NotNull(message = "Rating cannot be null")
+    @Min(value = 1, message = "Rating must be at least 1")
+    @Max(value = 5, message = "Rating must not exceed 5")
+    private Integer rating;
+
     private String comment;
 }

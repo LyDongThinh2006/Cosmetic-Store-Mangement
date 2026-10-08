@@ -1,7 +1,8 @@
 package com.thinh.cosmetic.domain.entity.account;
 
-import com.thinh.cosmetic.domain.entity.store.StoreEntity;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,11 +19,18 @@ public class EmployeeStoreEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @NotNull(message = "Employee cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "employee_id", nullable = false)
     private EmployeeEntity employee;
 
-    @ManyToOne
-    @JoinColumn(name = "store_id")
+    @NotNull(message = "Store cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "store_id", nullable = false)
     private StoreEntity store;
+
+    @NotNull(message = "IsPrimary flag cannot be null")
+    @Column(name = "is_primary", nullable = false)
+    @Builder.Default
+    private Boolean isPrimary = false;
 }

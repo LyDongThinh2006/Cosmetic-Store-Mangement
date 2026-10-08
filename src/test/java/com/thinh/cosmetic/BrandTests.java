@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -47,6 +46,7 @@ public class BrandTests {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/brands")
+                                .header("X-Requested-With", "fetch")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
                 )
@@ -67,20 +67,15 @@ public class BrandTests {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/brands")
+                                .header("X-Requested-With", "fetch")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.CREATED.value())
+                        MockMvcResultMatchers.jsonPath("$.id").isNumber()
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.message").value("Brand created successfully")
+                        MockMvcResultMatchers.jsonPath("$.name").value("Perfume")
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.data.id").isNumber()
-                ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.data.name").value("Perfume")
-                ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.data.name").value("Perfume")
-                ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE")
+                        MockMvcResultMatchers.jsonPath("$.status").value("ACTIVE")
         );
     }
 
@@ -122,17 +117,13 @@ public class BrandTests {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/brands")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.status").value(200)
+                MockMvcResultMatchers.jsonPath("$").isArray()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.message").value("Brands retrieved successfully")
+                MockMvcResultMatchers.jsonPath("$.length()").value(2)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data").isArray()
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Perfume")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data.length()").value(2)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data.[0].name").value("Perfume")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data.[1].name").value("Skincare")
+                MockMvcResultMatchers.jsonPath("$[1].name").value("Skincare")
         );
     }
 
@@ -154,6 +145,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/brands/1")
+                        .header("X-Requested-With", "fetch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(
@@ -179,18 +171,15 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/brands/1")
+                        .header("X-Requested-With", "fetch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.status").value(200)
+                MockMvcResultMatchers.jsonPath("$.name").value("Skincare")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.message").value("Brand updated successfully")
+                MockMvcResultMatchers.jsonPath("$.description").value("Skincare brand")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data.name").value("Skincare")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data.description").value("Skincare brand")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.data.status").value("INACTIVE")
+                MockMvcResultMatchers.jsonPath("$.status").value("INACTIVE")
         );
     }
 
@@ -206,6 +195,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/brands/1")
+                        .header("X-Requested-With", "fetch")
         ).andExpect(
                 MockMvcResultMatchers.status().isNoContent()
         );

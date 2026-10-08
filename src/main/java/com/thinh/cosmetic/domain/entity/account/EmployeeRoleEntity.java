@@ -1,6 +1,7 @@
 package com.thinh.cosmetic.domain.entity.account;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,11 +18,13 @@ public class EmployeeRoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @NotNull(message = "Employee cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "employee_id", nullable = false)
     private EmployeeEntity employee;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @NotNull(message = "Role cannot be null")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 }

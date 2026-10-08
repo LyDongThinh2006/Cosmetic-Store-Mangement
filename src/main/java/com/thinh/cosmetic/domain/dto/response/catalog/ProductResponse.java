@@ -29,6 +29,8 @@ public class ProductResponse {
 
     private String uses;
 
+    private Boolean isFeatured;
+
     private ActiveStatus status;
 
     private LocalDateTime createdAt;

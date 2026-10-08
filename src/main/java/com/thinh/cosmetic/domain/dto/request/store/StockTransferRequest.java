@@ -1,5 +1,6 @@
 package com.thinh.cosmetic.domain.dto.request.store;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,15 +10,30 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class StockTransferRequest {
-    @NotNull private Long sourceStoreId;
-    @NotNull private Long destinationStoreId;
-    @NotEmpty private List<TransferItemRequest> items;
+    @NotNull(message = "Source store ID cannot be null")
+    private Long sourceStoreId;
 
-    @Data @AllArgsConstructor @NoArgsConstructor @Builder
+    @NotNull(message = "Destination store ID cannot be null")
+    private Long destinationStoreId;
+
+    @NotEmpty(message = "Transfer items list cannot be empty")
+    private List<TransferItemRequest> items;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class TransferItemRequest {
-        @NotNull private Long skuId;
-        @NotNull private Integer quantity;
+        @NotNull(message = "SKU ID cannot be null")
+        private Long skuId;
+
+        @NotNull(message = "Quantity cannot be null")
+        @Min(value = 1, message = "Quantity must be greater than 0")
+        private Integer quantity;
     }
 }

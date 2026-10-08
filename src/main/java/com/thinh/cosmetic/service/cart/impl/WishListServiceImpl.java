@@ -2,8 +2,8 @@ package com.thinh.cosmetic.service.cart.impl;
 
 import com.thinh.cosmetic.domain.dto.response.cart.WishListResponse;
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
-import com.thinh.cosmetic.domain.entity.cart.WishListEntity;
-import com.thinh.cosmetic.domain.entity.cart.WishListItemEntity;
+import com.thinh.cosmetic.domain.entity.catalog.WishListEntity;
+import com.thinh.cosmetic.domain.entity.catalog.WishListItemEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductImageEntity;
 import com.thinh.cosmetic.repository.account.CustomerRepository;

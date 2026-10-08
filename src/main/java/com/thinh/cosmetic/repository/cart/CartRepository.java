@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.repository.cart;
 
-import com.thinh.cosmetic.domain.entity.cart.CartEntity;
+import com.thinh.cosmetic.domain.entity.sales.CartEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

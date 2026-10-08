@@ -2,7 +2,7 @@ package com.thinh.cosmetic.service.store.impl;
 
 import com.thinh.cosmetic.domain.dto.request.store.StoreRequest;
 import com.thinh.cosmetic.domain.dto.response.store.StoreResponse;
-import com.thinh.cosmetic.domain.entity.store.StoreEntity;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.mapper.store.StoreMapper;
 import com.thinh.cosmetic.repository.store.StoreRepository;

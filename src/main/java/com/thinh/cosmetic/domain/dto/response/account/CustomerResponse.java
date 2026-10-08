@@ -8,11 +8,15 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CustomerResponse {
     private Long id;
     private Long accountId;
     private String email;
+    private String phone;
     private String fullName;
     private LocalDate dob;
     private Gender gender;

@@ -2,7 +2,7 @@ package com.thinh.cosmetic.mapper.purchase;
 
 import com.thinh.cosmetic.domain.dto.request.purchase.SupplierRequest;
 import com.thinh.cosmetic.domain.dto.response.purchase.SupplierResponse;
-import com.thinh.cosmetic.domain.entity.purchase.SupplierEntity;
+import com.thinh.cosmetic.domain.entity.inventory.SupplierEntity;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)

@@ -7,8 +7,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CartItemRequest {
-    @NotNull private Long skuId;
-    @NotNull @Min(1) private Integer quantity;
+    @NotNull(message = "SKU ID cannot be null")
+    private Long skuId;
+
+    @NotNull(message = "Quantity cannot be null")
+    @Min(value = 1, message = "Quantity must be greater than 0")
+    private Integer quantity;
 }

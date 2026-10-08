@@ -1,6 +1,6 @@
 package com.thinh.cosmetic.repository.store;
 
-import com.thinh.cosmetic.domain.entity.store.InventoryEntity;
+import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

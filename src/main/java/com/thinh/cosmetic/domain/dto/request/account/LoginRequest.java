@@ -6,8 +6,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor @NoArgsConstructor @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class LoginRequest {
-    @NotBlank private String email;
-    @NotBlank private String password;
+
+    private String identifier;
+
+    private String email;
+
+    @NotBlank(message = "Password cannot be blank")
+    private String password;
+
+    public String getLoginIdentifier() {
+        if (identifier != null && !identifier.isBlank()) {
+            return identifier.trim();
+        }
+        if (email != null && !email.isBlank()) {
+            return email.trim();
+        }
+        return "";
+    }
 }
