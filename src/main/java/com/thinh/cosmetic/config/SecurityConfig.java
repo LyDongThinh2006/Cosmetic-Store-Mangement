@@ -80,8 +80,8 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(xRequestedWithFilter, BearerTokenAuthenticationFilter.class)
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers("/admin/**", "/api/admin/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers("/cart", "/checkout", "/order-success", "/account/**",
+                        .requestMatchers("/admin", "/admin/**", "/api/admin/**").hasAuthority("ROLE_EMPLOYEE")
+                        .requestMatchers("/cart", "/checkout", "/order-success", "/account", "/account/**",
                                 "/api/cart/**", "/api/checkout/**", "/api/orders/**").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/api/account/**").authenticated()
                         .anyRequest().permitAll()

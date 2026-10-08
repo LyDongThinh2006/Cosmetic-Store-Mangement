@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Danh Sách Sản Phẩm | LUNEA</title>
+</head>
+<body data-page="product-list"
+      th:data-keyword="${keyword}"
+      th:data-brand-id="${brandId}"
+      th:data-category-id="${categoryId}"
+      th:data-skin-type="${skinType}"
+      th:data-concern="${concern}"
+      th:data-price-range="${priceRange}"
+      th:data-sort-by="${sortBy}">
+    <div id="app">
+        <header>
+            <h1 th:text="${pageTitle}">Danh Sách Sản Phẩm LUNEA</h1>
+        </header>
+        <main>
+            <p>Trang lọc và tìm kiếm sản phẩm mỹ phẩm</p>
+        </main>
+    </div>
+</body>
+</html>

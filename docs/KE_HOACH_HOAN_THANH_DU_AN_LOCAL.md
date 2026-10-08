@@ -35,8 +35,8 @@
 - [x] **Hệ thống REST Controller:** Đầy đủ API phục vụ dữ liệu JSON (`/api/auth`, `/api/products`, `/api/cart`, `/api/orders`, `/api/admin/**`).
 
 ### 1.2. Khoảng trống cần hoàn thiện để chạy Web cục bộ
-- [ ] **DataSeeder tự động:** Database SQL Server hiện đang trống dữ liệu (chưa có tài khoản demo, chi nhánh, sản phẩm, tồn kho, voucher).
-- [ ] **Web Page Controllers (`@Controller`):** Chưa có các Controller render giao diện Thymeleaf (như `/`, `/products`, `/cart`, `/checkout`, `/admin/**`).
+- [x] **DataSeeder tự động:** Đã có `DataSeeder.java` nạp đủ 5 tài khoản demo, 3 chi nhánh, 5 thương hiệu, 10 sản phẩm, 16 SKUs, 48 bản ghi tồn kho và 3 voucher.
+- [x] **Web Page Controllers (`@Controller`):** Đã tạo đầy đủ 7 Controller điều hướng Thymeleaf (`HomeController`, `ProductPageController`, `AuthPageController`, `CartPageController`, `CheckoutPageController`, `AccountPageController`, `AdminPageController`, `CustomErrorController`).
 - [ ] **Giao diện Khách hàng (Thymeleaf Templates):** Thư mục `src/main/resources/templates/` đang trống. Cần tạo 8 màn hình khách hàng theo thiết kế Moonlight Dark Theme.
 - [ ] **Giao diện Quản trị Back-office:** Cần tạo layout Admin và các trang xử lý đơn hàng theo chi nhánh, điều chỉnh tồn kho có log, quản lý sản phẩm.
 - [ ] **Static Assets:** Cần tạo bảng màu CSS Tokens (`tokens.css`), client JS API wrapper (`api.js`), dữ liệu vị trí hành chính (`vn-locations.json`).
@@ -187,13 +187,13 @@ Bảng dưới đây được cấu hình dạng Checklist (`- [x]` và `- [ ]`)
 | **P1: DataSeeder** | Khởi tạo 3 chi nhánh & phân quyền | - [x] | Chi nhánh HCM, HN, Đà Nẵng (12 Permissions, 5 Roles) |
 | **P1: DataSeeder** | Khởi tạo Brand, Category, Product, SKU | - [x] | 5 Brands, 8 Categories, 10 Products, 16 SKUs |
 | **P1: DataSeeder** | Khởi tạo Tồn kho đa chi nhánh & Voucher | - [x] | 48 bản ghi tồn kho (có sản phẩm hết hàng & chỉ có ở HCM) |
-| **P2: Web Controller** | `HomeController.java` (`/`, `/stores`, `/brands`) | - [ ] | Trả về view Thymeleaf |
-| **P2: Web Controller** | `ProductPageController.java` (`/products`, `/{id}`) | - [ ] | Trả về danh sách và chi tiết |
-| **P2: Web Controller** | `AuthPageController.java` (`/login`, `/register`) | - [ ] | Trả về trang xác thực |
-| **P2: Web Controller** | `CartPageController.java` (`/cart`) | - [ ] | Yêu cầu `ROLE_CUSTOMER` |
-| **P2: Web Controller** | `CheckoutPageController.java` (`/checkout`, `/order-success`) | - [ ] | Yêu cầu `ROLE_CUSTOMER` |
-| **P2: Web Controller** | `AccountPageController.java` (`/account/**`) | - [ ] | Quản lý thông tin & đơn hàng của khách |
-| **P2: Web Controller** | `AdminPageController.java` (`/admin/**`) | - [ ] | Yêu cầu `ROLE_EMPLOYEE` |
+| **P2: Web Controller** | `HomeController.java` (`/`, `/stores`, `/brands`) | - [x] | Trả về view Thymeleaf (`home`, `stores`, `brands`) |
+| **P2: Web Controller** | `ProductPageController.java` (`/products`, `/{id}`) | - [x] | Trả về danh sách và chi tiết, nạp params vào Model |
+| **P2: Web Controller** | `AuthPageController.java` (`/login`, `/register`) | - [x] | Trả về view login/register, hỗ trợ query param redirect |
+| **P2: Web Controller** | `CartPageController.java` (`/cart`) | - [x] | Yêu cầu `ROLE_CUSTOMER`, redirect 302 nếu chưa login |
+| **P2: Web Controller** | `CheckoutPageController.java` (`/checkout`, `/order-success`) | - [x] | Yêu cầu `ROLE_CUSTOMER`, hiển thị orderCode |
+| **P2: Web Controller** | `AccountPageController.java` (`/account/**`) | - [x] | Quản lý profile, orders, order-detail |
+| **P2: Web Controller** | `AdminPageController.java` (`/admin/**`) | - [x] | Yêu cầu `ROLE_EMPLOYEE`, 403 đối với Customer |
 | **P3: Assets** | `tokens.css` & `site.css` (Moonlight Dark theme) | - [ ] | Tone đen, vàng gold sang trọng |
 | **P3: Assets** | `api.js` (Fetch wrapper + CSRF Header + Toast) | - [ ] | Bắt lỗi 401/403/409 tự động |
 | **P3: Assets** | `vn-locations.json` | - [ ] | Dropdown địa chỉ tỉnh / xã |
