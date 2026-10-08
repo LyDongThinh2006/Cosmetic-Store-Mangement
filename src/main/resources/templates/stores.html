@@ -16,7 +16,7 @@
 
             <!-- Page Title -->
             <div style="margin-bottom: 40px;" class="reveal-on-scroll">
-                <h1 style="font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; color: #fff; margin-bottom: 10px;">
+                <h1 style="font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px;">
                     Hệ thống showroom LUNEA
                 </h1>
                 <p style="font-size: 1rem; color: var(--color-text-secondary); max-width: 600px; font-weight: 300;">
@@ -30,7 +30,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                         <div>
                             <span class="eyebrow-tag" th:text="${s.province}" style="font-size: 0.65rem; padding: 2px 10px;">TP. Hồ Chí Minh</span>
-                            <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; color: #fff; margin-top: 10px;" th:text="${s.name}">
+                            <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; color: var(--color-text-primary); margin-top: 10px;" th:text="${s.name}">
                                 LUNEA Đồng Khởi - Quận 1
                             </h3>
                         </div>
@@ -52,7 +52,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: auto; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="margin-top: auto; padding-top: 18px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 0.75rem; color: var(--color-text-muted);">Tồn kho thời gian thực</span>
                         <a th:href="@{/products}" href="/products" class="btn-product-outline" style="width: auto; padding: 8px 18px; font-size: 0.82rem;">
                             <span>Xem sản phẩm</span>

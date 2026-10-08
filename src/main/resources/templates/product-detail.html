@@ -117,9 +117,9 @@
 
             <!-- Tabs Section: Thông tin sản phẩm, Thành phần, Hướng dẫn sử dụng, Đánh giá (Page 3 PDF) -->
             <div th:if="${product != null}" class="product-tabs-section reveal-on-scroll" style="margin-top: 56px; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 36px;">
-                <div style="display: flex; gap: 32px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 28px;">
+                <div style="display: flex; gap: 32px; border-bottom: 1px solid var(--color-border-subtle); margin-bottom: 28px;">
                     <button type="button" class="tab-btn active" onclick="switchTab('tab-info', this)" 
-                            style="background: none; border: none; padding: 12px 0; color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--color-gold-primary);">
+                            style="background: none; border: none; padding: 12px 0; color: var(--color-text-primary); font-size: 0.95rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--color-gold-primary);">
                         Thông tin sản phẩm
                     </button>
                     <button type="button" class="tab-btn" onclick="switchTab('tab-ingredients', this)" 
@@ -140,21 +140,21 @@
                 <div id="tab-info" class="tab-panel active" style="max-width: 680px;">
                     <h4 style="font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 16px;">Thông tin cơ bản</h4>
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; color: var(--color-text-secondary);">
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                             <td style="padding: 10px 0; width: 180px; color: var(--color-text-muted);">Thương hiệu</td>
-                            <td style="padding: 10px 0; color: #fff;" th:text="${product.brand != null ? product.brand.name : 'La Roche-Posay'}">La Roche-Posay</td>
+                            <td style="padding: 10px 0; color: var(--color-text-primary);" th:text="${product.brand != null ? product.brand.name : 'La Roche-Posay'}">La Roche-Posay</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                             <td style="padding: 10px 0; color: var(--color-text-muted);">Tên sản phẩm</td>
-                            <td style="padding: 10px 0; color: #fff;" th:text="${product.name}">Hyalu B5 Serum</td>
+                            <td style="padding: 10px 0; color: var(--color-text-primary);" th:text="${product.name}">Hyalu B5 Serum</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                             <td style="padding: 10px 0; color: var(--color-text-muted);">Dung tích</td>
-                            <td style="padding: 10px 0; color: #fff;" th:text="${product.skus != null and !product.skus.isEmpty() ? product.skus[0].variantName : '30 ml'}">30 ml</td>
+                            <td style="padding: 10px 0; color: var(--color-text-primary);" th:text="${product.skus != null and !product.skus.isEmpty() ? product.skus[0].variantName : '30 ml'}">30 ml</td>
                         </tr>
                         <tr>
                             <td style="padding: 10px 0; color: var(--color-text-muted);">Xuất xứ thương hiệu</td>
-                            <td style="padding: 10px 0; color: #fff;" th:text="${product.origin != null ? product.origin : 'Pháp'}">Pháp</td>
+                            <td style="padding: 10px 0; color: var(--color-text-primary);" th:text="${product.origin != null ? product.origin : 'Pháp'}">Pháp</td>
                         </tr>
                     </table>
                 </div>
@@ -293,7 +293,7 @@
                 b.style.fontWeight = '500';
                 b.style.borderBottom = 'none';
             });
-            btn.style.color = '#fff';
+            btn.style.color = 'var(--color-text-primary)';
             btn.style.fontWeight = '600';
             btn.style.borderBottom = '2px solid var(--color-gold-primary)';
 

@@ -6,24 +6,28 @@
     <header th:replace="~{fragments/header :: header}"></header>
 
     <main class="site-main">
-        <!-- Hero Section: European Luxury Moonlight Editorial (Page 1 PDF) -->
+        <!-- Attention (Hero Section): European Luxury Moonlight Editorial -->
         <section class="hero-section reveal-on-scroll">
             <div class="lunea-container hero-container">
                 <!-- Left Column: Editorial Brand Storytelling -->
                 <div class="hero-content">
                     <span class="hero-brand-title">LUNEA</span>
-                    <h1 class="hero-headline">Tỏa sáng vẻ đẹp thật.</h1>
+                    <h1 class="hero-headline">Tỏa sáng vẻ đẹp thật từ ánh trăng thuần khiết.</h1>
                     <p class="hero-description">
-                        Khám phá những lựa chọn phù hợp với làn da và thói quen chăm sóc của bạn.
+                        Khám phá chu trình chăm sóc da khoa học, tuyển chọn tinh hoa mỹ phẩm Châu Âu và Châu Á.
                     </p>
-                    <div class="hero-cta-wrap">
+                    <div class="hero-cta-group">
                         <a th:href="@{/products}" href="/products" class="btn-hero-champagne">
-                            <span>Khám phá sản phẩm</span>
+                            <span>Khám phá bộ sưu tập</span>
+                            <i class="bi bi-arrow-right" style="margin-left: 8px;"></i>
+                        </a>
+                        <a th:href="@{/stores}" href="/stores" class="btn-hero-ghost">
+                            <span>Hệ thống showroom</span>
                         </a>
                     </div>
                     <div class="hero-moon-tag">
                         <span class="moon-glyph">✦</span>
-                        <span>ÁNH TRĂNG CỦA VẺ ĐẸP</span>
+                        <span>ÁNH TRĂNG CỦA VẺ ĐẸP KHOA HỌC</span>
                     </div>
                 </div>
 
@@ -39,7 +43,7 @@
             </div>
         </section>
 
-        <!-- Category Strip: 5 Horizontal European Luxury Cards (Page 1 PDF) -->
+        <!-- Interest (Category Strip): 5 Horizontal European Luxury Cards -->
         <section class="category-strip-section reveal-on-scroll">
             <div class="lunea-container">
                 <div class="category-strip-grid">
@@ -91,12 +95,119 @@
             </div>
         </section>
 
-        <!-- Featured Products Section: "Lựa chọn nổi bật" (Page 1 PDF) -->
+        <!-- Desire (Prestige Marquee): European & Global Luxury Beauty Houses -->
+        <section class="prestige-marquee-section" aria-label="Đối tác thương hiệu cao cấp">
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    <div class="marquee-brand-item"><span>La Roche-Posay</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Chanel Beauté</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Dior Prestige</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Estée Lauder</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>SkinCeuticals</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Shiseido Ginza</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>YSL Beauty</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Lancôme Paris</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Kiehl's</span><span class="marquee-brand-dot"></span></div>
+                    <!-- Duplicate for infinite continuous flow -->
+                    <div class="marquee-brand-item"><span>La Roche-Posay</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Chanel Beauté</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Dior Prestige</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Estée Lauder</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>SkinCeuticals</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Shiseido Ginza</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>YSL Beauty</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Lancôme Paris</span><span class="marquee-brand-dot"></span></div>
+                    <div class="marquee-brand-item"><span>Kiehl's</span><span class="marquee-brand-dot"></span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interest (The Gapless Bento Grid): Curated Moonlight Collections -->
+        <section class="bento-section reveal-on-scroll">
+            <div class="lunea-container">
+                <div class="bento-header-wrapper">
+                    <span class="eyebrow-tag">Tuyển Tập Ánh Trăng</span>
+                    <h2 class="bento-title-editorial" style="margin-top: 12px;">Nghi thức chăm sóc chuyên sâu</h2>
+                    <p class="bento-subtitle-editorial">Sự hội tụ của hoạt chất sinh học và công nghệ khóa ẩm đa tầng.</p>
+                </div>
+
+                <!-- 4-Column Interlocking Matrix: Zero Empty Voids -->
+                <div class="bento-moon-grid">
+                    <!-- Card 1: 2 cols x 2 rows (Spotlight: Night Renewal Elixir) -->
+                    <a th:href="@{/products(categoryId=4)}" href="/products?categoryId=4" class="bento-card bento-card-spotlight">
+                        <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=900&auto=format&fit=crop&q=80" 
+                             alt="Tinh chất phục hồi ban đêm" class="bento-card-bg-img" loading="lazy">
+                        <div class="bento-card-overlay"></div>
+                        <div class="bento-card-content">
+                            <span class="bento-tag">Nghi Thức Ban Đêm</span>
+                            <h3 class="bento-heading">Phục Hồi Tế Bào Chuyên Sâu</h3>
+                            <p class="bento-desc">Tinh chất Hyaluronic Acid & chiết xuất hoa cúc La Mã tái sinh độ ẩm mịn trong suốt giấc ngủ.</p>
+                            <span class="bento-card-arrow">Khám phá chu trình &rarr;</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 2: 1 col x 1 row (Peptide Complex) -->
+                    <a th:href="@{/products(concern='Trẻ Hóa')}" href="/products?concern=Trẻ+Hóa" class="bento-card bento-card-peptide">
+                        <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=700&auto=format&fit=crop&q=80" 
+                             alt="Tái sinh tế bào" class="bento-card-bg-img" loading="lazy">
+                        <div class="bento-card-overlay"></div>
+                        <div class="bento-card-content">
+                            <span class="bento-tag">Trẻ Hóa</span>
+                            <h3 class="bento-heading">Phức Hợp Peptides</h3>
+                            <p class="bento-desc">Kích thích tăng sinh collagen tự nhiên.</p>
+                        </div>
+                    </a>
+
+                    <!-- Card 3: 1 col x 1 row (Solar & Blue Shield) -->
+                    <a th:href="@{/products(concern='Chống Nắng')}" href="/products?concern=Chống+Nắng" class="bento-card bento-card-shield">
+                        <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=700&auto=format&fit=crop&q=80" 
+                             alt="Màng chắn quang phổ rộng" class="bento-card-bg-img" loading="lazy">
+                        <div class="bento-card-overlay"></div>
+                        <div class="bento-card-content">
+                            <span class="bento-tag">Bảo Vệ</span>
+                            <h3 class="bento-heading">Quang Phổ Rộng</h3>
+                            <p class="bento-desc">Chống tia UV & ánh sáng xanh thiết bị.</p>
+                        </div>
+                    </a>
+
+                    <!-- Card 4: 2 cols x 1 row (Moonlight Privilege Club) -->
+                    <a th:href="@{/stores}" href="/stores" class="bento-card bento-card-privilege">
+                        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&auto=format&fit=crop&q=80" 
+                             alt="Đặc quyền thành viên Lunea" class="bento-card-bg-img" loading="lazy">
+                        <div class="bento-card-overlay"></div>
+                        <div class="bento-card-content">
+                            <span class="bento-tag">Đặc Quyền Thành Viên</span>
+                            <h3 class="bento-heading">Tư Vấn Da Liễu 1:1 Cùng Chuyên Gia</h3>
+                            <p class="bento-desc">Trải nghiệm soi da đa tầng và thiết kế phác đồ chăm sóc chuyên biệt tại hệ thống showroom Lunea.</p>
+                            <span class="bento-card-arrow">Đặt lịch tư vấn &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Desire (Editorial Manifesto): Inline Typography Micro-Images -->
+        <section class="editorial-manifesto-section reveal-on-scroll">
+            <div class="editorial-manifesto-container">
+                <span class="eyebrow-tag">Tuyên Ngôn Sắc Đẹp</span>
+                <p class="editorial-manifesto-text" style="margin-top: 18px;">
+                    Định hình vẻ đẹp <span class="inline-micro-img" style="background-image: url('https://images.unsplash.com/photo-1512290900672-1f4a99182a46?w=400&auto=format&fit=crop&q=80');"></span> chuẩn khoa học Châu Âu. Mỗi công thức là sự giao thoa tinh tế giữa ánh trăng thuần khiết <span class="inline-micro-img" style="background-image: url('https://images.unsplash.com/photo-1608248597359-5f210d7ef1a4?w=400&auto=format&fit=crop&q=80');"></span> và công nghệ hoạt chất tối tân.
+                </p>
+            </div>
+        </section>
+
+        <!-- Action (Featured Products Section): "Lựa chọn nổi bật" -->
         <section class="featured-products-section reveal-on-scroll">
             <div class="lunea-container">
                 <div class="section-header-editorial">
-                    <h2 class="section-title-editorial">Lựa chọn nổi bật</h2>
-                    <a th:href="@{/products}" href="/products" class="section-link-editorial">Xem tất cả</a>
+                    <div>
+                        <span class="eyebrow-tag" style="margin-bottom: 8px;">Bộ Sưu Tập</span>
+                        <h2 class="section-title-editorial">Lựa chọn nổi bật</h2>
+                    </div>
+                    <a th:href="@{/products}" href="/products" class="section-link-editorial">
+                        <span>Xem tất cả sản phẩm</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
 
                 <!-- Products Grid (4 Columns European Luxury Cards) -->
@@ -151,13 +262,14 @@
             </div>
         </section>
 
-        <!-- Demand / Concern Discovery Banner (Page 1 PDF) -->
+        <!-- Demand / Concern Discovery Banner -->
         <section class="concern-discovery-section reveal-on-scroll">
             <div class="lunea-container">
                 <div class="concern-discovery-card">
                     <div class="concern-content">
-                        <h3 class="concern-title">Tìm sản phẩm theo nhu cầu của bạn</h3>
-                        <p class="concern-subtitle">Dưỡng ẩm &nbsp;/&nbsp; Làm sạch &nbsp;/&nbsp; Chăm sóc da nhạy cảm</p>
+                        <span class="eyebrow-tag" style="margin-bottom: 4px;">Chăm Sóc Cá Nhân Hóa</span>
+                        <h3 class="concern-title">Tìm sản phẩm theo nhu cầu của làn da</h3>
+                        <p class="concern-subtitle">Dưỡng ẩm chuyên sâu &nbsp;/&nbsp; Tái sinh phục hồi &nbsp;/&nbsp; Bảo vệ da nhạy cảm</p>
                     </div>
                     <div class="concern-action">
                         <a th:href="@{/products(categoryId=4)}" href="/products?categoryId=4" class="btn-concern-outline">

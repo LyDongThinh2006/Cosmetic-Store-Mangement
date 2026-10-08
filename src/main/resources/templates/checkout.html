@@ -30,7 +30,7 @@
                 </h1>
                 <p style="font-size: 0.92rem; color: var(--color-text-secondary);">
                     <span>Đang mua hàng với tài khoản </span>
-                    <strong style="color: #fff;" th:text="${currentUser != null ? (currentUser.displayName != null ? currentUser.displayName : currentUser.username) : 'Khách vãng lai'}">Minh Anh</strong>.
+                    <strong style="color: var(--color-text-primary);" th:text="${currentUser != null ? (currentUser.displayName != null ? currentUser.displayName : currentUser.username) : 'Khách vãng lai'}">Minh Anh</strong>.
                     <a th:href="@{/login}" href="/login" style="color: var(--color-gold-light); margin-left: 6px; text-decoration: underline;">Đổi tài khoản</a>
                 </p>
             </div>
@@ -42,8 +42,8 @@
                 <!-- Left: Shipping & Payment Information -->
                 <div>
                     <!-- Step 1: Thông tin người nhận -->
-                    <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 24px;">
-                        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 24px; color: #fff;">
+                    <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 24px;">
+                        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 24px; color: var(--color-text-primary);">
                             Thông tin người nhận
                         </h3>
 
@@ -118,17 +118,17 @@
                     </div>
 
                     <!-- Step 2: Phương thức giao hàng (Page 9 PDF) -->
-                    <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 24px;">
-                        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 20px; color: #fff;">
+                    <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 24px;">
+                        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 20px; color: var(--color-text-primary);">
                             Phương thức giao hàng
                         </h3>
 
-                        <div style="padding: 16px 20px; border: 1px solid rgba(223, 190, 123, 0.3); background: rgba(223, 190, 123, 0.04); border-radius: 8px; display: flex; align-items: flex-start; gap: 14px;">
+                        <div style="padding: 16px 20px; border: 1px solid var(--color-border-gold); background: var(--color-gold-glow); border-radius: 8px; display: flex; align-items: flex-start; gap: 14px;">
                             <input type="radio" checked style="accent-color: var(--color-gold-primary); margin-top: 4px;">
                             <div style="flex: 1;">
                                 <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                                    <strong style="color: #fff; font-size: 0.95rem;">Giao hàng tiêu chuẩn</strong>
-                                    <span style="font-weight: 600; color: #fff;">30.000 ₫</span>
+                                    <strong style="color: var(--color-text-primary); font-size: 0.95rem;">Giao hàng tiêu chuẩn</strong>
+                                    <span style="font-weight: 600; color: var(--color-text-primary);">30.000 ₫</span>
                                 </div>
                                 <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 4px;">
                                     Dự kiến nhận: 26 - 28/09/2026
@@ -138,15 +138,15 @@
                     </div>
 
                     <!-- Step 3: Phương thức thanh toán (Page 9 PDF) -->
-                    <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 24px;">
-                        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 20px; color: #fff;">
+                    <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 28px; margin-bottom: 24px;">
+                        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 20px; color: var(--color-text-primary);">
                             Phương thức thanh toán
                         </h3>
 
-                        <div style="padding: 16px 20px; border: 1px solid rgba(223, 190, 123, 0.3); background: rgba(223, 190, 123, 0.04); border-radius: 8px; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px;">
+                        <div style="padding: 16px 20px; border: 1px solid var(--color-border-gold); background: var(--color-gold-glow); border-radius: 8px; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px;">
                             <input type="radio" id="payCOD" name="paymentMethod" value="COD" checked style="accent-color: var(--color-gold-primary); margin-top: 4px;">
                             <label for="payCOD" style="cursor: pointer; flex: 1;">
-                                <strong style="color: #fff; font-size: 0.95rem; display: block;">Thanh toán khi nhận hàng (COD)</strong>
+                                <strong style="color: var(--color-text-primary); font-size: 0.95rem; display: block;">Thanh toán khi nhận hàng (COD)</strong>
                                 <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 4px;">
                                     Thanh toán cho đơn vị vận chuyển khi nhận hàng.
                                 </p>
@@ -163,20 +163,20 @@
                 </div>
 
                 <!-- Right: Đơn hàng của bạn & Summary (Page 9 PDF) -->
-                <aside style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 24px;">
-                    <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 20px; color: #fff;">
+                <aside style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 32px 24px;">
+                    <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 500; margin-bottom: 20px; color: var(--color-text-primary);">
                         Đơn hàng của bạn
                     </h3>
 
                     <!-- Products Snapshot -->
-                    <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle);">
                         <div th:each="item : ${cart != null ? cart.items : null}" 
                              style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.88rem;">
                             <div style="flex: 1; padding-right: 12px;">
-                                <div style="color: #fff; font-weight: 500;" th:text="${item.productName}">Hyalu B5 Serum</div>
+                                <div style="color: var(--color-text-primary); font-weight: 500;" th:text="${item.productName}">Hyalu B5 Serum</div>
                                 <div style="font-size: 0.78rem; color: var(--color-text-muted);" th:text="${item.variantName} + ' × ' + ${item.quantity}">30 ml × 1</div>
                             </div>
-                            <div style="font-weight: 600; color: #fff;" 
+                            <div style="font-weight: 600; color: var(--color-text-primary);" 
                                  th:text="${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
                                 892.000 ₫
                             </div>
@@ -187,23 +187,23 @@
                     <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary);">
                             <span>Tạm tính</span>
-                            <span id="summarySubtotal" style="color: #fff;" 
+                            <span id="summarySubtotal" style="color: var(--color-text-primary);" 
                                   th:text="${cart != null ? #numbers.formatDecimal(cart.subtotal, 0, 'POINT', 0, 'COMMA') + ' ₫' : '4.292.000 ₫'}">4.292.000 ₫</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary);">
                             <span>Giảm giá</span>
-                            <span id="summaryDiscount" style="color: #fff;">0 ₫</span>
+                            <span id="summaryDiscount" style="color: var(--color-text-primary);">0 ₫</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary); padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                        <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary); padding-bottom: 16px; border-bottom: 1px solid var(--color-border-subtle);">
                             <span>Phí giao hàng</span>
-                            <span id="summaryShipping" style="color: #fff;">30.000 ₫</span>
+                            <span id="summaryShipping" style="color: var(--color-text-primary);">30.000 ₫</span>
                         </div>
                     </div>
 
                     <!-- Tổng thanh toán (Page 9 PDF) -->
                     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px;">
                         <span style="font-size: 0.95rem; color: var(--color-text-primary);">Tổng thanh toán</span>
-                        <span id="summaryTotal" style="font-size: 1.65rem; font-weight: 600; color: #fff;">4.322.000 ₫</span>
+                        <span id="summaryTotal" style="font-size: 1.65rem; font-weight: 600; color: var(--color-text-primary);">4.322.000 ₫</span>
                     </div>
 
                     <!-- Submit Button: Đặt hàng -->

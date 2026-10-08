@@ -244,8 +244,106 @@ const LUNEA = (function () {
         }
     }
 
+    // -------------------------------------------------------------
+    // Theme Management Engine (Dual Theme: Midnight Obsidian & Moonlight Pearl)
+    // -------------------------------------------------------------
+    function getTheme() {
+        return document.documentElement.getAttribute('data-theme') || 'dark';
+    }
+
+    function updateThemeToggleUI(theme) {
+        const btn = document.getElementById('themeToggleBtn');
+        if (!btn) return;
+        btn.setAttribute('aria-label', theme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối');
+        btn.setAttribute('title', theme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối');
+    }
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try {
+            localStorage.setItem('lunea-theme', theme);
+        } catch (e) {}
+        updateThemeToggleUI(theme);
+    }
+
+    function toggleTheme() {
+        const current = getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+        showToast(next === 'light' ? 'Đã chuyển sang giao diện Sáng (Moonlight Pearl)' : 'Đã chuyển sang giao diện Tối (Midnight Obsidian)', 'info', 2200);
+    }
+
+    function initTheme() {
+        const theme = getTheme();
+        updateThemeToggleUI(theme);
+    }
+
+    // -------------------------------------------------------------
+    // Advanced GSAP Motion Engine
+    // -------------------------------------------------------------
+    function initGSAP() {
+        if (typeof window.gsap === 'undefined') return;
+        const gsap = window.gsap;
+
+        if (typeof window.ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(window.ScrollTrigger);
+        }
+
+        // Hero Stagger Entrance
+        const heroHeadline = document.querySelector('.hero-headline');
+        if (heroHeadline) {
+            const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.9 } });
+            tl.fromTo('.hero-brand-title', { opacity: 0, y: 20 }, { opacity: 1, y: 0, delay: 0.1 })
+              .fromTo('.hero-headline', { opacity: 0, y: 30 }, { opacity: 1, y: 0 }, '-=0.65')
+              .fromTo('.hero-description', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
+              .fromTo('.hero-cta-group', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
+              .fromTo('.moon-image-wrapper', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.2)' }, '-=0.85');
+        }
+
+        // Bento Grid Scroll Scale
+        if (window.ScrollTrigger && document.querySelector('.bento-moon-grid')) {
+            gsap.fromTo('.bento-card',
+                { opacity: 0, y: 35, scale: 0.96 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    stagger: 0.12,
+                    duration: 0.85,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: '.bento-moon-grid',
+                        start: 'top 82%'
+                    }
+                }
+            );
+        }
+
+        // Editorial Manifesto Text Scrub / Reveal
+        if (window.ScrollTrigger && document.querySelector('.editorial-manifesto-text')) {
+            gsap.fromTo('.editorial-manifesto-text',
+                { opacity: 0.25, y: 25 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1.1,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: '.editorial-manifesto-section',
+                        start: 'top 78%',
+                        end: 'bottom 45%',
+                        scrub: 1
+                    }
+                }
+            );
+        }
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Theme UI
+        initTheme();
+
         // Refresh cart count (skip for auth pages)
         const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
         const badge = document.querySelector('.cart-badge-count');
@@ -253,8 +351,9 @@ const LUNEA = (function () {
             updateCartBadge();
         }
 
-        // Initialize scroll motion
+        // Initialize scroll motion & GSAP
         initScrollMotion();
+        initGSAP();
     });
 
     async function logout(e) {
@@ -287,6 +386,10 @@ const LUNEA = (function () {
         updateCartBadge,
         logout,
         toggleWishlist,
-        initScrollMotion
+        initScrollMotion,
+        getTheme,
+        setTheme,
+        toggleTheme,
+        initGSAP
     };
 })();

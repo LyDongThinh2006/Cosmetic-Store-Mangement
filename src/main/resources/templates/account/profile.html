@@ -22,12 +22,12 @@
                 <aside style="display: flex; flex-direction: column; gap: 24px;">
                     <!-- User Header -->
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #1a2233; border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; color: #fff;"
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-bg-elevated); border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary);"
                              th:text="${currentUser != null ? #strings.substring(currentUser.displayName != null ? currentUser.displayName : currentUser.username, 0, 2).toUpperCase() : 'MA'}">
                             MA
                         </div>
                         <div>
-                            <div style="font-weight: 600; color: #fff; font-size: 0.95rem;" 
+                            <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.95rem;" 
                                  th:text="${currentUser != null ? (currentUser.displayName != null ? currentUser.displayName : currentUser.username) : 'Minh Anh'}">Minh Anh</div>
                             <div style="font-size: 0.75rem; color: var(--color-text-muted);">Tài khoản của bạn</div>
                         </div>
@@ -41,7 +41,7 @@
                         <a href="javascript:void(0)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
                             Thông tin cá nhân
                         </a>
-                        <a th:href="@{/account/profile}" href="/account/profile" style="padding: 10px 14px; border-radius: 8px; color: #fff; font-weight: 600; background: rgba(255, 255, 255, 0.05);">
+                        <a th:href="@{/account/profile}" href="/account/profile" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-primary); font-weight: 600; background: var(--color-border-subtle);">
                             Địa chỉ nhận hàng
                         </a>
                         <a th:href="@{/account/orders}" href="/account/orders" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); transition: color var(--duration-fast);">
@@ -65,7 +65,7 @@
                 <!-- Right Content: Địa chỉ nhận hàng (Page 10 PDF) -->
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px;">
-                        <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; color: #fff;">
+                        <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; color: var(--color-text-primary);">
                             Địa chỉ nhận hàng
                         </h1>
                         <button type="button" onclick="LUNEA.showToast('Vui lòng thêm địa chỉ trực tiếp tại trang Thanh toán COD!', 'info')" 
@@ -77,10 +77,10 @@
                     <!-- Address Cards List (Page 10 PDF) -->
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <!-- Address 1: Nhà riêng (Mặc định) -->
-                        <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px;">
+                        <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-card);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <strong style="color: #fff; font-size: 1.05rem;">Nhà riêng</strong>
+                                    <strong style="color: var(--color-text-primary); font-size: 1.05rem;">Nhà riêng</strong>
                                     <span class="badge-stock in-stock" style="padding: 2px 8px; font-size: 0.7rem;">Mặc định</span>
                                 </div>
                                 <button type="button" onclick="LUNEA.showToast('Chức năng chỉnh sửa đang sẵn sàng.', 'info')" 
@@ -88,7 +88,7 @@
                                     Chỉnh sửa
                                 </button>
                             </div>
-                            <p style="font-size: 0.9rem; color: #fff; margin-bottom: 4px;">
+                            <p style="font-size: 0.9rem; color: var(--color-text-primary); margin-bottom: 4px;">
                                 Nguyễn Thị Minh Anh | 0901 234 567
                             </p>
                             <p style="font-size: 0.85rem; color: var(--color-text-muted);">
@@ -97,15 +97,15 @@
                         </div>
 
                         <!-- Address 2: Công ty -->
-                        <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px;">
+                        <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-card);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                <strong style="color: #fff; font-size: 1.05rem;">Công ty</strong>
+                                <strong style="color: var(--color-text-primary); font-size: 1.05rem;">Công ty</strong>
                                 <button type="button" onclick="LUNEA.showToast('Chức năng chỉnh sửa đang sẵn sàng.', 'info')" 
                                         style="background: none; border: none; color: var(--color-text-muted); font-size: 0.85rem; cursor: pointer;">
                                     Chỉnh sửa
                                 </button>
                             </div>
-                            <p style="font-size: 0.9rem; color: #fff; margin-bottom: 4px;">
+                            <p style="font-size: 0.9rem; color: var(--color-text-primary); margin-bottom: 4px;">
                                 Nguyễn Thị Minh Anh | 0901 234 567
                             </p>
                             <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 16px;">
@@ -118,15 +118,15 @@
                         </div>
 
                         <!-- Address 3: Địa chỉ khác -->
-                        <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px;">
+                        <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-card);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                <strong style="color: #fff; font-size: 1.05rem;">Địa chỉ khác</strong>
+                                <strong style="color: var(--color-text-primary); font-size: 1.05rem;">Địa chỉ khác</strong>
                                 <button type="button" onclick="LUNEA.showToast('Chức năng chỉnh sửa đang sẵn sàng.', 'info')" 
                                         style="background: none; border: none; color: var(--color-text-muted); font-size: 0.85rem; cursor: pointer;">
                                     Chỉnh sửa
                                 </button>
                             </div>
-                            <p style="font-size: 0.9rem; color: #fff; margin-bottom: 4px;">
+                            <p style="font-size: 0.9rem; color: var(--color-text-primary); margin-bottom: 4px;">
                                 Nguyễn Thị Minh Anh | 0901 234 567
                             </p>
                             <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 16px;">

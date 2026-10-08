@@ -93,9 +93,9 @@
                 <!-- Products Main Section (Page 2 PDF) -->
                 <div>
                     <!-- Top Bar: Result Count + Sort Dropdown -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-subtle); flex-wrap: wrap; gap: 12px;">
                         <div style="font-size: 0.92rem; color: var(--color-text-secondary);">
-                            <span id="productCount" th:text="${products != null ? products.size() : 0}" style="font-weight: 600; color: #fff;">8</span> sản phẩm
+                            <span id="productCount" th:text="${products != null ? products.size() : 0}" style="font-weight: 600; color: var(--color-text-primary);">8</span> sản phẩm
                             <span th:if="${keyword != null and !keyword.isBlank()}" th:text="' cho từ khóa \'' + ${keyword} + '\''" style="color: var(--color-gold-light);"></span>
                         </div>
 

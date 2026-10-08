@@ -22,12 +22,12 @@
                 <aside style="display: flex; flex-direction: column; gap: 24px;">
                     <!-- User Header -->
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #1a2233; border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; color: #fff;"
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-bg-elevated); border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary);"
                              th:text="${currentUser != null ? #strings.substring(currentUser.displayName != null ? currentUser.displayName : currentUser.username, 0, 2).toUpperCase() : 'MA'}">
                             MA
                         </div>
                         <div>
-                            <div style="font-weight: 600; color: #fff; font-size: 0.95rem;" 
+                            <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.95rem;" 
                                  th:text="${currentUser != null ? (currentUser.displayName != null ? currentUser.displayName : currentUser.username) : 'Minh Anh'}">Minh Anh</div>
                             <div style="font-size: 0.75rem; color: var(--color-text-muted);">Tài khoản của bạn</div>
                         </div>
@@ -44,7 +44,7 @@
                         <a th:href="@{/account/profile}" href="/account/profile" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); transition: color var(--duration-fast);">
                             Địa chỉ nhận hàng
                         </a>
-                        <a th:href="@{/account/orders}" href="/account/orders" style="padding: 10px 14px; border-radius: 8px; color: #fff; font-weight: 600; background: rgba(255, 255, 255, 0.05);">
+                        <a th:href="@{/account/orders}" href="/account/orders" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-primary); font-weight: 600; background: var(--color-border-subtle);">
                             Đơn hàng của tôi
                         </a>
                         <a href="javascript:void(0)" onclick="LUNEA.showToast('Bạn chưa có voucher nào mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
@@ -65,7 +65,7 @@
                 <!-- Right Content: Đơn hàng của tôi (Page 11 PDF) -->
                 <div>
                     <div style="margin-bottom: 28px;">
-                        <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; margin-bottom: 6px; color: #fff;">
+                        <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; margin-bottom: 6px; color: var(--color-text-primary);">
                             Đơn hàng của tôi
                         </h1>
                         <p style="font-size: 0.92rem; color: var(--color-text-muted);">
@@ -74,9 +74,9 @@
                     </div>
 
                     <!-- Status Tabs (Page 11 PDF) -->
-                    <div style="display: flex; gap: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 24px; font-size: 0.9rem;">
+                    <div style="display: flex; gap: 24px; border-bottom: 1px solid var(--color-border-subtle); margin-bottom: 24px; font-size: 0.9rem;">
                         <button type="button" class="order-filter-tab active" onclick="filterOrderList('ALL', this)" 
-                                style="background: none; border: none; padding: 10px 0; color: #fff; font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--color-gold-primary);">
+                                style="background: none; border: none; padding: 10px 0; color: var(--color-text-primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--color-gold-primary);">
                             Tất cả
                         </button>
                         <button type="button" class="order-filter-tab" onclick="filterOrderList('PENDING', this)" 
@@ -98,9 +98,9 @@
                     </div>
 
                     <!-- Orders Table (Page 11 PDF) -->
-                    <div style="background: #0f141f; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); overflow: hidden;">
+                    <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-card);">
                         <!-- Header -->
-                        <div style="display: grid; grid-template-columns: 2fr 1.2fr 1.5fr 1.5fr 40px; padding: 14px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); font-weight: 600;">
+                        <div style="display: grid; grid-template-columns: 2fr 1.2fr 1.5fr 1.5fr 40px; padding: 14px 24px; border-bottom: 1px solid var(--color-border-subtle); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); font-weight: 600;">
                             <div>Mã đơn / Ngày đặt</div>
                             <div>Số lượng</div>
                             <div>Trạng thái</div>
@@ -112,9 +112,9 @@
                         <div id="ordersTableBody">
                             <a th:each="o : ${orders}" th:href="@{/account/orders/{id}(id=${o.id})}" 
                                class="order-row-link" th:data-status="${o.status.name()}"
-                               style="display: grid; grid-template-columns: 2fr 1.2fr 1.5fr 1.5fr 40px; padding: 18px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); align-items: center; color: inherit; transition: background var(--duration-fast);">
+                               style="display: grid; grid-template-columns: 2fr 1.2fr 1.5fr 1.5fr 40px; padding: 18px 24px; border-bottom: 1px solid var(--color-border-subtle); align-items: center; color: inherit; transition: background var(--duration-fast);">
                                 <div>
-                                    <div style="font-weight: 600; color: #fff; font-size: 0.95rem;" 
+                                    <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.95rem;" 
                                          th:text="${o.orderCode != null ? ('#' + o.orderCode) : ('#' + o.id)}">#LN26092401</div>
                                     <div style="font-size: 0.78rem; color: var(--color-text-muted);" 
                                          th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy')}">24/09/2026</div>
@@ -143,7 +143,7 @@
                                     </span>
                                 </div>
 
-                                <div style="font-weight: 600; color: #fff; font-size: 0.95rem;" 
+                                <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.95rem;" 
                                      th:text="${#numbers.formatDecimal(o.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
                                     4.322.000 ₫
                                 </div>
@@ -176,7 +176,7 @@
                 b.style.fontWeight = 'normal';
                 b.style.borderBottom = 'none';
             });
-            btn.style.color = '#fff';
+            btn.style.color = 'var(--color-text-primary)';
             btn.style.fontWeight = '600';
             btn.style.borderBottom = '2px solid var(--color-gold-primary)';
 
