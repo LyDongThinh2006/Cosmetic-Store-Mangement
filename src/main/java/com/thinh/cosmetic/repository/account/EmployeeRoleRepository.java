@@ -5,7 +5,7 @@ import com.thinh.cosmetic.domain.entity.account.EmployeeRoleId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-public interface EmployeeRoleRepository extends JpaRepository<EmployeeRoleEntity, EmployeeRoleId> {
+public interface EmployeeRoleRepository extends JpaRepository<EmployeeRoleEntity, Long> {
     List<EmployeeRoleEntity> findByEmployeeId(Long employeeId);
     void deleteByEmployeeId(Long employeeId);
 }

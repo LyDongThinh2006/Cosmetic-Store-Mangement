@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface InventoryRepository extends JpaRepository<InventoryEntity, Long> {
     List<InventoryEntity> findByStoreId(Long storeId);
     Optional<InventoryEntity> findByStoreIdAndSkuId(Long storeId, Long skuId);
+    List<InventoryEntity> findBySkuId(Long skuId);
 
     @Query("SELECT i FROM InventoryEntity i WHERE i.store.id = :storeId AND i.actualStock <= i.minimumStock")
     List<InventoryEntity> findLowStock(@Param("storeId") Long storeId);
