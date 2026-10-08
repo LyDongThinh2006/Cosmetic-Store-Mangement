@@ -9,10 +9,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.thinh.cosmetic.service.account.CustomerService;
+import com.thinh.cosmetic.service.order.OrderService;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AccountPageController {
+
+    private final CustomerService customerService;
+    private final OrderService orderService;
 
     @GetMapping("/account")
     public String account() {
@@ -26,6 +32,13 @@ public class AccountPageController {
         model.addAttribute("activeTab", "profile");
         if (principal != null) {
             model.addAttribute("currentUser", principal);
+            Long customerId = principal.getCustomerId() != null ? principal.getCustomerId() : 1L;
+            try {
+                model.addAttribute("customer", customerService.getProfile(customerId));
+                model.addAttribute("addresses", customerService.getAddresses(customerId));
+            } catch (Exception e) {
+                log.warn("Failed to load customer profile for ID {}: {}", customerId, e.getMessage());
+            }
         }
         return "account/profile";
     }
@@ -37,6 +50,12 @@ public class AccountPageController {
         model.addAttribute("activeTab", "orders");
         if (principal != null) {
             model.addAttribute("currentUser", principal);
+            Long customerId = principal.getCustomerId() != null ? principal.getCustomerId() : 1L;
+            try {
+                model.addAttribute("orders", orderService.getByCustomer(customerId));
+            } catch (Exception e) {
+                log.warn("Failed to load orders for customer ID {}: {}", customerId, e.getMessage());
+            }
         }
         return "account/orders";
     }
@@ -53,6 +72,11 @@ public class AccountPageController {
         model.addAttribute("orderId", id);
         if (principal != null) {
             model.addAttribute("currentUser", principal);
+        }
+        try {
+            model.addAttribute("order", orderService.getById(id));
+        } catch (Exception e) {
+            log.warn("Failed to load order with ID {}: {}", id, e.getMessage());
         }
         return "account/order-detail";
     }

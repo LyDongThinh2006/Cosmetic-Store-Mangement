@@ -9,10 +9,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.thinh.cosmetic.service.account.CustomerService;
+import com.thinh.cosmetic.service.cart.CartService;
+import com.thinh.cosmetic.service.order.OrderService;
+import com.thinh.cosmetic.service.store.StoreService;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class CheckoutPageController {
+
+    private final CustomerService customerService;
+    private final CartService cartService;
+    private final StoreService storeService;
+    private final OrderService orderService;
 
     @GetMapping("/checkout")
     public String checkout(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
@@ -20,7 +30,15 @@ public class CheckoutPageController {
         model.addAttribute("activeNav", "checkout");
         if (principal != null) {
             model.addAttribute("currentUser", principal);
+            Long customerId = principal.getCustomerId() != null ? principal.getCustomerId() : 1L;
+            try {
+                model.addAttribute("addresses", customerService.getAddresses(customerId));
+                model.addAttribute("cart", cartService.getCart(customerId));
+            } catch (Exception e) {
+                log.warn("Failed to load checkout data: {}", e.getMessage());
+            }
         }
+        model.addAttribute("stores", storeService.getAll());
         return "checkout";
     }
 
@@ -36,6 +54,13 @@ public class CheckoutPageController {
         model.addAttribute("orderCode", finalOrderCode != null ? finalOrderCode : "");
         if (principal != null) {
             model.addAttribute("currentUser", principal);
+        }
+        if (finalOrderCode != null && !finalOrderCode.isBlank()) {
+            try {
+                model.addAttribute("order", orderService.getByOrderCode(finalOrderCode));
+            } catch (Exception e) {
+                log.warn("Failed to load order for code {}: {}", finalOrderCode, e.getMessage());
+            }
         }
         return "order-success";
     }

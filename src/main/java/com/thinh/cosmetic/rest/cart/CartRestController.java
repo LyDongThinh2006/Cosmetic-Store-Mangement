@@ -8,49 +8,67 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.thinh.cosmetic.security.AuthPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
 public class CartRestController {
     private final CartService cartService;
 
+    private Long resolveCustomerId(AuthPrincipal principal, Long customerId) {
+        if (principal != null && principal.getCustomerId() != null) {
+            return principal.getCustomerId();
+        }
+        if (customerId != null) {
+            return customerId;
+        }
+        return 1L;
+    }
+
     @GetMapping
     public ResponseEntity<CartResponse> getCart(
-            @RequestParam(required = false, defaultValue = "1") Long customerId
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestParam(required = false) Long customerId
     ) throws Exception {
-        return ResponseEntity.ok(cartService.getCart(customerId));
+        return ResponseEntity.ok(cartService.getCart(resolveCustomerId(principal, customerId)));
     }
 
     @PostMapping("/items")
     public ResponseEntity<CartResponse> addItem(
-            @RequestParam(required = false, defaultValue = "1") Long customerId,
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestParam(required = false) Long customerId,
             @Valid @RequestBody CartItemRequest request
     ) throws Exception {
-        return ResponseEntity.ok(cartService.addItem(customerId, request));
+        return ResponseEntity.ok(cartService.addItem(resolveCustomerId(principal, customerId), request));
     }
 
     @PutMapping("/items/{cartItemId}")
     public ResponseEntity<CartResponse> updateItemQuantity(
-            @RequestParam(required = false, defaultValue = "1") Long customerId,
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestParam(required = false) Long customerId,
             @PathVariable Long cartItemId,
             @RequestParam Integer quantity
     ) throws Exception {
-        return ResponseEntity.ok(cartService.updateItemQuantity(customerId, cartItemId, quantity));
+        return ResponseEntity.ok(cartService.updateItemQuantity(resolveCustomerId(principal, customerId), cartItemId, quantity));
     }
 
     @DeleteMapping("/items/{cartItemId}")
     public ResponseEntity<CartResponse> removeItem(
-            @RequestParam(required = false, defaultValue = "1") Long customerId,
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestParam(required = false) Long customerId,
             @PathVariable Long cartItemId
     ) throws Exception {
-        return ResponseEntity.ok(cartService.removeItem(customerId, cartItemId));
+        return ResponseEntity.ok(cartService.removeItem(resolveCustomerId(principal, customerId), cartItemId));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> clearCart(
-            @RequestParam(required = false, defaultValue = "1") Long customerId
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestParam(required = false) Long customerId
     ) throws Exception {
-        cartService.clearCart(customerId);
+        cartService.clearCart(resolveCustomerId(principal, customerId));
         return ResponseEntity.noContent().build();
     }
 }

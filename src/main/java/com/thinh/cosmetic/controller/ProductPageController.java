@@ -10,10 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.thinh.cosmetic.domain.dto.response.catalog.ProductResponse;
+import com.thinh.cosmetic.service.catalog.BrandService;
+import com.thinh.cosmetic.service.catalog.CategoryService;
+import com.thinh.cosmetic.service.catalog.ProductService;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ProductPageController {
+
+    private final ProductService productService;
+    private final BrandService brandService;
+    private final CategoryService categoryService;
 
     @GetMapping("/products")
     public String productList(
@@ -38,6 +47,9 @@ public class ProductPageController {
         model.addAttribute("priceRange", priceRange);
         model.addAttribute("sortBy", sortBy != null ? sortBy : "newest");
         model.addAttribute("currentPage", page);
+        model.addAttribute("brands", brandService.getAll());
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("products", productService.getAll());
         if (principal != null) {
             model.addAttribute("currentUser", principal);
         }
@@ -50,9 +62,16 @@ public class ProductPageController {
             @AuthenticationPrincipal AuthPrincipal principal,
             Model model
     ) {
-        model.addAttribute("pageTitle", "Chi Tiết Sản Phẩm | LUNEA");
+        ProductResponse product = null;
+        try {
+            product = productService.getById(id);
+        } catch (Exception e) {
+            log.warn("Product not found with id: {}", id);
+        }
+        model.addAttribute("pageTitle", product != null ? product.getName() + " | LUNEA" : "Chi Tiết Sản Phẩm | LUNEA");
         model.addAttribute("activeNav", "products");
         model.addAttribute("productId", id);
+        model.addAttribute("product", product);
         if (principal != null) {
             model.addAttribute("currentUser", principal);
         }

@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface OrderService {
     OrderResponse placeOrder(Long customerId, OrderRequest request) throws Exception;
+    OrderResponse previewOrder(Long customerId, OrderRequest request) throws Exception;
     OrderResponse getById(Long id) throws Exception;
+    OrderResponse getByOrderCode(String orderCode) throws Exception;
     List<OrderResponse> getByCustomer(Long customerId);
     List<OrderResponse> getAll();
     OrderResponse updateStatus(Long id, OrderStatus status) throws Exception;

@@ -22,6 +22,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
+import com.thinh.cosmetic.repository.store.InventoryRepository;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -31,6 +35,7 @@ public class CartServiceImpl implements CartService {
     private final CustomerRepository customerRepository;
     private final ProductSkuRepository skuRepository;
     private final ProductImageRepository productImageRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Override
     public CartResponse getCart(Long customerId) throws Exception {
@@ -47,8 +52,19 @@ public class CartServiceImpl implements CartService {
         CartItemEntity item = cartItemRepository.findByCartIdAndSkuId(cart.getId(), sku.getId())
                 .orElse(null);
 
+        int totalAvailable = inventoryRepository.findBySkuId(sku.getId())
+                .stream()
+                .mapToInt(inv -> Math.max(0, inv.getActualStock() - inv.getHeldQuantity()))
+                .sum();
+
+        int targetQuantity = (item != null ? item.getQuantity() : 0) + request.getQuantity();
+        if (targetQuantity > totalAvailable) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
+                    "Tồn kho không đủ! Sản phẩm chỉ còn " + totalAvailable + " sản phẩm khả dụng trên toàn hệ thống.");
+        }
+
         if (item != null) {
-            item.setQuantity(item.getQuantity() + request.getQuantity());
+            item.setQuantity(targetQuantity);
             cartItemRepository.save(item);
         } else {
             item = CartItemEntity.builder()
@@ -71,6 +87,14 @@ public class CartServiceImpl implements CartService {
         if (quantity <= 0) {
             cartItemRepository.delete(item);
         } else {
+            int totalAvailable = inventoryRepository.findBySkuId(item.getSku().getId())
+                    .stream()
+                    .mapToInt(inv -> Math.max(0, inv.getActualStock() - inv.getHeldQuantity()))
+                    .sum();
+            if (quantity > totalAvailable) {
+                throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
+                        "Tồn kho không đủ! Sản phẩm chỉ còn " + totalAvailable + " sản phẩm khả dụng trên toàn hệ thống.");
+            }
             item.setQuantity(quantity);
             cartItemRepository.save(item);
         }

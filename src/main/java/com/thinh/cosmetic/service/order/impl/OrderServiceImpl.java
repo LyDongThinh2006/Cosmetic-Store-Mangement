@@ -73,16 +73,49 @@ public class OrderServiceImpl implements OrderService {
             subtotal = subtotal.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
+        String voucher = request.getVoucherCode() != null ? request.getVoucherCode().trim().toUpperCase() : "";
         BigDecimal discountAmount = BigDecimal.ZERO;
-
-        // Free shipping if subtotal >= 500,000 VND; else 30,000 VND
         BigDecimal freeShippingThreshold = new BigDecimal("500000");
         BigDecimal shippingFee = subtotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : new BigDecimal("30000");
+
+        if ("LUNEA10".equals(voucher)) {
+            discountAmount = subtotal.multiply(new BigDecimal("0.10")).min(new BigDecimal("100000"));
+        } else if ("GIAM50K".equals(voucher)) {
+            discountAmount = new BigDecimal("50000");
+        } else if ("FREESHIP".equals(voucher)) {
+            shippingFee = BigDecimal.ZERO;
+        }
         BigDecimal totalAmount = subtotal.subtract(discountAmount).add(shippingFee).max(BigDecimal.ZERO);
 
-        StoreEntity assignedStore = storeRepository.findAll().stream().findFirst().orElse(null);
+        StoreEntity assignedStore = null;
+        if (request.getFulfillmentStoreId() != null) {
+            assignedStore = storeRepository.findById(request.getFulfillmentStoreId()).orElse(null);
+        }
+        if (assignedStore == null) {
+            List<StoreEntity> stores = storeRepository.findAll();
+            for (StoreEntity store : stores) {
+                boolean canFulfillAll = true;
+                for (CartItemEntity item : cartItems) {
+                    var inv = inventoryRepository.findByStoreIdAndSkuId(store.getId(), item.getSku().getId());
+                    if (inv.isEmpty() || (inv.get().getActualStock() - inv.get().getHeldQuantity()) < item.getQuantity()) {
+                        canFulfillAll = false;
+                        break;
+                    }
+                }
+                if (canFulfillAll) {
+                    assignedStore = store;
+                    break;
+                }
+            }
+            if (assignedStore == null && !stores.isEmpty()) {
+                assignedStore = stores.get(0);
+            }
+        }
+
+        String orderCode = "LUN-" + (int)(Math.random() * 900000 + 100000);
 
         OrderEntity order = OrderEntity.builder()
+                .orderCode(orderCode)
                 .customer(customer)
                 .assignedStore(assignedStore)
                 .recipientName(address.getRecipientName())
@@ -97,7 +130,6 @@ public class OrderServiceImpl implements OrderService {
                 .totalAmount(totalAmount)
                 .status(OrderStatus.PENDING)
                 .paymentMethod(request.getPaymentMethod())
-
                 .note(request.getNote())
                 .build();
         order = orderRepository.save(order);
@@ -146,9 +178,73 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
+    public OrderResponse previewOrder(Long customerId, OrderRequest request) throws Exception {
+        CustomerEntity customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new Exception("Customer not found: " + customerId));
+
+        CartEntity cart = cartRepository.findByCustomerId(customerId)
+                .orElseThrow(() -> new Exception("Cart not found for customer"));
+
+        List<CartItemEntity> cartItems = cartItemRepository.findByCartId(cart.getId());
+        if (cartItems.isEmpty()) {
+            throw new Exception("Cart is empty");
+        }
+
+        BigDecimal subtotal = BigDecimal.ZERO;
+        List<OrderItemResponse> itemResponses = new ArrayList<>();
+        for (CartItemEntity item : cartItems) {
+            ProductSkuEntity sku = item.getSku();
+            BigDecimal price = sku.getPrice() != null ? sku.getPrice() : BigDecimal.ZERO;
+            BigDecimal lineTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
+            subtotal = subtotal.add(lineTotal);
+
+            itemResponses.add(OrderItemResponse.builder()
+                    .id(item.getId())
+                    .skuId(sku.getId())
+                    .productName(sku.getProduct().getName())
+                    .variantName(sku.getVariantName())
+                    .price(price)
+                    .quantity(item.getQuantity())
+                    .subtotal(lineTotal)
+                    .build());
+        }
+
+        String voucher = request.getVoucherCode() != null ? request.getVoucherCode().trim().toUpperCase() : "";
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        BigDecimal freeShippingThreshold = new BigDecimal("500000");
+        BigDecimal shippingFee = subtotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : new BigDecimal("30000");
+
+        if ("LUNEA10".equals(voucher)) {
+            discountAmount = subtotal.multiply(new BigDecimal("0.10")).min(new BigDecimal("100000"));
+        } else if ("GIAM50K".equals(voucher)) {
+            discountAmount = new BigDecimal("50000");
+        } else if ("FREESHIP".equals(voucher)) {
+            shippingFee = BigDecimal.ZERO;
+        }
+        BigDecimal totalAmount = subtotal.subtract(discountAmount).add(shippingFee).max(BigDecimal.ZERO);
+
+        return OrderResponse.builder()
+                .subtotal(subtotal)
+                .discountAmount(discountAmount)
+                .shippingFee(shippingFee)
+                .totalAmount(totalAmount)
+                .items(itemResponses)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public OrderResponse getById(Long id) throws Exception {
         OrderEntity order = orderRepository.findById(id)
                 .orElseThrow(() -> new Exception("Order not found: " + id));
+        return toResponse(order);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getByOrderCode(String orderCode) throws Exception {
+        OrderEntity order = orderRepository.findByOrderCode(orderCode)
+                .orElseThrow(() -> new Exception("Order not found with code: " + orderCode));
         return toResponse(order);
     }
 
@@ -246,18 +342,28 @@ public class OrderServiceImpl implements OrderService {
 
         return OrderResponse.builder()
                 .id(o.getId())
+                .orderCode(o.getOrderCode())
+                .customerId(o.getCustomer() != null ? o.getCustomer().getId() : null)
+                .customerName(o.getCustomer() != null ? o.getCustomer().getFullName() : null)
+                .fulfillmentStoreId(o.getAssignedStore() != null ? o.getAssignedStore().getId() : null)
+                .fulfillmentStoreName(o.getAssignedStore() != null ? o.getAssignedStore().getName() : null)
                 .recipientName(o.getRecipientName())
                 .recipientPhone(o.getRecipientPhone())
-                .shippingAddress(o.getShippingAddress() + ", " + o.getWard() + ", " + o.getDistrict() + ", " + o.getProvince())
+                .shippingAddress(o.getShippingAddress() + (o.getWard() != null ? ", " + o.getWard() : "") + (o.getDistrict() != null ? ", " + o.getDistrict() : "") + (o.getProvince() != null ? ", " + o.getProvince() : ""))
+                .ward(o.getWard())
+                .district(o.getDistrict())
+                .province(o.getProvince())
                 .subtotal(o.getSubtotal())
                 .discountAmount(o.getDiscountAmount())
                 .shippingFee(o.getShippingFee())
                 .totalAmount(o.getTotalAmount())
                 .status(o.getStatus())
                 .paymentMethod(o.getPaymentMethod())
-
                 .note(o.getNote())
                 .createdAt(o.getCreatedAt())
+                .confirmedAt(o.getConfirmedAt())
+                .completedAt(o.getCompletedAt())
+                .cancelledAt(o.getCancelledAt())
                 .items(itemResponses)
                 .build();
     }

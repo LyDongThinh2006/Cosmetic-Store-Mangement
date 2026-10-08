@@ -15,7 +15,7 @@ import org.mapstruct.ReportingPolicy;
                 BrandMapper.class,
                 CategoryMapper.class
         },
-        unmappedTargetPolicy = ReportingPolicy.ERROR
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface ProductMapper {
 

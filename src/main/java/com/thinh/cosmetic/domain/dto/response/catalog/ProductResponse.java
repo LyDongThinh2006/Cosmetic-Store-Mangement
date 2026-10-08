@@ -33,5 +33,25 @@ public class ProductResponse {
 
     private ActiveStatus status;
 
+    private String imageUrl;
+
+    private java.util.List<String> imageUrls;
+
+    private java.math.BigDecimal minPrice;
+
+    private java.math.BigDecimal maxPrice;
+
+    private java.math.BigDecimal listPrice;
+
+    private Integer totalAvailableStock;
+
+    private Boolean inStock;
+
+    private java.util.List<ProductSkuResponse> skus;
+
+    private java.util.List<String> skinTypes;
+
+    private java.util.List<String> concerns;
+
     private LocalDateTime createdAt;
 }
