@@ -24,6 +24,8 @@
     <!-- Properties -->
     <properties>
         <java.version>25</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <lombok.version>1.18.48</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -239,6 +241,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
 
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <annotationProcessorPaths>
 
                         <!-- Lombok -->
