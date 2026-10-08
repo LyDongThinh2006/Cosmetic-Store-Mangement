@@ -30,7 +30,8 @@
                         <div th:each="imgUrl, iter : ${product.imageUrls}" 
                              class="gallery-thumb-item" 
                              th:classappend="${iter.first} ? 'active' : ''"
-                             th:onclick="'switchImage(\'' + ${imgUrl} + '\', this)'">
+                             th:attr="data-img=${imgUrl}"
+                             onclick="switchImage(this.getAttribute('data-img'), this)">
                             <img th:src="${imgUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     </div>

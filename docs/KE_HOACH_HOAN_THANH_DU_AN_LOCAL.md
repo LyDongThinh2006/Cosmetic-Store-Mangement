@@ -38,7 +38,7 @@
 - [x] **DataSeeder tự động:** Đã có `DataSeeder.java` nạp đủ 5 tài khoản demo, 3 chi nhánh, 5 thương hiệu, 10 sản phẩm, 16 SKUs, 48 bản ghi tồn kho và 3 voucher.
 - [x] **Web Page Controllers (`@Controller`):** Đã tạo đầy đủ 7 Controller điều hướng Thymeleaf (`HomeController`, `ProductPageController`, `AuthPageController`, `CartPageController`, `CheckoutPageController`, `AccountPageController`, `AdminPageController`, `CustomErrorController`).
 - [x] **Giao diện Khách hàng (Thymeleaf Templates):** Đã hoàn thành 10 màn hình khách hàng theo thiết kế Moonlight Dark Luxury (`home`, `product-list`, `product-detail`, `cart`, `checkout`, `order-success`, `stores`, `brands`, `orders`, `order-detail`, `profile`, `login`, `register`).
-- [ ] **Giao diện Quản trị Back-office:** Cần tạo layout Admin và các trang xử lý đơn hàng theo chi nhánh, điều chỉnh tồn kho có log, quản lý sản phẩm.
+- [x] **Giao diện Quản trị Back-office:** Đã tạo layout Admin, stylesheet Dark Luxury (`admin.css`), thanh điều hướng phân quyền, Dashboard KPI, trang xử lý đơn hàng theo chi nhánh & máy trạng thái (`orders.html`, `order-detail.html`), trang tra cứu & điều chỉnh tồn kho (`inventory.html`), trang quản lý sản phẩm chuỗi (`products.html`).
 - [x] **Static Assets:** Đã tạo bảng màu CSS Tokens (`tokens.css`), stylesheet Moonlight (`site.css`), client JS API wrapper (`api.js`), dữ liệu vị trí hành chính (`vn-locations.json`).
 
 ---
@@ -205,11 +205,11 @@ Bảng dưới đây được cấu hình dạng Checklist (`- [x]` và `- [ ]`)
 | **P3: Templates** | `checkout.html` | - [x] | Thanh toán COD, địa chỉ động, áp voucher LUNEA10 |
 | **P3: Templates** | `order-success.html` | - [x] | Hiển thị mã đơn LUN-XXXXXX và chi nhánh giữ hàng |
 | **P3: Templates** | `account/orders.html` & `account/order-detail.html` | - [x] | Lịch sử mua hàng, nút hủy đơn giải phóng tồn |
-| **P3: Templates** | `auth/login.html` & `auth/register.html` | - [x] | Đăng nhập/Đăng ký tài khoản, nút điền nhanh demo |
-| **P4: Back-office** | `admin/_layout.html` & `admin.css` | - [ ] | Layout sidebar phân quyền |
-| **P4: Back-office** | `admin/orders.html` & `order-detail.html` | - [ ] | Xử lý đơn hàng theo chi nhánh |
-| **P4: Back-office** | `admin/inventory.html` | - [ ] | Tra cứu tồn kho & modal điều chỉnh |
-| **P4: Back-office** | `admin/products.html` | - [ ] | Danh sách sản phẩm chuỗi |
+| **P4: Back-office** | `admin/fragments/sidebar.html`, `topbar.html`, `admin.css` | - [x] | Layout sidebar & topbar phân quyền theo vai trò/chi nhánh |
+| **P4: Back-office** | `admin/dashboard.html` | - [x] | Dashboard KPI: Doanh thu, Đơn chờ, Gói/giao, Cảnh báo kho |
+| **P4: Back-office** | `admin/orders.html` & `order-detail.html` | - [x] | Xử lý đơn hàng theo chi nhánh & máy trạng thái (trừ tồn khi giao) |
+| **P4: Back-office** | `admin/inventory.html` | - [x] | Tra cứu tồn kho chi nhánh & modal điều chỉnh (chặn < held) |
+| **P4: Back-office** | `admin/products.html` | - [x] | Danh sách sản phẩm, SKU biến thể & giá bán toàn chuỗi |
 | **P5: Kiểm thử** | Chạy thử toàn bộ kịch bản 16 bước | - [ ] | Xác thực không còn lỗi luồng |
 
 ---
