@@ -42,6 +42,10 @@ public class InventoryServiceImpl implements InventoryService {
         InventoryEntity inv = inventoryRepository.findByStoreIdAndSkuId(request.getStoreId(), request.getSkuId())
                 .orElseThrow(() -> new Exception("Inventory record not found"));
 
+        if (request.getNewQuantity() < inv.getHeldQuantity()) {
+            throw new Exception("Số lượng thực tế không được nhỏ hơn số lượng đang giữ cho khách (" + inv.getHeldQuantity() + " sản phẩm)");
+        }
+
         InventoryAdjustmentEntity adj = InventoryAdjustmentEntity.builder()
                 .store(inv.getStore())
                 .sku(inv.getSku())

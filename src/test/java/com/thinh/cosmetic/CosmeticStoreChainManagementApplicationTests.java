@@ -9,5 +9,4 @@ class CosmeticStoreChainManagementApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

@@ -39,17 +39,20 @@ public class ProductEntity {
     @Column(name = "name", nullable = false, length = 200)
     private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "description")
     private String description;
 
     @Size(max = 100, message = "Origin must not exceed 100 characters")
     @Column(name = "origin", length = 100)
     private String origin;
 
-    @Column(name = "main_ingredients", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "main_ingredients")
     private String mainIngredients;
 
-    @Column(name = "benefits", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "benefits")
     private String uses;
 
     @NotNull(message = "IsFeatured flag cannot be null")

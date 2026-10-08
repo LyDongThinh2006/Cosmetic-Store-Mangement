@@ -13,6 +13,7 @@ public interface OrderService {
     OrderResponse getByOrderCode(String orderCode) throws Exception;
     List<OrderResponse> getByCustomer(Long customerId);
     List<OrderResponse> getAll();
+    List<OrderResponse> getOrders(com.thinh.cosmetic.security.AuthPrincipal principal, Long storeId);
     OrderResponse updateStatus(Long id, OrderStatus status) throws Exception;
     OrderResponse cancelOrder(Long id, Long customerId) throws Exception;
 }

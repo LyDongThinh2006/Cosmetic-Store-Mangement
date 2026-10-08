@@ -23,7 +23,7 @@ public class StoreScope {
 
         boolean hasAllStores = principal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch("ALL_STORES"::equals);
+                .anyMatch(a -> "ALL_STORES".equals(a) || "ROLE_ADMIN".equals(a) || "ADMIN".equals(a));
 
         if (hasAllStores) {
             return null; // Null signifies all stores are accessible

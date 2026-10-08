@@ -43,7 +43,8 @@ public class ReturnRequestEntity {
     @Column(name = "reason", nullable = false, length = 255)
     private String reason;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "description")
     private String description;
 
     @NotNull(message = "Status cannot be null")

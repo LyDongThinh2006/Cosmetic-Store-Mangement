@@ -73,8 +73,11 @@ public class OrderRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAll() {
-        return ResponseEntity.ok(orderService.getAll());
+    public ResponseEntity<List<OrderResponse>> getAll(
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestParam(required = false) Long storeId
+    ) {
+        return ResponseEntity.ok(orderService.getOrders(principal, storeId));
     }
 
     @PutMapping("/{id}/status")

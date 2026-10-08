@@ -69,6 +69,13 @@ public class AppUserDetailsService implements UserDetailsService {
 
             if (employee != null) {
                 List<EmployeeRoleEntity> employeeRoles = employeeRoleRepository.findByEmployeeId(employee.getId());
+                for (EmployeeRoleEntity er : employeeRoles) {
+                    if (er.getRole() != null && er.getRole().getName() != null) {
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + er.getRole().getName()));
+                        authorities.add(new SimpleGrantedAuthority(er.getRole().getName()));
+                    }
+                }
+
                 List<Long> roleIds = employeeRoles.stream()
                         .filter(er -> er.getRole() != null && er.getRole().getId() != null)
                         .map(er -> er.getRole().getId())

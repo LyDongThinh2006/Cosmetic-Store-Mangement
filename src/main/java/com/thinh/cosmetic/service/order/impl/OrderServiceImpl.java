@@ -27,6 +27,9 @@ import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
 import com.thinh.cosmetic.service.order.OrderService;
 
+import com.thinh.cosmetic.security.AuthPrincipal;
+import com.thinh.cosmetic.security.StoreScope;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final StoreRepository storeRepository;
     private final InventoryRepository inventoryRepository;
+    private final StoreScope storeScope;
 
 
     @Override
@@ -258,7 +262,41 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> getAll() {
-        return orderRepository.findAll().stream().map(this::toResponse).toList();
+        return orderRepository.findAllByOrderByCreatedAtDesc().stream().map(this::toResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getOrders(AuthPrincipal principal, Long requestedStoreId) {
+        if (principal == null) {
+            return getAll();
+        }
+
+        List<Long> accessibleIds = storeScope.getAccessibleStoreIds(principal);
+        if (accessibleIds == null) {
+            // Admin or ALL_STORES
+            if (requestedStoreId != null) {
+                return orderRepository.findByAssignedStoreIdOrderByCreatedAtDesc(requestedStoreId)
+                        .stream().map(this::toResponse).toList();
+            }
+            return orderRepository.findAllByOrderByCreatedAtDesc()
+                    .stream().map(this::toResponse).toList();
+        }
+
+        if (accessibleIds.isEmpty()) {
+            return List.of();
+        }
+
+        if (requestedStoreId != null) {
+            if (!accessibleIds.contains(requestedStoreId)) {
+                return List.of();
+            }
+            return orderRepository.findByAssignedStoreIdOrderByCreatedAtDesc(requestedStoreId)
+                    .stream().map(this::toResponse).toList();
+        }
+
+        return orderRepository.findByAssignedStoreIdInOrderByCreatedAtDesc(accessibleIds)
+                .stream().map(this::toResponse).toList();
     }
 
     @Override
@@ -271,9 +309,11 @@ public class OrderServiceImpl implements OrderService {
 
         if (status == OrderStatus.CONFIRMED) {
             order.setConfirmedAt(LocalDateTime.now());
-        } else if (status == OrderStatus.COMPLETED) {
-            order.setCompletedAt(LocalDateTime.now());
-            // Deduct stock
+        } else if (status == OrderStatus.SHIPPING || status == OrderStatus.COMPLETED) {
+            if (status == OrderStatus.COMPLETED) {
+                order.setCompletedAt(LocalDateTime.now());
+            }
+            // Deduct actual stock on shipping or completed if not already committed
             List<OrderReservationEntity> holds = stockHoldRepository.findByOrderId(id);
             for (OrderReservationEntity hold : holds) {
                 if (hold.getStatus() == ReservationStatus.HELD) {

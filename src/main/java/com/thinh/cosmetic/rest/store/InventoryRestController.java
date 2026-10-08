@@ -37,9 +37,13 @@ public class InventoryRestController {
     @PostMapping("/adjust")
     public ResponseEntity<InventoryResponse> adjustStock(
             @Valid @RequestBody InventoryAdjustmentRequest request,
-            @RequestParam(required = false, defaultValue = "1") Long employeeId
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.thinh.cosmetic.security.AuthPrincipal principal,
+            @RequestParam(required = false) Long employeeId
     ) throws Exception {
-        return ResponseEntity.ok(inventoryService.adjustStock(request, employeeId));
+        Long empId = (principal != null && principal.getEmployeeId() != null)
+                ? principal.getEmployeeId()
+                : (employeeId != null ? employeeId : 1L);
+        return ResponseEntity.ok(inventoryService.adjustStock(request, empId));
     }
 
     @GetMapping("/store/{storeId}/sku/{skuId}/available")

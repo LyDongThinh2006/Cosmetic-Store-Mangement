@@ -81,8 +81,13 @@ public class SecurityConfig {
                 .addFilterBefore(xRequestedWithFilter, BearerTokenAuthenticationFilter.class)
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/admin", "/admin/**", "/api/admin/**").hasAuthority("ROLE_EMPLOYEE")
+                        .requestMatchers("/api/inventory/**").hasAuthority("ROLE_EMPLOYEE")
+                        .requestMatchers("/api/orders/{id}/status").hasAuthority("ROLE_EMPLOYEE")
+                        .requestMatchers("/api/orders/my-orders", "/api/orders/preview").hasAuthority("ROLE_CUSTOMER")
+                        .requestMatchers("/api/orders/{id}/cancel").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/cart", "/checkout", "/order-success", "/account", "/account/**",
-                                "/api/cart/**", "/api/checkout/**", "/api/orders/**").hasAuthority("ROLE_CUSTOMER")
+                                "/api/cart/**", "/api/checkout/**").hasAuthority("ROLE_CUSTOMER")
+                        .requestMatchers("/api/orders", "/api/orders/**").authenticated()
                         .requestMatchers("/api/account/**").authenticated()
                         .anyRequest().permitAll()
                 )
