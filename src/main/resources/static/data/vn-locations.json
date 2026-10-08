@@ -1,0 +1,79 @@
+[
+  {
+    "province": "Hồ Chí Minh",
+    "districts": [
+      {
+        "district": "Quận 1",
+        "wards": ["Phường Bến Nghé", "Phường Bến Thành", "Phường Đa Kao", "Phường Tân Định", "Phường Nguyễn Thái Bình"]
+      },
+      {
+        "district": "Quận 3",
+        "wards": ["Phường Võ Thị Sáu", "Phường 1", "Phường 2", "Phường 3", "Phường 4"]
+      },
+      {
+        "district": "Quận Bình Thạnh",
+        "wards": ["Phường 1", "Phường 2", "Phường 19", "Phường 25", "Phường 26"]
+      },
+      {
+        "district": "Thành phố Thủ Đức",
+        "wards": ["Phường Thảo Điền", "Phường An Phú", "Phường Linh Trung", "Phường Hiệp Phú"]
+      }
+    ]
+  },
+  {
+    "province": "Hà Nội",
+    "districts": [
+      {
+        "district": "Quận Cầu Giấy",
+        "wards": ["Phường Quan Hoa", "Phường Dịch Vọng", "Phường Nghĩa Đô", "Phường Mai Dịch", "Phường Yên Hòa"]
+      },
+      {
+        "district": "Quận Hoàn Kiếm",
+        "wards": ["Phường Tràng Tiền", "Phường Hàng Bạc", "Phường Hàng Bài", "Phường Lý Thái Tổ"]
+      },
+      {
+        "district": "Quận Đống Đa",
+        "wards": ["Phường Láng Hạ", "Phường Ô Chợ Dừa", "Phường Cát Linh", "Phường Văn Miếu"]
+      },
+      {
+        "district": "Quận Ba Đình",
+        "wards": ["Phường Kim Mã", "Phường Liễu Giai", "Phường Điện Biên", "Phường Đội Cấn"]
+      }
+    ]
+  },
+  {
+    "province": "Đà Nẵng",
+    "districts": [
+      {
+        "district": "Quận Hải Châu",
+        "wards": ["Phường Hải Châu 1", "Phường Hải Châu 2", "Phường Thạch Thang", "Phường Thuận Phước"]
+      },
+      {
+        "district": "Quận Sơn Trà",
+        "wards": ["Phường An Hải Bắc", "Phường An Hải Tây", "Phường Phước Mỹ", "Phường Thọ Quang"]
+      },
+      {
+        "district": "Quận Thanh Khê",
+        "wards": ["Phường Vĩnh Trung", "Phường Tân Chính", "Phường Thạc Gián"]
+      }
+    ]
+  },
+  {
+    "province": "Cần Thơ",
+    "districts": [
+      {
+        "district": "Quận Ninh Kiều",
+        "wards": ["Phường Tân An", "Phường An Cư", "Phường An Khánh", "Phường Xuân Khánh"]
+      }
+    ]
+  },
+  {
+    "province": "Hải Phòng",
+    "districts": [
+      {
+        "district": "Quận Hồng Bàng",
+        "wards": ["Phường Hoàng Văn Thụ", "Phường Minh Khai", "Phường Phan Bội Châu"]
+      }
+    ]
+  }
+]

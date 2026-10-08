@@ -1,0 +1,84 @@
+/**
+ * LUNEA Design Tokens - Moonlight Luxury Aesthetic
+ */
+:root {
+    /* Color Palette - Midnight Obsidian & Moonlight Gold */
+    --color-bg-base: #07090e;
+    --color-bg-elevated: #0d111a;
+    --color-bg-card: #121824;
+    --color-bg-card-hover: #172030;
+    --color-bg-glass: rgba(18, 24, 36, 0.75);
+    --color-bg-glass-heavy: rgba(11, 15, 23, 0.88);
+    --color-bg-subtle: rgba(255, 255, 255, 0.04);
+    
+    /* Hairline Borders */
+    --color-border-subtle: rgba(255, 255, 255, 0.08);
+    --color-border-medium: rgba(255, 255, 255, 0.14);
+    --color-border-gold: rgba(212, 175, 55, 0.35);
+    --color-border-gold-glow: rgba(212, 175, 55, 0.7);
+
+    /* Gold Gradient & Accents */
+    --color-gold-light: #fae8a4;
+    --color-gold-primary: #d4af37;
+    --color-gold-dark: #a67c1e;
+    --color-gold-glow: rgba(212, 175, 55, 0.22);
+    --gradient-gold: linear-gradient(135deg, #fae8a4 0%, #d4af37 50%, #aa7c11 100%);
+    --gradient-gold-subtle: linear-gradient(135deg, rgba(250, 232, 164, 0.12) 0%, rgba(212, 175, 55, 0.05) 100%);
+    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+    --gradient-hero: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 175, 55, 0.15), rgba(7, 9, 14, 0));
+
+    /* Typography Colors */
+    --color-text-primary: #f8fafc;
+    --color-text-secondary: #94a3b8;
+    --color-text-muted: #64748b;
+    --color-text-gold: #d4af37;
+    --color-text-gold-light: #fae8a4;
+
+    /* Semantic Accents */
+    --color-success: #10b981;
+    --color-success-bg: rgba(16, 185, 129, 0.12);
+    --color-success-border: rgba(16, 185, 129, 0.3);
+
+    --color-danger: #f43f5e;
+    --color-danger-bg: rgba(244, 63, 94, 0.12);
+    --color-danger-border: rgba(244, 63, 94, 0.3);
+
+    --color-warning: #f59e0b;
+    --color-warning-bg: rgba(245, 158, 11, 0.12);
+    --color-warning-border: rgba(245, 158, 11, 0.3);
+
+    --color-info: #38bdf8;
+    --color-info-bg: rgba(56, 189, 248, 0.12);
+    --color-info-border: rgba(56, 189, 248, 0.3);
+
+    /* Typography Scales - Native Vietnamese diacritics */
+    --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+    /* Radii - Double Bezel Archetype */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+    --radius-outer-shell: 24px;
+    --radius-inner-core: 18px;
+
+    /* Elevation & Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+    --shadow-gold-glow: 0 0 25px rgba(212, 175, 55, 0.25);
+    --shadow-gold-glow-lg: 0 0 45px rgba(212, 175, 55, 0.35);
+
+    /* Motion & Transitions */
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 150ms;
+    --duration-base: 250ms;
+    --duration-slow: 400ms;
+
+    /* Spacing & Layout */
+    --container-max-width: 1240px;
+    --header-height: 76px;
+}
