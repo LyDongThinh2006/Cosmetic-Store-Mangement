@@ -1,18 +1,69 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Hệ Thống Cửa Hàng | LUNEA</title>
-</head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body data-page="stores">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Hệ Thống Cửa Hàng LUNEA</h1>
-        </header>
-        <main>
-            <p>Danh sách 3 chi nhánh LUNEA tại TP.HCM, Hà Nội, Đà Nẵng</p>
-        </main>
-    </div>
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Breadcrumbs -->
+            <div style="margin-bottom: 32px;">
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                    <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                    <span style="margin: 0 6px;">/</span>
+                    <span style="color: var(--color-gold-light);">Chuỗi cửa hàng</span>
+                </div>
+                <h1 style="font-size: 2.2rem;">Hệ Thống Chuỗi Cửa Hàng LUNEA</h1>
+                <p style="font-size: 0.95rem; color: var(--color-text-secondary); margin-top: 6px;">
+                    Không gian trải nghiệm mỹ phẩm chính hãng hiện đại tại các vị trí đắc địa khắp cả nước
+                </p>
+            </div>
+
+            <!-- Stores Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px;">
+                <div th:each="s : ${stores}" class="card-shell">
+                    <div class="card-core" style="padding: 28px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                            <div>
+                                <span class="eyebrow-tag" th:text="${s.province}">TP. Hồ Chí Minh</span>
+                                <h3 style="font-size: 1.35rem; font-family: var(--font-serif); margin-top: 8px;" th:text="${s.name}">
+                                    LUNEA Đồng Khởi - Quận 1
+                                </h3>
+                            </div>
+                            <span class="badge-stock in-stock">Đang mở cửa</span>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.9rem; color: var(--color-text-secondary); margin-bottom: 24px;">
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <i class="bi bi-geo-alt" style="color: var(--color-gold-primary); font-size: 1.1rem; flex-shrink: 0;"></i>
+                                <span th:text="${s.address}">123 Đường Đồng Khởi, Phường Bến Nghé, Quận 1</span>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <i class="bi bi-telephone" style="color: var(--color-gold-primary); font-size: 1.1rem; flex-shrink: 0;"></i>
+                                <span th:text="${s.phone}">028.3822.9999</span>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <i class="bi bi-clock" style="color: var(--color-gold-primary); font-size: 1.1rem; flex-shrink: 0;"></i>
+                                <span th:text="${s.openTime} + ' – ' + ${s.closeTime}">08:30 – 22:00 (Mở cửa tất cả các ngày)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: auto; padding-top: 18px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Trung tâm phân phối & đóng gói</span>
+                            <a th:href="@{/products}" href="/products" class="btn-lunea-outline" style="padding: 6px 14px; font-size: 0.8rem;">
+                                Mua sắm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

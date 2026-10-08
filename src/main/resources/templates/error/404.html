@@ -1,19 +1,37 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">404 - Không Tìm Thấy Trang | LUNEA</title>
-</head>
-<body data-page="error-404">
-    <div id="app">
-        <header>
-            <h1>404 - Không Tìm Thấy Trang</h1>
-        </header>
-        <main>
-            <p>Trang hoặc tài nguyên bạn đang tìm kiếm không tồn tại trên hệ thống LUNEA.</p>
-            <p><a href="/">Quay về Trang chủ</a></p>
-        </main>
-    </div>
+<head th:replace="~{fragments/head :: head('404 - Không Tìm Thấy Trang | LUNEA')}"></head>
+<body data-page="error-404" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main" style="display: flex; align-items: center; justify-content: center; flex: 1;">
+        <div class="lunea-container" style="max-width: 520px;">
+            <div class="card-shell">
+                <div class="card-core" style="text-align: center; padding: 48px 32px;">
+                    <div style="font-size: 3.5rem; color: var(--color-gold-primary); margin-bottom: 16px;">
+                        <i class="bi bi-compass"></i>
+                    </div>
+                    <div class="eyebrow-tag" style="margin-bottom: 12px;">404 Not Found</div>
+                    <h1 style="font-size: 1.8rem; margin-bottom: 12px;">Không Tìm Thấy Trang</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
+                        Đường dẫn bạn yêu cầu không tồn tại hoặc đã được di chuyển. Hãy quay lại trang chủ hoặc tìm kiếm mỹ phẩm khác.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+                        <a th:href="@{/}" href="/" class="btn-lunea-gold">
+                            <i class="bi bi-house"></i>
+                            <span>Về Trang Chủ</span>
+                        </a>
+                        <a th:href="@{/products}" href="/products" class="btn-lunea-outline">
+                            <i class="bi bi-search"></i>
+                            <span>Xem Sản Phẩm</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

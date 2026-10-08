@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<header th:fragment="header" class="lunea-header">
+    <nav class="lunea-navbar-island" aria-label="Thanh điều hướng chính">
+        <!-- Brand Logo -->
+        <a th:href="@{/}" href="/" class="brand-logo">
+            <span class="brand-emblem">L</span>
+            <span>LUNEA</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <ul class="nav-links">
+            <li>
+                <a th:href="@{/}" href="/" class="nav-link" th:classappend="${activeNav == 'home'} ? 'active' : ''">Trang Chủ</a>
+            </li>
+            <li>
+                <a th:href="@{/products}" href="/products" class="nav-link" th:classappend="${activeNav == 'products'} ? 'active' : ''">Sản Phẩm</a>
+            </li>
+            <li>
+                <a th:href="@{/brands}" href="/brands" class="nav-link" th:classappend="${activeNav == 'brands'} ? 'active' : ''">Thương Hiệu</a>
+            </li>
+            <li>
+                <a th:href="@{/stores}" href="/stores" class="nav-link" th:classappend="${activeNav == 'stores'} ? 'active' : ''">Cửa Hàng</a>
+            </li>
+        </ul>
+
+        <!-- Right Side: Search, Cart, Account -->
+        <div class="nav-actions">
+            <!-- Search Input -->
+            <form th:action="@{/products}" method="GET" class="nav-search-form" role="search">
+                <i class="bi bi-search nav-search-icon"></i>
+                <input type="text" name="keyword" class="nav-search-input" placeholder="Tìm mỹ phẩm..." 
+                       th:value="${keyword}" aria-label="Tìm kiếm sản phẩm">
+            </form>
+
+            <!-- Cart Icon with Live Badge -->
+            <a th:href="@{/cart}" href="/cart" class="nav-icon-btn" title="Giỏ hàng của bạn">
+                <i class="bi bi-bag"></i>
+                <span class="badge-counter cart-badge-count" th:text="${cart != null ? cart.totalItems : 0}">0</span>
+            </a>
+
+            <!-- User Auth Dropdown -->
+            <div th:if="${currentUser != null}" class="user-dropdown">
+                <div class="user-trigger" tabindex="0">
+                    <div class="user-avatar" th:text="${#strings.substring(currentUser.displayName != null ? currentUser.displayName : currentUser.username, 0, 1).toUpperCase()}">U</div>
+                    <span class="user-name" th:text="${currentUser.displayName != null ? currentUser.displayName : currentUser.username}">Khách hàng</span>
+                    <i class="bi bi-chevron-down" style="font-size: 0.75rem; color: var(--color-text-muted);"></i>
+                </div>
+                <div class="user-menu">
+                    <!-- Admin Link if Employee -->
+                    <a th:if="${currentUser.isEmployee()}" th:href="@{/admin}" href="/admin" class="user-menu-item" style="color: var(--color-gold-light); font-weight: 700;">
+                        <i class="bi bi-speedometer2"></i> Trang Quản Trị Hệ Thống
+                    </a>
+                    <div th:if="${currentUser.isEmployee()}" class="user-menu-divider"></div>
+
+                    <!-- Customer Links -->
+                    <a th:if="${currentUser.isCustomer()}" th:href="@{/account/orders}" href="/account/orders" class="user-menu-item">
+                        <i class="bi bi-box-seam"></i> Đơn Hàng Của Tôi
+                    </a>
+                    <a th:href="@{/account/profile}" href="/account/profile" class="user-menu-item">
+                        <i class="bi bi-person"></i> Thông Tin Tài Khoản
+                    </a>
+                    <div class="user-menu-divider"></div>
+                    <a href="javascript:void(0)" onclick="LUNEA.logout()" class="user-menu-item" style="color: var(--color-danger);">
+                        <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                    </a>
+                </div>
+            </div>
+
+            <!-- Guest Login/Register Buttons -->
+            <div th:unless="${currentUser != null}" style="display: flex; align-items: center; gap: 8px;">
+                <a th:href="@{/login}" href="/login" class="btn-lunea-outline" style="padding: 7px 16px; font-size: 0.85rem;">Đăng Nhập</a>
+                <a th:href="@{/register}" href="/register" class="btn-lunea-gold" style="padding: 7px 16px; font-size: 0.85rem;">Đăng Ký</a>
+            </div>
+        </div>
+    </nav>
+</header>
+</html>

@@ -1,18 +1,57 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Thương Hiệu Đồng Hành | LUNEA</title>
-</head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body data-page="brands">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Thương Hiệu Đồng Hành</h1>
-        </header>
-        <main>
-            <p>Các thương hiệu mỹ phẩm chính hãng tại LUNEA</p>
-        </main>
-    </div>
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Breadcrumbs -->
+            <div style="margin-bottom: 32px;">
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                    <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                    <span style="margin: 0 6px;">/</span>
+                    <span style="color: var(--color-gold-light);">Thương hiệu</span>
+                </div>
+                <h1 style="font-size: 2.2rem;">Thương Hiệu Mỹ Phẩm Đồng Hành</h1>
+                <p style="font-size: 0.95rem; color: var(--color-text-secondary); margin-top: 6px;">
+                    Các nhãn hàng dược mỹ phẩm và chăm sóc da uy tín được LUNEA phân phối chính hãng 100%
+                </p>
+            </div>
+
+            <!-- Brands Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px;">
+                <div th:each="b : ${brands}" class="card-shell">
+                    <div class="card-core" style="padding: 28px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <h3 style="font-size: 1.4rem; font-family: var(--font-serif); color: var(--color-gold-light);" th:text="${b.name}">
+                                Cocoon Vietnam
+                            </h3>
+                            <span class="eyebrow-tag" style="padding: 2px 10px; font-size: 0.68rem;">Chính Hãng</span>
+                        </div>
+
+                        <p style="font-size: 0.9rem; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 24px;" 
+                           th:text="${b.description != null ? b.description : 'Thương hiệu mỹ phẩm cao cấp đồng hành cùng LUNEA.'}">
+                            Mô tả thương hiệu.
+                        </p>
+
+                        <div style="margin-top: auto; padding-top: 18px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Phân phối toàn chuỗi</span>
+                            <a th:href="@{/products(brandId=${b.id})}" class="btn-lunea-gold" style="padding: 8px 16px; font-size: 0.82rem;">
+                                <span>Xem Sản Phẩm</span>
+                                <i class="bi bi-arrow-right" style="font-size: 0.75rem;"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

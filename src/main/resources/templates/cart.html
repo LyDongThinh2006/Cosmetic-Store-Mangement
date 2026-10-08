@@ -1,18 +1,202 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Giỏ Hàng Của Bạn | LUNEA</title>
-</head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body data-page="cart">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Giỏ Hàng</h1>
-        </header>
-        <main>
-            <p>Trang quản lý giỏ hàng trực tuyến</p>
-        </main>
-    </div>
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Breadcrumbs -->
+            <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">
+                <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                <span style="margin: 0 6px;">/</span>
+                <span style="color: var(--color-gold-light);">Giỏ hàng</span>
+            </div>
+
+            <h1 style="font-size: 2.2rem; margin-bottom: 32px;">Giỏ Hàng Của Bạn</h1>
+
+            <!-- If Cart has items -->
+            <div id="cartContentWrap" th:if="${cart != null and cart.items != null and !cart.items.isEmpty()}" 
+                 style="display: grid; grid-template-columns: 1fr 360px; gap: 36px; align-items: start;">
+                <!-- Cart Items List (Left) -->
+                <div>
+                    <div class="card-shell">
+                        <div class="card-core" style="padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-subtle); margin-bottom: 20px;">
+                                <span style="font-weight: 700; font-size: 0.95rem;">Danh Sách Mặt Hàng (<span id="cartTotalItemsText" th:text="${cart.totalItems}">0</span>)</span>
+                                <button type="button" onclick="clearAllCart()" style="background: none; border: none; color: var(--color-danger); font-size: 0.82rem; cursor: pointer; text-decoration: underline;">
+                                    Xóa tất cả
+                                </button>
+                            </div>
+
+                            <div id="cartItemsList" style="display: flex; flex-direction: column; gap: 20px;">
+                                <div th:each="item : ${cart.items}" class="cart-item-row" th:id="'cart-item-' + ${item.id}"
+                                     style="display: grid; grid-template-columns: 80px 1fr auto auto; gap: 18px; align-items: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <!-- Thumbnail -->
+                                    <div style="width: 80px; height: 80px; border-radius: var(--radius-sm); overflow: hidden; background: #0d121c; flex-shrink: 0;">
+                                        <img th:src="${item.imageUrl}" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600" 
+                                             th:alt="${item.productName}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+
+                                    <!-- Product Info -->
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-family: var(--font-sans); font-weight: 600; line-height: 1.4; margin-bottom: 4px;" 
+                                            th:text="${item.productName}">Tên sản phẩm</h4>
+                                        <div style="font-size: 0.78rem; color: var(--color-gold-light); margin-bottom: 4px;">
+                                            Phân loại: <strong th:text="${item.variantName}">30ml</strong>
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: var(--color-text-muted);" th:text="'Mã: ' + ${item.skuCode}">SKU-001</div>
+                                    </div>
+
+                                    <!-- Quantity Stepper (DEMO STEP 8: INSUFFICIENT_STOCK) -->
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                        <div class="qty-stepper">
+                                            <button type="button" class="qty-btn" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} - 1) + ')'">-</button>
+                                            <input type="number" class="qty-input" th:id="'input-qty-' + ${item.id}" 
+                                                   th:value="${item.quantity}" 
+                                                   th:onchange="'updateQty(' + ${item.id} + ', this.value)'" min="1" max="99">
+                                            <button type="button" class="qty-btn" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} + 1) + ')'">+</button>
+                                        </div>
+                                        <span style="font-size: 0.75rem; color: var(--color-text-muted);" 
+                                              th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA')} + ' ₫ / món'">265.000 ₫ / món</span>
+                                    </div>
+
+                                    <!-- Subtotal & Remove -->
+                                    <div style="text-align: right; min-width: 120px;">
+                                        <div style="font-weight: 800; font-size: 1.05rem; color: var(--color-gold-light);" 
+                                             th:id="'subtotal-' + ${item.id}"
+                                             th:text="${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                            265.000 ₫
+                                        </div>
+                                        <button type="button" th:onclick="'removeItem(' + ${item.id} + ')'" 
+                                                style="background: none; border: none; color: var(--color-text-muted); font-size: 0.8rem; margin-top: 8px; cursor: pointer;"
+                                                title="Xóa mặt hàng">
+                                            <i class="bi bi-trash3"></i> Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary (Right) -->
+                <aside class="card-shell">
+                    <div class="card-core" style="padding: 24px;">
+                        <h3 style="font-size: 1.25rem; font-family: var(--font-serif); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border-subtle);">
+                            Tóm Tắt Đơn Hàng
+                        </h3>
+
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.92rem; color: var(--color-text-secondary);">
+                            <span>Tạm tính hàng:</span>
+                            <strong id="cartSubtotalText" style="color: var(--color-text-primary);" 
+                                    th:text="${#numbers.formatDecimal(cart.subtotal, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                265.000 ₫
+                            </strong>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 0.92rem; color: var(--color-text-secondary);">
+                            <span>Phí giao hàng ước tính:</span>
+                            <span id="cartShippingText" style="color: var(--color-success);" 
+                                  th:text="${cart.subtotal >= 500000 ? 'Miễn phí' : '30.000 ₫'}">Miễn phí</span>
+                        </div>
+
+                        <div style="padding: 12px; background: rgba(212,175,55,0.06); border: 1px solid var(--color-border-gold); border-radius: var(--radius-sm); margin-bottom: 24px; font-size: 0.8rem; color: var(--color-gold-light);">
+                            <i class="bi bi-info-circle"></i> Miễn phí vận chuyển cho đơn hàng từ <strong>500.000 ₫</strong>. Mã giảm giá áp dụng ở bước tiếp theo!
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; border-top: 1px solid var(--color-border-subtle); margin-bottom: 24px;">
+                            <span style="font-weight: 700; font-size: 1rem;">Tổng cộng tạm tính:</span>
+                            <span id="cartTotalText" class="text-gold-gradient" style="font-size: 1.6rem; font-weight: 900;"
+                                  th:text="${#numbers.formatDecimal(cart.subtotal >= 500000 ? cart.subtotal : cart.subtotal + 30000, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                265.000 ₫
+                            </span>
+                        </div>
+
+                        <a th:href="@{/checkout}" href="/checkout" class="btn-lunea-gold" style="width: 100%; justify-content: center; padding: 14px;">
+                            <span>Tiến Hành Thanh Toán</span>
+                            <span class="btn-icon-bubble"><i class="bi bi-arrow-right"></i></span>
+                        </a>
+
+                        <div style="text-align: center; margin-top: 16px;">
+                            <a th:href="@{/products}" href="/products" style="font-size: 0.82rem; color: var(--color-text-muted); text-decoration: underline;">
+                                Tiếp tục mua sắm
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Empty Cart State -->
+            <div id="cartEmptyState" class="card-shell" 
+                 th:style="${cart == null or cart.items == null or cart.items.isEmpty()} ? '' : 'display: none;'">
+                <div class="card-core" style="text-align: center; padding: 64px 24px;">
+                    <div style="font-size: 3.5rem; color: var(--color-text-muted); margin-bottom: 16px;"><i class="bi bi-bag-x"></i></div>
+                    <h2 style="font-size: 1.6rem; margin-bottom: 8px;">Giỏ hàng của bạn đang trống</h2>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 28px; font-size: 0.95rem;">
+                        Hãy khám phá các dòng mỹ phẩm chính hãng và thêm vào giỏ hàng ngay hôm nay.
+                    </p>
+                    <a th:href="@{/products}" href="/products" class="btn-lunea-gold" style="display: inline-flex;">
+                        <span>Khám Phá Mỹ Phẩm Ngay</span>
+                        <span class="btn-icon-bubble"><i class="bi bi-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Client-side Cart Interactions (Update qty, remove, stock validation) -->
+    <script th:inline="javascript">
+        async function updateQty(cartItemId, newQty) {
+            newQty = parseInt(newQty);
+            if (isNaN(newQty) || newQty < 1) {
+                if (confirm('Bạn có muốn xóa món hàng này khỏi giỏ?')) {
+                    await removeItem(cartItemId);
+                }
+                return;
+            }
+
+            try {
+                const res = await LUNEA.apiFetch(`/api/cart/items/${cartItemId}?quantity=${newQty}`, {
+                    method: 'PUT'
+                });
+                // Success: reload or update DOM
+                window.location.reload();
+            } catch (err) {
+                // If INSUFFICIENT_STOCK: toast shown by apiFetch, restore previous value
+                console.error('Update quantity failed', err);
+            }
+        }
+
+        async function removeItem(cartItemId) {
+            try {
+                await LUNEA.apiFetch(`/api/cart/items/${cartItemId}`, {
+                    method: 'DELETE'
+                });
+                LUNEA.toastSuccess('Đã xóa sản phẩm khỏi giỏ hàng.');
+                window.location.reload();
+            } catch (err) {
+                console.error('Remove item failed', err);
+            }
+        }
+
+        async function clearAllCart() {
+            if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ hàng?')) return;
+            try {
+                await LUNEA.apiFetch('/api/cart', {
+                    method: 'DELETE'
+                });
+                window.location.reload();
+            } catch (err) {
+                console.error('Clear cart failed', err);
+            }
+        }
+    </script>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

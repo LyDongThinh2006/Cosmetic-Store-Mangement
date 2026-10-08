@@ -1,18 +1,270 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Chi Tiết Sản Phẩm | LUNEA</title>
-</head>
-<body data-page="product-detail" th:data-product-id="${productId}">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Chi Tiết Sản Phẩm LUNEA</h1>
-        </header>
-        <main>
-            <p>Mã sản phẩm: <span th:text="${productId}">1</span></p>
-        </main>
-    </div>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-page="product-detail">
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Breadcrumbs -->
+            <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">
+                <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                <span style="margin: 0 6px;">/</span>
+                <a th:href="@{/products}" href="/products" style="color: var(--color-text-secondary);">Sản phẩm</a>
+                <span style="margin: 0 6px;">/</span>
+                <span style="color: var(--color-gold-light);" th:text="${product != null ? product.name : 'Chi tiết'}">Chi tiết</span>
+            </div>
+
+            <!-- Product Detail Main Grid -->
+            <div th:if="${product != null}" class="product-detail-grid">
+                <!-- Left: Image Gallery -->
+                <div>
+                    <div class="gallery-main-wrap card-shell">
+                        <img id="mainImage" th:src="${product.imageUrl}" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600" 
+                             th:alt="${product.name}" class="gallery-main-img">
+                    </div>
+
+                    <!-- Thumbnails row if multiple images exist -->
+                    <div class="gallery-thumbs-row" th:if="${product.imageUrls != null and product.imageUrls.size() > 1}">
+                        <div th:each="imgUrl, iter : ${product.imageUrls}" 
+                             class="gallery-thumb-item" 
+                             th:classappend="${iter.first} ? 'active' : ''"
+                             th:onclick="'switchImage(\'' + ${imgUrl} + '\', this)'">
+                            <img th:src="${imgUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Information, Variants & Actions -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                        <span class="product-brand" th:text="${product.brand != null ? product.brand.name : 'LUNEA'}" style="font-size: 0.95rem;">Cocoon Vietnam</span>
+                        <span style="color: var(--color-border-medium);">•</span>
+                        <span style="font-size: 0.82rem; color: var(--color-text-muted);" th:text="'Xuất xứ: ' + ${product.origin != null ? product.origin : 'Chính hãng'}">Xuất xứ: Việt Nam</span>
+                    </div>
+
+                    <h1 style="font-size: 2rem; line-height: 1.25; margin-bottom: 16px;" th:text="${product.name}">Tên sản phẩm mỹ phẩm</h1>
+
+                    <!-- Skin Types & Concerns Tags -->
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <span th:each="st : ${product.skinTypes}" class="eyebrow-tag" th:text="${st}" style="padding: 2px 10px; font-size: 0.7rem;">Da Dầu</span>
+                        <span th:each="c : ${product.concerns}" class="eyebrow-tag" th:text="${c}" style="padding: 2px 10px; font-size: 0.7rem; border-color: rgba(255,255,255,0.2); color: #fff;">Trị Mụn</span>
+                    </div>
+
+                    <!-- Price Box & Stock Status (Dynamic on SKU change - DEMO STEP 5) -->
+                    <div class="card-shell" style="margin-bottom: 24px;">
+                        <div class="card-core" style="padding: 20px; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                            <div>
+                                <div style="display: flex; align-items: baseline; gap: 12px;">
+                                    <span id="displayPrice" class="text-gold-gradient" style="font-size: 2.2rem; font-weight: 800;" 
+                                          th:text="${#numbers.formatDecimal(product.minPrice != null ? product.minPrice : 0, 0, 'POINT', 0, 'COMMA')} + ' ₫'">265.000 ₫</span>
+                                    <span id="displayListPrice" style="font-size: 1.1rem; color: var(--color-text-muted); text-decoration: line-through;" 
+                                          th:if="${product.listPrice != null and product.listPrice.compareTo(product.minPrice) > 0}"
+                                          th:text="${#numbers.formatDecimal(product.listPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'">295.000 ₫</span>
+                                </div>
+                                <div id="displaySkuCode" style="font-size: 0.78rem; color: var(--color-text-muted); margin-top: 4px;">
+                                    Mã SKU: <span th:text="${product.skus != null and !product.skus.isEmpty() ? product.skus[0].skuCode : 'N/A'}">SKU-001</span>
+                                </div>
+                            </div>
+
+                            <!-- In-Stock Status Pill -->
+                            <div>
+                                <span id="displayStockBadge" class="badge-stock in-stock" style="font-size: 0.85rem; padding: 6px 16px;">
+                                    <i class="bi bi-check-circle-fill"></i> Còn hàng
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SKU Variant Selector (DEMO STEP 5) -->
+                    <div th:if="${product.skus != null and !product.skus.isEmpty()}" style="margin-bottom: 24px;">
+                        <label class="form-label">Chọn Phân Loại / Dung Tích:</label>
+                        <div class="variant-pill-group" id="variantGroup">
+                            <button type="button" th:each="sku, iter : ${product.skus}" 
+                                    class="variant-pill" 
+                                    th:classappend="${iter.first} ? 'active' : ''"
+                                    th:data-sku-id="${sku.id}"
+                                    th:data-sku-code="${sku.skuCode}"
+                                    th:data-price="${sku.price}"
+                                    th:data-list-price="${sku.listPrice}"
+                                    th:onclick="'selectVariant(this)'">
+                                <span th:text="${sku.variantName}">Dung tích 70ml</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quantity Stepper -->
+                    <div style="margin-bottom: 28px;">
+                        <label class="form-label">Số Lượng:</label>
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div class="qty-stepper">
+                                <button type="button" class="qty-btn" onclick="stepQty(-1)">-</button>
+                                <input type="number" id="quantityInput" class="qty-input" value="1" min="1" max="99">
+                                <button type="button" class="qty-btn" onclick="stepQty(1)">+</button>
+                            </div>
+                            <span style="font-size: 0.82rem; color: var(--color-text-muted);">
+                                Tồn khả dụng chuỗi cửa hàng: <strong id="availableQtyText" th:text="${product.totalAvailableStock}">50</strong> món
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons (DEMO STEP 6 & 8) -->
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px;">
+                        <button type="button" id="btnAddToCart" onclick="handleAddToCart()" 
+                                class="btn-lunea-gold" style="flex: 1; min-width: 200px; padding: 14px 24px;">
+                            <i class="bi bi-bag-plus"></i>
+                            <span>Thêm Vào Giỏ Hàng</span>
+                        </button>
+                        <button type="button" onclick="handleBuyNow()" 
+                                class="btn-lunea-outline" style="flex: 1; min-width: 180px; padding: 14px 24px;">
+                            <span>Mua Ngay (COD)</span>
+                            <span class="btn-icon-bubble"><i class="bi bi-lightning-charge"></i></span>
+                        </button>
+                    </div>
+
+                    <!-- Store Availability Callout -->
+                    <div style="padding: 16px 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); display: flex; gap: 12px; align-items: center;">
+                        <i class="bi bi-geo-alt-fill" style="color: var(--color-gold-primary); font-size: 1.3rem;"></i>
+                        <div style="font-size: 0.85rem; color: var(--color-text-secondary);">
+                            Sẵn sàng giao hàng từ <strong>Chi nhánh Quận 1 (TP.HCM)</strong>, <strong>Cầu Giấy (Hà Nội)</strong> và <strong>Đà Nẵng</strong>. Tự động giữ hàng sau khi đặt thành công.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details Tabs / Content -->
+            <div th:if="${product != null}" style="margin-top: 64px; border-top: 1px solid var(--color-border-subtle); padding-top: 48px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px;">
+                    <!-- Uses / Benefits -->
+                    <div class="card-shell">
+                        <div class="card-core">
+                            <h3 style="font-size: 1.25rem; font-family: var(--font-serif); margin-bottom: 12px; color: var(--color-gold-light);">
+                                <i class="bi bi-stars"></i> Công Dụng & Hiệu Quả
+                            </h3>
+                            <p style="font-size: 0.92rem; color: var(--color-text-secondary); line-height: 1.7;" 
+                               th:text="${product.uses != null ? product.uses : 'Đang cập nhật công dụng chi tiết.'}">Công dụng chi tiết</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Ingredients -->
+                    <div class="card-shell">
+                        <div class="card-core">
+                            <h3 style="font-size: 1.25rem; font-family: var(--font-serif); margin-bottom: 12px; color: var(--color-gold-light);">
+                                <i class="bi bi-droplet-half"></i> Thành Phần Hoạt Tính
+                            </h3>
+                            <p style="font-size: 0.92rem; color: var(--color-text-secondary); line-height: 1.7;" 
+                               th:text="${product.mainIngredients != null ? product.mainIngredients : 'Đang cập nhật thành phần chi tiết.'}">Thành phần chi tiết</p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="card-shell">
+                        <div class="card-core">
+                            <h3 style="font-size: 1.25rem; font-family: var(--font-serif); margin-bottom: 12px; color: var(--color-gold-light);">
+                                <i class="bi bi-info-circle"></i> Mô Tả Sản Phẩm
+                            </h3>
+                            <p style="font-size: 0.92rem; color: var(--color-text-secondary); line-height: 1.7;" 
+                               th:text="${product.description != null ? product.description : 'Đang cập nhật mô tả.'}">Mô tả chi tiết</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Client-side SKU Variant switcher and Cart actions (Demo Steps 5, 6, 8) -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const productData = /*[[${product}]]*/ null;
+        let selectedSkuId = null;
+
+        // Initialize first variant
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstPill = document.querySelector('.variant-pill');
+            if (firstPill) {
+                selectVariant(firstPill);
+            }
+        });
+
+        // Switch main image on thumbnail click
+        function switchImage(url, elem) {
+            document.getElementById('mainImage').src = url;
+            document.querySelectorAll('.gallery-thumb-item').forEach(el => el.classList.remove('active'));
+            if (elem) elem.classList.add('active');
+        }
+
+        // Switch variant and update live price / SKU code (DEMO STEP 5)
+        function selectVariant(pill) {
+            document.querySelectorAll('.variant-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+
+            selectedSkuId = pill.dataset.skuId;
+            const price = parseFloat(pill.dataset.price);
+            const listPrice = parseFloat(pill.dataset.listPrice);
+            const skuCode = pill.dataset.skuCode;
+
+            document.getElementById('displayPrice').textContent = LUNEA.formatVND(price);
+            document.getElementById('displaySkuCode').innerHTML = 'Mã SKU: <span>' + skuCode + '</span>';
+
+            const listPriceEl = document.getElementById('displayListPrice');
+            if (listPrice && listPrice > price) {
+                listPriceEl.style.display = 'inline';
+                listPriceEl.textContent = LUNEA.formatVND(listPrice);
+            } else if (listPriceEl) {
+                listPriceEl.style.display = 'none';
+            }
+        }
+
+        function stepQty(delta) {
+            const input = document.getElementById('quantityInput');
+            let val = parseInt(input.value) || 1;
+            val = Math.max(1, Math.min(99, val + delta));
+            input.value = val;
+        }
+
+        // Add to Cart handler (DEMO STEP 6 & STEP 8)
+        async function handleAddToCart() {
+            if (!selectedSkuId) {
+                LUNEA.toastError('Vui lòng chọn phân loại sản phẩm!');
+                return;
+            }
+            const qty = parseInt(document.getElementById('quantityInput').value) || 1;
+            const btn = document.getElementById('btnAddToCart');
+            const originalHtml = btn.innerHTML;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang thêm...';
+                await LUNEA.addToCart(selectedSkuId, qty);
+            } catch (err) {
+                // Error (401 unauthenticated -> redirects to login; 409 insufficient stock -> toast displayed)
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        // Buy Now handler
+        async function handleBuyNow() {
+            if (!selectedSkuId) {
+                LUNEA.toastError('Vui lòng chọn phân loại sản phẩm!');
+                return;
+            }
+            const qty = parseInt(document.getElementById('quantityInput').value) || 1;
+            try {
+                await LUNEA.addToCart(selectedSkuId, qty);
+                window.location.href = '/cart';
+            } catch (err) {
+                // Handled in api.js
+            }
+        }
+        /*]]>*/
+    </script>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

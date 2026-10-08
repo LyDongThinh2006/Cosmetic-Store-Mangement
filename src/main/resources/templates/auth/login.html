@@ -1,18 +1,143 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Đăng Nhập | LUNEA</title>
-</head>
-<body data-page="login" th:data-redirect="${redirect}">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Đăng Nhập LUNEA</h1>
-        </header>
-        <main>
-            <p>Trang đăng nhập tài khoản Khách hàng / Nhân viên</p>
-        </main>
-    </div>
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-page="auth-login" style="display: flex; flex-direction: column; justify-content: center; min-height: 100vh;">
+    <!-- Minimal Island Header -->
+    <header style="padding: 24px 0; text-align: center;">
+        <a th:href="@{/}" href="/" class="brand-logo" style="justify-content: center;">
+            <span class="brand-emblem">L</span>
+            <span>LUNEA</span>
+        </a>
+    </header>
+
+    <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px;">
+        <div class="card-shell" style="width: 100%; max-width: 440px;">
+            <div class="card-core" style="padding: 36px 32px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <div class="eyebrow-tag" style="margin-bottom: 10px;">Chào Mừng Trở Lại</div>
+                    <h1 style="font-size: 1.8rem; margin-bottom: 6px;">Đăng Nhập Tài Khoản</h1>
+                    <p style="font-size: 0.88rem; color: var(--color-text-secondary);">
+                        Truy cập trải nghiệm mua sắm mỹ phẩm độc quyền tại LUNEA
+                    </p>
+                </div>
+
+                <!-- Login Form (DEMO STEP 7) -->
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <input type="hidden" id="redirectUrl" th:value="${redirect}">
+
+                    <div class="form-group">
+                        <label class="form-label" for="loginIdentifier">Email hoặc Tên Đăng Nhập</label>
+                        <input type="text" id="loginIdentifier" class="form-control-lunea" required 
+                               placeholder="khach01@lunea.test" autocomplete="username">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label class="form-label" for="loginPassword" style="margin-bottom: 0;">Mật Khẩu</label>
+                            <a href="javascript:void(0)" onclick="LUNEA.showToast('Vui lòng dùng tài khoản demo hoặc đăng ký tài khoản mới!', 'info')" 
+                               style="font-size: 0.78rem; color: var(--color-gold-light); text-decoration: underline;">Quên mật khẩu?</a>
+                        </div>
+                        <div style="position: relative;">
+                            <input type="password" id="loginPassword" class="form-control-lunea" required 
+                                   placeholder="••••••" autocomplete="current-password" style="padding-right: 42px;">
+                            <button type="button" onclick="togglePasswordVisibility()" 
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
+                                <i id="eyeIcon" class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnLoginSubmit" class="btn-lunea-gold" style="width: 100%; justify-content: center; padding: 13px;">
+                        <span>Đăng Nhập Ngay</span>
+                        <span class="btn-icon-bubble"><i class="bi bi-arrow-right"></i></span>
+                    </button>
+                </form>
+
+                <!-- Quick Demo Fill Pills (Extremely convenient for Demo Presentation!) -->
+                <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle);">
+                    <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center;">
+                        ⚡ Điền Nhanh Tài Khoản Demo (Mật khẩu: 123456)
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button type="button" onclick="fillDemo('khach01@lunea.test', '123456')" class="variant-pill" style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
+                            👤 <strong>Khách hàng:</strong> khach01@lunea.test
+                        </button>
+                        <button type="button" onclick="fillDemo('order_hcm', '123456')" class="variant-pill" style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
+                            🏢 <strong>Nhân viên HCM:</strong> order_hcm
+                        </button>
+                        <button type="button" onclick="fillDemo('admin', '123456')" class="variant-pill" style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
+                            👑 <strong>Quản trị viên:</strong> admin
+                        </button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
+                    Chưa có tài khoản? 
+                    <a th:href="@{/register}" href="/register" style="color: var(--color-gold-light); font-weight: 700; text-decoration: underline;">Đăng ký ngay</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer style="padding: 24px 0; text-align: center; font-size: 0.8rem; color: var(--color-text-muted);">
+        © 2026 LUNEA Beauty Chain · Bảo mật với Stateless JWT HttpOnly Cookie
+    </footer>
+
+    <!-- Client-side Login Script -->
+    <script th:inline="javascript">
+        function togglePasswordVisibility() {
+            const pwd = document.getElementById('loginPassword');
+            const eye = document.getElementById('eyeIcon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                eye.className = 'bi bi-eye-slash';
+            } else {
+                pwd.type = 'password';
+                eye.className = 'bi bi-eye';
+            }
+        }
+
+        function fillDemo(username, password) {
+            document.getElementById('loginIdentifier').value = username;
+            document.getElementById('loginPassword').value = password;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const redirectUrl = document.getElementById('redirectUrl').value || '/';
+
+            const btn = document.getElementById('btnLoginSubmit');
+            const originalHtml = btn.innerHTML;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang xác thực...';
+
+                const result = await LUNEA.apiFetch('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ identifier, password })
+                });
+
+                LUNEA.toastSuccess('Đăng nhập thành công! Đang chuyển hướng...');
+                setTimeout(() => {
+                    // Check if employee or customer
+                    if (result && result.accountType === 'EMPLOYEE') {
+                        window.location.href = '/admin';
+                    } else {
+                        window.location.href = redirectUrl.startsWith('/') ? redirectUrl : '/';
+                    }
+                }, 700);
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+                // Toast error was automatically shown by apiFetch (Demo Step 7: wrong password error)
+            }
+        }
+    </script>
+
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

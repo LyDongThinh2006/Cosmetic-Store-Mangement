@@ -1,25 +1,305 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Danh Sách Sản Phẩm | LUNEA</title>
-</head>
-<body data-page="product-list"
-      th:data-keyword="${keyword}"
-      th:data-brand-id="${brandId}"
-      th:data-category-id="${categoryId}"
-      th:data-skin-type="${skinType}"
-      th:data-concern="${concern}"
-      th:data-price-range="${priceRange}"
-      th:data-sort-by="${sortBy}">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Danh Sách Sản Phẩm LUNEA</h1>
-        </header>
-        <main>
-            <p>Trang lọc và tìm kiếm sản phẩm mỹ phẩm</p>
-        </main>
-    </div>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-page="products">
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Breadcrumb & Page Heading -->
+            <div style="margin-bottom: 32px;">
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                    <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                    <span style="margin: 0 6px;">/</span>
+                    <span style="color: var(--color-gold-light);">Sản phẩm</span>
+                </div>
+                <h1 style="font-size: 2.2rem;">Danh Sách Mỹ Phẩm & Chăm Sóc Sắc Đẹp</h1>
+                <p style="font-size: 0.92rem; color: var(--color-text-secondary); margin-top: 4px;">
+                    Tìm kiếm sản phẩm phù hợp nhất với loại da và nhu cầu cải thiện làn da của bạn
+                </p>
+            </div>
+
+            <!-- Layout: Sidebar Filter (Left) + Product Grid (Right) -->
+            <div style="display: grid; grid-template-columns: 280px 1fr; gap: 36px; align-items: start;">
+                <!-- Filter Sidebar -->
+                <aside class="card-shell">
+                    <div class="card-core" style="padding: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="font-size: 1.15rem; font-family: var(--font-serif);"><i class="bi bi-funnel"></i> Bộ Lọc</h3>
+                            <a th:href="@{/products}" href="/products" style="font-size: 0.8rem; color: var(--color-gold-primary); text-decoration: underline;">Đặt lại</a>
+                        </div>
+
+                        <form id="filterForm" th:action="@{/products}" method="GET">
+                            <!-- Keyword hidden input to maintain search query -->
+                            <input type="hidden" name="keyword" th:value="${keyword}">
+
+                            <!-- 1. Danh Mục -->
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label class="form-label">Danh Mục</label>
+                                <select name="categoryId" class="form-control-lunea" onchange="this.form.submit()">
+                                    <option value="">Tất cả danh mục</option>
+                                    <option th:each="c : ${categories}" 
+                                            th:value="${c.id}" 
+                                            th:text="${c.name}" 
+                                            th:selected="${categoryId != null and categoryId == c.id}">Chăm sóc da</option>
+                                </select>
+                            </div>
+
+                            <!-- 2. Thương Hiệu -->
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label class="form-label">Thương Hiệu</label>
+                                <select name="brandId" class="form-control-lunea" onchange="this.form.submit()">
+                                    <option value="">Tất cả thương hiệu</option>
+                                    <option th:each="b : ${brands}" 
+                                            th:value="${b.id}" 
+                                            th:text="${b.name}" 
+                                            th:selected="${brandId != null and brandId == b.id}">Cocoon Vietnam</option>
+                                </select>
+                            </div>
+
+                            <!-- 3. Khoảng Giá -->
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label class="form-label">Khoảng Giá</label>
+                                <select name="priceRange" class="form-control-lunea" onchange="this.form.submit()">
+                                    <option value="" th:selected="${priceRange == null or priceRange == ''}">Tất cả mức giá</option>
+                                    <option value="under300" th:selected="${priceRange == 'under300'}">Dưới 300.000 ₫</option>
+                                    <option value="300to600" th:selected="${priceRange == '300to600'}">300.000 ₫ – 600.000 ₫</option>
+                                    <option value="500to1000" th:selected="${priceRange == '500to1000'}">500.000 ₫ – 1.000.000 ₫</option>
+                                    <option value="above1000" th:selected="${priceRange == 'above1000'}">Trên 1.000.000 ₫</option>
+                                </select>
+                            </div>
+
+                            <!-- 4. Loại Da -->
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label class="form-label">Loại Da</label>
+                                <select name="skinType" class="form-control-lunea" onchange="this.form.submit()">
+                                    <option value="" th:selected="${skinType == null or skinType == ''}">Mọi loại da</option>
+                                    <option value="Da Dầu" th:selected="${skinType == 'Da Dầu'}">Da Dầu</option>
+                                    <option value="Da Khô" th:selected="${skinType == 'Da Khô'}">Da Khô</option>
+                                    <option value="Da Nhạy Cảm" th:selected="${skinType == 'Da Nhạy Cảm'}">Da Nhạy Cảm</option>
+                                    <option value="Da Hỗn Hợp" th:selected="${skinType == 'Da Hỗn Hợp'}">Da Hỗn Hợp</option>
+                                </select>
+                            </div>
+
+                            <!-- 5. Nhu Cầu -->
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label class="form-label">Nhu Cầu Cải Thiện</label>
+                                <select name="concern" class="form-control-lunea" onchange="this.form.submit()">
+                                    <option value="" th:selected="${concern == null or concern == ''}">Tất cả nhu cầu</option>
+                                    <option value="Trị Mụn" th:selected="${concern == 'Trị Mụn'}">Trị Mụn</option>
+                                    <option value="Phục Hồi Da" th:selected="${concern == 'Phục Hồi Da'}">Phục Hồi Da</option>
+                                    <option value="Dưỡng Sáng Mờ Thâm" th:selected="${concern == 'Dưỡng Sáng Mờ Thâm'}">Dưỡng Sáng Mờ Thâm</option>
+                                    <option value="Chống Lão Hóa" th:selected="${concern == 'Chống Lão Hóa'}">Chống Lão Hóa</option>
+                                    <option value="Dưỡng Ẩm Chuyên Sâu" th:selected="${concern == 'Dưỡng Ẩm Chuyên Sâu'}">Dưỡng Ẩm Chuyên Sâu</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn-lunea-gold" style="width: 100%; justify-content: center; font-size: 0.88rem; padding: 11px;">
+                                <span>Áp Dụng Bộ Lọc</span>
+                            </button>
+                        </form>
+                    </div>
+                </aside>
+
+                <!-- Products Main Section -->
+                <div>
+                    <!-- Top Bar: Result Count + Sort -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-subtle); flex-wrap: wrap; gap: 12px;">
+                        <div style="font-size: 0.92rem; color: var(--color-text-secondary);">
+                            Hiển thị <strong style="color: var(--color-text-primary);" id="productCount" th:text="${products != null ? products.size() : 0}">0</strong> sản phẩm
+                            <span th:if="${keyword != null and !keyword.isBlank()}" th:text="' cho từ khóa: \'' + ${keyword} + '\''" style="color: var(--color-gold-light);"></span>
+                        </div>
+
+                        <!-- Sort Dropdown -->
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="sortSelect" style="font-size: 0.85rem; color: var(--color-text-muted);">Sắp xếp:</label>
+                            <select id="sortSelect" class="form-control-lunea" style="padding: 7px 14px; font-size: 0.85rem; width: auto;"
+                                    onchange="handleSortChange(this.value)">
+                                <option value="newest" th:selected="${sortBy == 'newest'}">Mới nhất</option>
+                                <option value="price-asc" th:selected="${sortBy == 'price-asc'}">Giá tăng dần</option>
+                                <option value="price-desc" th:selected="${sortBy == 'price-desc'}">Giá giảm dần</option>
+                                <option value="featured" th:selected="${sortBy == 'featured'}">Nổi bật nhất</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div id="productGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;">
+                        <div th:each="p : ${products}" class="card-shell product-item-card"
+                             th:data-id="${p.id}"
+                             th:data-name="${p.name}"
+                             th:data-brand-id="${p.brand != null ? p.brand.id : ''}"
+                             th:data-category-id="${p.category != null ? p.category.id : ''}"
+                             th:data-price="${p.minPrice != null ? p.minPrice : 0}"
+                             th:data-featured="${p.isFeatured}"
+                             th:data-instock="${p.inStock}"
+                             th:data-skin-types="${p.skinTypes != null ? #strings.listJoin(p.skinTypes, ',') : ''}"
+                             th:data-concerns="${p.concerns != null ? #strings.listJoin(p.concerns, ',') : ''}">
+                            <div class="card-core product-card">
+                                <div class="product-thumb-wrap">
+                                    <img th:src="${p.imageUrl}" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600" 
+                                         th:alt="${p.name}" class="product-thumb" loading="lazy">
+                                    <div class="product-badges">
+                                        <!-- Real-time In-Stock / Out-of-Stock Badge (DEMO STEP 1 & 4) -->
+                                        <span th:if="${p.inStock}" class="badge-stock in-stock">
+                                            <i class="bi bi-check-circle-fill"></i> Còn hàng
+                                        </span>
+                                        <span th:unless="${p.inStock}" class="badge-stock out-of-stock">
+                                            <i class="bi bi-x-circle-fill"></i> Tạm hết hàng
+                                        </span>
+                                        <span th:if="${p.isFeatured}" class="badge-discount">Bán chạy</span>
+                                    </div>
+                                </div>
+
+                                <div class="product-brand" th:text="${p.brand != null ? p.brand.name : 'LUNEA'}">Cocoon Vietnam</div>
+                                <h3 class="product-title">
+                                    <a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.name}">Tên sản phẩm</a>
+                                </h3>
+
+                                <div class="product-price-row">
+                                    <span class="product-price" th:text="${#numbers.formatDecimal(p.minPrice != null ? p.minPrice : 0, 0, 'POINT', 0, 'COMMA')} + ' ₫'">265.000 ₫</span>
+                                    <span th:if="${p.listPrice != null and p.listPrice.compareTo(p.minPrice) > 0}" 
+                                          class="product-price-original" 
+                                          th:text="${#numbers.formatDecimal(p.listPrice, 0, 'POINT', 0, 'COMMA')} + ' ₫'">295.000 ₫</span>
+                                </div>
+
+                                <div style="margin-top: 18px; display: flex; gap: 8px;">
+                                    <a th:href="@{/products/{id}(id=${p.id})}" class="btn-lunea-outline" style="flex: 1; padding: 9px 12px; font-size: 0.82rem; justify-content: center;">
+                                        <span>Xem Chi Tiết</span>
+                                    </a>
+                                    <button th:if="${p.inStock and p.skus != null and !p.skus.isEmpty()}" 
+                                            type="button" 
+                                            th:onclick="'LUNEA.addToCart(' + ${p.skus[0].id} + ', 1)'" 
+                                            class="btn-lunea-gold" style="padding: 9px 14px; font-size: 0.85rem;" title="Thêm vào giỏ">
+                                        <i class="bi bi-bag-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State if No Product Found -->
+                    <div id="noProductsAlert" class="card-shell" style="margin-top: 24px; display: none;">
+                        <div class="card-core" style="text-align: center; padding: 48px;">
+                            <div style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 16px;"><i class="bi bi-search"></i></div>
+                            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Không tìm thấy sản phẩm phù hợp</h3>
+                            <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: 0.92rem;">
+                                Hãy thử thay đổi bộ lọc hoặc tìm kiếm bằng từ khóa khác.
+                            </p>
+                            <a th:href="@{/products}" href="/products" class="btn-lunea-gold" style="display: inline-flex;">
+                                <span>Xem Lại Tất Cả Sản Phẩm</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Client-side filter & sort controller -->
+    <script th:inline="javascript">
+        /* Client-side filter execution to support instant multi-criteria and URL query string */
+        function applyClientFilters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyword = (urlParams.get('keyword') || '').trim().toLowerCase();
+            const brandId = urlParams.get('brandId');
+            const categoryId = urlParams.get('categoryId');
+            const skinType = urlParams.get('skinType');
+            const concern = urlParams.get('concern');
+            const priceRange = urlParams.get('priceRange');
+            const sortBy = urlParams.get('sortBy') || 'newest';
+
+            const items = Array.from(document.querySelectorAll('.product-item-card'));
+            let visibleCount = 0;
+
+            items.forEach(card => {
+                const name = (card.dataset.name || '').toLowerCase();
+                const bId = card.dataset.brandId;
+                const cId = card.dataset.categoryId;
+                const price = parseFloat(card.dataset.price) || 0;
+                const cardSkinTypes = card.dataset.skinTypes || '';
+                const cardConcerns = card.dataset.concerns || '';
+
+                let match = true;
+
+                // Keyword filter
+                if (keyword && !name.includes(keyword)) {
+                    match = false;
+                }
+                // Brand filter
+                if (match && brandId && bId !== brandId) {
+                    match = false;
+                }
+                // Category filter
+                if (match && categoryId && cId !== categoryId) {
+                    match = false;
+                }
+                // Skin type filter
+                if (match && skinType && !cardSkinTypes.includes(skinType)) {
+                    match = false;
+                }
+                // Concern filter
+                if (match && concern && !cardConcerns.includes(concern)) {
+                    match = false;
+                }
+                // Price range filter
+                if (match && priceRange) {
+                    if (priceRange === 'under300' && price >= 300000) match = false;
+                    else if (priceRange === '300to600' && (price < 300000 || price > 600000)) match = false;
+                    else if (priceRange === '500to1000' && (price < 500000 || price > 1000000)) match = false;
+                    else if (priceRange === 'above1000' && price <= 1000000) match = false;
+                }
+
+                if (match) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Sorting visible items
+            const grid = document.getElementById('productGrid');
+            const visibleItems = items.filter(card => card.style.display !== 'none');
+            visibleItems.sort((a, b) => {
+                const priceA = parseFloat(a.dataset.price) || 0;
+                const priceB = parseFloat(b.dataset.price) || 0;
+                const idA = parseInt(a.dataset.id) || 0;
+                const idB = parseInt(b.dataset.id) || 0;
+
+                if (sortBy === 'price-asc') return priceA - priceB;
+                if (sortBy === 'price-desc') return priceB - priceA;
+                if (sortBy === 'featured') {
+                    const featA = a.dataset.featured === 'true' ? 1 : 0;
+                    const featB = b.dataset.featured === 'true' ? 1 : 0;
+                    return featB - featA;
+                }
+                return idA - idB; // newest
+            });
+
+            visibleItems.forEach(item => grid.appendChild(item));
+
+            // Count and Empty state
+            document.getElementById('productCount').textContent = visibleCount;
+            const emptyAlert = document.getElementById('noProductsAlert');
+            if (emptyAlert) {
+                emptyAlert.style.display = visibleCount === 0 ? '' : 'none';
+            }
+        }
+
+        function handleSortChange(sortVal) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('sortBy', sortVal);
+            window.location.href = url.toString();
+        }
+
+        document.addEventListener('DOMContentLoaded', applyClientFilters);
+    </script>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

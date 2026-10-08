@@ -1,18 +1,97 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Đặt Hàng Thành Công | LUNEA</title>
-</head>
-<body data-page="order-success" th:data-order-code="${orderCode}">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Đặt Hàng Thành Công!</h1>
-        </header>
-        <main>
-            <p>Mã đơn hàng: <strong th:text="${orderCode}">LUN-XXXXXX</strong></p>
-        </main>
-    </div>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-page="order-success">
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container" style="max-width: 760px;">
+            <!-- Celebration Card -->
+            <div class="card-shell">
+                <div class="card-core" style="text-align: center; padding: 48px 32px;">
+                    <!-- Success Check Icon with Gold Aura -->
+                    <div style="width: 76px; height: 76px; border-radius: 50%; background: var(--gradient-gold); margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; color: #07090e; font-size: 2.2rem; box-shadow: var(--shadow-gold-glow-lg);">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div class="eyebrow-tag" style="margin-bottom: 12px;">Đặt Hàng Thành Công</div>
+                    <h1 style="font-size: 2rem; margin-bottom: 12px;">Cảm Ơn Bạn Đã Mua Sắm Tại LUNEA!</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 0.95rem; margin-bottom: 28px; line-height: 1.6;">
+                        Đơn hàng của bạn đã được ghi nhận vào hệ thống quản lý chuỗi cửa hàng. Tồn kho đã được bảo lưu thành công và sẵn sàng để nhân viên chi nhánh đóng gói.
+                    </p>
+
+                    <!-- Order Code Box (DEMO STEP 10) -->
+                    <div style="padding: 20px; background: rgba(255,255,255,0.03); border: 1px dashed var(--color-border-gold); border-radius: var(--radius-md); margin-bottom: 32px;">
+                        <div style="font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;">Mã Đơn Hàng Của Bạn</div>
+                        <div class="text-gold-gradient" style="font-size: 2rem; font-weight: 900; letter-spacing: 0.05em;" 
+                             th:text="${order != null and order.orderCode != null ? order.orderCode : (orderCode != '' ? orderCode : 'LUN-SUCCESS')}">
+                            LUN-893421
+                        </div>
+                    </div>
+
+                    <!-- Order Key Details (Fulfillment Store, Total COD) -->
+                    <div th:if="${order != null}" style="text-align: left; background: rgba(0,0,0,0.2); border-radius: var(--radius-md); padding: 24px; margin-bottom: 32px; border: 1px solid var(--color-border-subtle);">
+                        <h4 style="font-family: var(--font-serif); font-size: 1.1rem; color: var(--color-gold-light); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border-subtle);">
+                            Thông Tin Đơn Hàng Chi Nhánh
+                        </h4>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.88rem;">
+                            <div>
+                                <span style="color: var(--color-text-muted);">Chi nhánh tiếp nhận:</span>
+                                <div style="font-weight: 700; color: var(--color-text-primary); margin-top: 2px;" 
+                                     th:text="${order.fulfillmentStoreName != null ? order.fulfillmentStoreName : 'LUNEA Đồng Khởi - Quận 1 (TP.HCM)'}">
+                                    LUNEA Đồng Khởi - Quận 1
+                                </div>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted);">Hình thức thanh toán:</span>
+                                <div style="font-weight: 700; color: var(--color-gold-light); margin-top: 2px;">
+                                    COD (Thanh toán khi nhận hàng)
+                                </div>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted);">Người nhận:</span>
+                                <div style="color: var(--color-text-primary); margin-top: 2px;" 
+                                     th:text="${order.recipientName} + ' (' + ${order.recipientPhone} + ')'">
+                                    Lê Hoàng Yến (0901234567)
+                                </div>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted);">Tổng thanh toán COD:</span>
+                                <div style="font-weight: 800; font-size: 1.1rem; color: var(--color-gold-light); margin-top: 2px;" 
+                                     th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                    265.000 ₫
+                                </div>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <span style="color: var(--color-text-muted);">Địa chỉ giao hàng:</span>
+                                <div style="color: var(--color-text-primary); margin-top: 2px;" th:text="${order.shippingAddress}">
+                                    45 Lê Duẩn, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                        <a th:href="@{/account/orders}" href="/account/orders" class="btn-lunea-gold">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Xem Đơn Hàng Của Tôi</span>
+                        </a>
+                        <a th:href="@{/}" href="/" class="btn-lunea-outline">
+                            <i class="bi bi-shop"></i>
+                            <span>Tiếp Tục Mua Sắm</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

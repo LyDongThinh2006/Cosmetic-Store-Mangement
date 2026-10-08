@@ -1,18 +1,150 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Đơn Hàng Của Tôi | LUNEA</title>
-</head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body data-page="account-orders">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Đơn Hàng Của Tôi</h1>
-        </header>
-        <main>
-            <p>Trang theo dõi lịch sử đơn hàng và hủy đơn</p>
-        </main>
-    </div>
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Account Layout Header -->
+            <div style="margin-bottom: 32px;">
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                    <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                    <span style="margin: 0 6px;">/</span>
+                    <span style="color: var(--color-gold-light);">Đơn hàng của tôi</span>
+                </div>
+                <h1 style="font-size: 2.2rem;">Lịch Sử Đơn Hàng</h1>
+            </div>
+
+            <!-- Tab Navigation (Profile vs Orders) -->
+            <div style="display: flex; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 12px;">
+                <a th:href="@{/account/profile}" href="/account/profile" class="nav-link" style="font-size: 1rem; padding: 8px 16px;">
+                    <i class="bi bi-person"></i> Hồ Sơ & Địa Chỉ
+                </a>
+                <a th:href="@{/account/orders}" href="/account/orders" class="nav-link active" style="font-size: 1rem; padding: 8px 16px;">
+                    <i class="bi bi-box-seam"></i> Đơn Hàng Của Tôi
+                </a>
+            </div>
+
+            <!-- Orders Container -->
+            <div th:if="${orders != null and !orders.isEmpty()}" style="display: flex; flex-direction: column; gap: 24px;">
+                <div th:each="o : ${orders}" class="card-shell">
+                    <div class="card-core" style="padding: 24px;">
+                        <!-- Order Top Header -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <span style="font-size: 0.78rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Mã đơn:</span>
+                                <strong class="text-gold-gradient" style="font-size: 1.15rem; margin-left: 6px;" 
+                                        th:text="${o.orderCode != null ? o.orderCode : ('#' + o.id)}">LUN-893421</strong>
+                                <span style="font-size: 0.8rem; color: var(--color-text-muted); margin-left: 12px;" 
+                                      th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy HH:mm')}">08/10/2026 14:30</span>
+                            </div>
+
+                            <!-- Order Status Badge -->
+                            <div>
+                                <span th:if="${o.status.name() == 'PENDING'}" class="badge-stock" style="background: var(--color-warning-bg); color: var(--color-warning); border: 1px solid var(--color-warning-border);">
+                                    <i class="bi bi-hourglass-split"></i> Chờ xử lý
+                                </span>
+                                <span th:if="${o.status.name() == 'CONFIRMED'}" class="badge-stock" style="background: var(--color-info-bg); color: var(--color-info); border: 1px solid var(--color-info-border);">
+                                    <i class="bi bi-check-circle"></i> Đã xác nhận
+                                </span>
+                                <span th:if="${o.status.name() == 'PREPARING'}" class="badge-stock" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">
+                                    <i class="bi bi-box"></i> Đang chuẩn bị hàng
+                                </span>
+                                <span th:if="${o.status.name() == 'SHIPPING'}" class="badge-stock" style="background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">
+                                    <i class="bi bi-truck"></i> Đang giao hàng
+                                </span>
+                                <span th:if="${o.status.name() == 'COMPLETED'}" class="badge-stock in-stock">
+                                    <i class="bi bi-check-all"></i> Hoàn thành
+                                </span>
+                                <span th:if="${o.status.name() == 'CANCELLED'}" class="badge-stock out-of-stock">
+                                    <i class="bi bi-x-circle"></i> Đã hủy
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Items Snapshot List -->
+                        <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+                            <div th:each="item : ${o.items}" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.92rem;">
+                                <div>
+                                    <strong th:text="${item.productName}">Tên sản phẩm</strong>
+                                    <span style="font-size: 0.8rem; color: var(--color-gold-light); margin-left: 8px;" th:text="'(' + ${item.variantName} + ')'">(30ml)</span>
+                                    <span style="font-size: 0.82rem; color: var(--color-text-muted); margin-left: 8px;" th:text="'× ' + ${item.quantity}">× 1</span>
+                                </div>
+                                <div style="font-weight: 700; color: var(--color-text-primary);" 
+                                     th:text="${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')} + ' ₫'">265.000 ₫</div>
+                            </div>
+                        </div>
+
+                        <!-- Order Bottom Summary & Actions (DEMO STEP 11: CANCEL ORDER) -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-subtle); padding-top: 18px; flex-wrap: wrap; gap: 16px;">
+                            <div>
+                                <span style="font-size: 0.85rem; color: var(--color-text-muted);">Tổng thanh toán COD:</span>
+                                <span class="text-gold-gradient" style="font-size: 1.35rem; font-weight: 900; margin-left: 8px;" 
+                                      th:text="${#numbers.formatDecimal(o.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">265.000 ₫</span>
+                            </div>
+
+                            <div style="display: flex; gap: 10px;">
+                                <a th:href="@{/account/orders/{id}(id=${o.id})}" class="btn-lunea-outline" style="padding: 8px 16px; font-size: 0.82rem;">
+                                    <span>Chi Tiết Đơn Hàng</span>
+                                </a>
+
+                                <!-- Cancel Order Button for PENDING orders (DEMO STEP 11) -->
+                                <button th:if="${o.status.name() == 'PENDING'}" 
+                                        type="button" 
+                                        th:onclick="'handleCancelOrder(' + ${o.id} + ')'" 
+                                        class="btn-lunea-outline" 
+                                        style="padding: 8px 16px; font-size: 0.82rem; color: var(--color-danger); border-color: var(--color-danger-border);">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>Hủy Đơn Hàng</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Orders State -->
+            <div th:unless="${orders != null and !orders.isEmpty()}" class="card-shell">
+                <div class="card-core" style="text-align: center; padding: 64px 24px;">
+                    <div style="font-size: 3.5rem; color: var(--color-text-muted); margin-bottom: 16px;"><i class="bi bi-box-seam"></i></div>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 8px;">Bạn chưa có đơn hàng nào</h3>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: 0.95rem;">
+                        Tất cả các đơn hàng mua sắm sẽ được quản lý và cập nhật tiến trình trực tiếp tại đây.
+                    </p>
+                    <a th:href="@{/products}" href="/products" class="btn-lunea-gold" style="display: inline-flex;">
+                        <span>Mua Sắm Mỹ Phẩm Ngay</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cancel Order Script (DEMO STEP 11) -->
+    <script th:inline="javascript">
+        async function handleCancelOrder(orderId) {
+            if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này? Tồn kho đang giữ sẽ được giải phóng ngay lập tức.')) {
+                return;
+            }
+
+            try {
+                await LUNEA.apiFetch(`/api/orders/${orderId}/cancel`, {
+                    method: 'PUT'
+                });
+                LUNEA.toastSuccess('Đã hủy đơn hàng thành công! Số lượng sản phẩm đã được hoàn trả tồn kho.');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } catch (err) {
+                // Handled in api.js
+            }
+        }
+    </script>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>

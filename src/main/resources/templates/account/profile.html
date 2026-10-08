@@ -1,18 +1,99 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Hồ Sơ Cá Nhân | LUNEA</title>
-</head>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body data-page="account-profile">
-    <div id="app">
-        <header>
-            <h1 th:text="${pageTitle}">Hồ Sơ Cá Nhân & Sổ Địa Chỉ</h1>
-        </header>
-        <main>
-            <p>Trang quản lý thông tin khách hàng và địa chỉ giao hàng</p>
-        </main>
-    </div>
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main">
+        <div class="lunea-container">
+            <!-- Breadcrumbs -->
+            <div style="margin-bottom: 32px;">
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                    <a th:href="@{/}" href="/" style="color: var(--color-text-secondary);">Trang chủ</a>
+                    <span style="margin: 0 6px;">/</span>
+                    <span style="color: var(--color-gold-light);">Hồ sơ cá nhân</span>
+                </div>
+                <h1 style="font-size: 2.2rem;">Thông Tin Tài Khoản</h1>
+            </div>
+
+            <!-- Tab Navigation (Profile vs Orders) -->
+            <div style="display: flex; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 12px;">
+                <a th:href="@{/account/profile}" href="/account/profile" class="nav-link active" style="font-size: 1rem; padding: 8px 16px;">
+                    <i class="bi bi-person"></i> Hồ Sơ & Địa Chỉ
+                </a>
+                <a th:href="@{/account/orders}" href="/account/orders" class="nav-link" style="font-size: 1rem; padding: 8px 16px;">
+                    <i class="bi bi-box-seam"></i> Đơn Hàng Của Tôi
+                </a>
+            </div>
+
+            <!-- Profile Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 36px; align-items: start;">
+                <!-- Personal Info Card (Left) -->
+                <div class="card-shell">
+                    <div class="card-core" style="padding: 28px;">
+                        <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 24px;">
+                            <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--gradient-gold); color: #07090e; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; box-shadow: var(--shadow-gold-glow);">
+                                <span th:text="${customer != null ? #strings.substring(customer.fullName, 0, 1).toUpperCase() : 'U'}">L</span>
+                            </div>
+                            <div>
+                                <h2 style="font-size: 1.35rem; font-family: var(--font-serif);" 
+                                    th:text="${customer != null ? customer.fullName : (currentUser != null ? currentUser.displayName : 'Khách hàng')}">Lê Hoàng Yến</h2>
+                                <span class="eyebrow-tag" style="margin-top: 4px; padding: 2px 10px;">Thành Viên Thân Thiết</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 16px; font-size: 0.92rem; border-top: 1px solid var(--color-border-subtle); padding-top: 20px;">
+                            <div>
+                                <span style="font-size: 0.78rem; color: var(--color-text-muted); text-transform: uppercase;">Email:</span>
+                                <div style="color: var(--color-text-primary); font-weight: 600;" 
+                                     th:text="${currentUser != null ? currentUser.username : 'khach01@lunea.test'}">khach01@lunea.test</div>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.78rem; color: var(--color-text-muted); text-transform: uppercase;">Điểm thưởng LUNEA:</span>
+                                <div class="text-gold-gradient" style="font-size: 1.4rem; font-weight: 800;" 
+                                     th:text="${customer != null ? customer.loyaltyPoints + ' điểm' : '120 điểm'}">120 điểm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Book Card (Right) -->
+                <div class="card-shell">
+                    <div class="card-core" style="padding: 28px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 12px;">
+                            <h3 style="font-size: 1.25rem; font-family: var(--font-serif);"><i class="bi bi-geo-alt"></i> Sổ Địa Chỉ Nhận Hàng</h3>
+                        </div>
+
+                        <div th:if="${addresses != null and !addresses.isEmpty()}" style="display: flex; flex-direction: column; gap: 16px;">
+                            <div th:each="addr : ${addresses}" 
+                                 style="padding: 16px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); background: rgba(255,255,255,0.02); position: relative;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                    <strong style="color: var(--color-text-primary);" th:text="${addr.recipientName}">Lê Hoàng Yến</strong>
+                                    <span th:if="${addr.isDefault}" class="badge-stock in-stock" style="font-size: 0.68rem; padding: 2px 8px;">
+                                        Mặc định
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--color-text-muted);" th:text="'SĐT: ' + ${addr.phone}">SĐT: 0901234567</div>
+                                <div style="font-size: 0.88rem; color: var(--color-text-secondary); margin-top: 4px;" 
+                                     th:text="${addr.addressDetail} + ', ' + ${addr.ward} + ', ' + ${addr.district} + ', ' + ${addr.province}">
+                                    Số 45 Đường Lê Duẩn, Phường Bến Nghé, Quận 1, Hồ Chí Minh
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:unless="${addresses != null and !addresses.isEmpty()}" style="color: var(--color-text-muted); font-size: 0.9rem; text-align: center; padding: 24px;">
+                            Chưa có địa chỉ giao hàng nào được lưu.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 </html>
