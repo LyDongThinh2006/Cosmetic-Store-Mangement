@@ -8,9 +8,11 @@ import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.domain.entity.inventory.InventoryAdjustmentEntity;
 import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
 import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.domain.dto.response.store.StoreStockResponse;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
 import com.thinh.cosmetic.repository.store.InventoryAdjustmentRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;
+import com.thinh.cosmetic.repository.store.StoreRepository;
 import com.thinh.cosmetic.service.store.impl.InventoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +22,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,6 +42,9 @@ class InventoryServiceTest {
 
     @Mock
     private EmployeeRepository employeeRepository;
+
+    @Mock
+    private StoreRepository storeRepository;
 
     @InjectMocks
     private InventoryServiceImpl inventoryService;
@@ -91,5 +98,23 @@ class InventoryServiceTest {
         assertEquals(55, response.getAvailableStock());
         verify(adjustmentRepository).save(any(InventoryAdjustmentEntity.class));
         verify(inventoryRepository).save(inventory);
+    }
+
+    @Test
+    @DisplayName("UC08: Get store stock by SKU calculates available stock per store")
+    void testGetStoreStockBySku() {
+        when(storeRepository.findAll()).thenReturn(List.of(store));
+        when(inventoryRepository.findBySkuId(10L)).thenReturn(List.of(inventory));
+
+        List<StoreStockResponse> stockList = inventoryService.getStoreStockBySku(10L);
+
+        assertEquals(1, stockList.size());
+        StoreStockResponse stockItem = stockList.get(0);
+        assertEquals(1L, stockItem.getStoreId());
+        assertEquals("Lunea Flagship Store", stockItem.getStoreName());
+        assertEquals(50, stockItem.getActualStock());
+        assertEquals(10, stockItem.getHeldQuantity());
+        assertEquals(40, stockItem.getAvailableStock());
+        assertTrue(stockItem.isInStock());
     }
 }

@@ -2,6 +2,7 @@ package com.thinh.cosmetic.service;
 
 import com.thinh.cosmetic.domain.dto.request.order.OrderRequest;
 import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
+import com.thinh.cosmetic.domain.entity.account.AccountEntity;
 import com.thinh.cosmetic.domain.entity.account.CustomerAddressEntity;
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
 import com.thinh.cosmetic.domain.entity.sales.CartEntity;
@@ -10,22 +11,26 @@ import com.thinh.cosmetic.domain.entity.catalog.ProductEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.domain.entity.sales.OrderEntity;
 import com.thinh.cosmetic.domain.entity.sales.OrderItemEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderReservationEntity;
 import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
 import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
 import com.thinh.cosmetic.domain.enums.ReservationStatus;
 import com.thinh.cosmetic.domain.enums.OrderStatus;
 import com.thinh.cosmetic.domain.enums.PaymentMethod;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.repository.account.CustomerAddressRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.repository.cart.CartItemRepository;
 import com.thinh.cosmetic.repository.cart.CartRepository;
+import com.thinh.cosmetic.repository.catalog.ProductImageRepository;
 import com.thinh.cosmetic.repository.order.OrderItemRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
 import com.thinh.cosmetic.repository.order.OrderReservationRepository;
-
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
-
+import com.thinh.cosmetic.security.AuthPrincipal;
+import com.thinh.cosmetic.security.StoreScope;
 import com.thinh.cosmetic.service.order.impl.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,9 +44,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +61,8 @@ class OrderServiceTest {
     @Mock private CartItemRepository cartItemRepository;
     @Mock private StoreRepository storeRepository;
     @Mock private InventoryRepository inventoryRepository;
-
+    @Mock private ProductImageRepository productImageRepository;
+    @Mock private StoreScope storeScope;
 
     @InjectMocks
     private OrderServiceImpl orderService;
@@ -70,7 +76,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        customer = CustomerEntity.builder().id(1L).fullName("Nguyen Van A").build();
+        AccountEntity account = AccountEntity.builder().id(101L).phone("0987654321").email("khach@lunea.test").build();
+        customer = CustomerEntity.builder().id(1L).fullName("Nguyen Van A").account(account).build();
         address = CustomerAddressEntity.builder()
                 .id(10L)
                 .customerEntity(customer)
@@ -99,13 +106,24 @@ class OrderServiceTest {
                 .quantity(2)
                 .build();
 
-        store = StoreEntity.builder().id(1L).name("Lunea Store 1").build();
+        store = StoreEntity.builder().id(1L).name("Lunea Store 1").province("Ho Chi Minh").build();
         inventory = InventoryEntity.builder()
                 .id(200L)
                 .store(store)
                 .sku(sku)
                 .actualStock(50)
                 .heldQuantity(0)
+                .build();
+    }
+
+    @Test
+    @DisplayName("Place order calculates total, reserves stock and clears cart")
+    void testPlaceOrderSuccess() throws Exception {
+        CartItemEntity cartItem = CartItemEntity.builder()
+                .id(50L)
+                .cart(cart)
+                .sku(sku)
+                .quantity(2)
                 .build();
 
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
@@ -114,11 +132,7 @@ class OrderServiceTest {
         when(cartItemRepository.findByCartId(5L)).thenReturn(List.of(cartItem));
         when(storeRepository.findAll()).thenReturn(List.of(store));
         when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
-    }
 
-    @Test
-    @DisplayName("Place order calculates total, reserves stock and clears cart")
-    void testPlaceOrderSuccess() throws Exception {
         when(orderRepository.save(any(OrderEntity.class))).thenAnswer(i -> {
             OrderEntity o = i.getArgument(0);
             o.setId(999L);
@@ -146,5 +160,154 @@ class OrderServiceTest {
         assertEquals(2, inventory.getHeldQuantity());
         // Verify cart was cleared
         verify(cartItemRepository).deleteByCartId(5L);
+    }
+
+    @Test
+    @DisplayName("Place order with voucher LUNEA10 applies 10% discount")
+    void testPlaceOrderWithVoucher() throws Exception {
+        CartItemEntity cartItem = CartItemEntity.builder()
+                .id(50L)
+                .cart(cart)
+                .sku(sku)
+                .quantity(2)
+                .build();
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(addressRepository.findById(10L)).thenReturn(Optional.of(address));
+        when(cartRepository.findByCustomerId(1L)).thenReturn(Optional.of(cart));
+        when(cartItemRepository.findByCartId(5L)).thenReturn(List.of(cartItem));
+        when(storeRepository.findAll()).thenReturn(List.of(store));
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
+
+        when(orderRepository.save(any(OrderEntity.class))).thenAnswer(i -> {
+            OrderEntity o = i.getArgument(0);
+            o.setId(999L);
+            return o;
+        });
+        when(orderItemRepository.save(any(OrderItemEntity.class))).thenAnswer(i -> i.getArgument(0));
+
+        OrderRequest request = OrderRequest.builder()
+                .customerAddressId(10L)
+                .paymentMethod(PaymentMethod.COD)
+                .voucherCode("LUNEA10")
+                .build();
+
+        OrderResponse response = orderService.placeOrder(1L, request);
+
+        assertNotNull(response);
+        assertEquals(new BigDecimal("400000"), response.getSubtotal());
+        assertEquals(new BigDecimal("40000.00"), response.getDiscountAmount()); // 10% of 400,000
+        assertEquals(new BigDecimal("30000"), response.getShippingFee());
+        assertEquals(new BigDecimal("390000.00"), response.getTotalAmount()); // 400,000 - 40,000 + 30,000
+    }
+
+    @Test
+    @DisplayName("Customer can cancel pending order and held stock is released")
+    void testCancelPendingOrderSuccess() throws Exception {
+        OrderEntity order = OrderEntity.builder()
+                .id(999L)
+                .orderCode("LUN-123456")
+                .customer(customer)
+                .status(OrderStatus.PENDING)
+                .assignedStore(store)
+                .subtotal(new BigDecimal("400000"))
+                .discountAmount(BigDecimal.ZERO)
+                .shippingFee(new BigDecimal("30000"))
+                .totalAmount(new BigDecimal("430000"))
+                .build();
+
+        OrderReservationEntity hold = OrderReservationEntity.builder()
+                .id(1L)
+                .order(order)
+                .store(store)
+                .sku(sku)
+                .quantity(2)
+                .status(ReservationStatus.HELD)
+                .build();
+
+        inventory.setHeldQuantity(2);
+
+        when(orderRepository.findById(999L)).thenReturn(Optional.of(order));
+        when(stockHoldRepository.findByOrderId(999L)).thenReturn(List.of(hold));
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
+        when(orderRepository.save(any(OrderEntity.class))).thenAnswer(i -> i.getArgument(0));
+
+        OrderResponse cancelled = orderService.cancelOrder(999L, 1L);
+
+        assertEquals(OrderStatus.CANCELLED, cancelled.getStatus());
+        assertEquals(ReservationStatus.RELEASED, hold.getStatus());
+        assertEquals(0, inventory.getHeldQuantity());
+    }
+
+    @Test
+    @DisplayName("Cancel order fails if order is already CONFIRMED or SHIPPING")
+    void testCancelOrderNotPendingFails() {
+        OrderEntity order = OrderEntity.builder()
+                .id(999L)
+                .orderCode("LUN-123456")
+                .customer(customer)
+                .status(OrderStatus.SHIPPING)
+                .build();
+
+        when(orderRepository.findById(999L)).thenReturn(Optional.of(order));
+
+        BusinessException ex = assertThrows(BusinessException.class, () -> orderService.cancelOrder(999L, 1L));
+        assertEquals(ErrorCode.ORDER_NOT_CANCELLABLE, ex.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Shipping status commits hold and deducts actual stock")
+    void testUpdateStatusShippingDeductsStock() throws Exception {
+        OrderEntity order = OrderEntity.builder()
+                .id(999L)
+                .orderCode("LUN-123456")
+                .customer(customer)
+                .status(OrderStatus.PREPARING)
+                .assignedStore(store)
+                .subtotal(new BigDecimal("400000"))
+                .discountAmount(BigDecimal.ZERO)
+                .shippingFee(new BigDecimal("30000"))
+                .totalAmount(new BigDecimal("430000"))
+                .build();
+
+        OrderReservationEntity hold = OrderReservationEntity.builder()
+                .id(1L)
+                .order(order)
+                .store(store)
+                .sku(sku)
+                .quantity(2)
+                .status(ReservationStatus.HELD)
+                .build();
+
+        inventory.setActualStock(50);
+        inventory.setHeldQuantity(2);
+
+        when(orderRepository.findById(999L)).thenReturn(Optional.of(order));
+        when(stockHoldRepository.findByOrderId(999L)).thenReturn(List.of(hold));
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
+        when(orderRepository.save(any(OrderEntity.class))).thenAnswer(i -> i.getArgument(0));
+
+        OrderResponse shipping = orderService.updateStatus(999L, OrderStatus.SHIPPING);
+
+        assertEquals(OrderStatus.SHIPPING, shipping.getStatus());
+        assertEquals(ReservationStatus.COMMITTED, hold.getStatus());
+        assertEquals(48, inventory.getActualStock()); // 50 - 2
+        assertEquals(0, inventory.getHeldQuantity()); // 2 - 2
+    }
+
+    @Test
+    @DisplayName("Staff can only access orders within their store scope")
+    void testStoreScopeOrdersFiltering() {
+        AuthPrincipal staffHcm = AuthPrincipal.builder()
+                .employeeId(2L)
+                .username("order_hcm")
+                .build();
+
+        when(storeScope.getAccessibleStoreIds(staffHcm)).thenReturn(List.of(1L));
+        when(orderRepository.findByAssignedStoreIdInOrderByCreatedAtDesc(List.of(1L))).thenReturn(List.of());
+
+        List<OrderResponse> orders = orderService.getOrders(staffHcm, null);
+        assertNotNull(orders);
+        verify(orderRepository).findByAssignedStoreIdInOrderByCreatedAtDesc(List.of(1L));
     }
 }

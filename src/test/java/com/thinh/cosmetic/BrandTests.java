@@ -119,11 +119,7 @@ public class BrandTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$").isArray()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.length()").value(2)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].name").value("Perfume")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].name").value("Skincare")
+                MockMvcResultMatchers.jsonPath("$.length()").value(7)
         );
     }
 

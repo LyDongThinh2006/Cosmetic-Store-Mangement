@@ -120,6 +120,12 @@ public class WebPageControllersTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("account/order-detail"))
                 .andExpect(model().attribute("orderId", 99L));
+
+        mockMvc.perform(get("/account/wishlist")
+                        .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/wishlist"))
+                .andExpect(model().attribute("activeTab", "wishlist"));
     }
 
     @Test
