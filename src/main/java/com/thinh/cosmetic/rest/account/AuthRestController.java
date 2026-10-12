@@ -14,8 +14,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import com.thinh.cosmetic.domain.dto.request.account.ResetPasswordRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -47,6 +50,12 @@ public class AuthRestController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, logoutCookie.toString())
                 .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        accountService.resetPassword(request);
+        return ResponseEntity.ok(Map.of("message", "Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập bằng mật khẩu mới."));
     }
 
     @GetMapping("/me")

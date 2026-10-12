@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import com.thinh.cosmetic.domain.dto.response.catalog.ProductResponse;
 import com.thinh.cosmetic.service.catalog.BrandService;
 import com.thinh.cosmetic.service.catalog.CategoryService;
@@ -24,7 +25,7 @@ public class ProductPageController {
     private final BrandService brandService;
     private final CategoryService categoryService;
 
-    @GetMapping("/products")
+    @GetMapping({"/products", "/product"})
     public String productList(
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "brandId", required = false) Long brandId,
@@ -39,7 +40,7 @@ public class ProductPageController {
     ) {
         model.addAttribute("pageTitle", "Danh Sách Sản Phẩm | LUNEA");
         model.addAttribute("activeNav", "products");
-        model.addAttribute("keyword", keyword != null ? keyword : "");
+        model.addAttribute("keyword", keyword != null ? keyword.trim() : "");
         model.addAttribute("brandId", brandId);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("skinType", skinType);
@@ -49,14 +50,19 @@ public class ProductPageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("brands", brandService.getAll());
         model.addAttribute("categories", categoryService.getAll());
-        model.addAttribute("products", productService.getAll());
+
+        List<ProductResponse> products = productService.searchAndFilter(
+                keyword, brandId, categoryId, skinType, concern, priceRange, sortBy
+        );
+        model.addAttribute("products", products);
+
         if (principal != null) {
             model.addAttribute("currentUser", principal);
         }
         return "product-list";
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping({"/products/{id}", "/product/{id}"})
     public String productDetail(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal AuthPrincipal principal,
@@ -68,7 +74,24 @@ public class ProductPageController {
         } catch (Exception e) {
             log.warn("Product not found with id: {}", id);
         }
-        model.addAttribute("pageTitle", product != null ? product.getName() + " | LUNEA" : "Chi Tiết Sản Phẩm | LUNEA");
+
+        if (product == null) {
+            return "redirect:/error/404";
+        }
+
+        final Long catId = product.getCategory() != null ? product.getCategory().getId() : null;
+        final Long brandId = product.getBrand() != null ? product.getBrand().getId() : null;
+
+        // Suggested / Related Products in same category or brand
+        List<ProductResponse> relatedProducts = productService.getAll().stream()
+                .filter(p -> !id.equals(p.getId()))
+                .filter(p -> (catId != null && p.getCategory() != null && catId.equals(p.getCategory().getId()))
+                        || (brandId != null && p.getBrand() != null && brandId.equals(p.getBrand().getId())))
+                .limit(4)
+                .toList();
+        model.addAttribute("relatedProducts", relatedProducts);
+
+        model.addAttribute("pageTitle", product.getName() + " | LUNEA");
         model.addAttribute("activeNav", "products");
         model.addAttribute("productId", id);
         model.addAttribute("product", product);
@@ -76,5 +99,9 @@ public class ProductPageController {
             model.addAttribute("currentUser", principal);
         }
         return "product-detail";
+    }
+
+    private boolean idMatch(Long id1, Long id2) {
+        return id1 != null && id1.equals(id2);
     }
 }

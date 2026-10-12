@@ -9,8 +9,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
 import com.thinh.cosmetic.service.account.CustomerService;
+import com.thinh.cosmetic.service.cart.WishListService;
 import com.thinh.cosmetic.service.order.OrderService;
+import com.thinh.cosmetic.service.returns.ReturnService;
 
 @Slf4j
 @Controller
@@ -19,6 +22,8 @@ public class AccountPageController {
 
     private final CustomerService customerService;
     private final OrderService orderService;
+    private final ReturnService returnService;
+    private final WishListService wishListService;
 
     @GetMapping("/account")
     public String account() {
@@ -74,10 +79,34 @@ public class AccountPageController {
             model.addAttribute("currentUser", principal);
         }
         try {
-            model.addAttribute("order", orderService.getById(id));
+            OrderResponse order = orderService.getById(id);
+            if (principal != null && principal.isCustomer() && principal.getCustomerId() != null) {
+                if (order.getCustomerId() != null && !principal.getCustomerId().equals(order.getCustomerId())) {
+                    return "redirect:/account/orders";
+                }
+            }
+            model.addAttribute("order", order);
+            model.addAttribute("returnRequests", returnService.getByOrder(id));
         } catch (Exception e) {
             log.warn("Failed to load order with ID {}: {}", id, e.getMessage());
         }
         return "account/order-detail";
+    }
+
+    @GetMapping("/account/wishlist")
+    public String wishlist(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Sản Phẩm Yêu Thích | LUNEA");
+        model.addAttribute("activeNav", "account");
+        model.addAttribute("activeTab", "wishlist");
+        if (principal != null) {
+            model.addAttribute("currentUser", principal);
+            Long customerId = principal.getCustomerId() != null ? principal.getCustomerId() : 1L;
+            try {
+                model.addAttribute("wishlist", wishListService.getWishList(customerId));
+            } catch (Exception e) {
+                log.warn("Failed to load wishlist for customer ID {}: {}", customerId, e.getMessage());
+            }
+        }
+        return "account/wishlist";
     }
 }

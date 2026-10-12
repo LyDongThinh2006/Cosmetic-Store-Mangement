@@ -38,6 +38,11 @@ public class ReturnRestController {
         return ResponseEntity.ok(returnService.getByCustomer(customerId));
     }
 
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<List<ReturnRequestResponse>> getByOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(returnService.getByOrder(orderId));
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<ReturnRequestResponse> updateStatus(
             @PathVariable Long id,

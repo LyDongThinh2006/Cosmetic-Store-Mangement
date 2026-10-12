@@ -2,7 +2,9 @@ package com.thinh.cosmetic.rest.catalog;
 
 import com.thinh.cosmetic.domain.dto.request.catalog.ProductRequest;
 import com.thinh.cosmetic.domain.dto.response.catalog.ProductResponse;
+import com.thinh.cosmetic.domain.dto.response.store.StoreStockResponse;
 import com.thinh.cosmetic.service.catalog.ProductService;
+import com.thinh.cosmetic.service.store.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductRestController {
     private final ProductService productService;
+    private final InventoryService inventoryService;
 
     @PostMapping
     public ResponseEntity<ProductResponse> create(
@@ -36,7 +39,20 @@ public class ProductRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAll() {
+    public ResponseEntity<List<ProductResponse>> getAll(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String skinType,
+            @RequestParam(required = false) String concern,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String sortBy
+    ) {
+        if (keyword != null || brandId != null || categoryId != null || skinType != null || concern != null || priceRange != null || sortBy != null) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(productService.searchAndFilter(keyword, brandId, categoryId, skinType, concern, priceRange, sortBy));
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(productService.getAll());
@@ -61,5 +77,10 @@ public class ProductRestController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @GetMapping("/sku/{skuId}/stores")
+    public ResponseEntity<List<StoreStockResponse>> getSkuStoreStock(@PathVariable Long skuId) {
+        return ResponseEntity.ok(inventoryService.getStoreStockBySku(skuId));
     }
 }
