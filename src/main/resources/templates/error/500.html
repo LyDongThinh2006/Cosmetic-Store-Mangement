@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('500 - Lỗi Hệ Thống | LUNEA')}"></head>
+<body data-page="error-500" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main" id="main-content" style="display: flex; align-items: center; justify-content: center; flex: 1;">
+        <div class="lunea-container" style="max-width: 540px;">
+            <div class="card-shell">
+                <div class="card-core" style="text-align: center; padding: 48px 32px;">
+                    <div style="font-size: 3.5rem; color: var(--color-danger, #e11d48); margin-bottom: 16px;">
+                        <i class="bi bi-exclamation-octagon"></i>
+                    </div>
+                    <div class="eyebrow-tag" style="margin-bottom: 12px; color: var(--color-gold-light);">Hệ Thống Đang Xử Lý</div>
+                    <h1 style="font-size: 1.8rem; margin-bottom: 12px;">Đã Xảy Ra Sự Cố Máy Chủ</h1>
+                    <p style="color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
+                        Hệ thống gặp sự cố tạm thời khi tải thông tin. Vui lòng tải lại trang hoặc quay lại danh sách sản phẩm.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+                        <a th:href="@{/}" href="/" class="btn-lunea-gold">
+                            <i class="bi bi-house"></i>
+                            <span>Về Trang Chủ</span>
+                        </a>
+                        <a th:href="@{/products}" href="/products" class="btn-lunea-outline">
+                            <i class="bi bi-grid"></i>
+                            <span>Xem Danh Mục Sản Phẩm</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <div th:replace="~{fragments/toast :: toast}"></div>
+</body>
+</html>

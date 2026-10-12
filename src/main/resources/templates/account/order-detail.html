@@ -5,7 +5,7 @@
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content">
         <div class="lunea-container" style="max-width: 960px;">
             <!-- Breadcrumbs (Page 12 PDF) -->
             <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 28px;" class="reveal-on-scroll">
@@ -33,68 +33,96 @@
                         </p>
                     </div>
 
-                    <!-- Badge -->
+                    <!-- Synchronized Status Badge -->
                     <div>
-                        <span th:if="${order.status.name() == 'PENDING'}" class="badge-stock" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.85rem; padding: 6px 16px;">
-                            Chờ xác nhận
+                        <span th:if="${order.status.name() == 'PENDING'}" class="status-pill pending" style="font-size: 0.85rem; padding: 6px 16px;">
+                            <i class="bi bi-hourglass"></i> Chờ xác nhận
                         </span>
-                        <span th:if="${order.status.name() == 'CONFIRMED' or order.status.name() == 'PREPARING'}" class="badge-stock" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-size: 0.85rem; padding: 6px 16px;">
-                            Đã xác nhận
+                        <span th:if="${order.status.name() == 'CONFIRMED'}" class="status-pill confirmed" style="font-size: 0.85rem; padding: 6px 16px;">
+                            <i class="bi bi-check2"></i> Đã xác nhận
                         </span>
-                        <span th:if="${order.status.name() == 'SHIPPING'}" class="badge-stock" style="background: rgba(99, 102, 241, 0.12); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.85rem; padding: 6px 16px;">
-                            Đang giao
+                        <span th:if="${order.status.name() == 'PREPARING'}" class="status-pill preparing" style="font-size: 0.85rem; padding: 6px 16px;">
+                            <i class="bi bi-box-seam"></i> Đang đóng gói
                         </span>
-                        <span th:if="${order.status.name() == 'COMPLETED'}" class="badge-stock in-stock" style="font-size: 0.85rem; padding: 6px 16px;">
-                            Đã giao
+                        <span th:if="${order.status.name() == 'SHIPPING'}" class="status-pill shipping" style="font-size: 0.85rem; padding: 6px 16px;">
+                            <i class="bi bi-truck"></i> Đang giao hàng
                         </span>
-                        <span th:if="${order.status.name() == 'CANCELLED'}" class="badge-stock out-of-stock" style="font-size: 0.85rem; padding: 6px 16px;">
-                            Đã hủy
+                        <span th:if="${order.status.name() == 'COMPLETED'}" class="status-pill completed" style="font-size: 0.85rem; padding: 6px 16px;">
+                            <i class="bi bi-check-circle-fill"></i> Hoàn thành
+                        </span>
+                        <span th:if="${order.status.name() == 'CANCELLED'}" class="status-pill cancelled" style="font-size: 0.85rem; padding: 6px 16px;">
+                            <i class="bi bi-x-circle-fill"></i> Đã hủy
                         </span>
                     </div>
                 </div>
 
-                <!-- 4-Step Order Progress Stepper (Page 12 PDF) -->
-                <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 36px 32px; margin-bottom: 32px; box-shadow: var(--shadow-card);">
+                <!-- Cancelled State Banner (if order is CANCELLED) -->
+                <div th:if="${order.status.name() == 'CANCELLED'}" 
+                     style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.35); border-radius: var(--radius-sm); padding: 22px 28px; margin-bottom: 32px; display: flex; align-items: center; gap: 18px;">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(244, 63, 94, 0.15); color: #fb7185; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; color: #fb7185; font-size: 1.15rem; font-weight: 700;">ĐƠN HÀNG ĐÃ BỊ HỦY</h3>
+                        <p style="margin: 0; font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.5;">
+                            Đơn hàng đã được hủy thành công. Toàn bộ số lượng tồn kho giữ trước đã được giải phóng an toàn trở lại kệ hàng chi nhánh và lượt sử dụng voucher khuyến mãi đã được hoàn lại.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 5-Step Order Progress Stepper (Synchronized 1-1 with Admin Back-office) -->
+                <div th:if="${order.status.name() != 'CANCELLED'}" 
+                     style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 36px 32px; margin-bottom: 32px; box-shadow: var(--shadow-card);">
                     <div style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                         <!-- Step Line -->
-                        <div style="position: absolute; top: 16px; left: 10%; right: 10%; height: 2px; background: var(--color-border-subtle); z-index: 0;"></div>
+                        <div style="position: absolute; top: 16px; left: 8%; right: 8%; height: 2px; background: var(--color-border-subtle); z-index: 0;"></div>
 
-                        <!-- Step 1: Đã đặt hàng -->
-                        <div style="position: relative; z-index: 1; text-align: center;">
+                        <!-- Step 1: Đặt hàng (PENDING) -->
+                        <div style="position: relative; z-index: 1; text-align: center; flex: 1;">
                             <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-gold-primary); color: #080a0f; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 auto 8px;">
-                                1
+                                <i class="bi bi-receipt" style="font-size: 0.85rem;"></i>
                             </div>
-                            <span style="font-size: 0.82rem; color: var(--color-text-primary);">Đã đặt hàng</span>
+                            <span style="font-size: 0.82rem; font-weight: 600; color: var(--color-text-primary);">Đặt hàng</span>
                         </div>
 
-                        <!-- Step 2: Đã xác nhận -->
-                        <div style="position: relative; z-index: 1; text-align: center;">
+                        <!-- Step 2: Đã xác nhận (CONFIRMED) -->
+                        <div style="position: relative; z-index: 1; text-align: center; flex: 1;">
                             <div style="width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;"
-                                 th:styleappend="${order.status.name() != 'PENDING' and order.status.name() != 'CANCELLED'} ? 'background: var(--color-gold-primary); color: #080a0f;' : 'background: var(--color-bg-elevated); color: var(--color-text-muted); border: 1px solid var(--color-border-subtle);'">
-                                2
+                                 th:styleappend="${order.status.name() == 'CONFIRMED' or order.status.name() == 'PREPARING' or order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'background: var(--color-gold-primary); color: #080a0f;' : 'background: var(--color-bg-elevated); color: var(--color-text-muted); border: 1px solid var(--color-border-subtle);'">
+                                <i class="bi bi-check-lg" style="font-size: 0.85rem;"></i>
                             </div>
                             <span style="font-size: 0.82rem;" 
-                                  th:styleappend="${order.status.name() != 'PENDING' and order.status.name() != 'CANCELLED'} ? 'color: var(--color-text-primary);' : 'color: var(--color-text-muted);'">Đã xác nhận</span>
+                                  th:styleappend="${order.status.name() == 'CONFIRMED' or order.status.name() == 'PREPARING' or order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'color: var(--color-text-primary); font-weight: 600;' : 'color: var(--color-text-muted);'">Đã xác nhận</span>
                         </div>
 
-                        <!-- Step 3: Đang giao -->
-                        <div style="position: relative; z-index: 1; text-align: center;">
+                        <!-- Step 3: Đang đóng gói (PREPARING) -->
+                        <div style="position: relative; z-index: 1; text-align: center; flex: 1;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;"
+                                 th:styleappend="${order.status.name() == 'PREPARING' or order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'background: var(--color-gold-primary); color: #080a0f;' : 'background: var(--color-bg-elevated); color: var(--color-text-muted); border: 1px solid var(--color-border-subtle);'">
+                                <i class="bi bi-box-seam" style="font-size: 0.85rem;"></i>
+                            </div>
+                            <span style="font-size: 0.82rem;" 
+                                  th:styleappend="${order.status.name() == 'PREPARING' or order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'color: var(--color-text-primary); font-weight: 600;' : 'color: var(--color-text-muted);'">Đóng gói</span>
+                        </div>
+
+                        <!-- Step 4: Đang giao hàng (SHIPPING) -->
+                        <div style="position: relative; z-index: 1; text-align: center; flex: 1;">
                             <div style="width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;"
                                  th:styleappend="${order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'background: var(--color-gold-primary); color: #080a0f;' : 'background: var(--color-bg-elevated); color: var(--color-text-muted); border: 1px solid var(--color-border-subtle);'">
-                                3
+                                <i class="bi bi-truck" style="font-size: 0.85rem;"></i>
                             </div>
                             <span style="font-size: 0.82rem;"
-                                  th:styleappend="${order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'color: var(--color-text-primary);' : 'color: var(--color-text-muted);'">Đang giao</span>
+                                  th:styleappend="${order.status.name() == 'SHIPPING' or order.status.name() == 'COMPLETED'} ? 'color: var(--color-text-primary); font-weight: 600;' : 'color: var(--color-text-muted);'">Đang giao</span>
                         </div>
 
-                        <!-- Step 4: Đã giao -->
-                        <div style="position: relative; z-index: 1; text-align: center;">
+                        <!-- Step 5: Hoàn thành (COMPLETED) -->
+                        <div style="position: relative; z-index: 1; text-align: center; flex: 1;">
                             <div style="width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;"
                                  th:styleappend="${order.status.name() == 'COMPLETED'} ? 'background: var(--color-gold-primary); color: #080a0f;' : 'background: var(--color-bg-elevated); color: var(--color-text-muted); border: 1px solid var(--color-border-subtle);'">
-                                4
+                                <i class="bi bi-check2-all" style="font-size: 0.85rem;"></i>
                             </div>
                             <span style="font-size: 0.82rem;"
-                                  th:styleappend="${order.status.name() == 'COMPLETED'} ? 'color: var(--color-text-primary);' : 'color: var(--color-text-muted);'">Đã giao</span>
+                                  th:styleappend="${order.status.name() == 'COMPLETED'} ? 'color: var(--color-text-primary); font-weight: 600;' : 'color: var(--color-text-muted);'">Hoàn thành</span>
                         </div>
                     </div>
                 </div>
@@ -104,7 +132,7 @@
                     <!-- Thông tin giao hàng -->
                     <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-card);">
                         <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--color-text-primary); margin-bottom: 16px;">
-                            Thông tin giao hàng
+                            <i class="bi bi-person-lines-fill" style="color: var(--color-gold-primary); margin-right: 6px;"></i>Thông tin giao hàng
                         </h3>
                         <p style="font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px;"
                            th:text="${order.recipientName} + ' | ' + ${order.recipientPhone}">
@@ -114,22 +142,31 @@
                            th:text="${order.shippingAddress} + ', ' + ${order.ward} + ', ' + ${order.province}">
                             123 Nguyễn Huệ, Phường Sài Gòn, TP. Hồ Chí Minh
                         </p>
-                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Giao hàng tiêu chuẩn</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--color-text-muted);">
+                            <span>Hình thức: Giao hàng tiêu chuẩn</span>
+                            <span th:if="${order.note != null and !order.note.isBlank()}" th:text="'Ghi chú: ' + ${order.note}"></span>
+                        </div>
+                        <!-- Fulfillment Store Tag (Omnichannel Synchronization) -->
+                        <div th:if="${order.fulfillmentStoreName != null}" style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--color-border-subtle); display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--color-gold-primary);">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>Chi nhánh xử lý: <strong th:text="${order.fulfillmentStoreName}">LUNEA Quận 1</strong></span>
+                        </div>
                     </div>
 
                     <!-- Thanh toán -->
                     <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); padding: 24px; box-shadow: var(--shadow-card);">
                         <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--color-text-primary); margin-bottom: 16px;">
-                            Thanh toán
+                            <i class="bi bi-credit-card-2-front" style="color: var(--color-gold-primary); margin-right: 6px;"></i>Thanh toán
                         </h3>
                         <p style="font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px;">
                             Thanh toán khi nhận hàng (COD)
                         </p>
                         <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 14px;">
-                            Chưa thanh toán
+                            <span th:if="${order.status.name() == 'COMPLETED'}" style="color: var(--color-success); font-weight: 600;"><i class="bi bi-check-circle-fill"></i> Đã thanh toán tiền mặt</span>
+                            <span th:unless="${order.status.name() == 'COMPLETED'}">Thu tiền khi nhận hàng</span>
                         </p>
                         <span style="font-size: 0.8rem; color: var(--color-text-muted);">
-                            Thời gian giao dự kiến: 25 - 27/09/2026
+                            Bảo chứng chính hãng 100% · Đổi trả trong 7 ngày
                         </span>
                     </div>
                 </div>
@@ -157,42 +194,146 @@
                         </div>
                     </div>
 
-                    <!-- Price Calculations (Page 12 PDF) -->
-                    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 10px; max-width: 320px; margin-left: auto;">
+                    <!-- Price Calculations (Synchronized with Admin) -->
+                    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 10px; max-width: 360px; margin-left: auto;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--color-text-secondary);">
-                            <span>Tạm tính</span>
+                            <span>Tạm tính tiền hàng</span>
                             <span style="color: var(--color-text-primary);" th:text="${#numbers.formatDecimal(order.subtotal != null ? order.subtotal : order.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">4.292.000 ₫</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--color-text-secondary);">
-                            <span>Phí giao hàng</span>
-                            <span style="color: var(--color-text-primary);">30.000 ₫</span>
+                        <div th:if="${order.discountAmount != null and order.discountAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}" style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--color-gold-primary);">
+                            <span>Giảm giá khuyến mãi / Voucher</span>
+                            <span th:text="'- ' + ${#numbers.formatDecimal(order.discountAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">- 50.000 ₫</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 600; color: var(--color-text-primary); padding-top: 10px; border-top: 1px solid var(--color-border-subtle);">
-                            <span>Tổng thanh toán</span>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--color-text-secondary);">
+                            <span>Phí vận chuyển</span>
+                            <span style="color: var(--color-text-primary);" th:text="${order.shippingFee != null and order.shippingFee.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? (#numbers.formatDecimal(order.shippingFee, 0, 'POINT', 0, 'COMMA') + ' ₫') : 'Miễn phí'}">30.000 ₫</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 700; color: var(--color-gold-light); padding-top: 10px; border-top: 1px solid var(--color-border-subtle);">
+                            <span>Tổng thanh toán COD</span>
                             <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">4.322.000 ₫</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bottom Back / Cancel buttons -->
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                <!-- Return Request Status Banner (if exists) -->
+                <div th:if="${returnRequests != null and !returnRequests.isEmpty()}" 
+                     style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 20px 24px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-weight: 600; color: #fbbf24; font-size: 0.95rem;">
+                            <i class="bi bi-arrow-return-left" style="margin-right: 6px;"></i>Yêu cầu đổi / trả hàng đã được gửi
+                        </div>
+                        <span th:each="ret : ${returnRequests}" class="badge-stock" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 0.78rem;"
+                              th:text="'Trạng thái: ' + ${ret.status}">
+                            Trạng thái: REQUESTED
+                        </span>
+                    </div>
+                    <div th:each="ret : ${returnRequests}" style="font-size: 0.84rem; color: var(--color-text-secondary);">
+                        <p style="margin: 0 0 4px 0;"><strong>Lý do:</strong> <span th:text="${ret.reason}">Hàng lỗi bao bì</span></p>
+                        <p style="margin: 0; font-size: 0.8rem; color: var(--color-text-muted);">
+                            Nhân viên chăm sóc khách hàng LUNEA đang tiếp nhận và sẽ liên hệ xử lý theo chính sách đổi trả trong vòng 24h.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Bottom Back / Cancel / Return buttons -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 16px;">
                     <a th:href="@{/account/orders}" href="/account/orders" class="btn-product-outline" style="width: auto; padding: 10px 24px;">
                         ← Quay lại danh sách đơn
                     </a>
 
-                    <!-- Cancel button if PENDING -->
-                    <button th:if="${order.status.name() == 'PENDING'}" 
-                            type="button" 
-                            th:onclick="'handleCancelOrder(' + ${order.id} + ')'" 
-                            class="btn-product-outline" style="width: auto; padding: 10px 24px; color: #f43f5e; border-color: rgba(244, 63, 94, 0.3);">
-                        Hủy đơn hàng
-                    </button>
+                    <div style="display: flex; gap: 12px;">
+                        <!-- Cancel button if PENDING -->
+                        <button th:if="${order.status.name() == 'PENDING'}" 
+                                type="button" 
+                                th:onclick="'handleCancelOrder(' + ${order.id} + ')'" 
+                                class="btn-product-outline" style="width: auto; padding: 10px 24px; color: #f43f5e; border-color: rgba(244, 63, 94, 0.3);">
+                            Hủy đơn hàng
+                        </button>
+
+                        <!-- Return Request button if COMPLETED and no existing return request -->
+                        <button th:if="${order.status.name() == 'COMPLETED' and (returnRequests == null or returnRequests.isEmpty())}" 
+                                type="button" 
+                                onclick="openReturnModal()" 
+                                class="btn-hero-champagne" style="width: auto; padding: 10px 24px; font-size: 0.88rem;">
+                            <i class="bi bi-arrow-return-left" style="margin-right: 6px;"></i>
+                            <span>Yêu cầu đổi / trả hàng</span>
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <div th:if="${order == null}" class="reveal-on-scroll" style="text-align: center; padding: 60px 20px;">
+                <p style="color: var(--color-text-muted); font-size: 1.1rem; margin-bottom: 24px;">Không tìm thấy thông tin đơn hàng này.</p>
+                <a th:href="@{/account/orders}" class="btn-hero-champagne" style="width: auto; padding: 12px 28px; display: inline-block;">Quay lại danh sách đơn hàng</a>
             </div>
         </div>
     </main>
 
-    <!-- Client-side Cancel Script -->
+    <!-- Return Request Modal (UC26 & KH-QĐ14) -->
+    <div th:if="${order != null}" id="returnModal" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle" tabindex="-1"
+         style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-gold); border-radius: 12px; max-width: 580px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 14px;">
+                <div>
+                    <h3 id="returnModalTitle" style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--color-text-primary); margin: 0 0 4px 0;">
+                        Gửi yêu cầu đổi / trả hàng
+                    </h3>
+                    <p style="font-size: 0.82rem; color: var(--color-text-muted); margin: 0;"
+                       th:text="'Đơn hàng #' + ${order.orderCode != null ? order.orderCode : order.id}">
+                        Đơn hàng #LN...
+                    </p>
+                </div>
+                <button type="button" onclick="closeReturnModal()" aria-label="Đóng hộp thoại yêu cầu đổi trả" style="background: none; border: none; font-size: 1.5rem; color: var(--color-text-muted); cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+
+            <form id="returnForm" onsubmit="submitReturnRequest(event)">
+                <input type="hidden" id="returnOrderId" th:value="${order.id}">
+
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label" style="margin-bottom: 8px;">Chọn sản phẩm cần đổi trả *:</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px; background: var(--color-bg-elevated); padding: 14px; border-radius: 8px; border: 1px solid var(--color-border-subtle);">
+                        <div th:each="it : ${order.items}" style="display: flex; align-items: center; justify-content: space-between; font-size: 0.86rem;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--color-text-primary);">
+                                <input type="checkbox" name="selectedItem" th:value="${it.id}" checked style="accent-color: var(--color-gold-primary);">
+                                <span th:text="${it.productName} + ' (' + ${it.variantName} + ')'">Hyalu B5 Serum</span>
+                            </label>
+                            <span style="font-size: 0.8rem; color: var(--color-text-muted);" th:text="'SL: ' + ${it.quantity}">SL: 1</span>
+                            <input type="hidden" th:id="'returnQty-' + ${it.id}" th:value="${it.quantity}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label class="form-label" for="returnReasonSelect">Lý do đổi trả *</label>
+                    <select id="returnReasonSelect" class="form-control-lunea" required>
+                        <option value="Hàng lỗi hoặc vỡ do quá trình vận chuyển">Hàng lỗi hoặc vỡ do quá trình vận chuyển</option>
+                        <option value="Giao sai mẫu mã hoặc dung tích so với đơn">Giao sai mẫu mã hoặc dung tích so với đơn</option>
+                        <option value="Sản phẩm có dấu hiệu kích ứng / vấn đề chất lượng">Sản phẩm có dấu hiệu kích ứng / vấn đề chất lượng</option>
+                        <option value="Khách hàng đổi ý muốn đổi sản phẩm khác">Khách hàng đổi ý muốn đổi sản phẩm khác</option>
+                        <option value="Lý do khác">Lý do khác...</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label" for="returnDescription">Mô tả chi tiết tình trạng sản phẩm</label>
+                    <textarea id="returnDescription" class="form-control-lunea" rows="3" 
+                              placeholder="Vui lòng mô tả cụ thể tình trạng hàng hóa để nhân viên CSKH xử lý nhanh chóng..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" onclick="closeReturnModal()" class="btn-product-outline" style="width: auto; padding: 10px 20px; font-size: 0.88rem;">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btnSubmitReturn" class="btn-hero-champagne" style="width: auto; padding: 10px 24px; font-size: 0.88rem;">
+                        Gửi yêu cầu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client-side Cancel & Return Scripts -->
     <script th:inline="javascript">
         async function handleCancelOrder(orderId) {
             if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
@@ -202,6 +343,70 @@
                 setTimeout(() => window.location.reload(), 600);
             } catch (e) {
                 // error handled in apiFetch
+            }
+        }
+
+        function openReturnModal() {
+            const modal = document.getElementById('returnModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                const firstControl = modal.querySelector('select, input, textarea, button');
+                if (firstControl) firstControl.focus();
+            }
+        }
+
+        function closeReturnModal() {
+            const modal = document.getElementById('returnModal');
+            if (modal) modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        async function submitReturnRequest(e) {
+            e.preventDefault();
+            const orderId = document.getElementById('returnOrderId').value;
+            const reason = document.getElementById('returnReasonSelect').value;
+            const description = (document.getElementById('returnDescription').value || '').trim();
+
+            const checkedBoxes = Array.from(document.querySelectorAll('input[name="selectedItem"]:checked'));
+            if (checkedBoxes.length === 0) {
+                LUNEA.showToast('Vui lòng chọn ít nhất một sản phẩm cần đổi trả!', 'warning');
+                return;
+            }
+
+            const items = checkedBoxes.map(cb => {
+                const orderItemId = parseInt(cb.value);
+                const qtyInput = document.getElementById('returnQty-' + orderItemId);
+                const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+                return {
+                    orderItemId: orderItemId,
+                    quantity: qty,
+                    detailReason: reason
+                };
+            });
+
+            const btn = document.getElementById('btnSubmitReturn');
+            btn.disabled = true;
+
+            try {
+                await LUNEA.apiFetch('/api/returns', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: parseInt(orderId),
+                        reason: reason,
+                        description: description,
+                        items: items
+                    })
+                });
+
+                LUNEA.showToast('Đã gửi yêu cầu đổi/trả hàng thành công! Nhân viên CSKH sẽ liên hệ sớm.', 'success');
+                closeReturnModal();
+                setTimeout(() => window.location.reload(), 800);
+            } catch (err) {
+                console.error("Return request error:", err);
+            } finally {
+                btn.disabled = false;
             }
         }
     </script>

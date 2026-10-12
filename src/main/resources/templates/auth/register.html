@@ -1,81 +1,94 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+
 <body data-page="auth-register">
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
+    <main class="site-main" id="main-content"
+        style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
         <div class="auth-split-wrapper reveal-on-scroll">
             <!-- Left Side: Brand & Crescent Moon Visual (Page 7 PDF) -->
             <div class="auth-story-col">
                 <span class="hero-brand-title" style="font-size: 2rem; margin-bottom: 12px;">LUNEA</span>
-                <h1 style="font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; line-height: 1.25; margin-bottom: 16px;">
+                <h1
+                    style="font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; line-height: 1.25; margin-bottom: 16px;">
                     Một tài khoản.<br>Trọn trải nghiệm.
                 </h1>
-                <p style="font-size: 1rem; color: var(--color-text-secondary); max-width: 380px; line-height: 1.7; font-weight: 300;">
+                <p
+                    style="font-size: 1rem; color: var(--color-text-secondary); max-width: 380px; line-height: 1.7; font-weight: 300;">
                     Lưu địa chỉ, theo dõi đơn hàng và tiếp tục mua sắm thuận tiện hơn.
                 </p>
                 <div class="auth-moon-visual">
-                    <img th:src="@{/images/moon-crescent.jpg}" src="/images/moon-crescent.jpg" 
-                         alt="LUNEA Moonlight" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img th:src="@{/images/moon-crescent.jpg}" src="/images/moon-crescent.jpg" alt="LUNEA Moonlight"
+                        width="440" height="440" fetchpriority="high" decoding="async"
+                        style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
 
             <!-- Right Side: Dark Luxury Register Form (Page 7 PDF) -->
             <div class="auth-form-card">
                 <h2 class="auth-title" style="margin-bottom: 8px;">Tạo tài khoản</h2>
-                <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">Các trường có dấu * là bắt buộc.</p>
+                <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">Các trường có dấu *
+                    là bắt buộc.</p>
 
                 <form id="registerForm" onsubmit="handleRegister(event)">
                     <div class="form-group">
                         <label class="form-label" for="regFullName">Họ và tên *</label>
-                        <input type="text" id="regFullName" class="form-control-lunea" required 
-                               placeholder="Nhập họ và tên">
+                        <input type="text" id="regFullName" class="form-control-lunea" required autocomplete="name"
+                            placeholder="Nhập họ và tên">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="regEmail">Email *</label>
-                        <input type="email" id="regEmail" class="form-control-lunea" required 
-                               placeholder="Nhập email">
+                        <input type="email" id="regEmail" class="form-control-lunea" required autocomplete="email"
+                            placeholder="Nhập email">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="regPhone">Số điện thoại</label>
-                        <input type="tel" id="regPhone" class="form-control-lunea" 
-                               placeholder="Nhập số điện thoại (không bắt buộc)">
+                        <input type="tel" id="regPhone" class="form-control-lunea" autocomplete="tel"
+                            placeholder="Nhập số điện thoại (không bắt buộc)">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="regPassword">Mật khẩu *</label>
-                        <input type="password" id="regPassword" class="form-control-lunea" required minlength="6" 
-                               placeholder="Tạo mật khẩu">
-                        <span style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 4px; display: block;">
+                        <input type="password" id="regPassword" class="form-control-lunea" required minlength="6"
+                            autocomplete="new-password" placeholder="Tạo mật khẩu">
+                        <span
+                            style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 4px; display: block;">
                             Ít nhất 6 ký tự, gồm chữ và số.
                         </span>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label class="form-label" for="regConfirmPassword">Xác nhận mật khẩu *</label>
-                        <input type="password" id="regConfirmPassword" class="form-control-lunea" required minlength="6" 
-                               placeholder="Nhập lại mật khẩu">
+                        <input type="password" id="regConfirmPassword" class="form-control-lunea" required minlength="6"
+                            autocomplete="new-password" placeholder="Nhập lại mật khẩu">
                     </div>
 
-                    <div style="margin-bottom: 24px; font-size: 0.82rem; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 8px;">
-                        <input type="checkbox" id="regAgreeTerms" required style="margin-top: 3px; accent-color: var(--color-gold-primary);">
+                    <div
+                        style="margin-bottom: 24px; font-size: 0.82rem; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 8px;">
+                        <input type="checkbox" id="regAgreeTerms" required
+                            style="margin-top: 3px; accent-color: var(--color-gold-primary);">
                         <label for="regAgreeTerms" style="cursor: pointer; line-height: 1.4;">
                             Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.
                         </label>
                     </div>
 
-                    <button type="submit" id="btnRegSubmit" class="btn-lunea-gold" style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
+                    <button type="submit" id="btnRegSubmit" class="btn-lunea-gold"
+                        style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
                         <span>Tạo tài khoản</span>
                     </button>
                 </form>
 
-                <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
-                    Đã có tài khoản? 
-                    <a th:href="@{/login}" href="/login" style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng nhập</a>
+                <div
+                    style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
+                    Đã có tài khoản?
+                    <a th:href="@{/login}" href="/login"
+                        style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng nhập</a>
                 </div>
             </div>
         </div>
@@ -135,4 +148,5 @@
     <!-- Toast Fragment -->
     <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
+
 </html>

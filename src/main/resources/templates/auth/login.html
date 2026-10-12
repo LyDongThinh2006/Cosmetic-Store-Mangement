@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+
 <body data-page="auth-login">
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
+    <main class="site-main" id="main-content"
+        style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
         <div class="auth-split-wrapper reveal-on-scroll">
             <!-- Left Side: Brand & Realistic Moon Visual (Page 6 PDF) -->
             <div class="auth-story-col">
                 <span class="eyebrow-tag" style="margin-bottom: 20px;">Tài khoản LUNEA</span>
-                <h1 style="font-family: var(--font-serif); font-size: clamp(2.4rem, 4.5vw, 3.4rem); font-weight: 500; line-height: 1.2; margin-bottom: 16px;">
+                <h1
+                    style="font-family: var(--font-serif); font-size: clamp(2.4rem, 4.5vw, 3.4rem); font-weight: 500; line-height: 1.2; margin-bottom: 16px;">
                     Chào mừng<br>bạn trở lại.
                 </h1>
-                <p style="font-size: 1rem; color: var(--color-text-secondary); max-width: 380px; line-height: 1.7; font-weight: 300;">
+                <p
+                    style="font-size: 1rem; color: var(--color-text-secondary); max-width: 380px; line-height: 1.7; font-weight: 300;">
                     Theo dõi đơn hàng và quản lý thông tin mua sắm ở cùng một nơi.
                 </p>
                 <div class="auth-moon-visual">
-                    <img th:src="@{/images/moon-crescent.jpg}" src="/images/moon-crescent.jpg" 
-                         alt="LUNEA Moonlight" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img th:src="@{/images/moon-crescent.jpg}" src="/images/moon-crescent.jpg" alt="LUNEA Moonlight"
+                        width="440" height="440" fetchpriority="high" decoding="async"
+                        style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
 
@@ -31,63 +37,132 @@
 
                     <div class="form-group">
                         <label class="form-label" for="loginIdentifier">Email hoặc số điện thoại *</label>
-                        <input type="text" id="loginIdentifier" class="form-control-lunea" required 
-                               placeholder="Nhập email hoặc số điện thoại" autocomplete="username">
+                        <input type="text" id="loginIdentifier" class="form-control-lunea" required
+                            placeholder="Nhập email hoặc số điện thoại" autocomplete="username">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label class="form-label" for="loginPassword">Mật khẩu *</label>
                         <div style="position: relative;">
-                            <input type="password" id="loginPassword" class="form-control-lunea" required 
-                                   placeholder="Nhập mật khẩu" autocomplete="current-password" style="padding-right: 44px;">
-                            <button type="button" onclick="togglePasswordVisibility()" 
-                                    style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
-                                <i id="eyeIcon" class="bi bi-eye"></i>
+                            <input type="password" id="loginPassword" class="form-control-lunea" required
+                                placeholder="Nhập mật khẩu" autocomplete="current-password"
+                                style="padding-right: 44px;">
+                            <button type="button" onclick="togglePasswordVisibility()"
+                                aria-label="Hiện hoặc ẩn mật khẩu"
+                                style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
+                                <i id="eyeIcon" class="bi bi-eye" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 0.85rem;">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--color-text-secondary);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 0.85rem;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--color-text-secondary);">
                             <input type="checkbox" style="accent-color: var(--color-gold-primary);">
                             <span>Ghi nhớ đăng nhập</span>
                         </label>
-                        <a href="javascript:void(0)" onclick="LUNEA.showToast('Vui lòng dùng tài khoản demo hoặc đăng ký tài khoản mới!', 'info')" 
-                           style="color: var(--color-text-secondary); text-decoration: none;">
+                        <button type="button" onclick="openForgotPasswordModal()" id="btnOpenForgotModal"
+                            style="background: none; border: none; padding: 0; color: var(--color-gold-light); text-decoration: underline; cursor: pointer; font-size: 0.85rem;">
                             Quên mật khẩu?
-                        </a>
+                        </button>
                     </div>
 
-                    <button type="submit" id="btnLoginSubmit" class="btn-lunea-gold" style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
+                    <button type="submit" id="btnLoginSubmit" class="btn-lunea-gold"
+                        style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
                         <span>Đăng nhập</span>
                     </button>
                 </form>
 
-                <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
-                    Chưa có tài khoản? 
-                    <a th:href="@{/register}" href="/register" style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng ký</a>
+                <div
+                    style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
+                    Chưa có tài khoản?
+                    <a th:href="@{/register}" href="/register"
+                        style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng ký</a>
                 </div>
 
                 <!-- Quick Demo Fill Pills -->
                 <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle);">
-                    <div style="font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center;">
-                        <i class="bi bi-key" style="margin-right: 4px;"></i> Điền nhanh tài khoản demo (Mật khẩu: 123456)
+                    <div
+                        style="font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center;">
+                        <i class="bi bi-key" style="margin-right: 4px;"></i> Điền nhanh tài khoản demo (Mật khẩu:
+                        123456)
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button type="button" onclick="fillDemo('khach01@lunea.test', '123456')" class="variant-pill" style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
-                            <i class="bi bi-person" style="margin-right: 6px; color: var(--color-gold-light);"></i> <strong>Khách hàng:</strong> khach01@lunea.test
+                        <button type="button" onclick="fillDemo('khach01@lunea.test', '123456')" class="variant-pill"
+                            style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
+                            <i class="bi bi-person" style="margin-right: 6px; color: var(--color-gold-light);"></i>
+                            <strong>Khách hàng:</strong> khach01@lunea.test
                         </button>
-                        <button type="button" onclick="fillDemo('order_hcm', '123456')" class="variant-pill" style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
-                            <i class="bi bi-building" style="margin-right: 6px; color: var(--color-gold-light);"></i> <strong>Nhân viên HCM:</strong> order_hcm
+                        <button type="button" onclick="fillDemo('order_hcm', '123456')" class="variant-pill"
+                            style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
+                            <i class="bi bi-building" style="margin-right: 6px; color: var(--color-gold-light);"></i>
+                            <strong>Nhân viên HCM:</strong> order_hcm
                         </button>
-                        <button type="button" onclick="fillDemo('admin', '123456')" class="variant-pill" style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
-                            <i class="bi bi-shield-lock" style="margin-right: 6px; color: var(--color-gold-light);"></i> <strong>Quản trị viên:</strong> admin
+                        <button type="button" onclick="fillDemo('admin', '123456')" class="variant-pill"
+                            style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
+                            <i class="bi bi-shield-lock" style="margin-right: 6px; color: var(--color-gold-light);"></i>
+                            <strong>Quản trị viên:</strong> admin
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Forgot Password Modal (UC03) -->
+    <div id="forgotPasswordModal" class="modal-overlay" role="dialog" aria-modal="true"
+        aria-labelledby="forgotPasswordTitle" tabindex="-1"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;">
+        <div
+            style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); width: 100%; max-width: 440px; padding: 32px; box-shadow: var(--shadow-modal); position: relative; margin: 20px;">
+            <button type="button" onclick="closeForgotPasswordModal()" aria-label="Đóng hộp thoại khôi phục mật khẩu"
+                style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--color-text-muted); font-size: 1.2rem; cursor: pointer;">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+            <div style="margin-bottom: 24px;">
+                <span class="eyebrow-tag" style="margin-bottom: 8px;">Khôi phục tài khoản</span>
+                <h3 id="forgotPasswordTitle"
+                    style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--color-text-primary); margin-top: 4px; margin-bottom: 8px;">
+                    Quên Mật Khẩu
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.6;">
+                    Nhập email hoặc số điện thoại để thiết lập lại mật khẩu mới cho tài khoản của bạn.
+                </p>
+            </div>
+
+            <form id="forgotPasswordForm" onsubmit="handleResetPassword(event)">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label class="form-label" for="resetIdentifier">Email hoặc số điện thoại *</label>
+                    <input type="text" id="resetIdentifier" class="form-control-lunea" required autocomplete="username"
+                        placeholder="Ví dụ: khach01@lunea.test">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label class="form-label" for="resetNewPassword">Mật khẩu mới *</label>
+                    <input type="password" id="resetNewPassword" class="form-control-lunea" required minlength="6"
+                        autocomplete="new-password" placeholder="Tối thiểu 6 ký tự">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label" for="resetConfirmPassword">Xác nhận mật khẩu mới *</label>
+                    <input type="password" id="resetConfirmPassword" class="form-control-lunea" required minlength="6"
+                        autocomplete="new-password" placeholder="Nhập lại mật khẩu mới">
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onclick="closeForgotPasswordModal()" class="btn btn-outline"
+                        style="padding: 10px 20px;">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btnResetPasswordSubmit" class="btn-lunea-gold"
+                        style="padding: 10px 24px;">
+                        <span>Xác nhận đổi mật khẩu</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer Fragment -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -109,6 +184,85 @@
         function fillDemo(username, password) {
             document.getElementById('loginIdentifier').value = username;
             document.getElementById('loginPassword').value = password;
+        }
+
+        function openForgotPasswordModal() {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                const currentId = document.getElementById('loginIdentifier').value.trim();
+                if (currentId) {
+                    document.getElementById('resetIdentifier').value = currentId;
+                }
+                document.getElementById('resetNewPassword').value = '';
+                document.getElementById('resetConfirmPassword').value = '';
+                setTimeout(() => {
+                    const focusTarget = document.getElementById('resetIdentifier');
+                    if (focusTarget) focusTarget.focus();
+                }, 50);
+            }
+        }
+
+        function closeForgotPasswordModal() {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (modal) modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        async function handleResetPassword(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('resetIdentifier').value.trim();
+            const newPassword = document.getElementById('resetNewPassword').value;
+            const confirmPassword = document.getElementById('resetConfirmPassword').value;
+            const btn = document.getElementById('btnResetPasswordSubmit');
+
+            if (!identifier) {
+                LUNEA.showToast('Vui lòng nhập email hoặc số điện thoại', 'warning');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                LUNEA.showToast('Mật khẩu mới phải có ít nhất 6 ký tự', 'warning');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                LUNEA.showToast('Mật khẩu xác nhận không khớp', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang xử lý...</span>';
+
+            try {
+                const response = await fetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        emailOrPhone: identifier,
+                        newPassword: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    LUNEA.showToast(data.message || 'Đặt lại mật khẩu thành công!', 'success');
+                    closeForgotPasswordModal();
+                    // Pre-fill login form
+                    document.getElementById('loginIdentifier').value = identifier;
+                    document.getElementById('loginPassword').value = newPassword;
+                } else {
+                    LUNEA.showToast(data.message || 'Không thể đặt lại mật khẩu', 'error');
+                }
+            } catch (err) {
+                console.error('Reset password error:', err);
+                LUNEA.showToast('Có lỗi xảy ra khi kết nối máy chủ.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Xác nhận đổi mật khẩu</span>';
+            }
         }
 
         async function handleLogin(e) {
@@ -156,4 +310,5 @@
     <!-- Toast Fragment -->
     <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
+
 </html>

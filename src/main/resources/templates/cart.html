@@ -5,7 +5,7 @@
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content">
         <div class="lunea-container">
             <!-- 3-Step Checkout Stepper Bar (Page 8 PDF) -->
             <div class="checkout-stepper-bar reveal-on-scroll">
@@ -50,7 +50,7 @@
                             <!-- Thumbnail -->
                             <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; background: var(--color-bg-elevated); border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; padding: 6px;">
                                 <img th:src="${item.imageUrl}" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600" 
-                                     th:alt="${item.productName}" style="max-height: 90%; width: auto; object-fit: contain;">
+                                     th:alt="${item.productName}" width="80" height="80" loading="lazy" decoding="async" style="max-height: 90%; width: auto; object-fit: contain;">
                             </div>
 
                             <!-- Product Info -->
@@ -67,11 +67,12 @@
                             <!-- Quantity Stepper -->
                             <div style="display: flex; justify-content: center;">
                                 <div class="qty-stepper">
-                                    <button type="button" class="qty-btn" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} - 1) + ')'">−</button>
+                                    <button type="button" class="qty-btn" aria-label="Giảm số lượng" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} - 1) + ')'">−</button>
                                     <input type="number" class="qty-input" th:id="'input-qty-' + ${item.id}" 
                                            th:value="${item.quantity}" 
+                                           aria-label="Số lượng sản phẩm"
                                            th:onchange="'updateQty(' + ${item.id} + ', this.value)'" min="1" max="99">
-                                    <button type="button" class="qty-btn" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} + 1) + ')'">+</button>
+                                    <button type="button" class="qty-btn" aria-label="Tăng số lượng" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} + 1) + ')'">+</button>
                                 </div>
                             </div>
 
@@ -84,7 +85,8 @@
                                 </span>
                                 <button type="button" th:onclick="'removeItem(' + ${item.id} + ')'" 
                                         style="background: none; border: none; color: var(--color-text-muted); font-size: 1.1rem; cursor: pointer; padding: 4px;"
-                                        title="Xóa mặt hàng">
+                                        title="Xóa mặt hàng khỏi giỏ hàng"
+                                        aria-label="Xóa mặt hàng khỏi giỏ hàng">
                                     ✕
                                 </button>
                             </div>

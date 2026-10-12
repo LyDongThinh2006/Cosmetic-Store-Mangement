@@ -5,7 +5,7 @@
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content">
         <div class="lunea-container" style="max-width: 680px;">
             <!-- 3-Step Checkout Stepper (Page 13 PDF) -->
             <div class="checkout-stepper-bar reveal-on-scroll">
@@ -43,7 +43,7 @@
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
                     <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                         <td style="padding: 14px 0; color: var(--color-text-muted);">Mã đơn hàng</td>
-                        <td style="padding: 14px 0; text-align: right; font-weight: 700; color: var(--color-text-primary);" 
+                        <td style="padding: 14px 0; text-align: right; font-weight: 700; color: var(--color-gold-light); font-family: monospace; font-size: 1.05rem;" 
                             th:text="${order != null and order.orderCode != null ? ('#' + order.orderCode) : (orderCode != null ? ('#' + orderCode) : '#LN26092401')}">
                             #LN26092401
                         </td>
@@ -51,25 +51,48 @@
                     <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                         <td style="padding: 14px 0; color: var(--color-text-muted);">Trạng thái đơn hàng</td>
                         <td style="padding: 14px 0; text-align: right; color: var(--color-text-primary); font-weight: 500;">
-                            Chờ xác nhận
+                            <span class="status-pill pending" style="padding: 4px 10px; font-size: 0.8rem;">
+                                <i class="bi bi-hourglass"></i> Chờ xác nhận
+                            </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${order != null and order.fulfillmentStoreName != null}" style="border-bottom: 1px solid var(--color-border-subtle);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Chi nhánh chuẩn bị hàng</td>
+                        <td style="padding: 14px 0; text-align: right; color: var(--color-gold-primary); font-weight: 600;">
+                            <i class="bi bi-geo-alt-fill" style="margin-right: 4px;"></i>
+                            <span th:text="${order.fulfillmentStoreName}">LUNEA Đồng Khởi - Quận 1 (TP.HCM)</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${order != null and order.recipientName != null}" style="border-bottom: 1px solid var(--color-border-subtle);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Người nhận & Địa chỉ</td>
+                        <td style="padding: 14px 0; text-align: right; color: var(--color-text-primary); max-width: 320px;">
+                            <div style="font-weight: 600;" th:text="${order.recipientName} + ' (' + ${order.recipientPhone} + ')'">Nguyễn Thị Minh Anh</div>
+                            <div style="font-size: 0.82rem; color: var(--color-text-secondary); margin-top: 2px;" th:text="${order.shippingAddress}">123 Nguyễn Huệ, TP.HCM</div>
                         </td>
                     </tr>
                     <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                         <td style="padding: 14px 0; color: var(--color-text-muted);">Phương thức thanh toán</td>
                         <td style="padding: 14px 0; text-align: right; color: var(--color-text-primary);">
-                            COD - chưa thanh toán
+                            Thanh toán khi nhận hàng (COD)
+                        </td>
+                    </tr>
+                    <tr th:if="${order != null and order.discountAmount != null and order.discountAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}" style="border-bottom: 1px solid var(--color-border-subtle);">
+                        <td style="padding: 14px 0; color: var(--color-text-muted);">Giảm giá ưu đãi</td>
+                        <td style="padding: 14px 0; text-align: right; color: var(--color-gold-light); font-weight: 600;"
+                            th:text="'- ' + ${#numbers.formatDecimal(order.discountAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                            - 100.000 ₫
                         </td>
                     </tr>
                     <tr style="border-bottom: 1px solid var(--color-border-subtle);">
                         <td style="padding: 14px 0; color: var(--color-text-muted);">Tổng thanh toán</td>
-                        <td style="padding: 14px 0; text-align: right; font-weight: 700; color: var(--color-text-primary); font-size: 1.15rem;" 
+                        <td style="padding: 14px 0; text-align: right; font-weight: 700; color: var(--color-gold-light); font-size: 1.25rem;" 
                             th:text="${order != null ? #numbers.formatDecimal(order.totalAmount, 0, 'POINT', 0, 'COMMA') + ' ₫' : '4.322.000 ₫'}">
                             4.322.000 ₫
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" style="padding-top: 16px; font-size: 0.8rem; color: var(--color-text-muted);">
-                            Giao tiêu chuẩn · Phí giao hàng 30.000 ₫
+                            Giao tiêu chuẩn · Tồn kho đã được giữ chỗ an toàn tại chi nhánh
                         </td>
                     </tr>
                 </table>
@@ -77,7 +100,10 @@
 
             <!-- Action Buttons (Page 13 PDF) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;" class="reveal-on-scroll">
-                <a th:href="@{/account/orders}" href="/account/orders" class="btn-hero-champagne" style="justify-content: center; padding: 14px;">
+                <a th:if="${order != null}" th:href="@{/account/orders/{id}(id=${order.id})}" href="/account/orders" class="btn-hero-champagne" style="justify-content: center; padding: 14px;">
+                    <span>Xem chi tiết đơn hàng</span>
+                </a>
+                <a th:unless="${order != null}" th:href="@{/account/orders}" href="/account/orders" class="btn-hero-champagne" style="justify-content: center; padding: 14px;">
                     <span>Đơn hàng của tôi</span>
                 </a>
                 <a th:href="@{/products}" href="/products" class="btn-product-outline" style="justify-content: center; padding: 14px; font-size: 0.95rem;">

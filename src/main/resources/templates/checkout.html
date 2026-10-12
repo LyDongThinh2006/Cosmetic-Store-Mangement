@@ -5,7 +5,7 @@
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content">
         <div class="lunea-container">
             <!-- 3-Step Stepper (Page 9 PDF) -->
             <div class="checkout-stepper-bar reveal-on-scroll">
@@ -75,13 +75,13 @@
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="recipientName">Họ và tên *</label>
                                 <input type="text" id="recipientName" name="recipientName" required class="form-control-lunea" 
-                                       placeholder="Nguyễn Thị Minh Anh" 
+                                       autocomplete="name" placeholder="Nguyễn Thị Minh Anh" 
                                        th:value="${addresses != null and !addresses.isEmpty() ? addresses[0].recipientName : (currentUser != null ? currentUser.displayName : 'Nguyễn Thị Minh Anh')}">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="recipientPhone">Số điện thoại *</label>
                                 <input type="tel" id="recipientPhone" name="recipientPhone" required class="form-control-lunea" 
-                                       placeholder="0901 234 567" 
+                                       autocomplete="tel" placeholder="0901 234 567" 
                                        th:value="${addresses != null and !addresses.isEmpty() ? addresses[0].phone : '0901234567'}">
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label" for="addressDetail">Địa chỉ chi tiết *</label>
                             <input type="text" id="addressDetail" name="shippingAddress" required class="form-control-lunea" 
-                                   placeholder="123 Nguyễn Huệ" 
+                                   autocomplete="street-address" placeholder="123 Nguyễn Huệ" 
                                    th:value="${addresses != null and !addresses.isEmpty() ? addresses[0].addressDetail : '123 Nguyễn Huệ'}">
                         </div>
                     </div>
@@ -233,9 +233,10 @@
     <!-- Client-side Checkout Scripts (Addresses & Order Placement) -->
     <script th:inline="javascript">
         /*<![CDATA[*/
-        const cartSubtotal = /*[[${cart != null ? cart.subtotal : 4292000}]]*/ 4292000;
-        let shippingFee = 30000;
+        const cartSubtotal = /*[[${cart != null ? cart.subtotal : 0}]]*/ 0;
+        let shippingFee = cartSubtotal >= 500000 ? 0 : 30000;
         let discountAmount = 0;
+        let appliedVoucherCode = '';
 
         document.addEventListener('DOMContentLoaded', async () => {
             await loadLocations();
@@ -286,27 +287,47 @@
 
         function updateTotalCalculations() {
             const grandTotal = Math.max(0, cartSubtotal + shippingFee - discountAmount);
+            document.getElementById('summaryShipping').textContent = LUNEA.formatVND(shippingFee);
+            document.getElementById('summaryDiscount').textContent = discountAmount > 0 ? ('-' + LUNEA.formatVND(discountAmount)) : '0 ₫';
             document.getElementById('summaryTotal').textContent = LUNEA.formatVND(grandTotal);
         }
 
-        function applyVoucher() {
+        async function applyVoucher() {
             const code = (document.getElementById('voucherInput').value || '').trim().toUpperCase();
             if (!code) {
                 LUNEA.showToast('Vui lòng nhập mã ưu đãi!', 'warning');
                 return;
             }
-            if (code === 'LUNEA10') {
-                discountAmount = Math.round(cartSubtotal * 0.1);
-                LUNEA.showToast('Áp dụng mã ưu đãi LUNEA10 giảm 10% thành công!', 'success');
-            } else if (code === 'FREESHIP') {
-                discountAmount = shippingFee;
-                LUNEA.showToast('Áp dụng mã ưu đãi FREESHIP miễn phí vận chuyển!', 'success');
-            } else {
-                LUNEA.showToast('Mã ưu đãi không hợp lệ hoặc đã hết hạn!', 'error');
-                return;
+            try {
+                const preview = await LUNEA.apiFetch('/api/orders/preview', {
+                    method: 'POST',
+                    body: JSON.stringify({ voucherCode: code })
+                });
+                appliedVoucherCode = code;
+                discountAmount = preview.discountAmount || 0;
+                shippingFee = preview.shippingFee !== undefined ? preview.shippingFee : shippingFee;
+                updateTotalCalculations();
+                LUNEA.showToast(`Áp dụng mã ưu đãi ${code} thành công!`, 'success');
+            } catch (err) {
+                // Fallback client logic
+                if (code === 'LUNEA10') {
+                    appliedVoucherCode = code;
+                    discountAmount = Math.min(Math.round(cartSubtotal * 0.1), 100000);
+                    LUNEA.showToast('Áp dụng mã ưu đãi LUNEA10 giảm 10% thành công!', 'success');
+                } else if (code === 'GIAM50K') {
+                    appliedVoucherCode = code;
+                    discountAmount = 50000;
+                    LUNEA.showToast('Áp dụng mã ưu đãi GIAM50K giảm 50.000 ₫ thành công!', 'success');
+                } else if (code === 'FREESHIP') {
+                    appliedVoucherCode = code;
+                    shippingFee = 0;
+                    LUNEA.showToast('Áp dụng mã ưu đãi FREESHIP miễn phí vận chuyển!', 'success');
+                } else {
+                    LUNEA.showToast('Mã ưu đãi không hợp lệ hoặc đã hết hạn!', 'error');
+                    return;
+                }
+                updateTotalCalculations();
             }
-            document.getElementById('summaryDiscount').textContent = '-' + LUNEA.formatVND(discountAmount);
-            updateTotalCalculations();
         }
 
         async function handlePlaceOrder(e) {
@@ -315,16 +336,19 @@
             btn.disabled = true;
             btn.innerHTML = '<span>Đang khởi tạo đơn hàng...</span>';
 
+            const voucherCode = appliedVoucherCode || (document.getElementById('voucherInput') ? document.getElementById('voucherInput').value.trim().toUpperCase() : '');
+
             const payload = {
                 recipientName: document.getElementById('recipientName').value.trim(),
                 recipientPhone: document.getElementById('recipientPhone').value.trim(),
                 province: document.getElementById('provinceInput').value || 'TP. Hồ Chí Minh',
                 district: document.getElementById('districtInput').value || 'Quận 1',
-                ward: document.getElementById('wardInput').value || 'Phường Sài Gòn',
+                ward: document.getElementById('wardInput').value || 'Phường Bến Nghé',
                 shippingAddress: document.getElementById('addressDetail').value.trim(),
                 note: document.getElementById('orderNote').value.trim(),
                 paymentMethod: 'COD',
-                customerAddressId: document.getElementById('customerAddressId').value || null
+                voucherCode: voucherCode || null,
+                customerAddressId: document.getElementById('customerAddressId').value ? parseInt(document.getElementById('customerAddressId').value) : null
             };
 
             try {
@@ -335,7 +359,7 @@
                 LUNEA.showToast('Đặt hàng thành công!', 'success');
                 setTimeout(() => {
                     window.location.href = `/order-success?orderCode=${res.orderCode}`;
-                }, 600);
+                }, 500);
             } catch (err) {
                 btn.disabled = false;
                 btn.innerHTML = '<span>Đặt hàng</span>';

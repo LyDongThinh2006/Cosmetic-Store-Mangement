@@ -5,7 +5,7 @@
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content">
         <div class="lunea-container">
             <!-- Breadcrumbs -->
             <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 28px;" class="reveal-on-scroll">
@@ -47,15 +47,18 @@
                         <a th:href="@{/account/orders}" href="/account/orders" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-primary); font-weight: 600; background: var(--color-border-subtle);">
                             Đơn hàng của tôi
                         </a>
-                        <a href="javascript:void(0)" onclick="LUNEA.showToast('Bạn chưa có voucher nào mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                        <a th:href="@{/account/wishlist}" href="/account/wishlist" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); transition: color var(--duration-fast);">
+                            Sản phẩm yêu thích
+                        </a>
+                        <button type="button" onclick="LUNEA.showToast('Bạn chưa có voucher nào mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); background: none; border: none; text-align: left; cursor: pointer; font-size: inherit;">
                             Voucher của tôi
-                        </a>
-                        <a href="javascript:void(0)" onclick="LUNEA.showToast('Không có thông báo mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                        </button>
+                        <button type="button" onclick="LUNEA.showToast('Không có thông báo mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); background: none; border: none; text-align: left; cursor: pointer; font-size: inherit;">
                             Thông báo
-                        </a>
-                        <a href="javascript:void(0)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted);">
+                        </button>
+                        <button type="button" onclick="LUNEA.showToast('Tính năng cài đặt tài khoản đang được hoàn thiện.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); background: none; border: none; text-align: left; cursor: pointer; font-size: inherit;">
                             Cài đặt
-                        </a>
+                        </button>
                         <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-danger); transition: color var(--duration-fast);">
                             <i class="bi bi-box-arrow-right"></i> Đăng xuất
                         </a>
@@ -73,27 +76,35 @@
                         </p>
                     </div>
 
-                    <!-- Status Tabs (Page 11 PDF) -->
-                    <div style="display: flex; gap: 24px; border-bottom: 1px solid var(--color-border-subtle); margin-bottom: 24px; font-size: 0.9rem;">
-                        <button type="button" class="order-filter-tab active" onclick="filterOrderList('ALL', this)" 
-                                style="background: none; border: none; padding: 10px 0; color: var(--color-text-primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--color-gold-primary);">
-                            Tất cả
+                    <!-- Status Tabs (Synchronized with Admin Back-office) -->
+                    <div role="tablist" aria-label="Lọc đơn hàng theo trạng thái" style="display: flex; gap: 16px; border-bottom: 1px solid var(--color-border-subtle); margin-bottom: 24px; font-size: 0.88rem; overflow-x: auto; padding-bottom: 2px;">
+                        <button type="button" class="order-filter-tab active" role="tab" id="order-tab-all" aria-selected="true" aria-controls="ordersTableBody" onclick="filterOrderList('ALL', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-primary); font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--color-gold-primary); white-space: nowrap;">
+                            Tất cả <span id="count-all" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
                         </button>
-                        <button type="button" class="order-filter-tab" onclick="filterOrderList('PENDING', this)" 
-                                style="background: none; border: none; padding: 10px 0; color: var(--color-text-muted); cursor: pointer;">
-                            Chờ xác nhận
+                        <button type="button" class="order-filter-tab" role="tab" id="order-tab-pending" aria-selected="false" aria-controls="ordersTableBody" onclick="filterOrderList('PENDING', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-muted); cursor: pointer; white-space: nowrap;">
+                            Chờ xác nhận <span id="count-pending" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
                         </button>
-                        <button type="button" class="order-filter-tab" onclick="filterOrderList('SHIPPING', this)" 
-                                style="background: none; border: none; padding: 10px 0; color: var(--color-text-muted); cursor: pointer;">
-                            Đang giao
+                        <button type="button" class="order-filter-tab" role="tab" id="order-tab-confirmed" aria-selected="false" aria-controls="ordersTableBody" onclick="filterOrderList('CONFIRMED', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-muted); cursor: pointer; white-space: nowrap;">
+                            Đã xác nhận <span id="count-confirmed" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
                         </button>
-                        <button type="button" class="order-filter-tab" onclick="filterOrderList('COMPLETED', this)" 
-                                style="background: none; border: none; padding: 10px 0; color: var(--color-text-muted); cursor: pointer;">
-                            Đã giao
+                        <button type="button" class="order-filter-tab" role="tab" id="order-tab-preparing" aria-selected="false" aria-controls="ordersTableBody" onclick="filterOrderList('PREPARING', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-muted); cursor: pointer; white-space: nowrap;">
+                            Đang đóng gói <span id="count-preparing" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
                         </button>
-                        <button type="button" class="order-filter-tab" onclick="filterOrderList('CANCELLED', this)" 
-                                style="background: none; border: none; padding: 10px 0; color: var(--color-text-muted); cursor: pointer;">
-                            Đã hủy
+                        <button type="button" class="order-filter-tab" role="tab" id="order-tab-shipping" aria-selected="false" aria-controls="ordersTableBody" onclick="filterOrderList('SHIPPING', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-muted); cursor: pointer; white-space: nowrap;">
+                            Đang giao hàng <span id="count-shipping" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
+                        </button>
+                        <button type="button" class="order-filter-tab" role="tab" id="order-tab-completed" aria-selected="false" aria-controls="ordersTableBody" onclick="filterOrderList('COMPLETED', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-muted); cursor: pointer; white-space: nowrap;">
+                            Hoàn thành <span id="count-completed" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
+                        </button>
+                        <button type="button" class="order-filter-tab" role="tab" id="order-tab-cancelled" aria-selected="false" aria-controls="ordersTableBody" onclick="filterOrderList('CANCELLED', this)" 
+                                style="background: none; border: none; padding: 10px 4px; color: var(--color-text-muted); cursor: pointer; white-space: nowrap;">
+                            Đã hủy <span id="count-cancelled" style="font-size: 0.72rem; opacity: 0.75;">(0)</span>
                         </button>
                     </div>
 
@@ -102,44 +113,53 @@
                         <!-- Header -->
                         <div style="display: grid; grid-template-columns: 2fr 1.2fr 1.5fr 1.5fr 40px; padding: 14px 24px; border-bottom: 1px solid var(--color-border-subtle); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); font-weight: 600;">
                             <div>Mã đơn / Ngày đặt</div>
-                            <div>Số lượng</div>
+                            <div>Số lượng & Chi nhánh</div>
                             <div>Trạng thái</div>
                             <div>Tổng tiền</div>
                             <div></div>
                         </div>
 
                         <!-- Rows -->
-                        <div id="ordersTableBody">
+                        <div id="ordersTableBody" role="tabpanel" aria-labelledby="order-tab-all" tabindex="0">
                             <a th:each="o : ${orders}" th:href="@{/account/orders/{id}(id=${o.id})}" 
                                class="order-row-link" th:data-status="${o.status.name()}"
                                style="display: grid; grid-template-columns: 2fr 1.2fr 1.5fr 1.5fr 40px; padding: 18px 24px; border-bottom: 1px solid var(--color-border-subtle); align-items: center; color: inherit; transition: background var(--duration-fast);">
                                 <div>
-                                    <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.95rem;" 
+                                    <div style="font-weight: 700; color: var(--color-gold-light); font-size: 0.95rem; font-family: monospace;" 
                                          th:text="${o.orderCode != null ? ('#' + o.orderCode) : ('#' + o.id)}">#LN26092401</div>
-                                    <div style="font-size: 0.78rem; color: var(--color-text-muted);" 
-                                         th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy')}">24/09/2026</div>
-                                </div>
-
-                                <div style="font-size: 0.88rem; color: var(--color-text-secondary);" 
-                                     th:text="${o.items != null ? (o.items.size() + ' sản phẩm') : '3 sản phẩm'}">
-                                    3 sản phẩm
+                                    <div style="font-size: 0.78rem; color: var(--color-text-muted); margin-top: 2px;" 
+                                         th:text="${#temporals.format(o.createdAt, 'dd/MM/yyyy HH:mm')}">24/09/2026 14:30</div>
                                 </div>
 
                                 <div>
-                                    <span th:if="${o.status.name() == 'PENDING'}" class="badge-stock" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
-                                        Chờ xác nhận
+                                    <div style="font-size: 0.88rem; color: var(--color-text-primary); font-weight: 500;" 
+                                         th:text="${o.items != null ? (o.items.size() + ' sản phẩm') : '3 sản phẩm'}">
+                                        3 sản phẩm
+                                    </div>
+                                    <div th:if="${o.fulfillmentStoreName != null}" style="font-size: 0.75rem; color: var(--color-gold-primary); margin-top: 2px; display: flex; align-items: center; gap: 4px;">
+                                        <i class="bi bi-geo-alt-fill" style="font-size: 0.72rem;"></i>
+                                        <span th:text="${o.fulfillmentStoreName}">LUNEA Quận 1</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span th:if="${o.status.name() == 'PENDING'}" class="status-pill pending">
+                                        <i class="bi bi-hourglass"></i> Chờ xác nhận
                                     </span>
-                                    <span th:if="${o.status.name() == 'CONFIRMED' or o.status.name() == 'PREPARING'}" class="badge-stock" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                                        Đã xác nhận
+                                    <span th:if="${o.status.name() == 'CONFIRMED'}" class="status-pill confirmed">
+                                        <i class="bi bi-check2"></i> Đã xác nhận
                                     </span>
-                                    <span th:if="${o.status.name() == 'SHIPPING'}" class="badge-stock" style="background: rgba(99, 102, 241, 0.12); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
-                                        Đang giao
+                                    <span th:if="${o.status.name() == 'PREPARING'}" class="status-pill preparing">
+                                        <i class="bi bi-box-seam"></i> Đang đóng gói
                                     </span>
-                                    <span th:if="${o.status.name() == 'COMPLETED'}" class="badge-stock in-stock">
-                                        Đã giao
+                                    <span th:if="${o.status.name() == 'SHIPPING'}" class="status-pill shipping">
+                                        <i class="bi bi-truck"></i> Đang giao hàng
                                     </span>
-                                    <span th:if="${o.status.name() == 'CANCELLED'}" class="badge-stock out-of-stock">
-                                        Đã hủy
+                                    <span th:if="${o.status.name() == 'COMPLETED'}" class="status-pill completed">
+                                        <i class="bi bi-check-circle-fill"></i> Hoàn thành
+                                    </span>
+                                    <span th:if="${o.status.name() == 'CANCELLED'}" class="status-pill cancelled">
+                                        <i class="bi bi-x-circle-fill"></i> Đã hủy
                                     </span>
                                 </div>
 
@@ -148,8 +168,14 @@
                                     4.322.000 ₫
                                 </div>
 
-                                <div style="color: var(--color-text-muted); font-size: 1.1rem; text-align: right;">
-                                    →
+                                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+                                    <button th:if="${o.status.name() == 'PENDING'}" 
+                                            type="button" 
+                                            th:onclick="'event.preventDefault(); event.stopPropagation(); handleCancelOrder(' + ${o.id} + ');'"
+                                            class="btn-product-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #f43f5e; border-color: rgba(244, 63, 94, 0.4); border-radius: 4px; white-space: nowrap;">
+                                        Hủy đơn
+                                    </button>
+                                    <span style="color: var(--color-text-muted); font-size: 1.1rem;">→</span>
                                 </div>
                             </a>
 
@@ -161,7 +187,7 @@
                     </div>
 
                     <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 16px;">
-                        Hiển thị <span th:text="${orders != null ? orders.size() : 0}">5</span> đơn hàng
+                        Hiển thị <span id="visibleOrdersCount" th:text="${orders != null ? orders.size() : 0}">5</span> đơn hàng
                     </div>
                 </div>
             </div>
@@ -170,23 +196,63 @@
 
     <!-- Client-side filter script -->
     <script th:inline="javascript">
+        function updateOrderCounters() {
+            const rows = document.querySelectorAll('.order-row-link');
+            const counts = { ALL: rows.length, PENDING: 0, CONFIRMED: 0, PREPARING: 0, SHIPPING: 0, COMPLETED: 0, CANCELLED: 0 };
+            rows.forEach(r => {
+                const s = r.dataset.status;
+                if (counts[s] !== undefined) counts[s]++;
+            });
+            document.getElementById('count-all').textContent = `(${counts.ALL})`;
+            document.getElementById('count-pending').textContent = `(${counts.PENDING})`;
+            document.getElementById('count-confirmed').textContent = `(${counts.CONFIRMED})`;
+            document.getElementById('count-preparing').textContent = `(${counts.PREPARING})`;
+            document.getElementById('count-shipping').textContent = `(${counts.SHIPPING})`;
+            document.getElementById('count-completed').textContent = `(${counts.COMPLETED})`;
+            document.getElementById('count-cancelled').textContent = `(${counts.CANCELLED})`;
+        }
+
         function filterOrderList(status, btn) {
             document.querySelectorAll('.order-filter-tab').forEach(b => {
                 b.style.color = 'var(--color-text-muted)';
                 b.style.fontWeight = 'normal';
                 b.style.borderBottom = 'none';
+                b.setAttribute('aria-selected', 'false');
             });
             btn.style.color = 'var(--color-text-primary)';
             btn.style.fontWeight = '600';
             btn.style.borderBottom = '2px solid var(--color-gold-primary)';
+            btn.setAttribute('aria-selected', 'true');
 
+            const tableBody = document.getElementById('ordersTableBody');
+            if (tableBody) tableBody.setAttribute('aria-labelledby', btn.id);
+
+            let visibleCount = 0;
             document.querySelectorAll('.order-row-link').forEach(row => {
                 if (status === 'ALL' || row.dataset.status === status) {
                     row.style.display = 'grid';
+                    visibleCount++;
                 } else {
                     row.style.display = 'none';
                 }
             });
+            const counterEl = document.getElementById('visibleOrdersCount');
+            if (counterEl) counterEl.textContent = visibleCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateOrderCounters();
+        });
+
+        async function handleCancelOrder(orderId) {
+            if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không? Tồn kho đang giữ sẽ được giải phóng ngay lập tức.')) return;
+            try {
+                await LUNEA.apiFetch(`/api/orders/${orderId}/cancel`, { method: 'POST' });
+                LUNEA.showToast('Hủy đơn hàng thành công!', 'success');
+                setTimeout(() => window.location.reload(), 600);
+            } catch (e) {
+                // error handled in apiFetch
+            }
         }
     </script>
 

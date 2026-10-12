@@ -5,7 +5,7 @@
     <!-- Header Fragment -->
     <header th:replace="~{fragments/header :: header}"></header>
 
-    <main class="site-main">
+    <main class="site-main" id="main-content">
         <div class="lunea-container">
             <!-- Breadcrumbs & Editorial Header (Page 2 PDF) -->
             <div class="editorial-catalog-header reveal-on-scroll" style="margin-bottom: 36px;">
@@ -35,10 +35,28 @@
                     </div>
 
                     <form id="filterForm" th:action="@{/products}" method="GET">
-                        <!-- Keyword preserve -->
-                        <input type="hidden" name="keyword" th:value="${keyword}">
+                        <!-- Preserve Sort -->
+                        <input type="hidden" name="sortBy" th:value="${sortBy}">
 
-                        <!-- 1. Thương Hiệu -->
+                        <!-- 0. Từ khóa -->
+                        <div class="filter-group">
+                            <label class="filter-group-title">Từ khóa tìm kiếm</label>
+                            <input type="text" name="keyword" class="form-control-lunea" placeholder="Nhập tên sản phẩm, thương hiệu..." th:value="${keyword}">
+                        </div>
+
+                        <!-- 1. Danh Mục -->
+                        <div class="filter-group">
+                            <label class="filter-group-title">Danh mục</label>
+                            <select name="categoryId" class="form-control-lunea" onchange="this.form.submit()">
+                                <option value="">Tất cả danh mục</option>
+                                <option th:each="c : ${categories}" 
+                                        th:value="${c.id}" 
+                                        th:text="${c.name}" 
+                                        th:selected="${categoryId != null and categoryId == c.id}">Serum</option>
+                            </select>
+                        </div>
+
+                        <!-- 2. Thương Hiệu -->
                         <div class="filter-group">
                             <label class="filter-group-title">Thương hiệu</label>
                             <select name="brandId" class="form-control-lunea" onchange="this.form.submit()">
@@ -113,7 +131,7 @@
                     </div>
 
                     <!-- Products Grid (Matching Page 2 PDF) -->
-                    <div id="productGrid" class="product-luxury-grid stagger-cards" style="grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
+                    <div id="productGrid" th:if="${products != null and !products.isEmpty()}" class="product-luxury-grid stagger-cards" style="grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
                         <div th:each="p : ${products}" class="luxury-product-card product-item-card"
                              th:data-id="${p.id}"
                              th:data-name="${p.name}"
@@ -132,7 +150,7 @@
                                     <span th:unless="${p.inStock}" class="badge-pill badge-muted">Tạm hết hàng</span>
                                 </div>
                                 <button type="button" class="wishlist-heart-btn" aria-label="Lưu vào yêu thích" 
-                                        onclick="LUNEA.toggleWishlist(this)">
+                                        th:onclick="'LUNEA.toggleWishlist(this, ' + ${p.id} + ')'">
                                     <i class="bi bi-heart"></i>
                                 </button>
                             </div>
@@ -141,7 +159,7 @@
                             <div class="product-image-box">
                                 <a th:href="@{/products/{id}(id=${p.id})}">
                                     <img th:src="${p.imageUrl}" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600" 
-                                         th:alt="${p.name}" class="product-image-img" loading="lazy">
+                                         th:alt="${p.name}" class="product-image-img" width="240" height="240" loading="lazy" decoding="async">
                                 </a>
                             </div>
 
@@ -172,7 +190,7 @@
                     </div>
 
                     <!-- Empty State -->
-                    <div id="noProductsAlert" class="card-shell" style="margin-top: 24px; display: none;">
+                    <div id="noProductsAlert" class="card-shell" th:if="${products == null or products.isEmpty()}" style="margin-top: 24px;">
                         <div class="card-core" style="text-align: center; padding: 48px;">
                             <div style="font-size: 3rem; color: var(--color-text-muted); margin-bottom: 16px;"><i class="bi bi-search"></i></div>
                             <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Không tìm thấy sản phẩm phù hợp</h3>

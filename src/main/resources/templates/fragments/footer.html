@@ -8,12 +8,13 @@
                 <a th:href="@{/}" href="/" class="brand-logo footer-logo">
                     <span class="brand-emblem-crescent">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="url(#footerGoldGrad)" stroke="#fae8a4" stroke-width="1.2"/>
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="url(#footerGoldGrad)"
+                                stroke="#fae8a4" stroke-width="1.2" />
                             <defs>
                                 <linearGradient id="footerGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#fae8a4"/>
-                                    <stop offset="50%" stop-color="#dfbe7b"/>
-                                    <stop offset="100%" stop-color="#b98e32"/>
+                                    <stop offset="0%" stop-color="#fae8a4" />
+                                    <stop offset="50%" stop-color="#dfbe7b" />
+                                    <stop offset="100%" stop-color="#b98e32" />
                                 </linearGradient>
                             </defs>
                         </svg>
@@ -21,7 +22,7 @@
                     <span class="brand-title-text">LUNEA</span>
                 </a>
                 <p class="footer-tagline">Tỏa sáng vẻ đẹp thật.</p>
-                <div class="footer-moon-phases">
+                <div class="footer-moon-phases" role="img" aria-label="Chu kỳ mặt trăng LUNEA">
                     <span class="moon-phase" title="New Moon">☾</span>
                     <span class="moon-phase" title="First Quarter">◐</span>
                     <span class="moon-phase active" title="Full Moon">◯</span>
@@ -36,7 +37,8 @@
                 <ul class="footer-links">
                     <li><a th:href="@{/products}" href="/products" class="footer-link">Chăm sóc da</a></li>
                     <li><a th:href="@{/brands}" href="/brands" class="footer-link">Thương hiệu</a></li>
-                    <li><a th:href="@{/products(concern='Trị Mụn')}" href="/products?concern=Trị+Mụn" class="footer-link">Khuyến mãi đặc quyền</a></li>
+                    <li><a th:href="@{/products(concern='Trị Mụn')}" href="/products?concern=Trị+Mụn"
+                            class="footer-link">Khuyến mãi đặc quyền</a></li>
                 </ul>
             </div>
 
@@ -44,7 +46,11 @@
             <div>
                 <h4 class="footer-title">Chăm sóc khách hàng</h4>
                 <ul class="footer-links">
-                    <li><a href="javascript:void(0)" onclick="LUNEA.showToast('Chính sách giao hàng miễn phí đơn từ 500.000 ₫ và đổi trả trong 7 ngày.', 'info')" class="footer-link">Giao hàng & đổi trả</a></li>
+                    <li><button type="button"
+                            onclick="LUNEA.showToast('Chính sách giao hàng miễn phí đơn từ 500.000 ₫ và đổi trả trong 7 ngày.', 'info')"
+                            class="footer-link"
+                            style="background: none; border: none; padding: 0; cursor: pointer; text-align: left; font-size: inherit; font-family: inherit;">Giao
+                            hàng &amp; đổi trả</button></li>
                     <li><a href="tel:02838229999" class="footer-link">Liên hệ hỗ trợ</a></li>
                     <li><a th:href="@{/stores}" href="/stores" class="footer-link">Hệ thống showroom</a></li>
                 </ul>
@@ -54,8 +60,10 @@
             <div>
                 <h4 class="footer-title">Tài khoản</h4>
                 <ul class="footer-links">
-                    <li><a th:href="@{/account/orders}" href="/account/orders" class="footer-link">Đơn hàng của tôi</a></li>
-                    <li><a th:href="@{/account/profile}" href="/account/profile" class="footer-link">Địa chỉ nhận hàng</a></li>
+                    <li><a th:href="@{/account/orders}" href="/account/orders" class="footer-link">Đơn hàng của tôi</a>
+                    </li>
+                    <li><a th:href="@{/account/profile}" href="/account/profile" class="footer-link">Địa chỉ nhận
+                            hàng</a></li>
                     <li><a th:href="@{/login}" href="/login" class="footer-link">Đăng nhập / Đăng ký</a></li>
                 </ul>
             </div>
@@ -63,13 +71,22 @@
 
         <!-- Bottom Copyright & Legal Links -->
         <div class="footer-bottom">
-            <p class="footer-copy">© LUNEA</p>
+            <p class="footer-copy">© 2026 LUNEA Haute Parfumerie &amp; Beauté. Tất cả quyền được bảo lưu.</p>
             <div class="footer-legal">
-                <a href="javascript:void(0)" class="footer-legal-link">Điều khoản sử dụng</a>
+                <button type="button"
+                    onclick="LUNEA.showToast('Điều khoản dịch vụ: Cam kết 100% mỹ phẩm chính hãng, đầy đủ chứng nhận nguồn gốc xuất xứ.', 'info')"
+                    class="footer-legal-link"
+                    style="background: none; border: none; padding: 0; cursor: pointer; font-size: inherit; font-family: inherit;">Điều
+                    khoản sử dụng</button>
                 <span class="footer-dot">•</span>
-                <a href="javascript:void(0)" class="footer-legal-link">Chính sách bảo mật</a>
+                <button type="button"
+                    onclick="LUNEA.showToast('Chính sách bảo mật: LUNEA cam kết bảo mật tuyệt đối thông tin cá nhân khách hàng theo tiêu chuẩn quốc tế.', 'info')"
+                    class="footer-legal-link"
+                    style="background: none; border: none; padding: 0; cursor: pointer; font-size: inherit; font-family: inherit;">Chính
+                    sách bảo mật</button>
             </div>
         </div>
     </div>
 </footer>
+
 </html>

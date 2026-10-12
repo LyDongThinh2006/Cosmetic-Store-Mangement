@@ -5,8 +5,57 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.">
+    <meta name="description" th:content="${metaDescription != null ? metaDescription : 'LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.'}" content="LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="theme-color" content="#0d0f12">
+    <meta name="color-scheme" content="dark light">
     <title th:text="${title != null ? title : 'LUNEA | Thế Giới Mỹ Phẩm & Chăm Sóc Sắc Đẹp'}">LUNEA | Thế Giới Mỹ Phẩm & Chăm Sóc Sắc Đẹp</title>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" th:href="${canonicalUrl != null ? canonicalUrl : 'https://lunea.com.vn'}" href="https://lunea.com.vn">
+
+    <!-- Favicon & Touch Icon & PWA Manifest -->
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/favicon.svg}" href="/images/favicon.svg">
+    <link rel="apple-touch-icon" th:href="@{/images/favicon.svg}" href="/images/favicon.svg">
+    <link rel="manifest" th:href="@{/site.webmanifest}" href="/site.webmanifest">
+
+    <!-- Open Graph Social Metadata (Facebook, Zalo, LinkedIn, Slack) -->
+    <meta property="og:site_name" content="LUNEA">
+    <meta property="og:type" th:content="${product != null ? 'product' : 'website'}" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:url" th:content="${canonicalUrl != null ? canonicalUrl : 'https://lunea.com.vn'}" content="https://lunea.com.vn">
+    <meta property="og:title" th:content="${product != null ? (product.name + ' | LUNEA') : (title != null ? title : 'LUNEA | Thế Giới Mỹ Phẩm & Chăm Sóc Sắc Đẹp')}" content="LUNEA | Thế Giới Mỹ Phẩm & Chăm Sóc Sắc Đẹp">
+    <meta property="og:description" th:content="${product != null and product.description != null ? product.description : (metaDescription != null ? metaDescription : 'LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.')}" content="LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.">
+    <meta property="og:image" th:content="${product != null and product.imageUrl != null ? product.imageUrl : (ogImage != null ? ogImage : 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&h=630&auto=format&fit=crop')}" content="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&h=630&auto=format&fit=crop">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" th:content="${product != null ? product.name : 'LUNEA Luxury Cosmetics & Skincare'}" content="LUNEA Luxury Cosmetics & Skincare">
+
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" th:content="${product != null ? (product.name + ' | LUNEA') : (title != null ? title : 'LUNEA | Thế Giới Mỹ Phẩm & Chăm Sóc Sắc Đẹp')}" content="LUNEA | Thế Giới Mỹ Phẩm & Chăm Sóc Sắc Đẹp">
+    <meta name="twitter:description" th:content="${product != null and product.description != null ? product.description : (metaDescription != null ? metaDescription : 'LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.')}" content="LUNEA - Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu.">
+    <meta name="twitter:image" th:content="${product != null and product.imageUrl != null ? product.imageUrl : (ogImage != null ? ogImage : 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&h=630&auto=format&fit=crop')}" content="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&h=630&auto=format&fit=crop">
+
+    <!-- Schema.org Organization JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BeautySalon",
+      "name": "LUNEA Haute Parfumerie & Beauté",
+      "url": "https://lunea.com.vn",
+      "description": "Hệ thống chuỗi showroom mỹ phẩm cao cấp và chăm sóc sắc đẹp chuẩn khoa học Châu Âu.",
+      "telephone": "+84-28-3822-9999",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "68 Đồng Khởi, Phường Bến Nghé",
+        "addressLocality": "Quận 1",
+        "addressRegion": "Hồ Chí Minh",
+        "addressCountry": "VN"
+      }
+    }
+    </script>
 
     <!-- Instant Theme Bootstrap (Prevents theme flash on reload) -->
     <script>
@@ -34,6 +83,7 @@
     <!-- LUNEA Design System & Client JS -->
     <link rel="stylesheet" th:href="@{/css/tokens.css}" href="/css/tokens.css">
     <link rel="stylesheet" th:href="@{/css/site.css}" href="/css/site.css">
+    <link rel="stylesheet" th:href="@{/css/print.css}" href="/css/print.css" media="print">
     <script th:src="@{/js/api.js}" src="/js/api.js" defer></script>
 </head>
 </html>

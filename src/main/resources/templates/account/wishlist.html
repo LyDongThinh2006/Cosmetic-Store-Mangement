@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-page="account-wishlist">
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="site-main" id="main-content">
+        <div class="lunea-container">
+            <!-- Breadcrumbs -->
+            <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 28px;" class="reveal-on-scroll">
+                <a th:href="@{/}" href="/" style="color: var(--color-text-secondary); text-decoration: none;">Trang chủ</a>
+                <span style="margin: 0 6px;">/</span>
+                <a th:href="@{/account/profile}" href="/account/profile" style="color: var(--color-text-secondary); text-decoration: none;">Tài khoản</a>
+                <span style="margin: 0 6px;">/</span>
+                <span style="color: var(--color-gold-light);">Sản phẩm yêu thích</span>
+            </div>
+
+            <!-- Account 2-Column Layout -->
+            <div style="display: grid; grid-template-columns: 240px 1fr; gap: 48px; align-items: start;" class="reveal-on-scroll">
+                <!-- Left Sidebar Navigation -->
+                <aside style="display: flex; flex-direction: column; gap: 24px;">
+                    <!-- User Header -->
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-bg-elevated); border: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary);"
+                             th:text="${currentUser != null ? #strings.substring(currentUser.displayName != null ? currentUser.displayName : currentUser.username, 0, 2).toUpperCase() : 'KH'}">
+                            KH
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.95rem;" 
+                                 th:text="${currentUser != null ? (currentUser.displayName != null ? currentUser.displayName : currentUser.username) : 'Khách hàng LUNEA'}">Khách hàng LUNEA</div>
+                            <div style="font-size: 0.75rem; color: var(--color-text-muted);">Tài khoản thành viên</div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Links -->
+                    <nav style="display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem;">
+                        <a th:href="@{/account/profile}" href="/account/profile" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color var(--duration-fast);">
+                            <i class="bi bi-person"></i>
+                            <span>Thông tin cá nhân</span>
+                        </a>
+                        <a th:href="@{/account/profile}" href="/account/profile" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color var(--duration-fast);">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>Sổ địa chỉ</span>
+                        </a>
+                        <a th:href="@{/account/orders}" href="/account/orders" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color var(--duration-fast);">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Đơn hàng của tôi</span>
+                        </a>
+                        <a th:href="@{/account/wishlist}" href="/account/wishlist" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-primary); font-weight: 600; background: var(--color-border-subtle); text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                            <i class="bi bi-heart" style="color: var(--color-gold-primary);"></i>
+                            <span>Sản phẩm yêu thích</span>
+                        </a>
+                        <button type="button" onclick="LUNEA.showToast('Bạn chưa có voucher nào mới.', 'info')" style="padding: 10px 14px; border-radius: 8px; color: var(--color-text-muted); background: none; border: none; text-align: left; cursor: pointer; font-size: inherit; display: flex; align-items: center; gap: 10px; width: 100%;">
+                            <i class="bi bi-ticket-perforated"></i>
+                            <span>Voucher của tôi</span>
+                        </button>
+                        <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" style="padding: 10px 14px; border-radius: 8px; color: var(--color-danger); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color var(--duration-fast); margin-top: 8px;">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Đăng xuất</span>
+                        </a>
+                    </nav>
+                </aside>
+
+                <!-- Right Content: Danh sách yêu thích -->
+                <div>
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle);">
+                        <div>
+                            <h1 style="font-family: var(--font-serif); font-size: 2.2rem; font-weight: 500; margin-bottom: 6px; color: var(--color-text-primary);">
+                                Danh Sách Yêu Thích
+                            </h1>
+                            <p style="font-size: 0.92rem; color: var(--color-text-muted);">
+                                Lưu giữ những tuyệt tác dưỡng da và trang điểm cao cấp dành riêng cho bạn.
+                            </p>
+                        </div>
+                        <div id="wishlistCountBadge" style="font-size: 0.88rem; color: var(--color-gold-light); background: rgba(212, 169, 106, 0.1); border: 1px solid var(--color-gold-primary); padding: 6px 14px; border-radius: 999px;">
+                            <span id="wishlistCountNumber" th:text="${wishlist != null and wishlist.items != null ? #lists.size(wishlist.items) : 0}">0</span> sản phẩm
+                        </div>
+                    </div>
+
+                    <!-- Empty State (Shown if no items) -->
+                    <div id="wishlistEmptyState" 
+                         th:style="${wishlist != null and wishlist.items != null and !#lists.isEmpty(wishlist.items)} ? 'display: none;' : 'display: flex;'"
+                         style="flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center; background: var(--color-bg-card); border: 1px dashed var(--color-border-subtle); border-radius: var(--radius-sm); margin-top: 12px;">
+                        <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--color-bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--color-gold-light); margin-bottom: 20px;">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                        <h2 style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--color-text-primary); margin-bottom: 8px;">
+                            Chưa có sản phẩm nào trong danh sách
+                        </h2>
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted); max-width: 440px; margin-bottom: 24px; line-height: 1.6;">
+                            Hãy khám phá ngay các bộ sưu tập mỹ phẩm thượng hạng của LUNEA và lưu lại những sản phẩm bạn yêu thích nhất.
+                        </p>
+                        <a th:href="@{/products}" href="/products" class="btn btn-primary" style="padding: 12px 28px; text-decoration: none;">
+                            <i class="bi bi-bag"></i> Khám Phá Bộ Sưu Tập
+                        </a>
+                    </div>
+
+                    <!-- Items Grid (Shown if items exist) -->
+                    <div id="wishlistGrid" 
+                         th:if="${wishlist != null and wishlist.items != null and !#lists.isEmpty(wishlist.items)}"
+                         style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;">
+                        <div th:each="item : ${wishlist.items}" 
+                             th:id="'wishlist-item-' + ${item.productId}"
+                             class="wishlist-card"
+                             style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); overflow: hidden; display: flex; flex-direction: column; transition: transform var(--duration-fast), box-shadow var(--duration-fast); position: relative;">
+                            
+                            <!-- Remove Button -->
+                            <button type="button" 
+                                    th:onclick="'removeWishlistItem(' + ${item.productId} + ', this)'"
+                                    title="Xóa khỏi danh sách yêu thích"
+                                    aria-label="Xóa khỏi danh sách yêu thích"
+                                    style="position: absolute; top: 12px; right: 12px; z-index: 5; width: 34px; height: 34px; border-radius: 50%; background: rgba(18, 18, 20, 0.75); backdrop-filter: blur(8px); border: 1px solid var(--color-border-subtle); color: #f87171; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--duration-fast);">
+                                <i class="bi bi-trash3" style="font-size: 0.85rem;"></i>
+                            </button>
+
+                            <!-- Product Image -->
+                            <a th:href="@{/products/{id}(id=${item.productId})}" style="display: block; aspect-ratio: 1; overflow: hidden; background: var(--color-bg-elevated); position: relative;">
+                                <img th:if="${item.imageUrl != null and !item.imageUrl.isEmpty()}" 
+                                     th:src="${item.imageUrl}" 
+                                     th:alt="${item.productName}"
+                                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                                     onmouseover="this.style.transform='scale(1.05)'"
+                                     onmouseout="this.style.transform='scale(1)'">
+                                <div th:unless="${item.imageUrl != null and !item.imageUrl.isEmpty()}" 
+                                     style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); font-size: 2rem;">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            </a>
+
+                            <!-- Product Info -->
+                            <div style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1;">
+                                <a th:href="@{/products/{id}(id=${item.productId})}" 
+                                   th:text="${item.productName}"
+                                   style="font-size: 0.95rem; font-weight: 500; color: var(--color-text-primary); text-decoration: none; margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.8em;"
+                                   onmouseover="this.style.color='var(--color-gold-light)'"
+                                   onmouseout="this.style.color='var(--color-text-primary)'">
+                                    Tên sản phẩm
+                                </a>
+
+                                <div style="font-size: 1.05rem; font-weight: 600; color: var(--color-gold-primary); margin-bottom: 16px; margin-top: auto;">
+                                    <span th:text="${item.price != null ? #numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT') + ' ₫' : 'Liên hệ'}">500.000 ₫</span>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                                    <a th:href="@{/products/{id}(id=${item.productId})}" 
+                                       class="btn btn-outline" 
+                                       style="width: 100%; text-align: center; padding: 10px 0; font-size: 0.85rem; border-color: var(--color-border-subtle); color: var(--color-text-primary); text-decoration: none;">
+                                        Xem Chi Tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:inline="javascript">
+        async function removeWishlistItem(productId, btnElement) {
+            if (!confirm('Bạn có chắc chắn muốn bỏ sản phẩm này khỏi danh sách yêu thích?')) {
+                return;
+            }
+
+            try {
+                btnElement.disabled = true;
+                const response = await fetch('/api/wishlist/products/' + productId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    LUNEA.showToast('Đã xóa sản phẩm khỏi danh sách yêu thích', 'success');
+                    
+                    const card = document.getElementById('wishlist-item-' + productId);
+                    if (card) {
+                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.9)';
+                        
+                        setTimeout(() => {
+                            card.remove();
+                            
+                            // Check if grid is now empty
+                            const grid = document.getElementById('wishlistGrid');
+                            const remainingCards = grid ? grid.querySelectorAll('.wishlist-card') : [];
+                            const countBadge = document.getElementById('wishlistCountNumber');
+                            if (countBadge) {
+                                countBadge.textContent = remainingCards.length;
+                            }
+                            
+                            if (remainingCards.length === 0) {
+                                if (grid) grid.style.display = 'none';
+                                const emptyState = document.getElementById('wishlistEmptyState');
+                                if (emptyState) emptyState.style.display = 'flex';
+                            }
+                        }, 300);
+                    }
+                } else {
+                    const data = await response.json();
+                    LUNEA.showToast(data.message || 'Không thể xóa sản phẩm khỏi yêu thích', 'error');
+                    btnElement.disabled = false;
+                }
+            } catch (err) {
+                console.error('Error removing wishlist item:', err);
+                LUNEA.showToast('Có lỗi xảy ra khi kết nối máy chủ.', 'error');
+                btnElement.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
