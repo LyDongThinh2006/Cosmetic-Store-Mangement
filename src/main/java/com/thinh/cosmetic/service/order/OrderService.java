@@ -10,10 +10,12 @@ public interface OrderService {
     OrderResponse placeOrder(Long customerId, OrderRequest request) throws Exception;
     OrderResponse previewOrder(Long customerId, OrderRequest request) throws Exception;
     OrderResponse getById(Long id) throws Exception;
+    OrderResponse getById(com.thinh.cosmetic.security.AuthPrincipal principal, Long id) throws Exception;
     OrderResponse getByOrderCode(String orderCode) throws Exception;
     List<OrderResponse> getByCustomer(Long customerId);
     List<OrderResponse> getAll();
     List<OrderResponse> getOrders(com.thinh.cosmetic.security.AuthPrincipal principal, Long storeId);
     OrderResponse updateStatus(Long id, OrderStatus status) throws Exception;
+    OrderResponse updateStatus(com.thinh.cosmetic.security.AuthPrincipal principal, Long id, OrderStatus status) throws Exception;
     OrderResponse cancelOrder(Long id, Long customerId) throws Exception;
 }

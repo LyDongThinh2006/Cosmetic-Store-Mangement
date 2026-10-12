@@ -25,7 +25,9 @@ import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,6 +90,106 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(p -> enrich(p, productMapper.toResponse(p)))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchAndFilter(
+            String keyword,
+            Long brandId,
+            Long categoryId,
+            String skinType,
+            String concern,
+            String priceRange,
+            String sortBy
+    ) {
+        List<ProductResponse> all = getAll();
+
+        return all.stream()
+                .filter(p -> matchesKeyword(p, keyword))
+                .filter(p -> brandId == null || (p.getBrand() != null && Objects.equals(p.getBrand().getId(), brandId)))
+                .filter(p -> categoryId == null || (p.getCategory() != null && Objects.equals(p.getCategory().getId(), categoryId)))
+                .filter(p -> matchesSkinType(p, skinType))
+                .filter(p -> matchesConcern(p, concern))
+                .filter(p -> matchesPriceRange(p, priceRange))
+                .sorted(getComparator(sortBy))
+                .toList();
+    }
+
+    private boolean matchesKeyword(ProductResponse p, String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return true;
+        }
+        String kwLower = keyword.trim().toLowerCase();
+        String kwNormalized = stripAccents(kwLower);
+
+        List<String> searchTargets = new ArrayList<>();
+        if (p.getName() != null) searchTargets.add(p.getName());
+        if (p.getBrand() != null && p.getBrand().getName() != null) searchTargets.add(p.getBrand().getName());
+        if (p.getCategory() != null && p.getCategory().getName() != null) searchTargets.add(p.getCategory().getName());
+        if (p.getDescription() != null) searchTargets.add(p.getDescription());
+        if (p.getMainIngredients() != null) searchTargets.add(p.getMainIngredients());
+        if (p.getUses() != null) searchTargets.add(p.getUses());
+        if (p.getOrigin() != null) searchTargets.add(p.getOrigin());
+        if (p.getSkus() != null) {
+            for (ProductSkuResponse sku : p.getSkus()) {
+                if (sku.getSkuCode() != null) searchTargets.add(sku.getSkuCode());
+                if (sku.getVariantName() != null) searchTargets.add(sku.getVariantName());
+            }
+        }
+
+        for (String target : searchTargets) {
+            String targetLower = target.toLowerCase();
+            if (targetLower.contains(kwLower)) return true;
+            if (stripAccents(targetLower).contains(kwNormalized)) return true;
+        }
+        return false;
+    }
+
+    private String stripAccents(String s) {
+        if (s == null) return "";
+        String n = Normalizer.normalize(s, Normalizer.Form.NFD);
+        return n.replaceAll("\\p{M}", "").replace("đ", "d").replace("Đ", "d");
+    }
+
+    private boolean matchesSkinType(ProductResponse p, String skinType) {
+        if (skinType == null || skinType.isBlank()) return true;
+        if (p.getSkinTypes() == null || p.getSkinTypes().isEmpty()) return false;
+        String stNorm = stripAccents(skinType.toLowerCase());
+        return p.getSkinTypes().stream()
+                .anyMatch(s -> stripAccents(s.toLowerCase()).contains(stNorm) || stNorm.contains(stripAccents(s.toLowerCase())));
+    }
+
+    private boolean matchesConcern(ProductResponse p, String concern) {
+        if (concern == null || concern.isBlank()) return true;
+        if (p.getConcerns() == null || p.getConcerns().isEmpty()) return false;
+        String cNorm = stripAccents(concern.toLowerCase());
+        return p.getConcerns().stream()
+                .anyMatch(c -> stripAccents(c.toLowerCase()).contains(cNorm) || cNorm.contains(stripAccents(c.toLowerCase())));
+    }
+
+    private boolean matchesPriceRange(ProductResponse p, String priceRange) {
+        if (priceRange == null || priceRange.isBlank()) return true;
+        BigDecimal price = p.getMinPrice() != null ? p.getMinPrice() : BigDecimal.ZERO;
+        return switch (priceRange.toLowerCase()) {
+            case "under300", "under500" -> price.compareTo(new BigDecimal("500000")) < 0;
+            case "300to600", "500to1000" -> price.compareTo(new BigDecimal("500000")) >= 0 && price.compareTo(new BigDecimal("1000000")) <= 0;
+            case "above1000" -> price.compareTo(new BigDecimal("1000000")) > 0;
+            default -> true;
+        };
+    }
+
+    private Comparator<ProductResponse> getComparator(String sortBy) {
+        if ("price-asc".equalsIgnoreCase(sortBy)) {
+            return Comparator.comparing(p -> p.getMinPrice() != null ? p.getMinPrice() : BigDecimal.ZERO);
+        } else if ("price-desc".equalsIgnoreCase(sortBy)) {
+            return Comparator.comparing((ProductResponse p) -> p.getMinPrice() != null ? p.getMinPrice() : BigDecimal.ZERO).reversed();
+        } else if ("featured".equalsIgnoreCase(sortBy)) {
+            return Comparator.comparing((ProductResponse p) -> Boolean.TRUE.equals(p.getIsFeatured())).reversed()
+                    .thenComparing(ProductResponse::getId, Comparator.nullsLast(Comparator.reverseOrder()));
+        } else {
+            return Comparator.comparing(ProductResponse::getId, Comparator.nullsLast(Comparator.reverseOrder()));
+        }
     }
 
     private ProductResponse enrich(ProductEntity product, ProductResponse res) {

@@ -13,6 +13,16 @@ public interface ProductService {
 
     List<ProductResponse> getAll();
 
+    List<ProductResponse> searchAndFilter(
+            String keyword,
+            Long brandId,
+            Long categoryId,
+            String skinType,
+            String concern,
+            String priceRange,
+            String sortBy
+    );
+
     ProductResponse update(Long id, ProductRequest request) throws Exception;
 
     void delete(Long id) throws Exception;

@@ -81,6 +81,12 @@ public class ReturnServiceImpl implements ReturnService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ReturnRequestResponse> getByOrder(Long orderId) {
+        return returnRequestRepository.findByOrderId(orderId).stream().map(this::toResponse).toList();
+    }
+
+    @Override
     public ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId) throws Exception {
         ReturnRequestEntity ret = returnRequestRepository.findById(id)
                 .orElseThrow(() -> new Exception("Return request not found: " + id));

@@ -15,10 +15,14 @@ import com.thinh.cosmetic.domain.entity.sales.OrderReservationEntity;
 import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
 import com.thinh.cosmetic.domain.enums.ReservationStatus;
 import com.thinh.cosmetic.domain.enums.OrderStatus;
+import com.thinh.cosmetic.domain.entity.catalog.ProductImageEntity;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.repository.account.CustomerAddressRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.repository.cart.CartItemRepository;
 import com.thinh.cosmetic.repository.cart.CartRepository;
+import com.thinh.cosmetic.repository.catalog.ProductImageRepository;
 import com.thinh.cosmetic.repository.order.OrderItemRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
 import com.thinh.cosmetic.repository.order.OrderReservationRepository;
@@ -52,23 +56,21 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final StoreRepository storeRepository;
     private final InventoryRepository inventoryRepository;
+    private final ProductImageRepository productImageRepository;
     private final StoreScope storeScope;
 
 
     @Override
     public OrderResponse placeOrder(Long customerId, OrderRequest request) throws Exception {
         CustomerEntity customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new Exception("Customer not found: " + customerId));
-
-        CustomerAddressEntity address = addressRepository.findById(request.getCustomerAddressId())
-                .orElseThrow(() -> new Exception("Address not found: " + request.getCustomerAddressId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, "Không tìm thấy khách hàng: " + customerId));
 
         CartEntity cart = cartRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> new Exception("Cart not found for customer"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.EMPTY_CART, "Giỏ hàng của bạn đang trống"));
 
         List<CartItemEntity> cartItems = cartItemRepository.findByCartId(cart.getId());
         if (cartItems.isEmpty()) {
-            throw new Exception("Cart is empty");
+            throw new BusinessException(ErrorCode.EMPTY_CART, "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ!");
         }
 
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -77,6 +79,59 @@ public class OrderServiceImpl implements OrderService {
             subtotal = subtotal.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
         }
 
+        // Resolve address details
+        CustomerAddressEntity address = null;
+        if (request.getCustomerAddressId() != null) {
+            address = addressRepository.findById(request.getCustomerAddressId()).orElse(null);
+        }
+
+        String recipientName = (address != null && address.getRecipientName() != null && !address.getRecipientName().isBlank())
+                ? address.getRecipientName()
+                : (request.getRecipientName() != null && !request.getRecipientName().isBlank() ? request.getRecipientName().trim() : (customer.getFullName() != null ? customer.getFullName() : "Khách hàng LUNEA"));
+
+        String recipientPhone = (address != null && address.getPhone() != null && !address.getPhone().isBlank())
+                ? address.getPhone()
+                : (request.getRecipientPhone() != null && !request.getRecipientPhone().isBlank() ? request.getRecipientPhone().trim() : (customer.getAccount() != null && customer.getAccount().getPhone() != null ? customer.getAccount().getPhone() : "0900000000"));
+
+        String shippingAddress = (address != null && address.getAddressDetail() != null && !address.getAddressDetail().isBlank())
+                ? address.getAddressDetail()
+                : (request.getShippingAddress() != null ? request.getShippingAddress().trim() : "");
+
+        String ward = (address != null && address.getWard() != null)
+                ? address.getWard()
+                : (request.getWard() != null ? request.getWard().trim() : "Phường Bến Nghé");
+
+        String district = (address != null && address.getDistrict() != null)
+                ? address.getDistrict()
+                : (request.getDistrict() != null ? request.getDistrict().trim() : "Quận 1");
+
+        String province = (address != null && address.getProvince() != null)
+                ? address.getProvince()
+                : (request.getProvince() != null ? request.getProvince().trim() : "TP. Hồ Chí Minh");
+
+        if (shippingAddress.isBlank()) {
+            shippingAddress = "Địa chỉ nhận hàng mặc định";
+        }
+
+        // Save newly provided address for customer if they didn't pick an existing one
+        if (address == null && !shippingAddress.isBlank()) {
+            try {
+                boolean hasSaved = !addressRepository.findByCustomerEntityId(customer.getId()).isEmpty();
+                CustomerAddressEntity newAddr = CustomerAddressEntity.builder()
+                        .customerEntity(customer)
+                        .recipientName(recipientName)
+                        .phone(recipientPhone)
+                        .province(province)
+                        .district(district)
+                        .ward(ward)
+                        .addressDetail(shippingAddress)
+                        .isDefault(!hasSaved)
+                        .build();
+                addressRepository.save(newAddr);
+            } catch (Exception ignored) {}
+        }
+
+        // Resolve voucher and discounts
         String voucher = request.getVoucherCode() != null ? request.getVoucherCode().trim().toUpperCase() : "";
         BigDecimal discountAmount = BigDecimal.ZERO;
         BigDecimal freeShippingThreshold = new BigDecimal("500000");
@@ -91,12 +146,15 @@ public class OrderServiceImpl implements OrderService {
         }
         BigDecimal totalAmount = subtotal.subtract(discountAmount).add(shippingFee).max(BigDecimal.ZERO);
 
+        // Store selection & stock check
         StoreEntity assignedStore = null;
         if (request.getFulfillmentStoreId() != null) {
             assignedStore = storeRepository.findById(request.getFulfillmentStoreId()).orElse(null);
         }
+
         if (assignedStore == null) {
             List<StoreEntity> stores = storeRepository.findAll();
+            List<StoreEntity> capableStores = new ArrayList<>();
             for (StoreEntity store : stores) {
                 boolean canFulfillAll = true;
                 for (CartItemEntity item : cartItems) {
@@ -107,11 +165,17 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (canFulfillAll) {
-                    assignedStore = store;
-                    break;
+                    capableStores.add(store);
                 }
             }
-            if (assignedStore == null && !stores.isEmpty()) {
+
+            if (!capableStores.isEmpty()) {
+                String provLower = province.toLowerCase();
+                assignedStore = capableStores.stream()
+                        .filter(s -> s.getProvince() != null && (provLower.contains(s.getProvince().toLowerCase()) || s.getProvince().toLowerCase().contains(provLower)))
+                        .findFirst()
+                        .orElse(capableStores.get(0));
+            } else if (!stores.isEmpty()) {
                 assignedStore = stores.get(0);
             }
         }
@@ -122,18 +186,18 @@ public class OrderServiceImpl implements OrderService {
                 .orderCode(orderCode)
                 .customer(customer)
                 .assignedStore(assignedStore)
-                .recipientName(address.getRecipientName())
-                .recipientPhone(address.getPhone())
-                .shippingAddress(address.getAddressDetail())
-                .ward(address.getWard())
-                .district(address.getDistrict())
-                .province(address.getProvince())
+                .recipientName(recipientName)
+                .recipientPhone(recipientPhone)
+                .shippingAddress(shippingAddress)
+                .ward(ward)
+                .district(district)
+                .province(province)
                 .subtotal(subtotal)
                 .discountAmount(discountAmount)
                 .shippingFee(shippingFee)
                 .totalAmount(totalAmount)
                 .status(OrderStatus.PENDING)
-                .paymentMethod(request.getPaymentMethod())
+                .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : com.thinh.cosmetic.domain.enums.PaymentMethod.COD)
                 .note(request.getNote())
                 .build();
         order = orderRepository.save(order);
@@ -184,14 +248,14 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponse previewOrder(Long customerId, OrderRequest request) throws Exception {
         CustomerEntity customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new Exception("Customer not found: " + customerId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CUSTOMER_NOT_FOUND, "Không tìm thấy khách hàng: " + customerId));
 
         CartEntity cart = cartRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> new Exception("Cart not found for customer"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.EMPTY_CART, "Giỏ hàng của bạn đang trống"));
 
         List<CartItemEntity> cartItems = cartItemRepository.findByCartId(cart.getId());
         if (cartItems.isEmpty()) {
-            throw new Exception("Cart is empty");
+            throw new BusinessException(ErrorCode.EMPTY_CART, "Giỏ hàng của bạn đang trống");
         }
 
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -202,11 +266,19 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal lineTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
             subtotal = subtotal.add(lineTotal);
 
+            String imgUrl = null;
+            if (productImageRepository != null && sku.getProduct() != null) {
+                imgUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(sku.getProduct().getId())
+                        .map(ProductImageEntity::getImageUrl)
+                        .orElse(null);
+            }
+
             itemResponses.add(OrderItemResponse.builder()
                     .id(item.getId())
                     .skuId(sku.getId())
                     .productName(sku.getProduct().getName())
                     .variantName(sku.getVariantName())
+                    .imageUrl(imgUrl)
                     .price(price)
                     .quantity(item.getQuantity())
                     .subtotal(lineTotal)
@@ -240,7 +312,20 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponse getById(Long id) throws Exception {
         OrderEntity order = orderRepository.findById(id)
-                .orElseThrow(() -> new Exception("Order not found: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng #" + id));
+        return toResponse(order);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getById(AuthPrincipal principal, Long id) throws Exception {
+        OrderEntity order = orderRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng #" + id));
+        if (principal != null && order.getAssignedStore() != null) {
+            if (!storeScope.canAccessStore(principal, order.getAssignedStore().getId())) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Không có quyền xem đơn hàng thuộc chi nhánh này");
+            }
+        }
         return toResponse(order);
     }
 
@@ -248,7 +333,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponse getByOrderCode(String orderCode) throws Exception {
         OrderEntity order = orderRepository.findByOrderCode(orderCode)
-                .orElseThrow(() -> new Exception("Order not found with code: " + orderCode));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng với mã: " + orderCode));
         return toResponse(order);
     }
 
@@ -301,10 +386,32 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse updateStatus(Long id, OrderStatus status) throws Exception {
-        OrderEntity order = orderRepository.findById(id)
-                .orElseThrow(() -> new Exception("Order not found: " + id));
+        return updateStatus(null, id, status);
+    }
 
-        OrderStatus oldStatus = order.getStatus();
+    @Override
+    public OrderResponse updateStatus(AuthPrincipal principal, Long id, OrderStatus status) throws Exception {
+        OrderEntity order = orderRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng #" + id));
+
+        if (principal != null && order.getAssignedStore() != null) {
+            if (!storeScope.canAccessStore(principal, order.getAssignedStore().getId())) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Bạn không có quyền thao tác đơn hàng của chi nhánh: " + order.getAssignedStore().getName());
+            }
+        }
+
+        OrderStatus currentStatus = order.getStatus();
+        if (currentStatus == status) {
+            return toResponse(order);
+        }
+
+        if (currentStatus == OrderStatus.CANCELLED) {
+            throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION, "Đơn hàng đã bị hủy, không thể thay đổi trạng thái!");
+        }
+        if (currentStatus == OrderStatus.COMPLETED) {
+            throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION, "Đơn hàng đã hoàn thành, không thể thay đổi trạng thái!");
+        }
+
         order.setStatus(status);
 
         if (status == OrderStatus.CONFIRMED) {
@@ -352,13 +459,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse cancelOrder(Long id, Long customerId) throws Exception {
         OrderEntity order = orderRepository.findById(id)
-                .orElseThrow(() -> new Exception("Order not found: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng #" + id));
 
-        if (!order.getCustomer().getId().equals(customerId)) {
-            throw new Exception("You do not have permission to cancel this order");
+        if (order.getCustomer() != null && !order.getCustomer().getId().equals(customerId)) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "Bạn không có quyền hủy đơn hàng này");
         }
         if (order.getStatus() != OrderStatus.PENDING) {
-            throw new Exception("Only pending orders can be cancelled");
+            throw new BusinessException(ErrorCode.ORDER_NOT_CANCELLABLE, "Chỉ có thể hủy đơn hàng khi đơn còn ở trạng thái Chờ xác nhận");
         }
 
         return updateStatus(id, OrderStatus.CANCELLED);
@@ -369,16 +476,36 @@ public class OrderServiceImpl implements OrderService {
                 orderItemRepository.findByOrderId(o.getId());
 
         List<OrderItemResponse> itemResponses = items.stream()
-                .map(i -> OrderItemResponse.builder()
-                        .id(i.getId())
-                        .skuId(i.getSku().getId())
-                        .productName(i.getSnapshotProductName())
-                        .variantName(i.getSnapshotVariantName())
-                        .price(i.getSnapshotPrice())
-                        .quantity(i.getQuantity())
-                        .subtotal(i.getSubtotal())
-                        .build())
+                .map(i -> {
+                    String imgUrl = null;
+                    if (productImageRepository != null && i.getSku() != null && i.getSku().getProduct() != null) {
+                        imgUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(i.getSku().getProduct().getId())
+                                .map(ProductImageEntity::getImageUrl)
+                                .orElse(null);
+                    }
+                    return OrderItemResponse.builder()
+                            .id(i.getId())
+                            .skuId(i.getSku() != null ? i.getSku().getId() : null)
+                            .productName(i.getSnapshotProductName())
+                            .variantName(i.getSnapshotVariantName())
+                            .imageUrl(imgUrl)
+                            .price(i.getSnapshotPrice())
+                            .quantity(i.getQuantity())
+                            .subtotal(i.getSubtotal())
+                            .build();
+                })
                 .toList();
+
+        String fullAddress = o.getShippingAddress() != null ? o.getShippingAddress() : "";
+        if (o.getWard() != null && !o.getWard().isBlank() && !fullAddress.contains(o.getWard())) {
+            fullAddress += ", " + o.getWard();
+        }
+        if (o.getDistrict() != null && !o.getDistrict().isBlank() && !fullAddress.contains(o.getDistrict())) {
+            fullAddress += ", " + o.getDistrict();
+        }
+        if (o.getProvince() != null && !o.getProvince().isBlank() && !fullAddress.contains(o.getProvince())) {
+            fullAddress += ", " + o.getProvince();
+        }
 
         return OrderResponse.builder()
                 .id(o.getId())
@@ -389,10 +516,11 @@ public class OrderServiceImpl implements OrderService {
                 .fulfillmentStoreName(o.getAssignedStore() != null ? o.getAssignedStore().getName() : null)
                 .recipientName(o.getRecipientName())
                 .recipientPhone(o.getRecipientPhone())
-                .shippingAddress(o.getShippingAddress() + (o.getWard() != null ? ", " + o.getWard() : "") + (o.getDistrict() != null ? ", " + o.getDistrict() : "") + (o.getProvince() != null ? ", " + o.getProvince() : ""))
+                .shippingAddress(fullAddress)
                 .ward(o.getWard())
                 .district(o.getDistrict())
                 .province(o.getProvince())
+                .deliveryMethod(o.getDeliveryMethod())
                 .subtotal(o.getSubtotal())
                 .discountAmount(o.getDiscountAmount())
                 .shippingFee(o.getShippingFee())

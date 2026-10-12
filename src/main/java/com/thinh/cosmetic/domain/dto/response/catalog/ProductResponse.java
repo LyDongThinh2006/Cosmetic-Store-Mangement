@@ -54,4 +54,12 @@ public class ProductResponse {
     private java.util.List<String> concerns;
 
     private LocalDateTime createdAt;
+
+    public String getPrimaryImageUrl() {
+        return imageUrl != null ? imageUrl : (imageUrls != null && !imageUrls.isEmpty() ? imageUrls.get(0) : null);
+    }
+
+    public String getShortDescription() {
+        return description != null ? description : name;
+    }
 }

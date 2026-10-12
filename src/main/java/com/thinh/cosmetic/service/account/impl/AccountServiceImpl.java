@@ -3,6 +3,7 @@ package com.thinh.cosmetic.service.account.impl;
 import com.thinh.cosmetic.config.AppProperties;
 import com.thinh.cosmetic.domain.dto.request.account.LoginRequest;
 import com.thinh.cosmetic.domain.dto.request.account.RegisterRequest;
+import com.thinh.cosmetic.domain.dto.request.account.ResetPasswordRequest;
 import com.thinh.cosmetic.domain.dto.response.account.CustomerResponse;
 import com.thinh.cosmetic.domain.dto.response.account.LoginResponse;
 import com.thinh.cosmetic.domain.dto.response.account.LoginResult;
@@ -116,5 +117,21 @@ public class AccountServiceImpl implements AccountService {
                 .response(loginResponse)
                 .token(token)
                 .build();
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+        String identifier = request.getEmailOrPhone() != null ? request.getEmailOrPhone().trim() : "";
+        if (identifier.isBlank()) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Email hoặc số điện thoại không được để trống");
+        }
+
+        String normalizedPhone = identifier.replaceAll("\\s+", "").replace("+84", "0");
+
+        AccountEntity account = accountRepository.findByEmailIgnoreCaseOrPhoneOrUsernameIgnoreCase(identifier, normalizedPhone, identifier)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy tài khoản tương ứng với thông tin đã nhập"));
+
+        account.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(account);
     }
 }

@@ -3,6 +3,8 @@ package com.thinh.cosmetic.service.store;
 import com.thinh.cosmetic.domain.dto.request.store.InventoryAdjustmentRequest;
 import com.thinh.cosmetic.domain.dto.response.store.InventoryResponse;
 
+import com.thinh.cosmetic.domain.dto.response.store.StoreStockResponse;
+
 import java.util.List;
 
 public interface InventoryService {
@@ -11,4 +13,5 @@ public interface InventoryService {
     InventoryResponse adjustStock(InventoryAdjustmentRequest request, Long employeeId) throws Exception;
     List<InventoryResponse> getLowStockItems(Long storeId);
     Integer getAvailableStock(Long storeId, Long skuId);
+    List<StoreStockResponse> getStoreStockBySku(Long skuId);
 }

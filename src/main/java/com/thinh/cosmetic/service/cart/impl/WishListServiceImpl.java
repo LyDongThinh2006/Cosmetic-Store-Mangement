@@ -11,6 +11,8 @@ import com.thinh.cosmetic.repository.cart.WishListItemRepository;
 import com.thinh.cosmetic.repository.cart.WishListRepository;
 import com.thinh.cosmetic.repository.catalog.ProductImageRepository;
 import com.thinh.cosmetic.repository.catalog.ProductRepository;
+import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
+import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.service.cart.WishListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -29,6 +32,7 @@ public class WishListServiceImpl implements WishListService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
+    private final ProductSkuRepository productSkuRepository;
 
     @Override
     public WishListResponse getWishList(Long customerId) throws Exception {
@@ -76,11 +80,18 @@ public class WishListServiceImpl implements WishListService {
             String imageUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(product.getId())
                     .map(ProductImageEntity::getImageUrl).orElse(null);
 
+            BigDecimal price = productSkuRepository.findByProductId(product.getId())
+                    .stream()
+                    .map(ProductSkuEntity::getPrice)
+                    .filter(Objects::nonNull)
+                    .min(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+
             itemResponses.add(WishListResponse.WishListItemResponse.builder()
                     .id(item.getId())
                     .productId(product.getId())
                     .productName(product.getName())
-                    .price(BigDecimal.ZERO)
+                    .price(price)
                     .imageUrl(imageUrl)
                     .addedAt(item.getAddedAt())
                     .build());

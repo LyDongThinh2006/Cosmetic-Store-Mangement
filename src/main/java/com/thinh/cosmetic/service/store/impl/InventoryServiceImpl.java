@@ -14,6 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import com.thinh.cosmetic.domain.dto.response.store.StoreStockResponse;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.repository.store.StoreRepository;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,6 +27,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
     private final InventoryAdjustmentRepository adjustmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final StoreRepository storeRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,6 +80,32 @@ public class InventoryServiceImpl implements InventoryService {
         return inventoryRepository.findByStoreIdAndSkuId(storeId, skuId)
                 .map(i -> Math.max(0, i.getActualStock() - i.getHeldQuantity()))
                 .orElse(0);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StoreStockResponse> getStoreStockBySku(Long skuId) {
+        List<StoreEntity> stores = storeRepository.findAll();
+        Map<Long, InventoryEntity> map = inventoryRepository.findBySkuId(skuId).stream()
+                .collect(Collectors.toMap(i -> i.getStore().getId(), i -> i, (a, b) -> a));
+
+        return stores.stream().map(store -> {
+            InventoryEntity inv = map.get(store.getId());
+            int actual = inv != null ? inv.getActualStock() : 0;
+            int held = inv != null ? inv.getHeldQuantity() : 0;
+            int available = Math.max(0, actual - held);
+            return StoreStockResponse.builder()
+                    .storeId(store.getId())
+                    .storeName(store.getName())
+                    .address(store.getAddress())
+                    .province(store.getProvince())
+                    .phone(store.getPhone())
+                    .actualStock(actual)
+                    .heldQuantity(held)
+                    .availableStock(available)
+                    .inStock(available > 0)
+                    .build();
+        }).toList();
     }
 
     private InventoryResponse toResponse(InventoryEntity inv) {
