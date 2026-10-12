@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="luneaGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5e6b3"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#997b20"/>
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="24" fill="#0d0f12"/>
+  <path d="M50 18 C32.32 18 18 32.32 18 50 C18 67.68 32.32 82 50 82 C61.94 82 72.33 75.46 77.85 65.75 C64.65 67.24 53.07 56.88 53.07 43.68 C53.07 33.25 59.88 24.38 69.45 20.89 C63.56 19.04 56.96 18 50 18 Z" fill="url(#luneaGold)"/>
+</svg>

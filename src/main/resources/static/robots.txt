@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /products
+Allow: /brands
+Allow: /stores
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Disallow: /admin/
+Disallow: /account/
+Disallow: /api/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-success
+
+Sitemap: https://lunea.com.vn/sitemap.xml

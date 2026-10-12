@@ -1,0 +1,17 @@
+{
+  "name": "LUNEA Haute Parfumerie & Beauté",
+  "short_name": "LUNEA",
+  "description": "Hệ thống chuỗi cửa hàng mỹ phẩm cao cấp & chăm sóc sắc đẹp chuẩn khoa học Châu Âu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0f12",
+  "theme_color": "#0d0f12",
+  "icons": [
+    {
+      "src": "/images/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -134,7 +134,7 @@ const LUNEA = (function () {
         if (isAuthPage) return null;
 
         try {
-            const cart = await apiFetch('/api/cart', { 
+            const cart = await apiFetch('/api/cart', {
                 method: 'GET',
                 skipAuthRedirect: true,
                 skipAuthToast: true
@@ -169,23 +169,41 @@ const LUNEA = (function () {
         }
     }
 
-    // Interactive Wishlist Toggle
-    function toggleWishlist(btn) {
+    // Interactive Wishlist Toggle with REST API integration
+    async function toggleWishlist(btn, productId) {
         if (!btn) return;
+        const pId = productId || btn.getAttribute('data-product-id');
         const icon = btn.querySelector('i');
-        const isActive = btn.classList.toggle('active');
-        if (isActive) {
-            if (icon) {
-                icon.className = 'bi bi-heart-fill';
-                icon.style.color = '#f43f5e';
+        const willBeActive = !btn.classList.contains('active');
+
+        if (pId) {
+            try {
+                const method = willBeActive ? 'POST' : 'DELETE';
+                const res = await fetch('/api/wishlist/products/' + pId, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (res.ok) {
+                    btn.classList.toggle('active', willBeActive);
+                    if (icon) {
+                        icon.className = willBeActive ? 'bi bi-heart-fill' : 'bi bi-heart';
+                        icon.style.color = willBeActive ? '#f43f5e' : '';
+                    }
+                    showToast(willBeActive ? 'Đã thêm vào danh sách yêu thích.' : 'Đã bỏ khỏi danh sách yêu thích.', 'success');
+                } else {
+                    showToast('Vui lòng đăng nhập để lưu vào danh sách yêu thích.', 'warning');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Không thể cập nhật danh sách yêu thích lúc này.', 'error');
             }
-            showToast('Đã thêm sản phẩm vào danh sách yêu thích của bạn.', 'success');
         } else {
+            const isActive = btn.classList.toggle('active');
             if (icon) {
-                icon.className = 'bi bi-heart';
-                icon.style.color = '';
+                icon.className = isActive ? 'bi bi-heart-fill' : 'bi bi-heart';
+                icon.style.color = isActive ? '#f43f5e' : '';
             }
-            showToast('Đã bỏ sản phẩm khỏi danh sách yêu thích.', 'info');
+            showToast(isActive ? 'Đã thêm sản phẩm vào danh sách yêu thích của bạn.' : 'Đã bỏ sản phẩm khỏi danh sách yêu thích.', 'info');
         }
     }
 
@@ -252,17 +270,18 @@ const LUNEA = (function () {
     }
 
     function updateThemeToggleUI(theme) {
-        const btn = document.getElementById('themeToggleBtn');
-        if (!btn) return;
-        btn.setAttribute('aria-label', theme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối');
-        btn.setAttribute('title', theme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối');
+        const btns = document.querySelectorAll('#themeToggleBtn, .theme-toggle-btn, .admin-theme-toggle-btn');
+        btns.forEach(btn => {
+            btn.setAttribute('aria-label', theme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối');
+            btn.setAttribute('title', theme === 'dark' ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối');
+        });
     }
 
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         try {
             localStorage.setItem('lunea-theme', theme);
-        } catch (e) {}
+        } catch (e) { }
         updateThemeToggleUI(theme);
     }
 
@@ -270,7 +289,6 @@ const LUNEA = (function () {
         const current = getTheme();
         const next = current === 'dark' ? 'light' : 'dark';
         setTheme(next);
-        showToast(next === 'light' ? 'Đã chuyển sang giao diện Sáng (Moonlight Pearl)' : 'Đã chuyển sang giao diện Tối (Midnight Obsidian)', 'info', 2200);
     }
 
     function initTheme() {
@@ -294,10 +312,10 @@ const LUNEA = (function () {
         if (heroHeadline) {
             const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.9 } });
             tl.fromTo('.hero-brand-title', { opacity: 0, y: 20 }, { opacity: 1, y: 0, delay: 0.1 })
-              .fromTo('.hero-headline', { opacity: 0, y: 30 }, { opacity: 1, y: 0 }, '-=0.65')
-              .fromTo('.hero-description', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
-              .fromTo('.hero-cta-group', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
-              .fromTo('.moon-image-wrapper', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.2)' }, '-=0.85');
+                .fromTo('.hero-headline', { opacity: 0, y: 30 }, { opacity: 1, y: 0 }, '-=0.65')
+                .fromTo('.hero-description', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
+                .fromTo('.hero-cta-group', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
+                .fromTo('.moon-image-wrapper', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.2)' }, '-=0.85');
         }
 
         // Bento Grid Scroll Scale
@@ -339,6 +357,142 @@ const LUNEA = (function () {
         }
     }
 
+    // Global Modal Dialog & Accessibility Management (WCAG 2.4.3 & 2.1.2)
+    function initModalAccessibility() {
+        let lastFocusedElement = null;
+
+        function isModalOpen(modal) {
+            if (!modal) return false;
+            if (modal.classList.contains('show') || modal.classList.contains('active') || modal.classList.contains('open')) {
+                return true;
+            }
+            const display = modal.style.display || window.getComputedStyle(modal).display;
+            return display !== 'none' && display !== '';
+        }
+
+        function closeModal(modal) {
+            if (!modal) return;
+            const closeBtn = modal.querySelector(
+                '.modal-close, .admin-modal-close, button[aria-label*="Đóng"], button[aria-label*="Close"], [data-close]'
+            );
+            if (closeBtn && typeof closeBtn.onclick === 'function') {
+                closeBtn.click();
+            } else if (modal.id === 'forgotPasswordModal' && typeof window.closeForgotPasswordModal === 'function') {
+                window.closeForgotPasswordModal();
+            } else if (modal.id === 'storeStockModal' && typeof window.closeStoreStockModal === 'function') {
+                window.closeStoreStockModal();
+            } else if (modal.id === 'addressModal' && typeof window.closeAddressModal === 'function') {
+                window.closeAddressModal();
+            } else if (modal.id === 'returnModal' && typeof window.closeReturnModal === 'function') {
+                window.closeReturnModal();
+            } else if (modal.id === 'adjustModal' && typeof window.closeAdjustModal === 'function') {
+                window.closeAdjustModal();
+            } else {
+                modal.classList.remove('show', 'active', 'open');
+                modal.style.display = 'none';
+            }
+            document.body.style.overflow = '';
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+                lastFocusedElement = null;
+            }
+        }
+
+        // Keyboard handler for Escape & Focus Trap (Tab / Shift+Tab)
+        document.addEventListener('keydown', (e) => {
+            const openModals = Array.from(document.querySelectorAll('[role="dialog"], .modal-overlay, .admin-modal-backdrop'))
+                .filter(isModalOpen);
+
+            if (openModals.length === 0) return;
+            const topModal = openModals[openModals.length - 1];
+
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeModal(topModal);
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                const focusable = Array.from(topModal.querySelectorAll(
+                    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                )).filter(el => {
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && style.visibility !== 'hidden';
+                });
+
+                if (focusable.length === 0) {
+                    e.preventDefault();
+                    return;
+                }
+
+                const firstEl = focusable[0];
+                const lastEl = focusable[focusable.length - 1];
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstEl || !topModal.contains(document.activeElement)) {
+                        e.preventDefault();
+                        lastEl.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastEl || !topModal.contains(document.activeElement)) {
+                        e.preventDefault();
+                        firstEl.focus();
+                    }
+                }
+            }
+        });
+
+        // Click outside backdrop to dismiss
+        document.addEventListener('click', (e) => {
+            const modals = document.querySelectorAll('[role="dialog"], .modal-overlay, .admin-modal-backdrop');
+            modals.forEach(modal => {
+                if (isModalOpen(modal) && e.target === modal) {
+                    closeModal(modal);
+                }
+            });
+        });
+
+        // Track opening trigger for focus restoration
+        document.addEventListener('click', (e) => {
+            const trigger = e.target.closest('button, a, [role="button"]');
+            if (trigger) {
+                const onclickStr = trigger.getAttribute('onclick') || '';
+                const isOpener = onclickStr.includes('open') ||
+                    trigger.dataset.modalTarget ||
+                    trigger.classList.contains('btn-check-stores');
+                if (isOpener) {
+                    lastFocusedElement = trigger;
+                }
+            }
+        }, true);
+    }
+
+    // Global ARIA Tabs Keyboard Navigation (WAI-ARIA Tabs: Arrow Left / Arrow Right)
+    function initTabAccessibility() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+            const activeTab = document.activeElement;
+            if (!activeTab || activeTab.getAttribute('role') !== 'tab') return;
+
+            const tablist = activeTab.closest('[role="tablist"]');
+            if (!tablist) return;
+
+            const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+            if (tabs.length <= 1) return;
+
+            const currentIndex = tabs.indexOf(activeTab);
+            if (currentIndex === -1) return;
+
+            e.preventDefault();
+            let nextIndex = e.key === 'ArrowRight'
+                ? (currentIndex + 1) % tabs.length
+                : (currentIndex - 1 + tabs.length) % tabs.length;
+
+            tabs[nextIndex].focus();
+            tabs[nextIndex].click();
+        });
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', () => {
         // Initialize Theme UI
@@ -354,6 +508,10 @@ const LUNEA = (function () {
         // Initialize scroll motion & GSAP
         initScrollMotion();
         initGSAP();
+
+        // Initialize modal & tab accessibility
+        initModalAccessibility();
+        initTabAccessibility();
     });
 
     async function logout(e) {
@@ -361,10 +519,10 @@ const LUNEA = (function () {
             e.preventDefault();
         }
         try {
-            await fetch('/api/auth/logout', { 
+            await fetch('/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'fetch'
                 }
@@ -390,6 +548,8 @@ const LUNEA = (function () {
         getTheme,
         setTheme,
         toggleTheme,
-        initGSAP
+        initGSAP,
+        initModalAccessibility,
+        initTabAccessibility
     };
 })();

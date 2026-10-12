@@ -3,8 +3,7 @@
    Dual Theme Architecture: Midnight Obsidian & Moonlight Pearl
    ========================================================================== */
 
-/* Google Fonts: Cinzel (Luxury Roman), Playfair Display (Editorial High-Contrast Serif), Outfit (Modern Precision Sans), Plus Jakarta Sans (Modern Grotesk), Be Vietnam Pro (Flawless Native Vietnamese Diacritics) */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+/* Google Fonts loaded via preconnected <link> tags in fragments/head.html for zero render-blocking */
 
 :root,
 [data-theme="dark"] {
@@ -194,4 +193,60 @@
 
     /* Ambient Glow Overlay */
     --ambient-body-glow: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(223, 190, 123, 0.15), transparent 70%);
+}
+
+/* ==========================================================================
+   Universal Status Badges / Pills (Synchronized across Storefront & Back-office)
+   ========================================================================== */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1.2;
+    transition: all var(--duration-fast, 150ms) ease;
+}
+
+.status-pill i {
+    font-size: 0.85em;
+}
+
+.status-pill.pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.status-pill.confirmed {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.status-pill.preparing {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.status-pill.shipping {
+    background: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+    border: 1px solid rgba(251, 146, 60, 0.35);
+}
+
+.status-pill.completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.status-pill.cancelled {
+    background: rgba(244, 63, 94, 0.15);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, 0.35);
 }
