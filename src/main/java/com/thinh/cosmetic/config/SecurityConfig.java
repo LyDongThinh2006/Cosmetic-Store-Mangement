@@ -52,7 +52,14 @@ public class SecurityConfig {
 
     @Bean
     public SecretKey jwtSecretKey() {
-        byte[] keyBytes = appProperties.getJwt().getSecret().getBytes(StandardCharsets.UTF_8);
+        String secret = appProperties.getJwt().getSecret();
+        if (secret == null || secret.isBlank() || secret.contains("${")) {
+            throw new IllegalStateException("Set APP_JWT_SECRET, or activate the local profile for development.");
+        }
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 32) {
+            throw new IllegalStateException("APP_JWT_SECRET must contain at least 32 UTF-8 bytes for HS256.");
+        }
         return new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 

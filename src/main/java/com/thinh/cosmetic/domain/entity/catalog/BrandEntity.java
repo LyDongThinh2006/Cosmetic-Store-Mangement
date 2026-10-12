@@ -26,8 +26,7 @@ public class BrandEntity {
     @Column(name = "name", nullable = false, unique = true, length = 150)
     private String name;
 
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @NotNull(message = "Status cannot be null")

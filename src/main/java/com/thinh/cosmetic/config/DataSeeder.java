@@ -52,12 +52,17 @@ public class DataSeeder implements CommandLineRunner {
     private final InventoryRepository inventoryRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final AppProperties appProperties;
 
     @Override
     @Transactional
     public void run(String... args) {
+        if (!appProperties.getSeed().isEnabled()) {
+            log.info(">>> [DataSeeder] Nạp dữ liệu mẫu đã bị tắt.");
+            return;
+        }
         if (roleRepository.count() > 0 && accountRepository.count() > 0 && storeRepository.count() > 0) {
-            log.info(">>> [DataSeeder] Dữ liệu đã tồn tại trong SQL Server. Bỏ qua nạp dữ liệu mẫu.");
+            log.info(">>> [DataSeeder] Dữ liệu đã tồn tại. Bỏ qua nạp dữ liệu mẫu.");
             return;
         }
 
@@ -86,7 +91,7 @@ public class DataSeeder implements CommandLineRunner {
         // 6. Sản phẩm, Biến thể SKU, Thuộc tính, Ảnh & Tồn kho đa chi nhánh
         seedCatalogAndInventory(brands, categories, attributes, stores);
 
-        log.info(">>> [DataSeeder] Hoàn thành nạp dữ liệu mẫu thành công vào Microsoft SQL Server!");
+        log.info(">>> [DataSeeder] Hoàn thành nạp dữ liệu mẫu thành công!");
     }
 
     private Map<String, PermissionEntity> seedPermissions() {

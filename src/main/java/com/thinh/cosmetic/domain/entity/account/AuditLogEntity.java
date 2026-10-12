@@ -41,8 +41,7 @@ public class AuditLogEntity {
     @Column(name = "target_id", length = 100)
     private String targetId;
 
-    @Lob
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "text")
     private String content;
 
     @Size(max = 45, message = "IP address must not exceed 45 characters")

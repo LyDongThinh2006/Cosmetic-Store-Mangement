@@ -10,6 +10,11 @@ services:
       - "5433:5432"
     volumes:
       - lunea_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lunea -d lunea"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   lunea_pgdata:

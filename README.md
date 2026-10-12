@@ -2,6 +2,88 @@
 
 Đồ án môn học **Công nghệ Phần mềm** – Tài liệu phân tích & thiết kế hệ thống cho website thương mại điện tử ngành mỹ phẩm, vận hành theo mô hình **chuỗi cửa hàng** (quản lý sản phẩm tập trung, tồn kho theo từng chi nhánh).
 
+## Chạy ứng dụng trên local
+
+Yêu cầu: **JDK 21**, Docker Compose. Maven đã có sẵn qua `mvnw` / `mvnw.cmd`.
+
+```bash
+docker compose up -d --wait postgres
+export SPRING_DATASOURCE_PASSWORD=12345
+export APP_JWT_SECRET="$(openssl rand -hex 32)"
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+Mở **http://localhost:8080**. Trên Windows dùng `mvnw.cmd` thay `./mvnw`.
+Trong IntelliJ, chọn JDK 21 và đặt **Active profiles = local** (hoặc biến môi trường
+`SPRING_PROFILES_ACTIVE=local`) cho cấu hình chạy `CosmeticStoreChainManagementApplication`.
+
+Profile `local` dùng PostgreSQL ở `localhost:5433`, database/user `lunea`.
+Theo cấu hình hiện tại, bạn cần đặt `SPRING_DATASOURCE_PASSWORD` (mặc định của Docker Compose
+là `12345`) và `APP_JWT_SECRET` (ít nhất 32 byte UTF-8) trong terminal hoặc Run Configuration
+trước khi chạy. Các lệnh `export` ở trên dành cho macOS/Linux; trên Windows đặt hai biến
+này trong terminal hoặc Run Configuration của IDE.
+
+Cookie local dùng HTTP. Cấu hình chung yêu cầu khóa JWT qua biến môi trường; không có khóa
+phát triển mặc định. Spring Boot không tự đọc file `.env`.
+
+Các trường văn bản dài trong entity dùng `@Column(columnDefinition = "text")`, không còn
+`@Lob` hoặc dialect riêng cho local. Local và Railway đều dùng ánh xạ `TEXT` với dialect
+PostgreSQL chuẩn. Nếu database cũ đang lưu các cột này bằng OID, xem
+[hướng dẫn chuyển OID sang TEXT](docs/POSTGRES_TEXT_MIGRATION.md) **trước khi chạy bản mới**.
+
+Với database mới, ứng dụng tạo bảng và nạp dữ liệu mẫu:
+
+| Tài khoản | Mật khẩu | Vai trò |
+|---|---|---|
+| `admin@lunea.test` | `123456` | Quản trị viên |
+| `khach01@lunea.test` | `123456` | Khách hàng |
+
+Nếu đã có dữ liệu, ứng dụng giữ dữ liệu hiện có. `docker compose stop` dừng database;
+`docker compose down` giữ volume; **không dùng `down -v` nếu cần giữ dữ liệu**.
+
+Các biến `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`,
+`APP_JWT_SECRET`, `APP_SECURITY_COOKIE_SECURE` và `PORT` có thể ghi đè cấu hình.
+Nếu terminal/IDE đang giữ biến database của Railway, bỏ các biến đó trước khi chạy local.
+
+Kiểm tra và đóng gói (test dùng H2, không cần Docker hay database Railway):
+
+```bash
+./mvnw clean verify
+java -jar target/cosmetic-0.0.1-SNAPSHOT.jar --spring.profiles.active=local
+```
+
+Nếu cổng 8080 đang được dùng, có thể chạy `PORT=8081 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+trên macOS/Linux. Nếu gặp lỗi mật khẩu PostgreSQL với volume cũ, dùng mật khẩu đã tạo volume đó;
+đổi `POSTGRES_PASSWORD` trong Compose không đổi mật khẩu của database đã tồn tại.
+
+## Giữ tương thích Railway
+
+`application.properties` chứa cấu hình chung; `application-local.properties` và
+`application-prod.properties` chứa cấu hình môi trường. Trên Railway đặt
+**`SPRING_PROFILES_ACTIVE=prod`**, theo [cơ chế profile của Spring Boot](https://docs.spring.io/spring-boot/reference/features/profiles.html).
+Không bật profile `local` trên Railway.
+
+| Biến | Giá trị |
+|---|---|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `SPRING_DATASOURCE_URL` | JDBC URL PostgreSQL hiện tại, bắt đầu bằng `jdbc:postgresql://` |
+| `SPRING_DATASOURCE_USERNAME` | User database Railway |
+| `SPRING_DATASOURCE_PASSWORD` | Password database Railway |
+| `APP_JWT_SECRET` | Khóa JWT riêng của deployment, ít nhất 32 byte UTF-8; giữ khóa hiện tại nếu hợp lệ |
+| `PORT` | Cổng Railway cung cấp |
+| `APP_SEED_ENABLED` | Mặc định `true`; đặt `false` nếu không muốn nạp dữ liệu mẫu |
+
+Profile `prod` giữ `ddl-auto=validate` và cookie `Secure=true` theo cấu hình hiện tại.
+Database phải có schema phù hợp trước khi ứng dụng khởi động. Riêng thay đổi bỏ `@Lob`,
+kiểm tra bảy cột và chuyển những cột OID bằng [script migration](docs/sql/convert-lob-oid-to-text.sql)
+trước khi deploy; cột đã là TEXT không cần chuyển. Không dùng `ddl-auto=update` để tự ép
+OID thành TEXT vì có thể chỉ giữ mã đối tượng thay vì nội dung. Xem
+[hướng dẫn migration](docs/POSTGRES_TEXT_MIGRATION.md).
+
+Giữ phiên bản dependency và cách đóng gói JAR hiện tại. Nếu cấu hình thủ công, build bằng
+`./mvnw clean package -DskipTests`, start bằng `java -jar target/cosmetic-0.0.1-SNAPSHOT.jar`.
+Xem [hướng dẫn Spring Boot của Railway](https://docs.railway.com/guides/spring-boot).
+
 ---
 
 ## 1. Thông tin đồ án
@@ -38,7 +120,7 @@ Repo này tổng hợp toàn bộ tài liệu phân tích – thiết kế của
 4. **Thiết kế dữ liệu** – lược đồ logic và chi tiết 37 bảng dữ liệu.
 5. **Thiết kế giao diện** – danh sách màn hình, sơ đồ luân chuyển và mô tả chi tiết từng màn hình.
 
-> **Trạng thái:** Repo hiện chứa tài liệu **phân tích & thiết kế** (SRS, use case, ERD, UI design). Phần cài đặt mã nguồn/chọn công nghệ triển khai cụ thể chưa nằm trong phạm vi tài liệu này.
+> **Trạng thái:** Repo chứa tài liệu **phân tích & thiết kế** cùng mã nguồn Spring Boot, Thymeleaf, Spring Security/JWT và PostgreSQL. Hướng dẫn chạy local và cấu hình Railway nằm ở đầu README.
 
 ---
 

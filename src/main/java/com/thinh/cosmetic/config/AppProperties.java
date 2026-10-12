@@ -18,13 +18,13 @@ public class AppProperties {
 
     @Data
     public static class Jwt {
-        private String secret = "lunea_super_secret_jwt_key_must_be_at_least_32_bytes_long_for_hs256";
+        private String secret;
         private long accessTtl = 7200L;
     }
 
     @Data
     public static class Security {
-        private boolean cookieSecure = false;
+        private boolean cookieSecure = true;
     }
 
     @Data
