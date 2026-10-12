@@ -4,7 +4,11 @@
 <aside th:fragment="sidebar(activeMenu)" class="admin-sidebar" id="adminSidebar">
     <!-- Brand -->
     <a href="/admin" class="admin-brand">
-        <div class="admin-brand-logo">L</div>
+        <div class="admin-brand-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="#0b0e14" stroke="#0b0e14" stroke-width="0.8" />
+            </svg>
+        </div>
         <div class="admin-brand-info">
             <h1>LUNEA</h1>
             <span>Back-office Portal</span>
@@ -17,8 +21,10 @@
             <i class="bi bi-person-fill"></i>
         </div>
         <div class="admin-staff-meta">
-            <div class="admin-staff-name" th:text="${currentUser != null ? currentUser.displayName : 'Nhân Viên Quản Trị'}">Nguyễn Quản Trị</div>
-            <div class="admin-staff-role" th:text="${primaryStoreName != null ? primaryStoreName : 'Toàn hệ thống'}">Chi nhánh HCM</div>
+            <div class="admin-staff-name"
+                th:text="${currentUser != null ? currentUser.displayName : 'Nhân Viên Quản Trị'}">Nguyễn Quản Trị</div>
+            <div class="admin-staff-role" th:text="${primaryStoreName != null ? primaryStoreName : 'Toàn hệ thống'}">Chi
+                nhánh HCM</div>
         </div>
     </div>
 
@@ -53,14 +59,17 @@
 
     <!-- Sidebar Footer -->
     <div class="admin-sidebar-footer">
-        <a href="/" target="_blank" class="admin-nav-link" style="color: var(--color-gold-light);">
+        <a href="/" target="_blank" rel="noopener noreferrer" class="admin-nav-link"
+            style="color: var(--color-gold-light);">
             <i class="bi bi-shop"></i>
             <span>Xem Web Khách Hàng</span>
         </a>
-        <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" class="admin-nav-link" style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+        <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" class="admin-nav-link"
+            style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left; text-decoration: none; display: flex; align-items: center; gap: 8px;">
             <i class="bi bi-box-arrow-right"></i>
             <span>Đăng Xuất</span>
         </a>
     </div>
 </aside>
+
 </html>

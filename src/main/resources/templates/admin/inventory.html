@@ -112,14 +112,14 @@
     </main>
 
     <!-- Adjustment Modal -->
-    <div class="admin-modal-backdrop" id="adjustModal">
+    <div class="admin-modal-backdrop" id="adjustModal" role="dialog" aria-modal="true" aria-labelledby="adjustModalTitle" tabindex="-1">
         <div class="admin-modal">
             <div class="admin-modal-header">
-                <h3 class="admin-modal-title">
+                <h3 class="admin-modal-title" id="adjustModalTitle">
                     <i class="bi bi-pencil-square" style="color: var(--color-gold-primary); margin-right: 6px;"></i>
                     Điều Chỉnh Tồn Kho
                 </h3>
-                <button type="button" class="admin-modal-close" onclick="closeAdjustModal()">&times;</button>
+                <button type="button" class="admin-modal-close" onclick="closeAdjustModal()" aria-label="Đóng hộp thoại điều chỉnh tồn kho">&times;</button>
             </div>
             <div class="admin-modal-body">
                 <div style="background: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px; border: 1px solid var(--color-border-subtle);">
@@ -289,11 +289,18 @@
             document.getElementById('modalCustomReason').style.display = 'none';
             document.getElementById('modalCustomReason').value = '';
 
-            document.getElementById('adjustModal').classList.add('show');
+            const modal = document.getElementById('adjustModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                const input = document.getElementById('modalNewQuantity');
+                if (input) input.focus();
+            }, 50);
         }
 
         function closeAdjustModal() {
             document.getElementById('adjustModal').classList.remove('show');
+            document.body.style.overflow = '';
         }
 
         function onReasonPresetChange(select) {

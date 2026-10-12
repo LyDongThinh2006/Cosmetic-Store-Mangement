@@ -85,7 +85,7 @@
             </div>
 
             <!-- Two-column Section -->
-            <div style="display: grid; grid-template-columns: 7fr 5fr; gap: 24px;">
+            <div class="admin-grid-2col">
                 <!-- Column Left: Recent Orders -->
                 <div class="admin-card">
                     <div class="admin-card-header">
@@ -199,7 +199,7 @@
 
         async function loadDashboardData() {
             const storeId = document.getElementById('branchFilter').value;
-            const ordersUrl = storeId ? `/api/orders?storeId=${storeId}` : '/api/orders';
+            const ordersUrl = storeId ? `/api/admin/orders?storeId=${storeId}` : '/api/admin/orders';
 
             try {
                 // 1. Fetch Orders

@@ -13,10 +13,18 @@
             <span th:text="${primaryStoreName != null ? primaryStoreName : 'Toàn hệ thống LUNEA'}">LUNEA Chi nhánh HCM</span>
         </div>
 
-        <a href="/" target="_blank" class="admin-btn admin-btn-outline" style="font-size: 0.8rem; padding: 6px 12px;">
+        <a href="/" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-outline" style="font-size: 0.8rem; padding: 6px 12px;">
             <i class="bi bi-box-arrow-up-right"></i>
             <span>Mở Storefront</span>
         </a>
+
+        <!-- Theme Mode Toggle (Synchronized with Storefront) -->
+        <button type="button" id="themeToggleBtn" class="admin-theme-toggle-btn" 
+                title="Chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối" 
+                onclick="LUNEA.toggleTheme()">
+            <i class="bi bi-sun theme-icon-sun"></i>
+            <i class="bi bi-moon-stars theme-icon-moon"></i>
+        </button>
     </div>
 </header>
 </html>

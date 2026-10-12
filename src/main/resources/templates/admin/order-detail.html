@@ -31,16 +31,16 @@
                     </div>
                 </div>
 
-                <!-- Stepper Progress Bar -->
+                <!-- Stepper Progress Bar (Synchronized with Customer Storefront) -->
                 <div class="admin-card-body" id="stepperContainer" style="padding-bottom: 10px;">
                     <div class="order-stepper" id="orderStepper">
                         <div class="stepper-step" id="step-PENDING">
                             <div class="step-circle"><i class="bi bi-receipt"></i></div>
-                            <div class="step-label">Chờ duyệt</div>
+                            <div class="step-label">Chờ xác nhận</div>
                         </div>
                         <div class="stepper-step" id="step-CONFIRMED">
                             <div class="step-circle"><i class="bi bi-check-lg"></i></div>
-                            <div class="step-label">Đã duyệt</div>
+                            <div class="step-label">Đã xác nhận</div>
                         </div>
                         <div class="stepper-step" id="step-PREPARING">
                             <div class="step-circle"><i class="bi bi-box-seam"></i></div>
@@ -59,7 +59,7 @@
             </div>
 
             <!-- Two-column Layout -->
-            <div style="display: grid; grid-template-columns: 7fr 5fr; gap: 24px;">
+            <div class="admin-grid-2col">
                 <!-- Left Column: Items snapshot & Financial summary -->
                 <div>
                     <!-- Items Snapshot -->
@@ -170,6 +170,20 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Return Requests Card (UC26 CSKH Synchronization) -->
+                    <div class="admin-card" id="returnRequestsCard" style="display: none; border-color: rgba(245, 158, 11, 0.4);">
+                        <div class="admin-card-header" style="background: rgba(245, 158, 11, 0.08);">
+                            <h3 class="admin-card-title" style="color: #fbbf24;">
+                                <i class="bi bi-arrow-return-left"></i>
+                                <span>Yêu Cầu Đổi / Trả Hàng (CSKH)</span>
+                            </h3>
+                            <span id="returnStatusBadge"></span>
+                        </div>
+                        <div class="admin-card-body" id="returnRequestsContent" style="font-size: 0.88rem;">
+                            <!-- Dynamic return requests content -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -197,12 +211,88 @@
 
         async function loadOrderDetail() {
             try {
-                const order = await LUNEA.apiFetch(`/api/orders/${orderId}`);
+                const order = await LUNEA.apiFetch(`/api/admin/orders/${orderId}`);
                 currentOrder = order;
                 renderOrderView(order);
+                loadReturnRequests();
             } catch (err) {
                 console.error("Error loading order detail:", err);
                 LUNEA.toastError("Không thể tải chi tiết đơn hàng");
+            }
+        }
+
+        async function loadReturnRequests() {
+            try {
+                const returns = await LUNEA.apiFetch(`/api/returns/order/${orderId}`);
+                const card = document.getElementById('returnRequestsCard');
+                const content = document.getElementById('returnRequestsContent');
+                const statusBadge = document.getElementById('returnStatusBadge');
+                if (!returns || returns.length === 0) {
+                    if (card) card.style.display = 'none';
+                    return;
+                }
+                card.style.display = 'block';
+                const ret = returns[0];
+                const statusMap = {
+                    'REQUESTED': { label: 'Chờ CSKH duyệt', cls: 'pending' },
+                    'APPROVED': { label: 'Đã chấp thuận', cls: 'confirmed' },
+                    'REJECTED': { label: 'Đã từ chối', cls: 'cancelled' },
+                    'COMPLETED': { label: 'Đã hoàn tất', cls: 'completed' }
+                };
+                const sInfo = statusMap[ret.status] || { label: ret.status, cls: 'pending' };
+                statusBadge.innerHTML = `<span class="status-pill ${sInfo.cls}" style="font-size: 0.8rem; padding: 4px 10px;">${sInfo.label}</span>`;
+                
+                const itemsHtml = (ret.items || []).map(it => `
+                    <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--color-border-subtle); font-size: 0.84rem;">
+                        <span style="color: var(--color-text-primary);"><strong>${it.productName || 'Sản phẩm'}</strong></span>
+                        <span style="color: var(--color-text-muted);">SL: <strong>${it.quantity}</strong></span>
+                    </div>
+                `).join('');
+
+                let actionBtns = '';
+                if (ret.status === 'REQUESTED') {
+                    actionBtns = `
+                        <div style="display: flex; gap: 10px; margin-top: 16px;">
+                            <button type="button" class="admin-btn admin-btn-success" style="flex: 1;" onclick="updateReturnStatus(${ret.id}, 'APPROVED')">
+                                <i class="bi bi-check-lg"></i> Duyệt Đổi Trả
+                            </button>
+                            <button type="button" class="admin-btn admin-btn-danger" style="flex: 1;" onclick="updateReturnStatus(${ret.id}, 'REJECTED')">
+                                <i class="bi bi-x-lg"></i> Từ Chối
+                            </button>
+                        </div>
+                    `;
+                }
+
+                content.innerHTML = `
+                    <div style="margin-bottom: 10px;">
+                        <div style="font-size: 0.76rem; color: var(--color-text-muted); text-transform: uppercase;">Lý do yêu cầu:</div>
+                        <div style="font-weight: 600; color: var(--color-gold-light); margin-top: 2px;">${ret.reason || 'Không nêu rõ'}</div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 0.76rem; color: var(--color-text-muted); text-transform: uppercase;">Mặt hàng khiếu nại:</div>
+                        <div style="margin-top: 4px;">${itemsHtml}</div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--color-text-muted);">
+                        Thời gian yêu cầu: ${new Date(ret.requestedAt).toLocaleString('vi-VN')}
+                    </div>
+                    ${actionBtns}
+                `;
+            } catch (e) {
+                console.warn("Could not load return requests:", e);
+            }
+        }
+
+        async function updateReturnStatus(returnId, newStatus) {
+            const confirmMsg = newStatus === 'APPROVED' 
+                ? 'Xác nhận chấp thuận yêu cầu đổi trả cho đơn hàng này?'
+                : 'Xác nhận từ chối yêu cầu đổi trả này?';
+            if (!confirm(confirmMsg)) return;
+            try {
+                await LUNEA.apiFetch(`/api/returns/${returnId}/status?status=${newStatus}`, { method: 'PUT' });
+                LUNEA.toastSuccess(`Đã cập nhật yêu cầu đổi trả sang ${newStatus}!`);
+                loadReturnRequests();
+            } catch (e) {
+                console.error("Update return status error:", e);
             }
         }
 
@@ -365,17 +455,25 @@
         }
 
         async function changeStatus(newStatus) {
+            const statusNames = {
+                'CONFIRMED': 'Đã xác nhận',
+                'PREPARING': 'Đang đóng gói',
+                'SHIPPING': 'Đang giao hàng',
+                'COMPLETED': 'Hoàn tất đơn hàng',
+                'CANCELLED': 'Hủy đơn hàng'
+            };
+            const label = statusNames[newStatus] || newStatus;
             const confirmMsg = newStatus === 'CANCELLED' 
                 ? 'Bạn có chắc chắn muốn hủy đơn hàng này? Tồn kho đang giữ sẽ được giải phóng ngay lập tức.'
-                : `Xác nhận chuyển đơn sang trạng thái "${newStatus}"?`;
+                : `Xác nhận chuyển đơn sang trạng thái "${label}"?`;
 
             if (!confirm(confirmMsg)) return;
 
             try {
-                const res = await LUNEA.apiFetch(`/api/orders/${orderId}/status?status=${newStatus}`, {
+                const res = await LUNEA.apiFetch(`/api/admin/orders/${orderId}/status?status=${newStatus}`, {
                     method: 'PUT'
                 });
-                LUNEA.toastSuccess(`Đã cập nhật trạng thái đơn sang ${newStatus}!`);
+                LUNEA.toastSuccess(`Đã cập nhật trạng thái đơn sang "${label}" thành công!`);
                 renderOrderView(res);
             } catch (err) {
                 console.error("Update status error:", err);

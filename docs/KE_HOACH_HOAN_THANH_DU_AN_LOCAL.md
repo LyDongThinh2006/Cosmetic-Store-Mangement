@@ -210,7 +210,7 @@ Bảng dưới đây được cấu hình dạng Checklist (`- [x]` và `- [ ]`)
 | **P4: Back-office** | `admin/orders.html` & `order-detail.html` | - [x] | Xử lý đơn hàng theo chi nhánh & máy trạng thái (trừ tồn khi giao) |
 | **P4: Back-office** | `admin/inventory.html` | - [x] | Tra cứu tồn kho chi nhánh & modal điều chỉnh (chặn < held) |
 | **P4: Back-office** | `admin/products.html` | - [x] | Danh sách sản phẩm, SKU biến thể & giá bán toàn chuỗi |
-| **P5: Kiểm thử** | Chạy thử toàn bộ kịch bản 16 bước | - [ ] | Xác thực không còn lỗi luồng |
+| **P5: Kiểm thử** | Chạy thử kịch bản 16 bước đặt hàng & bảo mật phân quyền | - [x] | 12/12 Automated Integration & Security Tests passed (OrderServiceTest, OrderEndpointsTest) |
 
 ---
 
