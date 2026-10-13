@@ -1,0 +1,2331 @@
+{
+  "analysis_scope": "Backend commerce: cart, wishlist, order, returns, review. Không sửa application. Chưa sinh diagram; root chỉ sinh sau khi toàn repository đọc xong.",
+  "files_read": [
+    "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+    "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java",
+    "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java",
+    "src/main/java/com/thinh/cosmetic/controller/CartPageController.java",
+    "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/cart/CartItemRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/order/OrderRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/returns/ReturnRequestDto.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/review/ReviewRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/cart/CartItemResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/cart/CartResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/cart/WishListResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/order/OrderItemResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/order/OrderResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/returns/ReturnRequestResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/review/ReviewResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/CustomerAddressEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/WishListEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/WishListItemEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/returns/ReturnItemEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/returns/ReturnRequestEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/review/ReviewEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/sales/CartEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/sales/CartItemEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/sales/OrderEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/sales/OrderItemEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/sales/OrderReservationEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/DeliveryMethod.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/OrderStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/PaymentMethod.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ReservationStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ReturnStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ReviewStatus.java",
+    "src/main/java/com/thinh/cosmetic/exception/BusinessException.java",
+    "src/main/java/com/thinh/cosmetic/exception/ErrorCode.java",
+    "src/main/java/com/thinh/cosmetic/exception/GlobalExceptionHandler.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/CustomerAddressRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/EmployeeStoreRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/cart/CartItemRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/cart/CartRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/cart/WishListItemRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/cart/WishListRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/ProductImageRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/ProductSkuRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/order/OrderItemRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/order/OrderRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/order/OrderReservationRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/returns/ReturnItemRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/returns/ReturnRequestRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/review/ReviewRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+    "src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java",
+    "src/main/java/com/thinh/cosmetic/security/AuthPrincipal.java",
+    "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+    "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java",
+    "src/main/java/com/thinh/cosmetic/service/cart/CartService.java",
+    "src/main/java/com/thinh/cosmetic/service/cart/WishListService.java",
+    "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/cart/impl/WishListServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/order/OrderService.java",
+    "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/returns/ReturnService.java",
+    "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/review/ReviewService.java",
+    "src/main/java/com/thinh/cosmetic/service/review/impl/ReviewServiceImpl.java",
+    "src/test/java/com/thinh/cosmetic/controller/OrderEndpointsTest.java",
+    "src/test/java/com/thinh/cosmetic/controller/Phase1RestEndpointsTest.java",
+    "src/test/java/com/thinh/cosmetic/service/OrderServiceTest.java",
+    "src/test/java/com/thinh/cosmetic/service/ReturnServiceTest.java",
+    "src/test/java/com/thinh/cosmetic/service/WishListServiceTest.java"
+  ],
+  "tests_read": [
+    "src/test/java/com/thinh/cosmetic/controller/OrderEndpointsTest.java",
+    "src/test/java/com/thinh/cosmetic/controller/Phase1RestEndpointsTest.java",
+    "src/test/java/com/thinh/cosmetic/service/OrderServiceTest.java",
+    "src/test/java/com/thinh/cosmetic/service/ReturnServiceTest.java",
+    "src/test/java/com/thinh/cosmetic/service/WishListServiceTest.java"
+  ],
+  "test_interpretation": [
+    "OrderServiceTest mock repositories chứng minh expected calculation/hold code paths, không xác minh persist hoặc concurrency.",
+    "ReturnServiceTest mock save trả object, không áp dụng Bean Validation/DB constraint; không chứng minh return create hợp lệ với customer null.",
+    "OrderEndpointsTest/Phase1RestEndpointsTest dùng Spring user principal thường không AuthPrincipal; không chứng minh StoreScope từ JWT. Test không dùng làm chức năng mới."
+  ],
+  "actors_convention": {
+    "ROLE_CUSTOMER": "Khách hàng: authority từ SecurityConfig, không suy diễn permission thêm.",
+    "ROLE_EMPLOYEE": "Nhân viên: authority từ SecurityConfig; StoreScope giới hạn đơn.",
+    "PUBLIC": "Người gọi API công khai: permitAll, gồm khách chưa đăng nhập. Đây là thiếu gate auth ở operational endpoints, không quyền nghiệp vụ được thiết kế."
+  },
+  "modules": [
+    {
+      "key": "cart",
+      "name": "Giỏ hàng",
+      "services": [
+        "CartService",
+        "CartServiceImpl"
+      ],
+      "entities": [
+        "CartEntity",
+        "CartItemEntity"
+      ],
+      "mappers": "Không có mapper riêng; toCartResponse private.",
+      "notes": [
+        "Cart theo customer; SKU dòng, giá luôn current SKU.",
+        "Tổng tồn kiểm trên mọi store; không reserve khi cart add."
+      ]
+    },
+    {
+      "key": "wishlist",
+      "name": "Sản phẩm yêu thích",
+      "services": [
+        "WishListService",
+        "WishListServiceImpl"
+      ],
+      "entities": [
+        "WishListEntity",
+        "WishListItemEntity"
+      ],
+      "mappers": "Không có mapper riêng; toResponse private.",
+      "notes": [
+        "Product-level wishlist; hiển thị min SKU price.",
+        "Không có move-to-cart endpoint/service; frontend xác nhận chỉ link product.",
+        "REST không có auth gate; UI mutation thiếu X-Requested-With."
+      ]
+    },
+    {
+      "key": "order",
+      "name": "Đặt hàng và xử lý đơn",
+      "services": [
+        "OrderService",
+        "OrderServiceImpl"
+      ],
+      "entities": [
+        "OrderEntity",
+        "OrderItemEntity",
+        "OrderReservationEntity"
+      ],
+      "mappers": "Không có mapper riêng; toResponse private.",
+      "notes": [
+        "Chỉ COD; HOME_DELIVERY default; STORE_PICKUP DTO enum bị bỏ qua.",
+        "Tự chọn store trong checkout; không có admin assign/reassign.",
+        "Preview và đặt đơn tính voucher hardcode; không module voucher persistence.",
+        "Stock HELD rồi COMMITTED hoặc RELEASED."
+      ]
+    },
+    {
+      "key": "returns",
+      "name": "Đổi trả",
+      "services": [
+        "ReturnService",
+        "ReturnServiceImpl"
+      ],
+      "entities": [
+        "ReturnRequestEntity",
+        "ReturnItemEntity"
+      ],
+      "mappers": "Không có mapper riêng; toResponse private.",
+      "notes": [
+        "Create bỏ customer mandatory nên lỗi persistence thật.",
+        "Description request bỏ qua; trạng thái cập nhật tự do.",
+        "Không hoàn kho/refund; API public không scope.",
+        "UI tạo/approve/reject; API process/complete không UI."
+      ]
+    },
+    {
+      "key": "review",
+      "name": "Đánh giá sản phẩm",
+      "services": [
+        "ReviewService",
+        "ReviewServiceImpl"
+      ],
+      "entities": [
+        "ReviewEntity"
+      ],
+      "mappers": "Không có mapper riêng; toResponse private.",
+      "notes": [
+        "Create VISIBLE ngay; product list lọc VISIBLE.",
+        "orderId required DTO nhưng unknown order được chấp nhận null.",
+        "Không verified purchase/order ownership/orderItem; public moderation.",
+        "Frontend review tab chỉ tĩnh."
+      ]
+    }
+  ],
+  "entity_relationships": [
+    {
+      "entity": "CartEntity",
+      "table": "carts",
+      "relationships": [
+        "customer: OneToOne CustomerEntity, required, customer_id unique",
+        "items: OneToMany CartItemEntity, cascade ALL, orphanRemoval"
+      ],
+      "constraints": [
+        "customer @NotNull"
+      ]
+    },
+    {
+      "entity": "CartItemEntity",
+      "table": "cart_items",
+      "relationships": [
+        "cart: ManyToOne CartEntity required",
+        "sku: ManyToOne ProductSkuEntity required"
+      ],
+      "constraints": [
+        "quantity @NotNull, @Min(1)"
+      ]
+    },
+    {
+      "entity": "WishListEntity",
+      "table": "wishlists",
+      "relationships": [
+        "customer: OneToOne CustomerEntity, required, customer_id unique"
+      ],
+      "constraints": [
+        "createdAt @CreationTimestamp"
+      ]
+    },
+    {
+      "entity": "WishListItemEntity",
+      "table": "wishlist_items",
+      "relationships": [
+        "wishList: ManyToOne WishListEntity required",
+        "product: ManyToOne ProductEntity required"
+      ],
+      "constraints": [
+        "addedAt @CreationTimestamp"
+      ]
+    },
+    {
+      "entity": "OrderEntity",
+      "table": "orders",
+      "relationships": [
+        "customer: ManyToOne CustomerEntity required",
+        "assignedStore: ManyToOne StoreEntity required, fulfillment_store_id",
+        "items: OneToMany OrderItemEntity cascade ALL"
+      ],
+      "constraints": [
+        "order_code unique <=30",
+        "receiver name/phone/address NotBlank + size",
+        "subtotal/discount/shipping/total DecimalMin(0)",
+        "deliveryMethod HOME_DELIVERY default",
+        "status PENDING default; paymentMethod COD default",
+        "createdAt @CreationTimestamp"
+      ]
+    },
+    {
+      "entity": "OrderItemEntity",
+      "table": "order_items",
+      "relationships": [
+        "order: ManyToOne OrderEntity required",
+        "sku: ManyToOne ProductSkuEntity required"
+      ],
+      "constraints": [
+        "snapshot product name NotBlank <=200",
+        "snapshot variant <=150",
+        "snapshotPrice >=0",
+        "quantity>=1",
+        "subtotal>=0"
+      ]
+    },
+    {
+      "entity": "OrderReservationEntity",
+      "table": "order_reservations",
+      "relationships": [
+        "order: ManyToOne OrderEntity required",
+        "sku: ManyToOne ProductSkuEntity required",
+        "store: ManyToOne StoreEntity required"
+      ],
+      "constraints": [
+        "quantity>=1",
+        "ReservationStatus required"
+      ]
+    },
+    {
+      "entity": "ReturnRequestEntity",
+      "table": "return_requests",
+      "relationships": [
+        "order: ManyToOne OrderEntity required",
+        "customer: ManyToOne CustomerEntity required",
+        "processedBy: ManyToOne EmployeeEntity optional, handled_by",
+        "items: OneToMany ReturnItemEntity cascade ALL"
+      ],
+      "constraints": [
+        "reason NotBlank <=255",
+        "description text",
+        "ReturnStatus required",
+        "customer @NotNull and nullable=false"
+      ]
+    },
+    {
+      "entity": "ReturnItemEntity",
+      "table": "return_items",
+      "relationships": [
+        "returnRequest: ManyToOne ReturnRequestEntity required",
+        "orderItem: ManyToOne OrderItemEntity required"
+      ],
+      "constraints": [
+        "quantity>=1",
+        "detailReason<=255"
+      ]
+    },
+    {
+      "entity": "ReviewEntity",
+      "table": "reviews",
+      "relationships": [
+        "customer: ManyToOne CustomerEntity required",
+        "product: ManyToOne ProductEntity required",
+        "order: ManyToOne OrderEntity optional",
+        "orderItem: OneToOne OrderItemEntity optional"
+      ],
+      "constraints": [
+        "rating 1..5",
+        "moderationStatus PENDING entity default (service overrides VISIBLE)",
+        "content text",
+        "createdAt @CreationTimestamp"
+      ]
+    }
+  ],
+  "repository_queries": [
+    {
+      "repository": "CartRepository",
+      "query": "findByCustomerId",
+      "purpose": "Tìm duy nhất giỏ khách."
+    },
+    {
+      "repository": "CartItemRepository",
+      "query": "findByCartId / findByCartIdAndSkuId / deleteByCartId",
+      "purpose": "Liệt kê/merge SKU giỏ và clear sau checkout."
+    },
+    {
+      "repository": "WishListRepository",
+      "query": "findByCustomerId",
+      "purpose": "Wishlist duy nhất khách."
+    },
+    {
+      "repository": "WishListItemRepository",
+      "query": "findByWishListId / findByWishListIdAndProductId / deleteByWishListIdAndProductId",
+      "purpose": "List, tránh trùng bằng lookup và xóa đúng wishlist-product."
+    },
+    {
+      "repository": "OrderRepository",
+      "query": "findByCustomerIdOrderByCreatedAtDesc",
+      "purpose": "Lịch sử khách."
+    },
+    {
+      "repository": "OrderRepository",
+      "query": "findByOrderCode",
+      "purpose": "Tra đơn theo mã unique."
+    },
+    {
+      "repository": "OrderRepository",
+      "query": "findByAssignedStoreIdOrderByCreatedAtDesc / findByAssignedStoreIdInOrderByCreatedAtDesc / findAllByOrderByCreatedAtDesc",
+      "purpose": "List scope theo branch hoặc all stores."
+    },
+    {
+      "repository": "OrderItemRepository",
+      "query": "findByOrderId",
+      "purpose": "Đọc dòng snapshot."
+    },
+    {
+      "repository": "OrderReservationRepository",
+      "query": "findByOrderId",
+      "purpose": "Commit/release holds khi trạng thái đơn thay đổi."
+    },
+    {
+      "repository": "ReturnRequestRepository",
+      "query": "findByOrderId",
+      "purpose": "Gắn yêu cầu với order detail."
+    },
+    {
+      "repository": "ReturnRequestRepository",
+      "query": "@Query SELECT r FROM ReturnRequestEntity r WHERE r.order.customer.id = :customerId",
+      "purpose": "Tra returns theo customer của order, không theo r.customer."
+    },
+    {
+      "repository": "ReturnItemRepository",
+      "query": "findByReturnRequestId",
+      "purpose": "Fallback đọc dòng return."
+    },
+    {
+      "repository": "ReviewRepository",
+      "query": "findByProductId / findByCustomerId",
+      "purpose": "List reviews; getByProduct service lọc VISIBLE; findByCustomerId chưa exposed service."
+    },
+    {
+      "repository": "InventoryRepository",
+      "query": "findBySkuId / findByStoreIdAndSkuId",
+      "purpose": "Tổng tồn cart; chọn cửa hàng và mutate hold/on-hand order."
+    },
+    {
+      "repository": "InventoryRepository",
+      "query": "@Query SELECT i FROM InventoryEntity i WHERE i.store.id = :storeId AND i.actualStock <= i.minimumStock",
+      "purpose": "Low-stock query thuộc inventory, đọc làm dependency; không tạo commerce UC."
+    },
+    {
+      "repository": "CustomerAddressRepository",
+      "query": "findByCustomerEntityId",
+      "purpose": "Nếu thêm address lúc order, first saved address default."
+    },
+    {
+      "repository": "EmployeeStoreRepository",
+      "query": "findByEmployeeId",
+      "purpose": "Phạm vi cửa hàng nhân viên; ALL_STORES/ROLE_ADMIN/ADMIN bypass."
+    }
+  ],
+  "flows": [
+    {
+      "key": "checkout",
+      "steps": [
+        "Cart add/update không giữ tồn",
+        "Optional preview/voucher",
+        "placeOrder -> address details -> totals -> assignedStore -> PENDING/order snapshots -> HELD/inventory reserved -> cart clear"
+      ],
+      "source": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java"
+    },
+    {
+      "key": "order_lifecycle",
+      "steps": [
+        "Employee scope check",
+        "Non-terminal status có thể chuyển bất kỳ status (không chain bắt buộc)",
+        "CONFIRMED ghi confirmedAt",
+        "SHIPPING hoặc COMPLETED commit HELD, giảm on-hand/reserved",
+        "CANCELLED release HELD; stock COMMITTED không hoàn",
+        "CANCELLED/COMPLETED terminal (same-status idempotent)"
+      ],
+      "source": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java"
+    },
+    {
+      "key": "customer_cancel",
+      "steps": [
+        "Order thuộc customer",
+        "Chỉ PENDING",
+        "Gọi updateStatus(null,...CANCELLED), release HELD"
+      ],
+      "source": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java"
+    },
+    {
+      "key": "returns",
+      "steps": [
+        "UI completed order -> submit DTO",
+        "Service bỏ mandatory customer nên create persistence bị chặn",
+        "Có record thì view; updateStatus chỉ gán status/processedBy/processedAt",
+        "Không có physical receipt/refund/inventory adjustment"
+      ],
+      "source": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java"
+    },
+    {
+      "key": "review",
+      "steps": [
+        "Public create rating/comment VISIBLE",
+        "Public list product chỉ VISIBLE",
+        "Public moderation đổi status; product list thay theo đó"
+      ],
+      "source": "src/main/java/com/thinh/cosmetic/service/review/impl/ReviewServiceImpl.java"
+    }
+  ],
+  "business_rules": [
+    "Cart quantity DTO >=1; update quantity<=0 xóa dòng; inventory availability max(0, actualStock-heldQuantity).",
+    "Cart subtotal current SKU price * quantity; null price ->0.",
+    "Shipping threshold >=500000 ->0, else 30000; LUNEA10 10% capped 100000; GIAM50K 50000; FREESHIP shipping0; total floor0.",
+    "Order uses snapshot prices/names. OrderCode random LUN-6digits, unique DB.",
+    "Address fallback recipient from customer, phone account or 0900000000; location defaults HCM/Quan1/BenNghe; shipping default string if blank.",
+    "StoreScope global when authority ALL_STORES or ROLE_ADMIN or ADMIN; otherwise EmployeeStore IDs, no scope when employeeId null.",
+    "Customer cancel only owner+PENDING. Employee status terminal guard only; same status idempotent.",
+    "Reservation HELD commit on SHIPPING/COMPLETED once, release on CANCELLED once; quantities clamped zero.",
+    "Return DTO validates order/reason/items top-level; no @Valid on nested items. Required customer entity never assigned.",
+    "Review rating1..5 and DTO orderId required; service permits missing order ID reference as null and publishes VISIBLE immediately.",
+    "XRequestedWithFilter protects modifying /api requests by header presence, not by user identity."
+  ],
+  "gaps": [
+    {
+      "key": "commerce_public_auth",
+      "severity": "auth",
+      "evidence": [
+        "SecurityConfig anyRequest permitAll",
+        "WishListRestController/ReturnRestController/ReviewRestController no PreAuthorize"
+      ],
+      "description": "Wishlist/return/review operations public; default IDs may operate data of customer/employee1. Do not label exclusive customer/employee access."
+    },
+    {
+      "key": "wishlist_header",
+      "severity": "integration",
+      "evidence": [
+        "Frontend agent: static/js/api.js toggleWishlist",
+        "Frontend agent: account/wishlist.html removeWishlistItem",
+        "XRequestedWithFilter"
+      ],
+      "description": "Wishlist raw mutation fetch lacks X-Requested-With; cookie flow403."
+    },
+    {
+      "key": "cart_owner",
+      "severity": "auth",
+      "evidence": [
+        "CartServiceImpl.updateItemQuantity",
+        "CartServiceImpl.removeItem"
+      ],
+      "description": "No ownership check cartItemId against resolved cart."
+    },
+    {
+      "key": "cart_ui_shape",
+      "severity": "integration",
+      "evidence": [
+        "Frontend agent: cart.html updateQty",
+        "CartResponse"
+      ],
+      "description": "UI expects itemSubtotal/cartSubtotal, backend returns items/subtotal; buttons target SSR quantity."
+    },
+    {
+      "key": "order_create_stock",
+      "severity": "business",
+      "evidence": [
+        "OrderServiceImpl.placeOrder"
+      ],
+      "description": "Explicit store not stock checked; fallback first store even if no capable store; no lock/recheck; reserve can exceed available."
+    },
+    {
+      "key": "order_delivery",
+      "severity": "incomplete",
+      "evidence": [
+        "OrderRequest.deliveryMethod",
+        "OrderServiceImpl.placeOrder",
+        "OrderEntity default HOME_DELIVERY"
+      ],
+      "description": "STORE_PICKUP request ignored; only default home delivery actually persisted."
+    },
+    {
+      "key": "order_scope",
+      "severity": "auth",
+      "evidence": [
+        "OrderRestController.getByCustomer",
+        "OrderRestController.getByOrderCode",
+        "CheckoutPageController.orderSuccess",
+        "OrderServiceImpl.placeOrder"
+      ],
+      "description": "Customer/{id} no ownership, employee by-code no scope, success page no ownership, existing addressId no ownership."
+    },
+    {
+      "key": "order_transitions",
+      "severity": "business",
+      "evidence": [
+        "OrderServiceImpl.updateStatus"
+      ],
+      "description": "Non-terminal statuses allow jumps/backtracking; no required progression. Cancel after SHIPPING does not restore COMMITTED actual stock."
+    },
+    {
+      "key": "return_create_constraint",
+      "severity": "defect",
+      "evidence": [
+        "ReturnServiceImpl.create",
+        "ReturnRequestEntity.customer"
+      ],
+      "description": "customer never populated, violates @NotNull/nullable=false; mocks hide this; no verified real persistence happy path."
+    },
+    {
+      "key": "return_incomplete",
+      "severity": "incomplete",
+      "evidence": [
+        "ReturnServiceImpl.create/updateStatus",
+        "ReturnRequestDto"
+      ],
+      "description": "description ignored; no ownership/order-item membership/quantity bounds/nested validation/status guards; no refund/restock."
+    },
+    {
+      "key": "review_incomplete",
+      "severity": "incomplete",
+      "evidence": [
+        "ReviewServiceImpl.create/updateModerationStatus",
+        "ReviewRequest"
+      ],
+      "description": "No verified purchase/order ownership/orderItem/duplicate checks; unknown order silently null; no auth/moderator tracking."
+    },
+    {
+      "key": "not_present",
+      "severity": "absence",
+      "evidence": [
+        "Cart/WishList/Order full interfaces/controllers/implementations",
+        "Frontend agent full commerce templates"
+      ],
+      "description": "No wishlist move-to-cart flow; no staff assign/reassign order store; no external payment/courier; no voucher management/usage. Do not invent UCs."
+    }
+  ],
+  "relationships_verified": [],
+  "relationships_notes": [
+    "Authentication is precondition; no include-login.",
+    "Inventory repository calls/reservation mutation are internal behaviors, not independent included user-goal UCs.",
+    "No include cart-clear from place order: clear is internal DB behavior here; the user goal clear cart is independent.",
+    "No state progression include/extend inferred: backend allows non-terminal jumps.",
+    "Optional voucher may qualify extend only after root verifies explicit UI extension point; this backend analysis asserts none."
+  ],
+  "use_cases": [
+    {
+      "key": "cart.view",
+      "name": "Xem giỏ hàng",
+      "module": "cart",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem sản phẩm SKU, số lượng, giá hiện tại và tổng tiền trong giỏ.",
+      "preconditions": "Đã đăng nhập ROLE_CUSTOMER.",
+      "main": [
+        "Gọi GET /api/cart hoặc mở trang /cart.",
+        "Hệ thống tìm giỏ theo customerId của principal; nếu chưa có thì tạo giỏ.",
+        "Đọc cart items, giá SKU hiện tại và ảnh chính sản phẩm.",
+        "Trả các dòng, subtotal và tổng số lượng."
+      ],
+      "alternatives": [
+        "Giỏ chưa có sản phẩm: trả danh sách rỗng và tổng 0.",
+        "Khách không tồn tại nhưng chưa có giỏ: code tạo customer=null rồi persistence không đáp ứng constraint."
+      ],
+      "postconditions": "Giỏ được hiển thị; lần đọc đầu tiên có thể tạo giỏ.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java",
+          "class": "CartRestController",
+          "method": "getCart",
+          "endpoint": "GET /api/cart"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+          "class": "CartServiceImpl",
+          "method": "getCart",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Query customerId chỉ được dùng khi AuthPrincipal không chứa customerId; fallback 1L."
+      ]
+    },
+    {
+      "key": "cart.add",
+      "name": "Thêm sản phẩm vào giỏ",
+      "module": "cart",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Thêm một SKU hoặc tăng số lượng SKU đã có trong giỏ.",
+      "preconditions": "Đã đăng nhập; SKU tồn tại; quantity >= 1.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi skuId và quantity; @Valid kiểm tra dữ liệu.",
+        "Tìm hoặc tạo giỏ của khách, tìm SKU và dòng SKU đã có.",
+        "Cộng tồn khả dụng max(0, actualStock-heldQuantity) trên mọi cửa hàng.",
+        "Nếu tổng số lượng sau thêm không vượt tồn khả dụng, lưu dòng mới hoặc cập nhật dòng cũ.",
+        "Trả lại giỏ và tổng tiền."
+      ],
+      "alternatives": [
+        "SKU không tồn tại: generic Exception -> INTERNAL_ERROR 500.",
+        "Số lượng vượt tổng tồn khả dụng: INSUFFICIENT_STOCK 409.",
+        "DTO thiếu skuId/quantity hoặc quantity < 1: VALIDATION_ERROR 400."
+      ],
+      "postconditions": "Giỏ chứa SKU với số lượng tăng; chưa giữ tồn.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java",
+          "class": "CartRestController",
+          "method": "addItem",
+          "endpoint": "POST /api/cart/items"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+          "class": "CartServiceImpl",
+          "method": "addItem",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không kiểm activeStatus SKU/product/store.",
+        "Tồn cộng toàn hệ thống không bảo đảm một cửa hàng đáp ứng toàn bộ giỏ."
+      ]
+    },
+    {
+      "key": "cart.quantity",
+      "name": "Điều chỉnh số lượng trong giỏ",
+      "module": "cart",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Đổi số lượng của dòng giỏ hàng.",
+      "preconditions": "Đã đăng nhập; cartItemId tồn tại.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Tìm hoặc tạo giỏ của customer resolved.",
+        "Tìm cartItem theo ID.",
+        "Quantity <= 0: xóa dòng; nếu > 0 kiểm tổng tồn khả dụng trên các cửa hàng.",
+        "Lưu số lượng mới nếu đủ tồn và trả giỏ resolved."
+      ],
+      "alternatives": [
+        "Không đủ tồn: INSUFFICIENT_STOCK 409.",
+        "Không có item: generic Exception -> 500.",
+        "CartItem của khách khác vẫn được xử lý vì thiếu kiểm item.cart.id == cart.id."
+      ],
+      "postconditions": "Số lượng dòng được đổi hoặc dòng bị xóa.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java",
+          "class": "CartRestController",
+          "method": "updateItemQuantity",
+          "endpoint": "PUT /api/cart/items/{cartItemId}?quantity=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+          "class": "CartServiceImpl",
+          "method": "updateItemQuantity",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không chứng minh quyền sở hữu dòng; đây là lỗi triển khai, không phải chức năng quản lý giỏ người khác.",
+        "Frontend agent xác minh cart.html dùng số lượng SSR cố định ở nút +/-; AJAX đọc itemSubtotal/cartSubtotal không có trong CartResponse nên tổng tiền stale và click lặp không tăng tiếp."
+      ]
+    },
+    {
+      "key": "cart.remove",
+      "name": "Xóa sản phẩm khỏi giỏ",
+      "module": "cart",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Xóa một dòng khỏi giỏ.",
+      "preconditions": "Đã đăng nhập.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Tìm hoặc tạo giỏ của customer resolved.",
+        "Xóa cartItem bằng ID.",
+        "Trả lại giỏ resolved với tổng tiền tính lại."
+      ],
+      "alternatives": [
+        "CartItem thuộc giỏ người khác cũng bị xóa vì không kiểm quyền sở hữu.",
+        "Item không tồn tại: không có business validation riêng; hành vi deleteById do repository."
+      ],
+      "postconditions": "Dòng giỏ theo ID bị xóa.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java",
+          "class": "CartRestController",
+          "method": "removeItem",
+          "endpoint": "DELETE /api/cart/items/{cartItemId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+          "class": "CartServiceImpl",
+          "method": "removeItem",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không gán mục tiêu quản trị giỏ khách khác dù lỗ hổng cho phép."
+      ]
+    },
+    {
+      "key": "cart.clear",
+      "name": "Làm trống giỏ hàng",
+      "module": "cart",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa mọi dòng trong giỏ của khách.",
+      "preconditions": "Đã đăng nhập.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Tìm hoặc tạo giỏ của khách.",
+        "Xóa các cartItem có cartId tương ứng.",
+        "Trả HTTP 204."
+      ],
+      "alternatives": [
+        "Giỏ đã rỗng: vẫn trả 204."
+      ],
+      "postconditions": "Giỏ vẫn tồn tại và không còn dòng.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java",
+          "class": "CartRestController",
+          "method": "clearCart",
+          "endpoint": "DELETE /api/cart"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+          "class": "CartServiceImpl",
+          "method": "clearCart",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "wishlist.view",
+      "name": "Xem sản phẩm yêu thích",
+      "module": "wishlist",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem sản phẩm đã lưu trong wishlist của customer resolved.",
+      "preconditions": "API không yêu cầu đăng nhập; customerId nếu được chỉ định phải tồn tại để tạo wishlist mới.",
+      "main": [
+        "Tìm wishlist theo customerId của AuthPrincipal, query hoặc fallback 1.",
+        "Nếu chưa có, tạo wishlist.",
+        "Đọc sản phẩm, ảnh chính, giá thấp nhất trong các SKU.",
+        "Trả wishlist."
+      ],
+      "alternatives": [
+        "Không có sản phẩm: danh sách rỗng.",
+        "Customer không tồn tại và chưa có wishlist: customer=null vi phạm entity constraint."
+      ],
+      "postconditions": "Wishlist được đọc hoặc tạo mới.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java",
+          "class": "WishListRestController",
+          "method": "getWishList",
+          "endpoint": "GET /api/wishlist"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/WishListServiceImpl.java",
+          "class": "WishListServiceImpl",
+          "method": "getWishList",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Trang /account/wishlist yêu cầu ROLE_CUSTOMER; API rơi vào permitAll.",
+        "Giá min gồm cả SKU inactive; không có lọc active."
+      ]
+    },
+    {
+      "key": "wishlist.add",
+      "name": "Lưu sản phẩm yêu thích",
+      "module": "wishlist",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Thêm sản phẩm vào danh sách yêu thích.",
+      "preconditions": "Product tồn tại; API không yêu cầu đăng nhập.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Resolve customerId và tìm/tạo wishlist.",
+        "Tìm product theo ID.",
+        "Nếu product chưa có trong wishlist thì lưu wishlist item.",
+        "Trả wishlist."
+      ],
+      "alternatives": [
+        "Product đã tồn tại: không tạo dòng trùng.",
+        "Product không tồn tại: generic Exception -> 500.",
+        "UI raw fetch thiếu X-Requested-With nên request cookie JWT bị chặn 403 trước controller."
+      ],
+      "postconditions": "Backend có thể lưu wishlist item nếu request hợp lệ.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java",
+          "class": "WishListRestController",
+          "method": "addProduct",
+          "endpoint": "POST /api/wishlist/products/{productId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/WishListServiceImpl.java",
+          "class": "WishListServiceImpl",
+          "method": "addProduct",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Tích hợp UI phải Partially Implemented: frontend agent xác minh header thiếu.",
+        "API cho phép guest sửa wishlist qua customerId/default 1; không coi đây là độc quyền Customer."
+      ]
+    },
+    {
+      "key": "wishlist.remove",
+      "name": "Bỏ sản phẩm yêu thích",
+      "module": "wishlist",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa một sản phẩm khỏi wishlist.",
+      "preconditions": "API không yêu cầu đăng nhập.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Resolve customerId và tìm/tạo wishlist.",
+        "Xóa item bằng wishlistId + productId.",
+        "Trả wishlist."
+      ],
+      "alternatives": [
+        "Product không ở wishlist: không có business exception riêng.",
+        "UI raw fetch thiếu X-Requested-With: 403 trước controller."
+      ],
+      "postconditions": "Wishlist không còn sản phẩm chỉ định.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java",
+          "class": "WishListRestController",
+          "method": "removeProduct",
+          "endpoint": "DELETE /api/wishlist/products/{productId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/cart/impl/WishListServiceImpl.java",
+          "class": "WishListServiceImpl",
+          "method": "removeProduct",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Tích hợp UI phải Partially Implemented do header thiếu."
+      ]
+    },
+    {
+      "key": "order.preview",
+      "name": "Xem tổng tiền trước khi đặt hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tính tổng giỏ, phí giao hàng và giảm giá mà chưa tạo đơn.",
+      "preconditions": "Đã đăng nhập ROLE_CUSTOMER; customer và giỏ có sản phẩm tồn tại.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi OrderRequest tới /api/orders/preview; controller không @Valid ở đường preview.",
+        "Đọc khách và giỏ, snapshot giá hiện tại vào response.",
+        "Tính subtotal; shipping 0 nếu subtotal >= 500000, ngược lại 30000.",
+        "Áp dụng mã hardcode và tính max(0, subtotal-discount+shipping).",
+        "Trả tổng tiền và dòng sản phẩm; không lưu order/reservation."
+      ],
+      "alternatives": [
+        "Giỏ rỗng: EMPTY_CART 400.",
+        "Customer không tồn tại: CUSTOMER_NOT_FOUND 404.",
+        "Mã lạ: không báo lỗi, discount 0; shipping theo threshold."
+      ],
+      "postconditions": "Khách nhận tổng tiền dự kiến; DB không tạo đơn.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "previewOrder",
+          "endpoint": "POST /api/orders/preview"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "previewOrder",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không kiểm tồn; không bắt buộc gọi preview trước placeOrder."
+      ]
+    },
+    {
+      "key": "order.voucher",
+      "name": "Áp dụng mã ưu đãi khi thanh toán",
+      "module": "order",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Áp dụng một trong ba mã hardcode trong preview và đặt hàng.",
+      "preconditions": "Đã đăng nhập; giỏ không rỗng; nhập mã.REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Chuẩn hóa voucherCode trim và uppercase.",
+        "LUNEA10: giảm 10% subtotal, tối đa 100000; GIAM50K: giảm 50000; FREESHIP: phí ship 0.",
+        "Trả tổng dự kiến qua preview; khi đặt hàng tính lại cùng rule và lưu discountAmount/shippingFee."
+      ],
+      "alternatives": [
+        "Mã khác hoặc rỗng: discount 0; không có validation mã/expiry/quota.",
+        "Tổng tiền không âm dù discount > subtotal."
+      ],
+      "postconditions": "Tổng tiền thay đổi và discountAmount được lưu khi đặt đơn.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "previewOrder",
+          "endpoint": "POST /api/orders/preview"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "previewOrder",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "placeOrder",
+          "endpoint": "POST /api/orders"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không có module quản trị voucher thật; không có lưu usage hay hoàn lượt sử dụng.",
+        "Không tự tạo extend: root cần extension point UI đọc đầy đủ; backend có thể nhận voucher ngay trong placeOrder."
+      ]
+    },
+    {
+      "key": "order.place",
+      "name": "Đặt hàng thanh toán khi nhận",
+      "module": "order",
+      "actors": [
+        "ROLE_CUSTOMER",
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Tạo đơn COD từ toàn bộ giỏ, xác định cửa hàng phục vụ, giữ tồn và xóa giỏ.",
+      "preconditions": "API /api/orders và /api/orders/checkout yêu cầu authenticated(); trang checkout ROLE_CUSTOMER. Customer/cart tồn tại và có dòng; paymentMethod COD (@NotNull).REST mutation: dùng Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Resolve customerId từ AuthPrincipal, query hoặc fallback 1; đọc khách và cart items.",
+        "Lấy địa chỉ đã lưu nếu ID tồn tại; nếu không dùng request/customer/fallback và thử lưu địa chỉ mới.",
+        "Tính subtotal, shipping, discount và total.",
+        "Nếu fulfillmentStoreId tồn tại thì chọn store đó; nếu không tìm store đủ mọi SKU, ưu tiên province, fallback capable đầu hoặc store đầu.",
+        "Tạo orderCode LUN- ngẫu nhiên 6 số, order PENDING và các dòng snapshot.",
+        "Tạo HELD reservation cho từng SKU và tăng heldQuantity nếu inventory record tồn tại.",
+        "Xóa cart items, trả đơn HTTP 201."
+      ],
+      "alternatives": [
+        "Customer không có: 404; giỏ rỗng: 400.",
+        "Không store nào đủ tồn: code vẫn chọn store đầu; không trả NO_STORE_CAN_FULFILL.",
+        "Không store nào tồn tại: assignedStore=null mâu thuẫn @NotNull/DB.",
+        "OrderCode collision không retry; persistence có thể DATA_CONFLICT.",
+        "CustomerAddressId không kiểm thuộc khách; deliveryMethod bỏ qua."
+      ],
+      "postconditions": "Đơn PENDING, dòng snapshot và stock holds được tạo; giỏ đã xóa trong transaction.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "placeOrder",
+          "endpoint": "POST /api/orders; POST /api/orders/checkout"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "placeOrder",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/domain/dto/request/order/OrderRequest.java",
+          "class": "OrderRequest",
+          "method": "",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/domain/entity/sales/OrderEntity.java",
+          "class": "OrderEntity",
+          "method": "",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+          "class": "InventoryRepository",
+          "method": "findByStoreIdAndSkuId",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/order/OrderReservationRepository.java",
+          "class": "OrderReservationRepository",
+          "method": "save",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java",
+          "class": "XRequestedWithFilter",
+          "method": "doFilterInternal",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không có hỗ trợ thanh toán online hoặc external payment actor: enum chỉ COD.",
+        "deliveryMethod STORE_PICKUP trong DTO bị bỏ qua; order luôn mặc định HOME_DELIVERY.",
+        "Không recheck/lock tồn khi giữ; store được chọn trực tiếp có thể thiếu tồn; có thể vượt actualStock.",
+        "Không lọc inactive store/SKU/product.",
+        "API placeOrder cho employee authenticated chỉ định customerId dù UI dành cho Customer; không dùng ORDER_PROCESS/ORDER_VIEW permission."
+      ]
+    },
+    {
+      "key": "order.history",
+      "name": "Xem lịch sử đơn hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem các đơn của khách hiện tại theo thời gian giảm dần.",
+      "preconditions": "Đã đăng nhập ROLE_CUSTOMER.",
+      "main": [
+        "Mở /account/orders hoặc GET /api/orders/my-orders.",
+        "Lấy customerId từ AuthPrincipal.",
+        "Truy vấn các đơn customerId, createdAt giảm dần.",
+        "Trả danh sách cùng trạng thái, tổng tiền, dòng đơn."
+      ],
+      "alternatives": [
+        "Chưa có đơn: danh sách rỗng.",
+        "Fallback customerId query/1 khi AuthPrincipal không có customerId."
+      ],
+      "postconditions": "Lịch sử đơn được hiển thị.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "getMyOrders",
+          "endpoint": "GET /api/orders/my-orders"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "getByCustomer",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java",
+          "class": "AccountPageController",
+          "method": "orders",
+          "endpoint": "GET /account/orders"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "REST /api/orders/customer/{customerId} chỉ yêu cầu authenticated(), không kiểm owner; ghi như lỗ hổng, không UC xem dữ liệu khách khác."
+      ]
+    },
+    {
+      "key": "order.detail",
+      "name": "Theo dõi chi tiết đơn hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Xem đơn bằng ID hoặc orderCode và các trạng thái xử lý.",
+      "preconditions": "Đã đăng nhập ROLE_CUSTOMER; đơn tồn tại.",
+      "main": [
+        "Mở /account/orders/{id} hoặc GET /api/orders/{id} hay /code/{orderCode}.",
+        "Đọc đơn và dòng snapshot.",
+        "Nếu AuthPrincipal customerId khác owner, REST hoặc account page từ chối/redirect.",
+        "Trả recipient/address, trạng thái, timestamps, items và totals."
+      ],
+      "alternatives": [
+        "Đơn không có: ORDER_NOT_FOUND 404; page ghi log.",
+        "Sai owner: REST ACCESS_DENIED 403; account page redirect /account/orders.",
+        "Trang /order-success?orderCode=... gọi getByOrderCode không kiểm owner, gây lộ đơn theo mã."
+      ],
+      "postconditions": "Chi tiết đơn được đọc.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "getById",
+          "endpoint": "GET /api/orders/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "getByOrderCode",
+          "endpoint": "GET /api/orders/code/{orderCode}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "getById",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "getByOrderCode",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java",
+          "class": "AccountPageController",
+          "method": "orderDetail",
+          "endpoint": "GET /account/orders/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java",
+          "class": "CheckoutPageController",
+          "method": "orderSuccess",
+          "endpoint": "GET /order-success"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Employee gọi REST by-id có StoreScope; by-code không có StoreScope employee."
+      ]
+    },
+    {
+      "key": "order.cancel_customer",
+      "name": "Hủy đơn đang chờ xác nhận",
+      "module": "order",
+      "actors": [
+        "ROLE_CUSTOMER"
+      ],
+      "status_backend": "Implemented",
+      "description": "Khách hủy đơn của mình khi PENDING và giải phóng stock holds.",
+      "preconditions": "Đã đăng nhập ROLE_CUSTOMER; đơn thuộc customer; status PENDING. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi POST/PUT /api/orders/{id}/cancel.",
+        "Kiểm order owner và status PENDING.",
+        "Chuyển CANCELLED, ghi cancelledAt.",
+        "Với mỗi HELD, chuyển RELEASED và giảm heldQuantity tối thiểu 0.",
+        "Lưu order và trả response."
+      ],
+      "alternatives": [
+        "Không đúng owner: ACCESS_DENIED 403.",
+        "Không PENDING: ORDER_NOT_CANCELLABLE 409.",
+        "Không order: ORDER_NOT_FOUND 404."
+      ],
+      "postconditions": "Đơn CANCELLED và tồn giữ HELD được giải phóng.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "cancelOrder",
+          "endpoint": "PUT|POST /api/orders/{id}/cancel"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "cancelOrder",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không hoàn lượt dùng voucher vì không có usage ledger."
+      ]
+    },
+    {
+      "key": "order.staff_list",
+      "name": "Tra cứu đơn hàng trong phạm vi cửa hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Nhân viên xem và lọc đơn theo cửa hàng được phân công.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; phạm vi từ EmployeeStore hoặc ALL_STORES/ROLE_ADMIN/ADMIN.",
+      "main": [
+        "Gọi /api/admin/orders hoặc /api/orders, tùy chọn storeId.",
+        "StoreScope trả null cho quyền toàn chuỗi; ngược lại danh sách assigned store ids.",
+        "Nếu toàn chuỗi, lấy tất cả hoặc store chỉ định; nếu được phân công, chỉ truy vấn assigned store ids.",
+        "Sắp xếp createdAt giảm dần và trả danh sách."
+      ],
+      "alternatives": [
+        "Không có store assignment: danh sách rỗng.",
+        "storeId ngoài scope: danh sách rỗng.",
+        "Principal null trong service overload: trả getAll; normal secured JWT flow phải có principal."
+      ],
+      "postconditions": "Danh sách trong scope được đọc.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "getOrders",
+          "endpoint": "GET /api/admin/orders"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "getOrders",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/order/OrderRepository.java",
+          "class": "OrderRepository",
+          "method": "findByAssignedStoreIdOrderByCreatedAtDesc",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/order/OrderRepository.java",
+          "class": "OrderRepository",
+          "method": "findByAssignedStoreIdInOrderByCreatedAtDesc",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/order/OrderRepository.java",
+          "class": "OrderRepository",
+          "method": "findAllByOrderByCreatedAtDesc",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "getAll",
+          "endpoint": "GET /api/orders?storeId=..."
+        }
+      ],
+      "notes": [
+        "Controller getOrders delegates service method getOrders; REST method name is getOrders in Admin and getAll in Order.",
+        "Các quyền ORDER_VIEW/ORDER_PROCESS không được dùng để gate endpoint."
+      ]
+    },
+    {
+      "key": "order.staff_detail",
+      "name": "Xem chi tiết đơn của cửa hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Nhân viên đọc chi tiết đơn thuộc chi nhánh trong scope.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; order thuộc cửa hàng accessible.",
+      "main": [
+        "Gọi /api/admin/orders/{id} hoặc /api/orders/{id}.",
+        "Tìm order.",
+        "Nếu assignedStore có giá trị, kiểm StoreScope.canAccessStore.",
+        "Trả order và dòng snapshot."
+      ],
+      "alternatives": [
+        "Ngoài scope: ACCESS_DENIED 403.",
+        "Không tìm thấy: ORDER_NOT_FOUND 404.",
+        "Order assignedStore null thì scope check bị bỏ qua, nhưng entity bình thường cấm null."
+      ],
+      "postconditions": "Chi tiết đơn trong scope được đọc.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "getById",
+          "endpoint": "GET /api/admin/orders/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "getById",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "getById",
+          "endpoint": "GET /api/orders/{id}"
+        }
+      ],
+      "notes": [
+        "Đường /api/orders/code/{orderCode} không áp dụng scope employee."
+      ]
+    },
+    {
+      "key": "order.confirm",
+      "name": "Xác nhận đơn hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Nhân viên cập nhật tiến trình đơn sang CONFIRMED.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; order trong StoreScope; trạng thái hiện tại chưa CANCELLED/COMPLETED hoặc đã bằng đích. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Chọn thao tác tương ứng và gọi status endpoint (hoặc cancel endpoint).",
+        "Tìm order và kiểm StoreScope.",
+        "Nếu cùng status, trả ngay; nếu hiện tại CANCELLED/COMPLETED và khác status thì từ chối.",
+        "Gán CONFIRMED. Ghi confirmedAt, giữ HELD reservation.",
+        "Lưu order và trả response."
+      ],
+      "alternatives": [
+        "Ngoài scope: ACCESS_DENIED 403.",
+        "Sửa terminal order: INVALID_STATUS_TRANSITION 409.",
+        "Các trạng thái non-terminal được nhảy tự do hoặc đi lùi vì không có bảng transition."
+      ],
+      "postconditions": "Status=CONFIRMED và các effects được lưu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/admin/orders/{id}/status?status=CONFIRMED"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/orders/{id}/status?status=CONFIRMED"
+        }
+      ],
+      "notes": [
+        "Các hold HELD chỉ commit/release một lần theo trạng thái reservation.",
+        "Không có payment collection integration, courier API hoặc xác nhận giao vận ngoài hệ thống.",
+        "UI có thể giới hạn nút theo trạng thái nhưng backend không enforced predecessor; root merge UI exact."
+      ]
+    },
+    {
+      "key": "order.prepare",
+      "name": "Chuyển đơn sang chuẩn bị hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Nhân viên cập nhật tiến trình đơn sang PREPARING.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; order trong StoreScope; trạng thái hiện tại chưa CANCELLED/COMPLETED hoặc đã bằng đích. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Chọn thao tác tương ứng và gọi status endpoint (hoặc cancel endpoint).",
+        "Tìm order và kiểm StoreScope.",
+        "Nếu cùng status, trả ngay; nếu hiện tại CANCELLED/COMPLETED và khác status thì từ chối.",
+        "Gán PREPARING. Đổi trạng thái, không ghi timestamp hoặc thay đổi tồn.",
+        "Lưu order và trả response."
+      ],
+      "alternatives": [
+        "Ngoài scope: ACCESS_DENIED 403.",
+        "Sửa terminal order: INVALID_STATUS_TRANSITION 409.",
+        "Các trạng thái non-terminal được nhảy tự do hoặc đi lùi vì không có bảng transition."
+      ],
+      "postconditions": "Status=PREPARING và các effects được lưu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/admin/orders/{id}/status?status=PREPARING"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/orders/{id}/status?status=PREPARING"
+        }
+      ],
+      "notes": [
+        "Các hold HELD chỉ commit/release một lần theo trạng thái reservation.",
+        "Không có payment collection integration, courier API hoặc xác nhận giao vận ngoài hệ thống.",
+        "UI có thể giới hạn nút theo trạng thái nhưng backend không enforced predecessor; root merge UI exact."
+      ]
+    },
+    {
+      "key": "order.ship",
+      "name": "Bàn giao đơn để giao hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Nhân viên cập nhật tiến trình đơn sang SHIPPING.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; order trong StoreScope; trạng thái hiện tại chưa CANCELLED/COMPLETED hoặc đã bằng đích. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Chọn thao tác tương ứng và gọi status endpoint (hoặc cancel endpoint).",
+        "Tìm order và kiểm StoreScope.",
+        "Nếu cùng status, trả ngay; nếu hiện tại CANCELLED/COMPLETED và khác status thì từ chối.",
+        "Gán SHIPPING. Với HELD reservation, chuyển COMMITTED và giảm actualStock/heldQuantity tối thiểu 0.",
+        "Lưu order và trả response."
+      ],
+      "alternatives": [
+        "Ngoài scope: ACCESS_DENIED 403.",
+        "Sửa terminal order: INVALID_STATUS_TRANSITION 409.",
+        "Các trạng thái non-terminal được nhảy tự do hoặc đi lùi vì không có bảng transition."
+      ],
+      "postconditions": "Status=SHIPPING và các effects được lưu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/admin/orders/{id}/status?status=SHIPPING"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/orders/{id}/status?status=SHIPPING"
+        }
+      ],
+      "notes": [
+        "Các hold HELD chỉ commit/release một lần theo trạng thái reservation.",
+        "Không có payment collection integration, courier API hoặc xác nhận giao vận ngoài hệ thống.",
+        "UI có thể giới hạn nút theo trạng thái nhưng backend không enforced predecessor; root merge UI exact."
+      ]
+    },
+    {
+      "key": "order.complete",
+      "name": "Ghi nhận đơn giao thành công",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Nhân viên cập nhật tiến trình đơn sang COMPLETED.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; order trong StoreScope; trạng thái hiện tại chưa CANCELLED/COMPLETED hoặc đã bằng đích. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Chọn thao tác tương ứng và gọi status endpoint (hoặc cancel endpoint).",
+        "Tìm order và kiểm StoreScope.",
+        "Nếu cùng status, trả ngay; nếu hiện tại CANCELLED/COMPLETED và khác status thì từ chối.",
+        "Gán COMPLETED. Ghi completedAt; commit HELD nếu chưa commit; đơn trở thành terminal.",
+        "Lưu order và trả response."
+      ],
+      "alternatives": [
+        "Ngoài scope: ACCESS_DENIED 403.",
+        "Sửa terminal order: INVALID_STATUS_TRANSITION 409.",
+        "Các trạng thái non-terminal được nhảy tự do hoặc đi lùi vì không có bảng transition."
+      ],
+      "postconditions": "Status=COMPLETED và các effects được lưu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/admin/orders/{id}/status?status=COMPLETED"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/orders/{id}/status?status=COMPLETED"
+        }
+      ],
+      "notes": [
+        "Các hold HELD chỉ commit/release một lần theo trạng thái reservation.",
+        "Không có payment collection integration, courier API hoặc xác nhận giao vận ngoài hệ thống.",
+        "UI có thể giới hạn nút theo trạng thái nhưng backend không enforced predecessor; root merge UI exact."
+      ]
+    },
+    {
+      "key": "order.cancel_staff",
+      "name": "Hủy đơn trong phạm vi cửa hàng",
+      "module": "order",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Nhân viên cập nhật tiến trình đơn sang CANCELLED.",
+      "preconditions": "Đã đăng nhập ROLE_EMPLOYEE; order trong StoreScope; trạng thái hiện tại chưa CANCELLED/COMPLETED hoặc đã bằng đích. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Chọn thao tác tương ứng và gọi status endpoint (hoặc cancel endpoint).",
+        "Tìm order và kiểm StoreScope.",
+        "Nếu cùng status, trả ngay; nếu hiện tại CANCELLED/COMPLETED và khác status thì từ chối.",
+        "Gán CANCELLED. Ghi cancelledAt; HELD chuyển RELEASED và giảm heldQuantity; COMMITTED không phục hồi.",
+        "Lưu order và trả response."
+      ],
+      "alternatives": [
+        "Ngoài scope: ACCESS_DENIED 403.",
+        "Sửa terminal order: INVALID_STATUS_TRANSITION 409.",
+        "Các trạng thái non-terminal được nhảy tự do hoặc đi lùi vì không có bảng transition."
+      ],
+      "postconditions": "Status=CANCELLED và các effects được lưu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "cancelOrder",
+          "endpoint": "PUT|POST /api/admin/orders/{id}/cancel"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java",
+          "class": "OrderServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "getAccessibleStoreIds",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+          "class": "StoreScope",
+          "method": "canAccessStore",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java",
+          "class": "AdminOrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/admin/orders/{id}/status?status=CANCELLED"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+          "class": "OrderRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT|POST /api/orders/{id}/status?status=CANCELLED"
+        }
+      ],
+      "notes": [
+        "Các hold HELD chỉ commit/release một lần theo trạng thái reservation.",
+        "Không có payment collection integration, courier API hoặc xác nhận giao vận ngoài hệ thống.",
+        "UI có thể giới hạn nút theo trạng thái nhưng backend không enforced predecessor; root merge UI exact."
+      ]
+    },
+    {
+      "key": "return.create",
+      "name": "Gửi yêu cầu đổi trả",
+      "module": "returns",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Khách gửi yêu cầu đổi trả có lý do và các dòng đơn.",
+      "preconditions": "API công khai; orderId tồn tại, reason không trống, items không rỗng. UI chỉ hiện với order COMPLETED chưa có return. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Nhận DTO và @Valid kiểm top-level orderId/reason/items.",
+        "Tìm order.",
+        "Build ReturnRequest với order/reason/REQUESTED nhưng không gán customer hoặc description.",
+        "Gọi repository.save.",
+        "Nếu có thể qua save, tìm các orderItem theo ID và lưu return items rồi trả response."
+      ],
+      "alternatives": [
+        "Đường persistence thật không đáp ứng @NotNull/nullable=false cho customer: không có main success được chứng minh.",
+        "Items DTO không có @Valid cascade, quantity nested chưa validated ở controller.",
+        "Không kiểm orderItem thuộc order, quantity <= ordered, order status, owner hoặc duplicate request.",
+        "Order/orderItem không có: generic Exception 500."
+      ],
+      "postconditions": "Không thể khẳng định request được tạo thành công; entity customer bắt buộc đang thiếu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "create",
+          "endpoint": "POST /api/returns"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "create",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/domain/entity/returns/ReturnRequestEntity.java",
+          "class": "ReturnRequestEntity",
+          "method": "",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/domain/dto/request/returns/ReturnRequestDto.java",
+          "class": "ReturnRequestDto",
+          "method": "",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "ReturnServiceTest mocks save, không validate entity/DB, nên success test không chứng minh persist thật.",
+        "Không có cơ chế refund hoặc nhập lại inventory."
+      ]
+    },
+    {
+      "key": "return.view",
+      "name": "Theo dõi yêu cầu đổi trả",
+      "module": "returns",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem yêu cầu đổi trả bằng ID hoặc theo order/customer; API còn cho xem toàn bộ.",
+      "preconditions": "API không cần đăng nhập; record/order/customer dùng để tra cứu.",
+      "main": [
+        "Gọi GET /api/returns/{id}, /order/{orderId}, /customer/{customerId}, hoặc /api/returns.",
+        "Repository đọc request, order và các return items.",
+        "Map trạng thái, lý do, processedByName, thời điểm và các dòng.",
+        "Trả DTO/list; UI customer order detail và admin order detail hiển thị theo orderId."
+      ],
+      "alternatives": [
+        "Không request với ID: generic Exception 500.",
+        "Không record trong query list: danh sách rỗng.",
+        "Không kiểm owner/customer/store scope."
+      ],
+      "postconditions": "Request records được đọc.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "getById",
+          "endpoint": "GET /api/returns/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "getAll",
+          "endpoint": "GET /api/returns"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "getByCustomer",
+          "endpoint": "GET /api/returns/customer/{customerId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "getByOrder",
+          "endpoint": "GET /api/returns/order/{orderId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "getById",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "getAll",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "getByCustomer",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "getByOrder",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/returns/ReturnRequestRepository.java",
+          "class": "ReturnRequestRepository",
+          "method": "findByOrderId",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/returns/ReturnRequestRepository.java",
+          "class": "ReturnRequestRepository",
+          "method": "findByCustomerId",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Public API operational access là thiếu auth; UI customer/admin access có ROLE gates ở page level.",
+        "Description không có trong response dù entity có field."
+      ]
+    },
+    {
+      "key": "return.approve",
+      "name": "Duyệt yêu cầu đổi trả",
+      "module": "returns",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Cập nhật trạng thái lưu trong yêu cầu đổi trả sang APPROVED.",
+      "preconditions": "API công khai; ReturnRequest tồn tại; employeeId request/default 1. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi PUT /api/returns/{id}/status?status=APPROVED.",
+        "Tìm request và gán trạng thái; không kiểm predecessor.",
+        "Tìm employeeId; nếu không có, lưu processedBy=null.",
+        "Ghi processedAt now và lưu request."
+      ],
+      "alternatives": [
+        "Không request: generic Exception 500.",
+        "Không employee: vẫn cập nhật, không lỗi.",
+        "Guest có thể gọi endpoint; không kiểm employee identity, StoreScope hoặc owner.",
+        "Có thể cập nhật từ trạng thái nào sang trạng thái nào."
+      ],
+      "postconditions": "Request status=APPROVED, processedAt cập nhật; không phát sinh hoàn kho/hoàn tiền.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT /api/returns/{id}/status?status=APPROVED&employeeId=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "UI admin chỉ có APPROVED/REJECTED khi REQUESTED; PROCESSING/COMPLETED là backend-only.",
+        "Actor UI intended là employee, access enforcement actual là PUBLIC."
+      ]
+    },
+    {
+      "key": "return.reject",
+      "name": "Từ chối yêu cầu đổi trả",
+      "module": "returns",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Cập nhật trạng thái lưu trong yêu cầu đổi trả sang REJECTED.",
+      "preconditions": "API công khai; ReturnRequest tồn tại; employeeId request/default 1. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi PUT /api/returns/{id}/status?status=REJECTED.",
+        "Tìm request và gán trạng thái; không kiểm predecessor.",
+        "Tìm employeeId; nếu không có, lưu processedBy=null.",
+        "Ghi processedAt now và lưu request."
+      ],
+      "alternatives": [
+        "Không request: generic Exception 500.",
+        "Không employee: vẫn cập nhật, không lỗi.",
+        "Guest có thể gọi endpoint; không kiểm employee identity, StoreScope hoặc owner.",
+        "Có thể cập nhật từ trạng thái nào sang trạng thái nào."
+      ],
+      "postconditions": "Request status=REJECTED, processedAt cập nhật; không phát sinh hoàn kho/hoàn tiền.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT /api/returns/{id}/status?status=REJECTED&employeeId=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "UI admin chỉ có APPROVED/REJECTED khi REQUESTED; PROCESSING/COMPLETED là backend-only.",
+        "Actor UI intended là employee, access enforcement actual là PUBLIC."
+      ]
+    },
+    {
+      "key": "return.process",
+      "name": "Ghi nhận đang xử lý đổi trả",
+      "module": "returns",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Cập nhật trạng thái lưu trong yêu cầu đổi trả sang PROCESSING.",
+      "preconditions": "API công khai; ReturnRequest tồn tại; employeeId request/default 1. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi PUT /api/returns/{id}/status?status=PROCESSING.",
+        "Tìm request và gán trạng thái; không kiểm predecessor.",
+        "Tìm employeeId; nếu không có, lưu processedBy=null.",
+        "Ghi processedAt now và lưu request."
+      ],
+      "alternatives": [
+        "Không request: generic Exception 500.",
+        "Không employee: vẫn cập nhật, không lỗi.",
+        "Guest có thể gọi endpoint; không kiểm employee identity, StoreScope hoặc owner.",
+        "Có thể cập nhật từ trạng thái nào sang trạng thái nào."
+      ],
+      "postconditions": "Request status=PROCESSING, processedAt cập nhật; không phát sinh hoàn kho/hoàn tiền.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT /api/returns/{id}/status?status=PROCESSING&employeeId=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "UI admin chỉ có APPROVED/REJECTED khi REQUESTED; PROCESSING/COMPLETED là backend-only.",
+        "Actor UI intended là employee, access enforcement actual là PUBLIC."
+      ]
+    },
+    {
+      "key": "return.complete",
+      "name": "Ghi nhận hoàn tất đổi trả",
+      "module": "returns",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Cập nhật trạng thái lưu trong yêu cầu đổi trả sang COMPLETED.",
+      "preconditions": "API công khai; ReturnRequest tồn tại; employeeId request/default 1. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi PUT /api/returns/{id}/status?status=COMPLETED.",
+        "Tìm request và gán trạng thái; không kiểm predecessor.",
+        "Tìm employeeId; nếu không có, lưu processedBy=null.",
+        "Ghi processedAt now và lưu request."
+      ],
+      "alternatives": [
+        "Không request: generic Exception 500.",
+        "Không employee: vẫn cập nhật, không lỗi.",
+        "Guest có thể gọi endpoint; không kiểm employee identity, StoreScope hoặc owner.",
+        "Có thể cập nhật từ trạng thái nào sang trạng thái nào."
+      ],
+      "postconditions": "Request status=COMPLETED, processedAt cập nhật; không phát sinh hoàn kho/hoàn tiền.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java",
+          "class": "ReturnRestController",
+          "method": "updateStatus",
+          "endpoint": "PUT /api/returns/{id}/status?status=COMPLETED&employeeId=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/returns/impl/ReturnServiceImpl.java",
+          "class": "ReturnServiceImpl",
+          "method": "updateStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "UI admin chỉ có APPROVED/REJECTED khi REQUESTED; PROCESSING/COMPLETED là backend-only.",
+        "Actor UI intended là employee, access enforcement actual là PUBLIC."
+      ]
+    },
+    {
+      "key": "review.view_product",
+      "name": "Xem đánh giá sản phẩm",
+      "module": "review",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tra cứu các đánh giá sản phẩm có moderationStatus VISIBLE.",
+      "preconditions": "Product ID được chỉ định; API công khai.",
+      "main": [
+        "Gọi GET /api/reviews/product/{productId}.",
+        "Repository tìm reviews theo productId.",
+        "Service lọc VISIBLE.",
+        "Trả rating/comment/customerName/productName."
+      ],
+      "alternatives": [
+        "Không có review hoặc chỉ HIDDEN/PENDING: danh sách rỗng.",
+        "Không kiểm product tồn tại riêng."
+      ],
+      "postconditions": "Visible reviews được đọc.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java",
+          "class": "ReviewRestController",
+          "method": "getByProduct",
+          "endpoint": "GET /api/reviews/product/{productId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/review/impl/ReviewServiceImpl.java",
+          "class": "ReviewServiceImpl",
+          "method": "getByProduct",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Frontend tab review tĩnh, không gọi API => Backend Only sau merge UI."
+      ]
+    },
+    {
+      "key": "review.create",
+      "name": "Viết đánh giá sản phẩm",
+      "module": "review",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Lưu rating và nội dung review gắn product/customer.",
+      "preconditions": "API công khai; customerId query/default 1 và product tồn tại; DTO orderId bắt buộc, rating 1..5. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "@Valid kiểm productId/orderId/rating.",
+        "Tìm product và customer theo IDs.",
+        "Tìm orderId; nếu không có thì order=null và tiếp tục.",
+        "Build review với rating/comment và status VISIBLE, không set orderItem.",
+        "Lưu và trả DTO."
+      ],
+      "alternatives": [
+        "Product/customer không có: generic Exception 500.",
+        "orderId không có: vẫn tạo review với order=null.",
+        "Không kiểm customer sở hữu order, order COMPLETED hay product nằm trong order; không chống duplicate.",
+        "Review xuất hiện VISIBLE ngay dù entity default là PENDING."
+      ],
+      "postconditions": "Review được lưu VISIBLE nếu product/customer/validation hợp lệ.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java",
+          "class": "ReviewRestController",
+          "method": "create",
+          "endpoint": "POST /api/reviews?customerId=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/review/impl/ReviewServiceImpl.java",
+          "class": "ReviewServiceImpl",
+          "method": "create",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không có UI viết review; actor actual PUBLIC, customerId không được lấy từ AuthPrincipal."
+      ]
+    },
+    {
+      "key": "review.all",
+      "name": "Kiểm tra danh sách đánh giá",
+      "module": "review",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Đọc toàn bộ review, kể cả hidden/pending.",
+      "preconditions": "API công khai.",
+      "main": [
+        "Gọi GET /api/reviews.",
+        "Đọc findAll.",
+        "Map tất cả DTO, không lọc status."
+      ],
+      "alternatives": [
+        "Không reviews: danh sách rỗng."
+      ],
+      "postconditions": "Toàn bộ reviews được trả.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java",
+          "class": "ReviewRestController",
+          "method": "getAll",
+          "endpoint": "GET /api/reviews"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/review/impl/ReviewServiceImpl.java",
+          "class": "ReviewServiceImpl",
+          "method": "getAll",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không có UI quản trị review hoặc kiểm quyền REVIEW_MODERATE."
+      ]
+    },
+    {
+      "key": "review.moderate",
+      "name": "Ẩn hoặc hiển thị đánh giá",
+      "module": "review",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Thay đổi moderationStatus của review sang VISIBLE/HIDDEN/PENDING.",
+      "preconditions": "API công khai; reviewId tồn tại; ReviewStatus enum hợp lệ. REST mutation cần Bearer header hoặc X-Requested-With: fetch/XMLHttpRequest.",
+      "main": [
+        "Gửi PUT /api/reviews/{id}/status?status=....",
+        "Tìm review theo ID.",
+        "Gán status không kiểm trạng thái trước.",
+        "Lưu và trả DTO; VISIBLE mới được public product list trả."
+      ],
+      "alternatives": [
+        "Không có review: generic Exception 500.",
+        "Guest hoặc customer đều có thể update vì permitAll.",
+        "ReviewStatus enum không hợp lệ: framework reject request."
+      ],
+      "postconditions": "Status review thay đổi và ảnh hưởng product visible list.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java",
+          "class": "ReviewRestController",
+          "method": "updateModerationStatus",
+          "endpoint": "PUT /api/reviews/{id}/status?status=..."
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/review/impl/ReviewServiceImpl.java",
+          "class": "ReviewServiceImpl",
+          "method": "updateModerationStatus",
+          "endpoint": ""
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+          "class": "SecurityConfig",
+          "method": "securityFilterChain",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Không có UI moderation; không ghi moderator/audit timestamp."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A4A
+skinparam ArrowThickness 1
+skinparam actorStyle stickman
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam usecaseBorderColor #5C5544
+skinparam usecaseFontColor #252525
+skinparam rectangleBorderColor #565656
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam nodesep 32
+skinparam ranksep 70
+title Cửa hàng
+actor "Người gọi API công\nkhai" as A_PUBLIC
+actor "Khách vãng lai" as A_GUEST
+actor "Khách hàng" as A_CUSTOMER
+actor "Nhân viên" as A_EMPLOYEE
+rectangle "Cosmetic Store Chain Management — LUNEA" as SYSTEM {
+  usecase "UC033\nXem hệ thống cửa hàng" as UC033 #FFF8DB
+  usecase "UC034\nThêm cửa hàng" as UC034 #E5EEF9
+  usecase "UC035\nCập nhật cửa hàng" as UC035 #E5EEF9
+  usecase "UC036\nNgừng hoạt động cửa hàng" as UC036 #E5EEF9
+}
+UC033 -- A_PUBLIC
+A_GUEST -- UC033
+A_CUSTOMER -- UC033
+A_EMPLOYEE -- UC033
+UC034 -- A_PUBLIC
+UC035 -- A_PUBLIC
+UC036 -- A_PUBLIC
+legend bottom left
+|= Màu |= Implementation Status |
+|<#FFF8DB> | Implemented |
+|<#FFE7CE> | Partially Implemented |
+|<#E5EEF9> | Backend Only |
+|<#EDE5F4> | UI Only |
+Nguồn: source review 13/10/2026. Chưa chạy nghiệm thu ứng dụng.
+API công khai phản ánh permitAll hiện tại; xem báo cáo quyền.
+endlegend
+@enduml

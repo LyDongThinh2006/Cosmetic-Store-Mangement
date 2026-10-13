@@ -1,0 +1,56 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A4A
+skinparam ArrowThickness 1
+skinparam actorStyle stickman
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam usecaseBorderColor #5C5544
+skinparam usecaseFontColor #252525
+skinparam rectangleBorderColor #565656
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam nodesep 32
+skinparam ranksep 70
+title Người gọi API công khai — phần 1
+actor "Người gọi API công\nkhai" as A_PUBLIC
+rectangle "Cosmetic Store Chain Management — LUNEA" as SYSTEM {
+  usecase "UC005\nXem hồ sơ khách hàng" as UC005 #FFF8DB
+  usecase "UC006\nCập nhật hồ sơ khách hàng" as UC006 #FFE7CE
+  usecase "UC007\nXem sổ địa chỉ" as UC007 #FFF8DB
+  usecase "UC008\nThêm địa chỉ nhận hàng" as UC008 #FFF8DB
+  usecase "UC009\nCập nhật địa chỉ nhận hàng" as UC009 #FFE7CE
+  usecase "UC010\nXóa địa chỉ nhận hàng" as UC010 #FFF8DB
+  usecase "UC011\nXem hồ sơ làm đẹp" as UC011 #E5EEF9
+  usecase "UC012\nCập nhật hồ sơ làm đẹp" as UC012 #E5EEF9
+  usecase "UC013\nTra cứu danh sách khách hàng" as UC013 #E5EEF9
+  usecase "UC014\nĐặt địa chỉ nhận hàng mặc\nđịnh" as UC014 #FFE7CE
+  usecase "UC015\nTra cứu nhân viên" as UC015 #E5EEF9
+  usecase "UC016\nTạo tài khoản nhân viên" as UC016 #FFE7CE
+}
+A_PUBLIC -- UC005
+A_PUBLIC -- UC006
+A_PUBLIC -- UC007
+A_PUBLIC -- UC008
+A_PUBLIC -- UC009
+A_PUBLIC -- UC010
+A_PUBLIC -- UC011
+A_PUBLIC -- UC012
+A_PUBLIC -- UC013
+A_PUBLIC -- UC014
+A_PUBLIC -- UC015
+A_PUBLIC -- UC016
+legend bottom left
+|= Màu |= Implementation Status |
+|<#FFF8DB> | Implemented |
+|<#FFE7CE> | Partially Implemented |
+|<#E5EEF9> | Backend Only |
+|<#EDE5F4> | UI Only |
+Nguồn: source review 13/10/2026. Chưa chạy nghiệm thu ứng dụng.
+API công khai phản ánh permitAll hiện tại; xem báo cáo quyền.
+endlegend
+@enduml

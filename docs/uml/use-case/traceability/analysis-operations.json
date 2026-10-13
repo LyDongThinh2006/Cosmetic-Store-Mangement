@@ -1,0 +1,2694 @@
+{
+  "scope": "Backend catalog, brand/category, store/inventory/stock transfer, supplier/purchase; toàn bộ implementation + DTO/entity/repository/mapper và security liên quan đã được đọc. Chưa đối chiếu toàn bộ frontend; root gán ID và status cuối.",
+  "files_read": [
+    "pom.xml",
+    "src/main/resources/application.properties",
+    "src/main/resources/application-local.properties",
+    "src/main/resources/application-prod.properties",
+    "src/test/resources/application.properties",
+    "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+    "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java",
+    "src/main/java/com/thinh/cosmetic/controller/HomeController.java",
+    "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/catalog/BrandRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/catalog/CategoryRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/catalog/ProductRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/catalog/ProductSkuRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/purchase/PurchaseOrderRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/purchase/SupplierRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/store/InventoryAdjustmentRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/store/StockTransferRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/store/StoreRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/catalog/BrandResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/catalog/CategoryResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/catalog/ProductResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/catalog/ProductSkuResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/purchase/PurchaseOrderResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/purchase/SupplierResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/store/InventoryResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/store/StockTransferResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/store/StoreResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/store/StoreStockResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/AttributeEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/BrandEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/CategoryEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductAttributeValueEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductImageEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductSkuEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/catalog/SkuAttributeValueEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryAdjustmentEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/PurchaseOrderEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/PurchaseOrderItemEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StockTransferEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StockTransferItemEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StoreEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/inventory/SupplierEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ActiveStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/PriceRange.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/PurchaseOrderStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ReceiptStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/SkinType.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/SkincareNeed.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/TransferStatus.java",
+    "src/main/java/com/thinh/cosmetic/exception/GlobalExceptionHandler.java",
+    "src/main/java/com/thinh/cosmetic/mapper/catalog/BrandMapper.java",
+    "src/main/java/com/thinh/cosmetic/mapper/catalog/CategoryMapper.java",
+    "src/main/java/com/thinh/cosmetic/mapper/catalog/ProductMapper.java",
+    "src/main/java/com/thinh/cosmetic/mapper/purchase/SupplierMapper.java",
+    "src/main/java/com/thinh/cosmetic/mapper/store/StoreMapper.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/EmployeeStoreRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/AttributeRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/BrandRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/CategoryRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/ProductAttributeValueRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/ProductImageRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/ProductRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/ProductSkuRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/catalog/SkuAttributeValueRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/purchase/PurchaseOrderItemRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/purchase/PurchaseOrderRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/purchase/SupplierRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/store/InventoryAdjustmentRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/store/StockTransferItemRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/store/StockTransferRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/store/StoreRepository.java",
+    "src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java",
+    "src/main/java/com/thinh/cosmetic/security/AuthPrincipal.java",
+    "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+    "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java",
+    "src/main/java/com/thinh/cosmetic/service/catalog/BrandService.java",
+    "src/main/java/com/thinh/cosmetic/service/catalog/CategoryService.java",
+    "src/main/java/com/thinh/cosmetic/service/catalog/ProductService.java",
+    "src/main/java/com/thinh/cosmetic/service/catalog/impl/BrandServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/catalog/impl/CategoryServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/purchase/PurchaseOrderService.java",
+    "src/main/java/com/thinh/cosmetic/service/purchase/SupplierService.java",
+    "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/purchase/impl/SupplierServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/store/InventoryService.java",
+    "src/main/java/com/thinh/cosmetic/service/store/StockTransferService.java",
+    "src/main/java/com/thinh/cosmetic/service/store/StoreService.java",
+    "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java",
+    "src/test/java/com/thinh/cosmetic/BrandTests.java",
+    "src/test/java/com/thinh/cosmetic/controller/Phase1RestEndpointsTest.java",
+    "src/test/java/com/thinh/cosmetic/controller/WebPageControllersTest.java",
+    "src/test/java/com/thinh/cosmetic/service/InventoryServiceTest.java"
+  ],
+  "modules": [
+    {
+      "key": "catalog",
+      "name": "Danh mục sản phẩm",
+      "behavior": "Đọc sản phẩm với SKU/ảnh/attributes/stock; tìm và lọc trong bộ nhớ; thêm/sửa/xóa vật lý thông tin cơ bản."
+    },
+    {
+      "key": "brand_category",
+      "name": "Thương hiệu và danh mục",
+      "behavior": "CRUD thương hiệu; CRUD danh mục và parent khi tạo; parentId bị bỏ qua khi sửa."
+    },
+    {
+      "key": "store",
+      "name": "Hệ thống cửa hàng",
+      "behavior": "Thông tin cửa hàng công khai, CRUD với DELETE chuyển INACTIVE."
+    },
+    {
+      "key": "inventory",
+      "name": "Tồn kho",
+      "behavior": "Public SKU stock; inventory list/detail/available/low-stock/adjust chỉ cần ROLE_EMPLOYEE, chưa StoreScope."
+    },
+    {
+      "key": "stock_transfer",
+      "name": "Chuyển kho",
+      "behavior": "Phiếu PENDING → ship trừ kho nguồn / IN_TRANSIT → receive cộng kho đích / RECEIVED. API public."
+    },
+    {
+      "key": "purchase",
+      "name": "Nhà cung cấp và nhập hàng",
+      "behavior": "Supplier CRUD soft deactivate; PO DRAFT → confirm đồng thời cộng kho và CONFIRMED. API public."
+    }
+  ],
+  "security": {
+    "method_security_annotations": "Không có @PreAuthorize trên các REST hoặc service trong phạm vi này. @EnableMethodSecurity bật trong SecurityConfig nhưng không tự tạo kiểm tra permission.",
+    "public_endpoints": [
+      "/api/products/**",
+      "/api/brands/**",
+      "/api/categories/**",
+      "/api/stores/**",
+      "/api/suppliers/**",
+      "/api/stock-transfers/**",
+      "/api/purchase-orders/**"
+    ],
+    "protected_endpoints": {
+      "/api/inventory/**": "ROLE_EMPLOYEE",
+      "/admin/**": "ROLE_EMPLOYEE"
+    },
+    "mutation_csrf_filter": "XRequestedWithFilter yêu cầu X-Requested-With=fetch/XMLHttpRequest cho POST/PUT/PATCH/DELETE /api/** nếu không có Bearer header. Header này không chứng minh đăng nhập/permission; endpoint permitAll vẫn public.",
+    "store_scope": "StoreScope cho ALL_STORES, ROLE_ADMIN hoặc ADMIN => null/all; người có employeeId lấy EmployeeStore IDs; còn lại list rỗng. AdminPageController dùng scope để dựng accessibleStores UI. Các inventory/transfer/purchase/catalog services không gọi scope.",
+    "actor_aliases": {
+      "PUBLIC": "Khách vãng lai hoặc bất kỳ người gọi API; không yêu cầu authority.",
+      "ROLE_EMPLOYEE": "Nhân viên có authority ROLE_EMPLOYEE; không chia Branch/Warehouse/Manager theo permission trong phần code này."
+    }
+  },
+  "flows": [
+    {
+      "key": "stock_transfer_lifecycle",
+      "states": [
+        "PENDING",
+        "IN_TRANSIT",
+        "RECEIVED"
+      ],
+      "actions": [
+        {
+          "from": "PENDING",
+          "to": "IN_TRANSIT",
+          "action": "Xác nhận xuất chuyển kho",
+          "effect": "Trừ actualStock tại nguồn; stamped shippedAt."
+        },
+        {
+          "from": "IN_TRANSIT",
+          "to": "RECEIVED",
+          "action": "Xác nhận nhận chuyển kho",
+          "effect": "Cộng actualStock tại đích; stamped receivedAt."
+        }
+      ],
+      "not_implemented": [
+        "PENDING_EXPORT enum không dùng trong logic.",
+        "Không có approve/cancel/completion riêng hoặc nhận từng phần."
+      ]
+    },
+    {
+      "key": "purchase_lifecycle",
+      "states": [
+        "DRAFT",
+        "CONFIRMED"
+      ],
+      "actions": [
+        {
+          "from": "DRAFT",
+          "to": "CONFIRMED",
+          "action": "Xác nhận nhập hàng vào kho",
+          "effect": "Cộng actualStock cửa hàng nhận và confirmedAt trong một method."
+        }
+      ],
+      "not_implemented": [
+        "Không tách phê duyệt PO và receipt.",
+        "ReceiptStatus enum không gắn entity/service/endpoint phiếu nhận riêng."
+      ]
+    },
+    {
+      "key": "stock_adjustment",
+      "actions": [
+        "Tìm inventory hiện có.",
+        "Kiểm tra newQuantity >= heldQuantity.",
+        "Lưu before/after/reason/employee/timestamp.",
+        "Cập nhật actualStock."
+      ]
+    },
+    {
+      "key": "category_hierarchy",
+      "actions": [
+        "Create: nếu parentId được cung cấp thì tìm category cha và gán parent.",
+        "Update: map tên/mô tả/status, bỏ qua parentId."
+      ],
+      "not_implemented": [
+        "Đổi/cắt quan hệ cha; kiểm tra chu trình hierarchy; trả cây/danh mục con khi filter."
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "key": "stock_available",
+      "rule": "availableStock=max(0,actualStock-heldQuantity); tổng product available cộng mọi inventory của mọi SKU.",
+      "source": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java#enrich; src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java"
+    },
+    {
+      "key": "stock_low",
+      "rule": "low-stock khi store.id=storeId AND actualStock <= minimumStock; không dùng availableStock.",
+      "source": "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java#findLowStock"
+    },
+    {
+      "key": "adjustment",
+      "rule": "Số tồn mới >=0 và >=heldQuantity; reason bắt buộc ≤255; inventory phải tồn tại; audit trước/sau và employee required.",
+      "source": "src/main/java/com/thinh/cosmetic/domain/dto/request/store/InventoryAdjustmentRequest.java; src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java#adjustStock"
+    },
+    {
+      "key": "search",
+      "rule": "Từ khóa có/không dấu; brand/category exact ID; skin/need theo tên Attribute, không theo value; filter/sort in-memory sau enrich; không pagination.",
+      "source": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java#searchAndFilter"
+    },
+    {
+      "key": "price_ranges",
+      "rule": "under300/under500 => <500000; 300to600/500to1000 => [500000,1000000]; above1000 => >1000000; không nhận diện => không lọc.",
+      "source": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java#matchesPriceRange"
+    },
+    {
+      "key": "transfer",
+      "rule": "create PENDING; ship chỉ PENDING và actualStock >= quantity; receive chỉ IN_TRANSIT và cộng toàn bộ quantity; nếu thiếu inventory đích tạo actual=0, held=0, minimum=5.",
+      "source": "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java"
+    },
+    {
+      "key": "purchase",
+      "rule": "Tổng nhập=sum(unitPrice*quantity); create DRAFT; confirm chỉ DRAFT và cộng toàn bộ quantity vào receivingStore; missing inventory mặc định minimum=5.",
+      "source": "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java"
+    },
+    {
+      "key": "soft_delete",
+      "rule": "DELETE store/supplier chỉ đổi status=INACTIVE; DELETE product/brand/category xóa vật lý.",
+      "source": "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java; src/main/java/com/thinh/cosmetic/service/purchase/impl/SupplierServiceImpl.java; src/main/java/com/thinh/cosmetic/service/catalog/impl"
+    },
+    {
+      "key": "checked_exceptions",
+      "rule": "Các service thông thường throw new Exception cho not-found/wrong-state/insufficient stock; GlobalExceptionHandler trả INTERNAL_ERROR HTTP 500, không có BusinessException code riêng.",
+      "source": "src/main/java/com/thinh/cosmetic/exception/GlobalExceptionHandler.java"
+    },
+    {
+      "key": "nested_validation",
+      "rule": "@Valid đặt ở @RequestBody ngoài nhưng items của StockTransferRequest/PurchaseOrderRequest thiếu @Valid; nested DTO constraints chưa cascade. Entity constraints tồn tại khi persistence.",
+      "source": "src/main/java/com/thinh/cosmetic/domain/dto/request/store/StockTransferRequest.java; src/main/java/com/thinh/cosmetic/domain/dto/request/purchase/PurchaseOrderRequest.java"
+    }
+  ],
+  "gaps": [
+    {
+      "key": "missing_rbac",
+      "description": "Catalog/store/supplier/transfer/purchase mutation endpoints permitAll; không có @PreAuthorize.",
+      "impact": "Không thể gán quyền quản trị/manager/warehouse dựa tài liệu thiết kế. Khách không đăng nhập với header mutation có thể gọi thao tác.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+        "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+        "src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java",
+        "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+        "src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "missing_store_scope",
+      "description": "Inventory chỉ ROLE_EMPLOYEE, không kiểm tra StoreScope; transfer/purchase cũng không scope.",
+      "impact": "Danh sách cửa hàng trên UI được lọc nhưng API cho phép truy cập ID bất kỳ.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+        "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "sku_crud_absent",
+      "description": "ProductSkuRequest/Response, Entity và Repository có; không có ProductSkuService, Mapper hoặc REST CRUD.",
+      "impact": "Không xem quản lý SKU là use case hoàn chỉnh; sản phẩm tạo mới chưa có SKU/giá/tồn bán được qua ProductRequest.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/dto/request/catalog/ProductSkuRequest.java",
+        "src/main/java/com/thinh/cosmetic/repository/catalog/ProductSkuRepository.java",
+        "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "image_attributes_management_absent",
+      "description": "ProductImage/Attribute/ProductAttributeValue/SkuAttributeValue có Entity/Repository; chỉ đọc ProductImage/ProductAttributeValue khi enrich, không controller/service quản lý.",
+      "impact": "Không tạo UC upload/manage ảnh hoặc attribute CRUD từ entity/test/seeder.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductImageEntity.java",
+        "src/main/java/com/thinh/cosmetic/repository/catalog/AttributeRepository.java",
+        "src/main/java/com/thinh/cosmetic/repository/catalog/SkuAttributeValueRepository.java",
+        "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "category_update_parent_ignored",
+      "description": "CategoryRequest.parentId bị bỏ qua trong CategoryMapper.updateEntity; CategoryServiceImpl.update không gán parent.",
+      "impact": "Thay cha/tách gốc không được thực hiện dù DTO nhận parentId.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/mapper/catalog/CategoryMapper.java",
+        "src/main/java/com/thinh/cosmetic/service/catalog/impl/CategoryServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "inactive_exposed",
+      "description": "getAll/enrich/public stock không lọc ACTIVE.",
+      "impact": "Sản phẩm/SKU/cửa hàng ngừng hoạt động vẫn có thể xuất hiện trong tra cứu; store/supplier inactive chưa chặn transfer/purchase.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "public_stock_details",
+      "description": "Public stock trả actualStock và heldQuantity, không chỉ available; skuId không tồn tại vẫn trả 0 mọi cửa hàng.",
+      "impact": "Tra SKU sai có phản hồi giống SKU hết hàng; dữ liệu tồn/giữ được công khai.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/domain/dto/response/store/StoreStockResponse.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "transfer_held_stock",
+      "description": "confirmShipment kiểm tra actualStock, không actualStock-heldQuantity.",
+      "impact": "Có thể xuất hàng đã giữ cho đơn khách, làm actual < held.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "transfer_approval_absent",
+      "description": "Không có approve; PENDING_EXPORT enum không được service dùng; terminal state RECEIVED.",
+      "impact": "Không đưa approval/completion riêng vào diagram hiện hành.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/enums/TransferStatus.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "purchase_receipt_merged",
+      "description": "confirm PO đồng thời cộng stock DRAFT→CONFIRMED; không entity/service/REST Receipt riêng.",
+      "impact": "Không tạo actor nhà cung cấp bên ngoài tham gia API hoặc UC phê duyệt/nhận hàng tách biệt.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/enums/ReceiptStatus.java",
+        "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "created_by_query",
+      "description": "Transfer/PO create lấy employeeId query mặc định 1; không principal. Điều chỉnh ưu tiên principal nhưng có fallback query/1.",
+      "impact": "Gán người tạo không xác thực hoặc employee missing làm entity validation thất bại.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+        "src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java",
+        "src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "checked_transaction",
+      "description": "create transfer/PO và ship lưu dần trước khi có thể ném checked Exception; @Transactional không khai báo rollbackFor.",
+      "impact": "Theo rollback mặc định Spring, có nguy cơ commit dữ liệu/một phần stock khi dòng sau không tồn tại/thiếu hàng. Đây là phân tích tĩnh, chưa chứng minh bằng test runtime riêng.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "concurrent_stock",
+      "description": "Entity inventory/transfer/PO không @Version; repo không locking; mọi update read-modify-save.",
+      "impact": "Chưa có chứng cứ ngăn lost update/ship-confirm cạnh tranh. Không đánh dấu concurrency-safe.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryEntity.java",
+        "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StockTransferEntity.java",
+        "src/main/java/com/thinh/cosmetic/domain/entity/inventory/PurchaseOrderEntity.java",
+        "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "no_inventory_pair_uniqueness",
+      "description": "InventoryEntity không khai báo uniqueConstraint store×sku; findByStoreIdAndSkuId trả Optional; public stock merge chọn bản ghi đầu.",
+      "impact": "Entity layer không bảo đảm một inventory cho một store-SKU; cần root đối chiếu schema SQL thực tế trước kết luận DB.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryEntity.java",
+        "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "operating_hours_not_persisted",
+      "description": "StoreRequest/Response.operatingHours có nhưng StoreEntity không có; StoreMapper unmapped ignore.",
+      "impact": "String operatingHours không được lưu/đọc, chỉ openTime/closeTime có persistence.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/dto/request/store/StoreRequest.java",
+        "src/main/java/com/thinh/cosmetic/domain/dto/response/store/StoreResponse.java",
+        "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StoreEntity.java",
+        "src/main/java/com/thinh/cosmetic/mapper/store/StoreMapper.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "audit_read_absent",
+      "description": "Điều chỉnh lưu InventoryAdjustment nhưng không endpoint/page lịch sử trong phần controller/service đã đọc; ship/receive/purchase confirm không ghi InventoryAdjustment.",
+      "impact": "Không tạo UC truy xuất lịch sử audit hoặc audit mọi biến động kho.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/repository/store/InventoryAdjustmentRepository.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+        "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "nested_validation_missing",
+      "description": "List items thiếu @Valid; DTO các dòng chưa cascade validation từ controller.",
+      "impact": "Một số input sai đi vào logic/persistence, có thể trả 500 thay 400 hoặc tạo bản ghi đầu trước lỗi; entity validations vẫn kiểm soát lúc lưu.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/domain/dto/request/store/StockTransferRequest.java",
+        "src/main/java/com/thinh/cosmetic/domain/dto/request/purchase/PurchaseOrderRequest.java"
+      ],
+      "status": "Observed from implementation"
+    },
+    {
+      "key": "product_update_unenriched",
+      "description": "update product trả productMapper.toResponse thay vì enrich.",
+      "impact": "UI dùng response trực tiếp có thể mất ảnh/SKU/stock tạm thời; cần GET reload.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java"
+      ],
+      "status": "Observed from implementation"
+    }
+  ],
+  "entity_relationships": [
+    {
+      "entity": "AttributeEntity",
+      "table": "attributes",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/AttributeEntity.java",
+      "relations": [],
+      "notes": [
+        "name ≤120, group ≤30; group dùng SKIN_TYPE/NEED; không unique theo group/name."
+      ]
+    },
+    {
+      "entity": "BrandEntity",
+      "table": "brands",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/BrandEntity.java",
+      "relations": [],
+      "notes": [
+        "Tên unique, status required/default ACTIVE ở Entity."
+      ]
+    },
+    {
+      "entity": "CategoryEntity",
+      "table": "categories",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/CategoryEntity.java",
+      "relations": [
+        {
+          "field": "parent",
+          "target": "CategoryEntity",
+          "required": false,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "Quan hệ tự tham chiếu một cha; không @OneToMany children; không rule chống cycle ở service."
+      ]
+    },
+    {
+      "entity": "ProductEntity",
+      "table": "products",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductEntity.java",
+      "relations": [
+        {
+          "field": "brand",
+          "target": "BrandEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "category",
+          "target": "CategoryEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "createdAt auto; isFeatured/status non-null; không cascade SKU/ảnh từ ProductEntity."
+      ]
+    },
+    {
+      "entity": "ProductSkuEntity",
+      "table": "skus",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductSkuEntity.java",
+      "relations": [
+        {
+          "field": "product",
+          "target": "ProductEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "skuCode unique; barcode unique optional; price ≥0 required; listPrice ≥0 optional."
+      ]
+    },
+    {
+      "entity": "ProductImageEntity",
+      "table": "product_images",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductImageEntity.java",
+      "relations": [
+        {
+          "field": "product",
+          "target": "ProductEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "productSku",
+          "target": "ProductSkuEntity",
+          "required": false,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "isPrimary/sortOrder required; không kiểm tra sku thuộc product trong service vì không có write service."
+      ]
+    },
+    {
+      "entity": "ProductAttributeValueEntity",
+      "table": "product_attribute_values",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/ProductAttributeValueEntity.java",
+      "relations": [
+        {
+          "field": "product",
+          "target": "ProductEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "attribute",
+          "target": "AttributeEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "value required ≤100; enrich dùng attribute.name thay value."
+      ]
+    },
+    {
+      "entity": "SkuAttributeValueEntity",
+      "table": "sku_attribute_values",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/catalog/SkuAttributeValueEntity.java",
+      "relations": [
+        {
+          "field": "sku",
+          "target": "ProductSkuEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "attribute",
+          "target": "AttributeEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "value required ≤255; hiện không có read/write workflow."
+      ]
+    },
+    {
+      "entity": "StoreEntity",
+      "table": "stores",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StoreEntity.java",
+      "relations": [],
+      "notes": [
+        "openTime/closeTime, lat/long persisted; operatingHours absent; ACTIVE default."
+      ]
+    },
+    {
+      "entity": "InventoryEntity",
+      "table": "inventories",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryEntity.java",
+      "relations": [
+        {
+          "field": "store",
+          "target": "StoreEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "sku",
+          "target": "ProductSkuEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "on_hand_qty, reserved_qty, low_stock_threshold >=0; default 0/0/5; no declared unique pair/version."
+      ]
+    },
+    {
+      "entity": "InventoryAdjustmentEntity",
+      "table": "inventory_adjustments",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryAdjustmentEntity.java",
+      "relations": [
+        {
+          "field": "store",
+          "target": "StoreEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "sku",
+          "target": "ProductSkuEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "performedBy",
+          "target": "EmployeeEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "before/after>=0, reason required, adjustedAt auto."
+      ]
+    },
+    {
+      "entity": "StockTransferEntity",
+      "table": "stock_transfers",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StockTransferEntity.java",
+      "relations": [
+        {
+          "field": "sourceStore",
+          "target": "StoreEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "destinationStore",
+          "target": "StoreEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "createdBy",
+          "target": "EmployeeEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "items",
+          "target": "StockTransferItemEntity",
+          "required": false,
+          "cardinality": "one-to-many",
+          "detail": "mappedBy stockTransfer; cascade ALL, không orphanRemoval"
+        }
+      ],
+      "notes": [
+        "required status; createdAt auto; shippedAt/receivedAt optional."
+      ]
+    },
+    {
+      "entity": "StockTransferItemEntity",
+      "table": "stock_transfer_items",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/StockTransferItemEntity.java",
+      "relations": [
+        {
+          "field": "stockTransfer",
+          "target": "StockTransferEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "sku",
+          "target": "ProductSkuEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "quantity>=1."
+      ]
+    },
+    {
+      "entity": "SupplierEntity",
+      "table": "suppliers",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/SupplierEntity.java",
+      "relations": [],
+      "notes": [
+        "name/contact/address/phone/email/status; name không unique ở Entity."
+      ]
+    },
+    {
+      "entity": "PurchaseOrderEntity",
+      "table": "purchase_orders",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/PurchaseOrderEntity.java",
+      "relations": [
+        {
+          "field": "supplier",
+          "target": "SupplierEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "receivingStore",
+          "target": "StoreEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "createdBy",
+          "target": "EmployeeEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "items",
+          "target": "PurchaseOrderItemEntity",
+          "required": false,
+          "cardinality": "one-to-many",
+          "detail": "mappedBy purchaseOrder; cascade ALL, không orphanRemoval"
+        }
+      ],
+      "notes": [
+        "totalAmount>=0 default 0; DRAFT default; createdAt auto; confirmedAt optional."
+      ]
+    },
+    {
+      "entity": "PurchaseOrderItemEntity",
+      "table": "purchase_order_items",
+      "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/PurchaseOrderItemEntity.java",
+      "relations": [
+        {
+          "field": "purchaseOrder",
+          "target": "PurchaseOrderEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        },
+        {
+          "field": "sku",
+          "target": "ProductSkuEntity",
+          "required": true,
+          "cardinality": "many-to-one",
+          "detail": ""
+        }
+      ],
+      "notes": [
+        "quantity>=1; unit_cost>=0; line_total>=0."
+      ]
+    }
+  ],
+  "important_queries": [
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/catalog/ProductRepository.java",
+      "class": "ProductRepository",
+      "method": "findByCategoryId / findByBrandId / findByIsFeaturedTrue / findByNameContainingIgnoreCase",
+      "meaning": "Finders định nghĩa nhưng searchAndFilter đọc findAll và lọc bộ nhớ.",
+      "used_by_operations_service": false
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/catalog/ProductSkuRepository.java",
+      "class": "ProductSkuRepository",
+      "method": "findByProductId",
+      "meaning": "Tất cả SKU của product, không status filter.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/catalog/ProductSkuRepository.java",
+      "class": "ProductSkuRepository",
+      "method": "findBySkuCode",
+      "meaning": "Finder code có trong repo; operations services chưa dùng.",
+      "used_by_operations_service": false
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/catalog/ProductImageRepository.java",
+      "class": "ProductImageRepository",
+      "method": "findByProductIdAndIsPrimaryTrue / findByProductIdOrderBySortOrderAsc",
+      "meaning": "Ảnh chính hoặc ảnh đầu; allImgs theo sortOrder.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/catalog/ProductAttributeValueRepository.java",
+      "class": "ProductAttributeValueRepository",
+      "method": "findByProductId",
+      "meaning": "Đọc attribute.name và group để dựng skinTypes/concerns.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+      "class": "InventoryRepository",
+      "method": "findByStoreId / findByStoreIdAndSkuId / findBySkuId",
+      "meaning": "Tra kho cho detail/list/available, public SKU stock, product total, transfer và purchase.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+      "class": "InventoryRepository",
+      "method": "findLowStock",
+      "meaning": "JPQL store.id=:storeId AND actualStock<=minimumStock.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/store/StockTransferItemRepository.java",
+      "class": "StockTransferItemRepository",
+      "method": "findByStockTransferId",
+      "meaning": "Các dòng dùng xuất và nhận, fallback response.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/store/StockTransferRepository.java",
+      "class": "StockTransferRepository",
+      "method": "findBySourceStoreIdOrDestinationStoreId",
+      "meaning": "Finder theo store có nhưng getAll dùng findAll.",
+      "used_by_operations_service": false
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/purchase/PurchaseOrderItemRepository.java",
+      "class": "PurchaseOrderItemRepository",
+      "method": "findByPurchaseOrderId",
+      "meaning": "Dòng hàng dùng confirm và fallback response.",
+      "used_by_operations_service": true
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/purchase/PurchaseOrderRepository.java",
+      "class": "PurchaseOrderRepository",
+      "method": "findBySupplierId / findByReceivingStoreId",
+      "meaning": "Finder có nhưng service getAll không sử dụng.",
+      "used_by_operations_service": false
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/purchase/SupplierRepository.java",
+      "class": "SupplierRepository",
+      "method": "existsByName",
+      "meaning": "Có finder nhưng create/update không gọi; không unique Entity.",
+      "used_by_operations_service": false
+    },
+    {
+      "file": "src/main/java/com/thinh/cosmetic/repository/account/EmployeeStoreRepository.java",
+      "class": "EmployeeStoreRepository",
+      "method": "findByEmployeeId",
+      "meaning": "StoreScope lấy accessible IDs; inventory/transfer/PO không sử dụng StoreScope.",
+      "used_by_operations_service": true
+    }
+  ],
+  "uml_relationships": {
+    "include": [],
+    "extend": [],
+    "generalization": [],
+    "reason": "Các CRUD là mục tiêu độc lập; xác thực là precondition; trạng thái phiếu chứng minh tuần tự nhưng không tự tạo include/extend. Audit/mapping/repository là nội bộ, không được tạo technical use case."
+  },
+  "use_cases": [
+    {
+      "key": "catalog_browse",
+      "name": "Xem danh sách sản phẩm",
+      "module": "catalog",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem sản phẩm kèm thương hiệu, danh mục, ảnh, SKU, giá và tồn khả dụng trên toàn chuỗi.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "Mở trang / hoặc /products, hoặc GET /api/products.",
+        "Hệ thống lấy toàn bộ sản phẩm, bổ sung SKU, ảnh, giá min/max, thuộc tính và tồn khả dụng.",
+        "Hiển thị kết quả sản phẩm."
+      ],
+      "alternatives": [
+        "Không có ảnh: dùng ảnh chính, ảnh đầu theo sortOrder hoặc URL Unsplash mặc định.",
+        "Không có SKU: giá min/max bằng 0, danh sách SKU rỗng.",
+        "Không có tồn: tồn khả dụng bằng 0."
+      ],
+      "postconditions": [
+        "Dữ liệu không thay đổi."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "getAll",
+          "endpoint": "GET /api/products"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+          "class": "ProductServiceImpl",
+          "method": "getAll / enrich",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/HomeController.java",
+          "class": "HomeController",
+          "method": "home",
+          "endpoint": "GET /"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java",
+          "class": "ProductPageController",
+          "method": "productList",
+          "endpoint": "GET /products; GET /product"
+        }
+      ],
+      "notes": [
+        "Không lọc ACTIVE cho sản phẩm, SKU, thương hiệu, danh mục hoặc cửa hàng.",
+        "Không phân trang backend; tham số page của page controller không được áp dụng."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "catalog_search",
+      "name": "Tìm kiếm và lọc sản phẩm",
+      "module": "catalog",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tìm sản phẩm theo từ khóa, thương hiệu, danh mục, loại da, nhu cầu và khoảng giá; sắp xếp kết quả.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "Cung cấp keyword, brandId, categoryId, skinType, concern, priceRange hoặc sortBy.",
+        "Hệ thống enrich toàn bộ sản phẩm trước rồi lọc trong bộ nhớ.",
+        "Từ khóa so khớp có/không dấu trên tên, brand, category, description, ingredients, uses, origin, skuCode và variantName.",
+        "Lọc brand/category theo ID chính xác; loại da/nhu cầu theo tên thuộc tính; khoảng giá theo minPrice.",
+        "Sắp xếp theo price-asc, price-desc, featured hoặc ID giảm dần."
+      ],
+      "alternatives": [
+        "Không có kết quả: trả danh sách rỗng.",
+        "priceRange không nhận diện: không lọc giá.",
+        "sortBy không nhận diện: sắp xếp ID giảm dần."
+      ],
+      "postconditions": [
+        "Kết quả truy vấn được hiển thị; dữ liệu không thay đổi."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "getAll",
+          "endpoint": "GET /api/products?keyword=&brandId=&categoryId=&skinType=&concern=&priceRange=&sortBy="
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+          "class": "ProductServiceImpl",
+          "method": "searchAndFilter / matchesKeyword / matchesSkinType / matchesConcern / matchesPriceRange / getComparator",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java",
+          "class": "ProductPageController",
+          "method": "productList",
+          "endpoint": "GET /products"
+        }
+      ],
+      "notes": [
+        "under300 và under500 cùng nghĩa giá < 500.000; 300to600 và 500to1000 cùng nghĩa 500.000–1.000.000; above1000 > 1.000.000.",
+        "Category filter không mở rộng xuống các danh mục con.",
+        "Tên thuộc tính được dùng cho skinTypes/concerns; value của ProductAttributeValue không dùng; các nhóm ngoài SKIN_TYPE đều vào concerns."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "catalog_detail",
+      "name": "Xem chi tiết sản phẩm",
+      "module": "catalog",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem mô tả, biến thể/SKU, giá, ảnh, loại da/nhu cầu, tồn khả dụng và sản phẩm liên quan.",
+      "preconditions": [
+        "ID sản phẩm tồn tại; không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "Mở /products/{id} hoặc GET /api/products/{id}.",
+        "Hệ thống tìm sản phẩm và enrich SKU, ảnh, giá, stock và thuộc tính.",
+        "Page controller chọn tối đa 4 sản phẩm cùng brand hoặc category, loại sản phẩm đang xem.",
+        "Hiển thị chi tiết sản phẩm."
+      ],
+      "alternatives": [
+        "Sản phẩm không tồn tại: API ném checked Exception và được trả HTTP 500; page chuyển /error/404.",
+        "Không có ảnh/SKU/stock: dùng các giá trị fallback như danh sách."
+      ],
+      "postconditions": [
+        "Thông tin chi tiết được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "getById",
+          "endpoint": "GET /api/products/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+          "class": "ProductServiceImpl",
+          "method": "getById / enrich",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java",
+          "class": "ProductPageController",
+          "method": "productDetail",
+          "endpoint": "GET /products/{id}; GET /product/{id}"
+        }
+      ],
+      "notes": [
+        "Related products chỉ theo brand/category, không có tư vấn AI hay cá nhân hóa; không suy diễn thêm actor external."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "product_create",
+      "name": "Thêm sản phẩm",
+      "module": "catalog",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tạo bản ghi sản phẩm với thương hiệu, danh mục, mô tả, xuất xứ, nguyên liệu, công dụng, featured và status.",
+      "preconditions": [
+        "Payload có brandId, categoryId; tên không trống ≤ 200 ký tự; origin ≤ 100; brand/category tồn tại.",
+        "Mutation API có header X-Requested-With phù hợp hoặc dùng Bearer token."
+      ],
+      "main": [
+        "Gửi ProductRequest tới POST /api/products.",
+        "Hệ thống map trường cơ bản, tìm brand/category theo ID rồi gán quan hệ.",
+        "Lưu ProductEntity và trả DTO được enrich."
+      ],
+      "alternatives": [
+        "Request không hợp lệ: HTTP 400.",
+        "Brand/category không tồn tại: checked Exception, HTTP 500.",
+        "Nếu status hoặc isFeatured thành null sau mapping: entity @NotNull ngăn lưu; cần đối chiếu generated mapper/runtime."
+      ],
+      "postconditions": [
+        "Một sản phẩm mới được lưu; không tạo SKU, ảnh, tồn kho hay thuộc tính."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "create",
+          "endpoint": "POST /api/products"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+          "class": "ProductServiceImpl",
+          "method": "create",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/ProductMapper.java",
+          "class": "ProductMapper",
+          "method": "toEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không có xác thực/permission cho endpoint; PUBLIC mô tả truy cập thật.",
+        "ProductRequest không chứa SKU, ảnh hoặc attribute values; không xem những phần này là được quản lý qua form sản phẩm."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "product_update",
+      "name": "Cập nhật sản phẩm",
+      "module": "catalog",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Sửa thông tin cơ bản và trạng thái kinh doanh của sản phẩm; thay brand/category.",
+      "preconditions": [
+        "Sản phẩm và brand/category tồn tại; validation như thêm sản phẩm.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi PUT /api/products/{id} với ProductRequest.",
+        "Hệ thống đọc sản phẩm và map các trường cơ bản.",
+        "Tìm và gán brand/category nếu ID có trong request.",
+        "Lưu sản phẩm và trả DTO cơ bản."
+      ],
+      "alternatives": [
+        "Không có sản phẩm, brand hoặc category: checked Exception, HTTP 500.",
+        "Request không hợp lệ hoặc entity sau mapping vi phạm @NotNull: HTTP 400."
+      ],
+      "postconditions": [
+        "Thông tin sản phẩm được cập nhật."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "update",
+          "endpoint": "PUT /api/products/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+          "class": "ProductServiceImpl",
+          "method": "update",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/ProductMapper.java",
+          "class": "ProductMapper",
+          "method": "updateEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "status=INACTIVE là khả năng trong update; không có endpoint riêng ngừng kinh doanh.",
+        "Response của update không gọi enrich nên thiếu SKU/ảnh/giá/stock/attribute fields cho đến khi GET lại.",
+        "NullValuePropertyMappingStrategy.IGNORE không được đặt cho ProductMapper; null có thể xóa optional fields."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "product_delete",
+      "name": "Xóa sản phẩm",
+      "module": "catalog",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa vật lý bản ghi sản phẩm.",
+      "preconditions": [
+        "Sản phẩm tồn tại; header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi DELETE /api/products/{id}.",
+        "Hệ thống kiểm tra tồn tại và deleteById.",
+        "Trả HTTP 204 khi xóa thành công."
+      ],
+      "alternatives": [
+        "Sản phẩm không tồn tại: checked Exception, HTTP 500.",
+        "Quan hệ SKU, ảnh, attribute hoặc các dữ liệu khác còn tham chiếu có thể gây lỗi ràng buộc dữ liệu HTTP 409."
+      ],
+      "postconditions": [
+        "Bản ghi sản phẩm bị xóa khi không bị ràng buộc cản trở."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "delete",
+          "endpoint": "DELETE /api/products/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/ProductServiceImpl.java",
+          "class": "ProductServiceImpl",
+          "method": "delete",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Xóa vật lý khác với update status=INACTIVE; không có cascade cleanup trong implementation."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "brand_browse",
+      "name": "Xem thương hiệu",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem danh sách hoặc thông tin một thương hiệu.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "Mở /brands hoặc GET /api/brands; có thể yêu cầu /api/brands/{id}.",
+        "Hệ thống findAll hoặc findById, map BrandResponse.",
+        "Hiển thị tên, mô tả và status."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception, HTTP 500.",
+        "Không có thương hiệu: danh sách rỗng."
+      ],
+      "postconditions": [
+        "Thông tin thương hiệu được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java",
+          "class": "BrandRestController",
+          "method": "getAll / getById",
+          "endpoint": "GET /api/brands; GET /api/brands/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/BrandServiceImpl.java",
+          "class": "BrandServiceImpl",
+          "method": "getAll / getById",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/HomeController.java",
+          "class": "HomeController",
+          "method": "brands",
+          "endpoint": "GET /brands"
+        }
+      ],
+      "notes": [
+        "Không lọc ACTIVE."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "brand_create",
+      "name": "Thêm thương hiệu",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Thêm tên, mô tả và status thương hiệu.",
+      "preconditions": [
+        "Tên không trống ≤ 150; tên phải thỏa unique của Entity/DB.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi BrandRequest tới POST /api/brands.",
+        "Hệ thống map request, save BrandEntity rồi trả BrandResponse."
+      ],
+      "alternatives": [
+        "Tên không hợp lệ: HTTP 400.",
+        "Tên trùng: ràng buộc unique, HTTP 409.",
+        "status null được DTO cho phép nhưng entity bắt buộc; kết quả phụ thuộc null mapping, không có default trong service."
+      ],
+      "postconditions": [
+        "Thương hiệu mới được lưu."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java",
+          "class": "BrandRestController",
+          "method": "create",
+          "endpoint": "POST /api/brands"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/BrandServiceImpl.java",
+          "class": "BrandServiceImpl",
+          "method": "create",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/BrandMapper.java",
+          "class": "BrandMapper",
+          "method": "toEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không gọi kiểm tra tồn tại/tên trùng trong service; không có RBAC."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "brand_update",
+      "name": "Cập nhật thương hiệu",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Sửa tên, mô tả hoặc status của thương hiệu.",
+      "preconditions": [
+        "Thương hiệu tồn tại; tên không trống ≤ 150; header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi PUT /api/brands/{id}.",
+        "Tìm thương hiệu, map request với null bị bỏ qua.",
+        "Lưu và trả thông tin cập nhật."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception, HTTP 500.",
+        "Tên trùng hoặc sai validation: HTTP 409/400."
+      ],
+      "postconditions": [
+        "Thương hiệu được cập nhật."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java",
+          "class": "BrandRestController",
+          "method": "update",
+          "endpoint": "PUT /api/brands/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/BrandServiceImpl.java",
+          "class": "BrandServiceImpl",
+          "method": "update",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/BrandMapper.java",
+          "class": "BrandMapper",
+          "method": "updateEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Có thể đặt status=INACTIVE hoặc ACTIVE; description null không xóa giá trị cũ."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "brand_delete",
+      "name": "Xóa thương hiệu",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa vật lý một thương hiệu.",
+      "preconditions": [
+        "Thương hiệu tồn tại; header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi DELETE /api/brands/{id}.",
+        "Kiểm tra tồn tại, deleteById, trả HTTP 204."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception, HTTP 500.",
+        "Sản phẩm đang tham chiếu có thể ngăn xóa: HTTP 409."
+      ],
+      "postconditions": [
+        "Thương hiệu bị xóa nếu không bị FK cản trở."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java",
+          "class": "BrandRestController",
+          "method": "delete",
+          "endpoint": "DELETE /api/brands/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/BrandServiceImpl.java",
+          "class": "BrandServiceImpl",
+          "method": "delete",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không là soft delete."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "category_browse",
+      "name": "Xem danh mục sản phẩm",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem danh sách danh mục hoặc một danh mục, có parentId.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "GET /api/categories hoặc /api/categories/{id}; page sản phẩm/home dùng CategoryService.getAll.",
+        "Hệ thống tìm category và map parent.id vào parentId.",
+        "Hiển thị thông tin danh mục."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception, HTTP 500.",
+        "Không có danh mục: danh sách rỗng."
+      ],
+      "postconditions": [
+        "Thông tin danh mục được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java",
+          "class": "CategoryRestController",
+          "method": "getAll / getById",
+          "endpoint": "GET /api/categories; GET /api/categories/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/CategoryServiceImpl.java",
+          "class": "CategoryServiceImpl",
+          "method": "getAll / getById",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/CategoryMapper.java",
+          "class": "CategoryMapper",
+          "method": "toResponse",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Response là danh sách phẳng, không trả cây descendants; không lọc ACTIVE."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "category_create",
+      "name": "Thêm danh mục sản phẩm",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tạo danh mục gốc hoặc con của một danh mục có sẵn.",
+      "preconditions": [
+        "Tên không trống ≤ 150; description ≤ 500; parentId nếu có phải tồn tại.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi CategoryRequest tới POST /api/categories.",
+        "Map trường cơ bản; nếu parentId có giá trị, tìm category cha rồi gán parent.",
+        "Save và trả CategoryResponse cùng parentId."
+      ],
+      "alternatives": [
+        "Cha không tồn tại: RuntimeException, HTTP 500.",
+        "Validation không đạt: HTTP 400.",
+        "status null được request cho phép nhưng entity yêu cầu; service không tự default."
+      ],
+      "postconditions": [
+        "Danh mục mới gốc/con được lưu."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java",
+          "class": "CategoryRestController",
+          "method": "create",
+          "endpoint": "POST /api/categories"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/CategoryServiceImpl.java",
+          "class": "CategoryServiceImpl",
+          "method": "create",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/CategoryMapper.java",
+          "class": "CategoryMapper",
+          "method": "toEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không có nghiệp vụ quản lý cây đầy đủ hay endpoint di chuyển cây; chỉ gán cha khi create."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "category_update",
+      "name": "Cập nhật danh mục sản phẩm",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Sửa tên, mô tả và status danh mục; request parentId chưa được xử lý.",
+      "preconditions": [
+        "Danh mục tồn tại; tên không trống ≤ 150; description ≤ 500.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi PUT /api/categories/{id}.",
+        "Hệ thống tìm danh mục, CategoryMapper.updateEntity bỏ qua null và bỏ qua parent.",
+        "Lưu tên/mô tả/status và trả danh mục."
+      ],
+      "alternatives": [
+        "Không có category: checked Exception, HTTP 500.",
+        "Validation không đạt: HTTP 400.",
+        "Gửi parentId mới hoặc null: quan hệ cha vẫn giữ nguyên."
+      ],
+      "postconditions": [
+        "Tên/mô tả/status được cập nhật; parent không đổi."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java",
+          "class": "CategoryRestController",
+          "method": "update",
+          "endpoint": "PUT /api/categories/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/CategoryServiceImpl.java",
+          "class": "CategoryServiceImpl",
+          "method": "update",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/catalog/CategoryMapper.java",
+          "class": "CategoryMapper",
+          "method": "updateEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Khoảng trống thực tế: chưa hỗ trợ chuyển danh mục cha hoặc tách thành danh mục gốc; không đánh dấu quản lý hierarchy đầy đủ."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "category_delete",
+      "name": "Xóa danh mục sản phẩm",
+      "module": "brand_category",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa vật lý danh mục theo ID.",
+      "preconditions": [
+        "Header mutation phù hợp; danh mục không bị FK cản trở."
+      ],
+      "main": [
+        "Gửi DELETE /api/categories/{id}.",
+        "Service gọi deleteById trực tiếp.",
+        "Trả HTTP 204 nếu không có lỗi."
+      ],
+      "alternatives": [
+        "Danh mục cha có con hoặc danh mục có sản phẩm tham chiếu có thể bị FK ngăn xóa: HTTP 409.",
+        "Không kiểm tra tồn tại riêng trước deleteById."
+      ],
+      "postconditions": [
+        "Danh mục được xóa khi thao tác thành công."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java",
+          "class": "CategoryRestController",
+          "method": "delete",
+          "endpoint": "DELETE /api/categories/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/catalog/impl/CategoryServiceImpl.java",
+          "class": "CategoryServiceImpl",
+          "method": "delete",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không cascade chuyển sản phẩm/danh mục con hoặc soft deactivate."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "store_browse",
+      "name": "Xem hệ thống cửa hàng",
+      "module": "store",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem thông tin cửa hàng gồm địa chỉ, tỉnh, số điện thoại, giờ mở/đóng, tọa độ và status.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "Mở /stores hoặc GET /api/stores; có thể xem /api/stores/{id}.",
+        "Hệ thống lấy StoreEntity, map StoreResponse.",
+        "Hiển thị các cửa hàng."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception, HTTP 500.",
+        "Không có cửa hàng: danh sách rỗng."
+      ],
+      "postconditions": [
+        "Thông tin cửa hàng được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java",
+          "class": "StoreRestController",
+          "method": "getAll / getById",
+          "endpoint": "GET /api/stores; GET /api/stores/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java",
+          "class": "StoreServiceImpl",
+          "method": "getAll / getById",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/controller/HomeController.java",
+          "class": "HomeController",
+          "method": "stores",
+          "endpoint": "GET /stores"
+        }
+      ],
+      "notes": [
+        "findAll trả cả INACTIVE; không có tìm kiếm backend theo tỉnh/khoảng cách.",
+        "operatingHours trong Response không có nguồn field Entity."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "store_create",
+      "name": "Thêm cửa hàng",
+      "module": "store",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tạo cửa hàng và thông tin liên lạc, giờ mở/đóng, tọa độ, status.",
+      "preconditions": [
+        "Tên ≤ 150, địa chỉ ≤ 255, tỉnh ≤ 100 đều không trống; phone ≤ 20.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi StoreRequest tới POST /api/stores.",
+        "Map request vào StoreEntity; status null được service đặt ACTIVE.",
+        "Save và trả StoreResponse."
+      ],
+      "alternatives": [
+        "Request sai validation/định dạng thời gian: HTTP 400."
+      ],
+      "postconditions": [
+        "Cửa hàng mới được lưu."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java",
+          "class": "StoreRestController",
+          "method": "create",
+          "endpoint": "POST /api/stores"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java",
+          "class": "StoreServiceImpl",
+          "method": "create",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/store/StoreMapper.java",
+          "class": "StoreMapper",
+          "method": "toEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "operatingHours là field DTO nhưng Entity không có; chỉ openTime/closeTime được lưu.",
+        "Không tạo tồn kho hay nhân viên gán cửa hàng tự động."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "store_update",
+      "name": "Cập nhật cửa hàng",
+      "module": "store",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Sửa địa chỉ, liên lạc, tỉnh, tên, giờ mở/đóng, tọa độ và status.",
+      "preconditions": [
+        "Cửa hàng tồn tại; validation giống thêm cửa hàng; header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi PUT /api/stores/{id}.",
+        "Tìm cửa hàng và map trường khác null vào entity.",
+        "Save và trả StoreResponse."
+      ],
+      "alternatives": [
+        "Không có cửa hàng: checked Exception, HTTP 500.",
+        "Request sai validation: HTTP 400.",
+        "operatingHours được gửi nhưng không có nơi lưu."
+      ],
+      "postconditions": [
+        "Thông tin cửa hàng được cập nhật."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java",
+          "class": "StoreRestController",
+          "method": "update",
+          "endpoint": "PUT /api/stores/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java",
+          "class": "StoreServiceImpl",
+          "method": "update",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/store/StoreMapper.java",
+          "class": "StoreMapper",
+          "method": "updateEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Có thể kích hoạt lại qua status=ACTIVE.",
+        "Không kiểm tra openTime/closeTime hợp lệ theo nghiệp vụ hoặc lat/long range."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "store_deactivate",
+      "name": "Ngừng hoạt động cửa hàng",
+      "module": "store",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Đặt trạng thái cửa hàng INACTIVE, giữ nguyên dữ liệu.",
+      "preconditions": [
+        "Cửa hàng tồn tại; header mutation phù hợp."
+      ],
+      "main": [
+        "Gửi DELETE /api/stores/{id}.",
+        "Service tìm entity, setStatus(INACTIVE), save.",
+        "Trả HTTP 204."
+      ],
+      "alternatives": [
+        "Không có cửa hàng: checked Exception, HTTP 500."
+      ],
+      "postconditions": [
+        "Cửa hàng có status INACTIVE."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java",
+          "class": "StoreRestController",
+          "method": "deactivate",
+          "endpoint": "DELETE /api/stores/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StoreServiceImpl.java",
+          "class": "StoreServiceImpl",
+          "method": "deactivate",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Endpoint DELETE nhưng không xóa vật lý.",
+        "Không tự ẩn trong StoreService.getAll, public stock, ProductService.enrich; không xử lý đơn/tồn/nhân viên hiện có."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "stock_public",
+      "name": "Tra cứu tồn sản phẩm theo cửa hàng",
+      "module": "inventory",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tra tồn khả dụng và thông tin liên lạc tại từng cửa hàng cho một SKU.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập; skuId được truyền trên URL."
+      ],
+      "main": [
+        "GET /api/products/sku/{skuId}/stores.",
+        "Hệ thống lấy toàn bộ cửa hàng và tồn kho theo skuId.",
+        "Mỗi cửa hàng trả actualStock, heldQuantity, availableStock=max(0,actual-held), inStock và địa chỉ/liên lạc.",
+        "Không có inventory ở cửa hàng: trả tất cả số lượng bằng 0."
+      ],
+      "alternatives": [
+        "skuId không tồn tại: không kiểm tra SKU, vẫn trả mọi cửa hàng với số lượng 0."
+      ],
+      "postconditions": [
+        "Stock snapshot theo cửa hàng được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java",
+          "class": "ProductRestController",
+          "method": "getSkuStoreStock",
+          "endpoint": "GET /api/products/sku/{skuId}/stores"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+          "class": "InventoryServiceImpl",
+          "method": "getStoreStockBySku",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Trả cả cửa hàng INACTIVE và actual/held nội bộ; không chỉ available.",
+        "Inventory trùng store-SKU chọn bản ghi đầu qua merge (a,b)->a."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "inventory_browse",
+      "name": "Xem tồn kho cửa hàng",
+      "module": "inventory",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Nhân viên xem tồn thực tế, lượng giữ, khả dụng và ngưỡng tối thiểu của cửa hàng/SKU.",
+      "preconditions": [
+        "Token hợp lệ có ROLE_EMPLOYEE theo SecurityConfig.",
+        "API không yêu cầu cửa hàng thuộc phạm vi của nhân viên."
+      ],
+      "main": [
+        "GET /api/inventory/store/{storeId} hoặc /store/{storeId}/sku/{skuId}; có thể lấy riêng /available.",
+        "Hệ thống tìm inventory theo store hoặc store-SKU.",
+        "Trả actualStock, heldQuantity, available=max(0,actual-held), minimumStock và nhận diện sản phẩm."
+      ],
+      "alternatives": [
+        "Store hoặc SKU không có inventory: list rỗng hoặc /available trả 0; detail ném checked Exception HTTP 500.",
+        "Chưa xác thực/không ROLE_EMPLOYEE: HTTP 401/403."
+      ],
+      "postconditions": [
+        "Stock snapshot được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java",
+          "class": "InventoryRestController",
+          "method": "getByStore / getByStoreAndSku / getAvailableStock",
+          "endpoint": "GET /api/inventory/store/{storeId}; GET /api/inventory/store/{storeId}/sku/{skuId}; GET /api/inventory/store/{storeId}/sku/{skuId}/available"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+          "class": "InventoryServiceImpl",
+          "method": "getByStore / getByStoreAndSku / getAvailableStock",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "StoreScope chỉ phục vụ danh sách cửa hàng ở AdminPageController; API/service này không sử dụng nên nhân viên gọi ID cửa hàng khác được.",
+        "Không có permission riêng INVENTORY_VIEW/INVENTORY_ADJUST trong code."
+      ],
+      "security": {
+        "url_rule": "/api/inventory/** requires ROLE_EMPLOYEE",
+        "preauthorize": null,
+        "store_scope": false
+      }
+    },
+    {
+      "key": "inventory_low",
+      "name": "Xem cảnh báo tồn thấp",
+      "module": "inventory",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tra các SKU có tồn thực tế không vượt ngưỡng minimumStock của cửa hàng.",
+      "preconditions": [
+        "Token hợp lệ có ROLE_EMPLOYEE."
+      ],
+      "main": [
+        "GET /api/inventory/store/{storeId}/low-stock.",
+        "Repository chọn store.id và actualStock <= minimumStock.",
+        "Hệ thống trả danh sách InventoryResponse."
+      ],
+      "alternatives": [
+        "Không có bản ghi thỏa: danh sách rỗng.",
+        "Chưa xác thực/không ROLE_EMPLOYEE: HTTP 401/403."
+      ],
+      "postconditions": [
+        "Danh sách SKU tồn thấp được trả."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java",
+          "class": "InventoryRestController",
+          "method": "getLowStockItems",
+          "endpoint": "GET /api/inventory/store/{storeId}/low-stock"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+          "class": "InventoryServiceImpl",
+          "method": "getLowStockItems",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/repository/store/InventoryRepository.java",
+          "class": "InventoryRepository",
+          "method": "findLowStock",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Dùng actualStock, không dùng khả dụng sau giữ hàng; ngưỡng bao gồm trường hợp bằng.",
+        "Không có workflow đặt ngưỡng/đặt mua tự động, thông báo gửi bên ngoài hay scheduler."
+      ],
+      "security": {
+        "url_rule": "/api/inventory/** requires ROLE_EMPLOYEE",
+        "preauthorize": null,
+        "store_scope": false
+      }
+    },
+    {
+      "key": "inventory_adjust",
+      "name": "Điều chỉnh tồn kho",
+      "module": "inventory",
+      "actors": [
+        "ROLE_EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Cập nhật tồn thực tế sau kiểm đếm và lưu lịch sử trước/sau, lý do, người thực hiện, thời gian.",
+      "preconditions": [
+        "Token có ROLE_EMPLOYEE; inventory store-SKU tồn tại.",
+        "newQuantity không null, >=0; lý do không trống ≤255; newQuantity >= heldQuantity.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "POST /api/inventory/adjust với storeId, skuId, newQuantity, reason.",
+        "Controller ưu tiên principal.employeeId; thiếu thì dùng employeeId parameter hoặc 1.",
+        "Service kiểm tra tồn mới không nhỏ hơn lượng giữ cho khách.",
+        "Ghi InventoryAdjustmentEntity với quantityBefore, quantityAfter, reason, performedBy và adjustedAt.",
+        "Set actualStock=newQuantity, save và trả InventoryResponse."
+      ],
+      "alternatives": [
+        "Không có inventory: checked Exception HTTP 500.",
+        "Tồn mới dưới lượng giữ: checked Exception HTTP 500.",
+        "Request không hợp lệ: HTTP 400.",
+        "Employee lookup không có kết quả: performedBy=null; Entity bắt buộc employee nên validation/constraint ngăn lưu."
+      ],
+      "postconditions": [
+        "Tồn thực tế và audit adjustment được lưu; heldQuantity không đổi."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java",
+          "class": "InventoryRestController",
+          "method": "adjustStock",
+          "endpoint": "POST /api/inventory/adjust"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/InventoryServiceImpl.java",
+          "class": "InventoryServiceImpl",
+          "method": "adjustStock",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/domain/entity/inventory/InventoryAdjustmentEntity.java",
+          "class": "InventoryAdjustmentEntity",
+          "method": "performedBy / adjustedAt",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không kiểm tra StoreScope.",
+        "Có lịch sử trong DB nhưng không có REST/page xem lịch sử điều chỉnh; không tạo UC tra audit hoàn chỉnh.",
+        "Không có pessimistic lock/@Version; chưa bảo đảm cạnh tranh với giữ hàng trong đơn."
+      ],
+      "security": {
+        "url_rule": "/api/inventory/** requires ROLE_EMPLOYEE",
+        "preauthorize": null,
+        "store_scope": false
+      }
+    },
+    {
+      "key": "transfer_create",
+      "name": "Lập phiếu chuyển kho",
+      "module": "stock_transfer",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Lập phiếu gồm cửa hàng nguồn, đích và các dòng SKU/số lượng ở trạng thái PENDING.",
+      "preconditions": [
+        "sourceStoreId, destinationStoreId không null; items không rỗng; store/SKU và employeeId phải tồn tại để lưu hợp lệ.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "POST /api/stock-transfers với request và employeeId query mặc định 1.",
+        "Tìm nguồn/đích, tạo StockTransferEntity status=PENDING và employee theo ID query.",
+        "Lưu từng StockTransferItem với SKU và quantity.",
+        "Trả phiếu và dòng hàng."
+      ],
+      "alternatives": [
+        "Nguồn/đích/SKU không tồn tại: checked Exception HTTP 500.",
+        "employeeId không tồn tại: null createdBy vi phạm Entity @NotNull.",
+        "items rỗng/null: HTTP 400; thiếu @Valid trên list nên nested validation DTO không được cascade, entity validation là lớp sau."
+      ],
+      "postconditions": [
+        "Phiếu PENDING và các dòng hàng được lưu; chưa trừ/giữ tồn."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+          "class": "StockTransferRestController",
+          "method": "create",
+          "endpoint": "POST /api/stock-transfers?employeeId=1"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+          "class": "StockTransferServiceImpl",
+          "method": "create",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không RBAC, không StoreScope; có thể giả danh createdBy qua query.",
+        "Không cấm cùng nguồn/đích, SKU lặp, store/SKU INACTIVE; không kiểm tra tồn khi lập.",
+        "checked Exception sau save có rủi ro không rollback toàn bộ do @Transactional không rollbackFor checked exceptions."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "transfer_browse",
+      "name": "Xem phiếu chuyển kho",
+      "module": "stock_transfer",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem danh sách hoặc chi tiết phiếu chuyển kho cùng trạng thái, thời gian và dòng SKU.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "GET /api/stock-transfers hoặc /{id}.",
+        "Hệ thống findAll hoặc findById, trả store names, status, employee name, created/shipped/received times và items."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception HTTP 500.",
+        "Không có phiếu: danh sách rỗng."
+      ],
+      "postconditions": [
+        "Thông tin phiếu chuyển được hiển thị."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+          "class": "StockTransferRestController",
+          "method": "getAll / getById",
+          "endpoint": "GET /api/stock-transfers; GET /api/stock-transfers/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+          "class": "StockTransferServiceImpl",
+          "method": "getAll / getById / toResponse",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không lọc theo store/status/người; repository có finder sourceOrDestination nhưng service không dùng.",
+        "Response không có source/destination IDs; chỉ tên."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "transfer_ship",
+      "name": "Xác nhận xuất chuyển kho",
+      "module": "stock_transfer",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xuất hàng khỏi cửa hàng nguồn và chuyển phiếu từ PENDING sang IN_TRANSIT.",
+      "preconditions": [
+        "Phiếu tồn tại và status=PENDING.",
+        "Mỗi dòng có inventory tại nguồn; actualStock >= quantity.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "PUT /api/stock-transfers/{id}/ship.",
+        "Tìm phiếu, kiểm tra PENDING.",
+        "Lấy dòng hàng, từng dòng kiểm tra actualStock rồi trừ quantity và save tồn nguồn.",
+        "Set IN_TRANSIT, shippedAt=now, save phiếu và trả kết quả."
+      ],
+      "alternatives": [
+        "Phiếu không tồn tại/không PENDING: checked Exception HTTP 500.",
+        "Thiếu inventory hoặc không đủ actualStock: checked Exception HTTP 500.",
+        "Không đủ tồn ở dòng sau khi dòng trước đã save: có nguy cơ commit một phần do checked Exception không thuộc rollback mặc định."
+      ],
+      "postconditions": [
+        "Khi thành công, tồn nguồn giảm theo quantity; phiếu IN_TRANSIT có shippedAt."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+          "class": "StockTransferRestController",
+          "method": "confirmShipment",
+          "endpoint": "PUT /api/stock-transfers/{id}/ship"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+          "class": "StockTransferServiceImpl",
+          "method": "confirmShipment",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không có bước phê duyệt riêng; enum PENDING_EXPORT không được service sử dụng.",
+        "Kiểm tra actualStock, bỏ qua heldQuantity; có thể xuất phần đã giữ cho khách.",
+        "Không khóa/Version; hai lần ship cạnh tranh có rủi ro trừ kho sai; không ghi InventoryAdjustment audit."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "transfer_receive",
+      "name": "Xác nhận nhận chuyển kho",
+      "module": "stock_transfer",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Nhận toàn bộ dòng chuyển kho tại cửa hàng đích và chuyển phiếu IN_TRANSIT thành RECEIVED.",
+      "preconditions": [
+        "Phiếu tồn tại và status=IN_TRANSIT; header mutation phù hợp."
+      ],
+      "main": [
+        "PUT /api/stock-transfers/{id}/receive.",
+        "Tìm phiếu và kiểm tra IN_TRANSIT.",
+        "Từng dòng tìm tồn đích; nếu chưa có tạo inventory actual=0, held=0, minimum=5.",
+        "Cộng quantity vào actualStock, save inventory.",
+        "Set RECEIVED và receivedAt=now, save phiếu và trả kết quả."
+      ],
+      "alternatives": [
+        "Phiếu không tồn tại/không IN_TRANSIT: checked Exception HTTP 500.",
+        "Lỗi persistence/validation khi lưu inventory: request thất bại."
+      ],
+      "postconditions": [
+        "Khi thành công, tồn đích tăng; phiếu RECEIVED có receivedAt."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java",
+          "class": "StockTransferRestController",
+          "method": "confirmReceipt",
+          "endpoint": "PUT /api/stock-transfers/{id}/receive"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/store/impl/StockTransferServiceImpl.java",
+          "class": "StockTransferServiceImpl",
+          "method": "confirmReceipt",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Nhận toàn bộ theo quantity gốc; không hỗ trợ nhận thiếu/hư hỏng/hủy.",
+        "Không có approval hoặc completion status riêng; RECEIVED là terminal implementation.",
+        "Không RBAC/StoreScope, lock, Version hoặc adjustment audit."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "supplier_browse",
+      "name": "Xem nhà cung cấp",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem danh sách hoặc chi tiết nhà cung cấp với thông tin liên hệ và status.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "GET /api/suppliers hoặc /{id}.",
+        "Hệ thống findAll/findById, map SupplierResponse."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception HTTP 500.",
+        "Không có supplier: danh sách rỗng."
+      ],
+      "postconditions": [
+        "Thông tin nhà cung cấp được trả."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java",
+          "class": "SupplierRestController",
+          "method": "getAll / getById",
+          "endpoint": "GET /api/suppliers; GET /api/suppliers/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/SupplierServiceImpl.java",
+          "class": "SupplierServiceImpl",
+          "method": "getAll / getById",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không lọc ACTIVE và không phân trang/tìm kiếm."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "supplier_create",
+      "name": "Thêm nhà cung cấp",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tạo nhà cung cấp, người liên hệ, địa chỉ, điện thoại, email và status.",
+      "preconditions": [
+        "Tên không trống ≤200; contact ≤150; address ≤255; phone ≤20; email hợp lệ ≤150.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "POST /api/suppliers với SupplierRequest.",
+        "Map request, đặt status=ACTIVE nếu null.",
+        "Save và trả SupplierResponse."
+      ],
+      "alternatives": [
+        "Sai validation/JSON: HTTP 400."
+      ],
+      "postconditions": [
+        "Nhà cung cấp được lưu."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java",
+          "class": "SupplierRestController",
+          "method": "create",
+          "endpoint": "POST /api/suppliers"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/SupplierServiceImpl.java",
+          "class": "SupplierServiceImpl",
+          "method": "create",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/purchase/SupplierMapper.java",
+          "class": "SupplierMapper",
+          "method": "toEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "existsByName trong repository không được service sử dụng; Entity name không unique."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "supplier_update",
+      "name": "Cập nhật nhà cung cấp",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Sửa thông tin liên hệ hoặc status nhà cung cấp.",
+      "preconditions": [
+        "Supplier tồn tại; validation như create; header mutation phù hợp."
+      ],
+      "main": [
+        "PUT /api/suppliers/{id}.",
+        "Tìm supplier, map non-null fields.",
+        "Save và trả dữ liệu mới."
+      ],
+      "alternatives": [
+        "Không có supplier: checked Exception HTTP 500.",
+        "Request không hợp lệ: HTTP 400."
+      ],
+      "postconditions": [
+        "Nhà cung cấp được cập nhật."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java",
+          "class": "SupplierRestController",
+          "method": "update",
+          "endpoint": "PUT /api/suppliers/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/SupplierServiceImpl.java",
+          "class": "SupplierServiceImpl",
+          "method": "update",
+          "endpoint": null
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/mapper/purchase/SupplierMapper.java",
+          "class": "SupplierMapper",
+          "method": "updateEntity",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Có thể ACTIVE lại qua status; null không xóa dữ liệu optional cũ."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "supplier_deactivate",
+      "name": "Ngừng hợp tác nhà cung cấp",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Đặt supplier INACTIVE thay vì xóa vật lý.",
+      "preconditions": [
+        "Supplier tồn tại; header mutation phù hợp."
+      ],
+      "main": [
+        "DELETE /api/suppliers/{id}.",
+        "Tìm supplier, setStatus(INACTIVE), save và trả HTTP 204."
+      ],
+      "alternatives": [
+        "ID không tồn tại: checked Exception HTTP 500."
+      ],
+      "postconditions": [
+        "Nhà cung cấp có status INACTIVE."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java",
+          "class": "SupplierRestController",
+          "method": "deactivate",
+          "endpoint": "DELETE /api/suppliers/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/SupplierServiceImpl.java",
+          "class": "SupplierServiceImpl",
+          "method": "deactivate",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không chặn tạo PO từ supplier INACTIVE; không tự lọc khỏi danh sách."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "purchase_create",
+      "name": "Lập đơn nhập hàng",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Lập đơn mua từ supplier đến một cửa hàng với các dòng SKU, quantity, unitPrice và tổng tiền ở trạng thái DRAFT.",
+      "preconditions": [
+        "supplierId/receivingStoreId không null; items không rỗng; supplier/store/SKU và employeeId phải tồn tại.",
+        "Header mutation phù hợp."
+      ],
+      "main": [
+        "POST /api/purchase-orders?employeeId=1.",
+        "Tìm supplier/cửa hàng; tạo PO DRAFT, createdBy từ query, total=0.",
+        "Từng dòng tìm SKU và tính subtotal=unitPrice*quantity.",
+        "Lưu PurchaseOrderItem, cộng totalAmount, gán items và save PO.",
+        "Trả PO và items."
+      ],
+      "alternatives": [
+        "Supplier/store/SKU không tồn tại: checked Exception HTTP 500.",
+        "Không có employee: createdBy=null vi phạm Entity bắt buộc.",
+        "items rỗng/null: HTTP 400; nested item validation không cascade do thiếu @Valid trên list; entity constraint là lớp sau.",
+        "unitPrice/quantity null: phép tính có thể ném exception trước entity validation."
+      ],
+      "postconditions": [
+        "PO DRAFT và dòng hàng được lưu; chưa tăng tồn."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java",
+          "class": "PurchaseOrderRestController",
+          "method": "create",
+          "endpoint": "POST /api/purchase-orders?employeeId=1"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java",
+          "class": "PurchaseOrderServiceImpl",
+          "method": "create",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không RBAC/StoreScope; employeeId query cho phép gán người tạo, không lấy principal.",
+        "Không kiểm tra status ACTIVE, giá supplier hay trùng SKU; giá nhập do request quyết định.",
+        "Checked Exception sau lưu PO/items có nguy cơ commit một phần."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "purchase_browse",
+      "name": "Xem đơn nhập hàng",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem danh sách hoặc chi tiết PO với nhà cung cấp, cửa hàng nhận, người tạo, trạng thái, tổng tiền và dòng hàng.",
+      "preconditions": [
+        "Không yêu cầu đăng nhập."
+      ],
+      "main": [
+        "GET /api/purchase-orders hoặc /{id}.",
+        "Hệ thống findAll/findById và map PO cùng items."
+      ],
+      "alternatives": [
+        "Không có PO ID: checked Exception HTTP 500.",
+        "Không có đơn: danh sách rỗng."
+      ],
+      "postconditions": [
+        "Thông tin đơn nhập được trả."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java",
+          "class": "PurchaseOrderRestController",
+          "method": "getAll / getById",
+          "endpoint": "GET /api/purchase-orders; GET /api/purchase-orders/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java",
+          "class": "PurchaseOrderServiceImpl",
+          "method": "getAll / getById / toResponse",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không lọc supplier/store/status; repository findBySupplierId/findByReceivingStoreId không dùng.",
+        "Response chỉ names, không supplier/store IDs."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    },
+    {
+      "key": "purchase_confirm",
+      "name": "Xác nhận nhập hàng vào kho",
+      "module": "purchase",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xác nhận PO DRAFT và nhập toàn bộ hàng vào tồn kho cửa hàng nhận trong cùng thao tác.",
+      "preconditions": [
+        "PO tồn tại và status=DRAFT; header mutation phù hợp."
+      ],
+      "main": [
+        "PUT /api/purchase-orders/{id}/confirm.",
+        "Tìm PO và kiểm tra DRAFT.",
+        "Mỗi dòng tìm inventory store-SKU; nếu thiếu tạo actual=0, held=0, minimum=5.",
+        "Cộng quantity vào actualStock rồi save inventory.",
+        "Set status=CONFIRMED, confirmedAt=now và save PO."
+      ],
+      "alternatives": [
+        "ID không tồn tại/không DRAFT: checked Exception HTTP 500.",
+        "Persistence/validation error khi lưu inventory hoặc PO: request thất bại."
+      ],
+      "postconditions": [
+        "Khi thành công, tồn kho nhận tăng toàn bộ lượng trong PO; PO CONFIRMED có confirmedAt."
+      ],
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java",
+          "class": "PurchaseOrderRestController",
+          "method": "confirm",
+          "endpoint": "PUT /api/purchase-orders/{id}/confirm"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/purchase/impl/PurchaseOrderServiceImpl.java",
+          "class": "PurchaseOrderServiceImpl",
+          "method": "confirm",
+          "endpoint": null
+        }
+      ],
+      "notes": [
+        "Không có approve rồi receipt tách biệt; confirm đồng thời tăng kho nên tên UC phản ánh hành vi nhập hàng thật.",
+        "Không có phiếu nhận riêng, nhận từng phần, sửa/hủy PO hay đối chiếu hàng thiếu.",
+        "Không RBAC/StoreScope, lock/Version hay adjustment audit."
+      ],
+      "security": {
+        "url_rule": "anyRequest().permitAll()",
+        "preauthorize": null,
+        "store_scope": false,
+        "mutation_header": "X-Requested-With: fetch/XMLHttpRequest hoặc Authorization: Bearer ..."
+      }
+    }
+  ],
+  "verification": {
+    "code_read_complete_for_assigned_modules": true,
+    "frontend_fully_cross_checked": false,
+    "new_runtime_tests_run": false,
+    "tests_read": [
+      "InventoryServiceTest",
+      "BrandTests",
+      "Phase1RestEndpointsTest",
+      "WebPageControllersTest"
+    ],
+    "test_interpretation": "Tests chỉ bổ sung chứng cứ và phạm vi kiểm tra; mock/test UC labels không quyết định ID hoặc chức năng hoàn chỉnh. Inventory tests xác nhận công thức available, adjustment save audit và public SKU stock."
+  }
+}

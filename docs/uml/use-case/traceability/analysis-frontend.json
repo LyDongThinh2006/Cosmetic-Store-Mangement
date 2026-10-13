@@ -1,0 +1,1852 @@
+{
+  "analysis_scope": "Frontend implementation, page controllers, static client assets, UI/API integration and historical design comparison. Application source was not modified.",
+  "files_read": [
+    {
+      "path": "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+      "lines": 121,
+      "sha256": "aa3c3fd5535f507f29445443d7991a09efee422b04c336f31db5c41b6aa22153",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java",
+      "lines": 112,
+      "sha256": "38e0347bd4b987c62cf3a54193a3b2e8a377ce9951fe771cae6e68066ca6c13b",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java",
+      "lines": 98,
+      "sha256": "b85a6e5bfb74acb1bade37ea07f88647d7c859402a4364a3ded9b440dc1fa4ff",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/AuthPageController.java",
+      "lines": 77,
+      "sha256": "22495edcfde4596a5923ebf13128df0be51e1b104a54b7c823e441c25f1a7e5d",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/CartPageController.java",
+      "lines": 35,
+      "sha256": "8e6eadb57c39094a361602b1aff92a0b5ea4b3bbfacbb3a8f8e412bc2b94c7ab",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java",
+      "lines": 67,
+      "sha256": "7ec1222ab06dbf2efbc4484dd6af8263cc06386db3d7a4795fd80d90e018c04e",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/CustomErrorController.java",
+      "lines": 73,
+      "sha256": "a5844ddc3e8f744d1172e5cd2cc32c0aab924aa4345b39c2214eaf06178c5f32",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/HomeController.java",
+      "lines": 60,
+      "sha256": "00dbc00a2289f6e237372a9bf7fb47cf967051e0621b92010f6c2952f42eb16f",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java",
+      "lines": 107,
+      "sha256": "795f4e212a5d1992ddc39532b3997ae72a01227a09eb003276c48102f91b24d5",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/domain/dto/response/cart/CartResponse.java",
+      "lines": 17,
+      "sha256": "055fbfc500cd35140995575091edbdc4fe6083bc4304cb5734ac2c9ca999fa10",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java",
+      "lines": 68,
+      "sha256": "46e2d228536058e8ec97f9a20ab9da91f1eac8e60ef70ff531e9e8019951b98e",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java",
+      "lines": 69,
+      "sha256": "d555eee67b33aec53a8b886ae1ded6b0ed62e127d94f3bf095c8cf7e7f1935ce",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/service/cart/impl/CartServiceImpl.java",
+      "lines": 162,
+      "sha256": "ee5572f4acdab7525bf30a25b761fb6c4faa65f97b342e7b47a69efa51f01dfa",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/css/admin.css",
+      "lines": 912,
+      "sha256": "60eaf978332769ad2bbf734d9c8410c78ec24af86dd6086ccbe600b2d2321f5e",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/css/print.css",
+      "lines": 70,
+      "sha256": "7cf8168beae60a0f9df4cc9ede37e859213a35cc674f160b2e32cee28fa21421",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/css/site.css",
+      "lines": 2425,
+      "sha256": "afa97f3e081e66a8cfbda3b2801bd1beee0df1260f259c848b66e0224e315d42",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/css/tokens.css",
+      "lines": 252,
+      "sha256": "b43bcfdada8884989cc34fca92e7e03b06294145feb719458251476ec05292f2",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/data/vn-locations.json",
+      "lines": 79,
+      "sha256": "1ec0cad6133283b3cb73a150d3706e4acb97b40c462f98fe3e97e8e49b40d87a",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/images/favicon.svg",
+      "lines": 11,
+      "sha256": "92b046a68056dc83cdfce7568abcf20f19a96e8863cff7f783e3b862fe52d797",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/js/api.js",
+      "lines": 555,
+      "sha256": "14f464c1ec6f1355f71ad800b6e6ae65c661b707f1d8c31dc162288c20830bb1",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/robots.txt",
+      "lines": 16,
+      "sha256": "6c9c9c3c7ea119f2531bbab460e3a7ba00db26f1ce9c9babc05f594b11e42049",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/static/site.webmanifest",
+      "lines": 17,
+      "sha256": "aec6bd041400be0bf498f68b503b13b616555c666cb4bd6978d2125507365276",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/account/order-detail.html",
+      "lines": 419,
+      "sha256": "7b953391f6a5b970760c11db5ae5891418c983261c9caade92c94501087982fa",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/account/orders.html",
+      "lines": 264,
+      "sha256": "14f65bdce0cbdc4701faba5b39857dfe85d0504fecdd477dcece27928e795d79",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/account/profile.html",
+      "lines": 502,
+      "sha256": "fcaa0aefbaafb7625026810951f0e0ad2073d47c29160f02b676defa062a430c",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/account/wishlist.html",
+      "lines": 219,
+      "sha256": "d006c8ee346de8d38fc926b6be4991a9e489a22541f99c13bf991fe5b95d05b1",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/dashboard.html",
+      "lines": 310,
+      "sha256": "0715bb7018d89888749636e886aa6e40c3cb2ce59a3bf4bfca1be6269ee61fb3",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/fragments/head.html",
+      "lines": 40,
+      "sha256": "747a8c83f6f052f1b0ff9f9f0ede09ef5627350789f37825e727333a998a529f",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/fragments/sidebar.html",
+      "lines": 75,
+      "sha256": "baead4cfa1d488c8d61c7c5367832b20ca636409192a0af495d067401d8f9fcb",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/fragments/topbar.html",
+      "lines": 30,
+      "sha256": "acf0efb7e2cb380f51b1a78d2a3f7a095f1147301d4f8267d78b22c72a5bf563",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/inventory.html",
+      "lines": 369,
+      "sha256": "d530cab7f14b54abdf763e1792c03f0c0d96ad9609d5e6dee5fb1fa4bd64f8ad",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/order-detail.html",
+      "lines": 488,
+      "sha256": "123ad52067fec32582ccd96432827ce860d93bbdcd4bc744e72cbac1dad0ebc5",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/orders.html",
+      "lines": 260,
+      "sha256": "194d5f275399682d6494acb9765836b652eee3b137bc1762afc214cf9bc3d1cf",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/admin/products.html",
+      "lines": 263,
+      "sha256": "ee3023afaaa28ec6b9c045761a497935182c81b291754a0e30bd4ba6fe13f2c0",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/auth/login.html",
+      "lines": 314,
+      "sha256": "59141e791a982671dc2fe79f5cf217261470c4e292943de40f1b20168ad3f127",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/auth/register.html",
+      "lines": 152,
+      "sha256": "40be0198754828eb758589b01056cb3212340523ca4444c71c44f28750c1f1ee",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/brands.html",
+      "lines": 61,
+      "sha256": "b6bb1525c39bd7b4b0ed02e3251591d3d95ed09da9b458c672dc0e8b860e39fb",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/cart.html",
+      "lines": 225,
+      "sha256": "f207e12afe65292a5d4541072bf667d94640209e99dc500102f834e60230f6a8",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/checkout.html",
+      "lines": 376,
+      "sha256": "e02606c703054f8fa2d17e9fde3b04c361a166181bc73a1773669d33e69802f0",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/error/403.html",
+      "lines": 37,
+      "sha256": "fd21a9221eef1c1d73121737bde0c6e8d2d94a62b18c6b25fe14179a49519340",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/error/404.html",
+      "lines": 37,
+      "sha256": "de8e64b94f92529c00dd08f044139f2fb8e9397289bf21bf8ac7c9ba4f3f6ae1",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/error/500.html",
+      "lines": 37,
+      "sha256": "3a07455bbb355f222944309571a87f914a19e6d3d9c7d746349a88a0a407be6e",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/fragments/footer.html",
+      "lines": 92,
+      "sha256": "8e375bcc44c1f49b3091e3bfcf08237e5ad2dd50091d027e7f76f20d64b138aa",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/fragments/head.html",
+      "lines": 89,
+      "sha256": "914b20fcbbe5e9e3d38edd0da25957a7202b440f238c89d9d38a910e8b2a314e",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/fragments/header.html",
+      "lines": 151,
+      "sha256": "a99722b8f591a59b46b359aef10835a9108a09bc6cebfd2e8c88c0c23d2f1b9d",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/fragments/toast.html",
+      "lines": 4,
+      "sha256": "7a7447b57593db260f8aa7bc0365932ebb2f830bb7f30933adfdebc04a5aca2f",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/home.html",
+      "lines": 358,
+      "sha256": "086237e1e2c6e34e3384adb66c2973e3322a1f55fdfcbe42898b82a793aedc7e",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/order-success.html",
+      "lines": 125,
+      "sha256": "45709e6ce11f39e967b8935cba2f934865a0e5989d72ec6a266cec8db6bd25a1",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/product-detail.html",
+      "lines": 457,
+      "sha256": "900913fe2b27e006d362221d72a30dfddae62c79d1fce9928c5e7c096d52a903",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/product-list.html",
+      "lines": 224,
+      "sha256": "c63eb4bd78d7a7fd005778793b6909d449ce2a69b32364f034517924653e28c2",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/resources/templates/stores.html",
+      "lines": 71,
+      "sha256": "fcbe0b3fded9cf44202b590f37c5526549fdca1f359fc714f9844d2e110c2dbd",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/test/java/com/thinh/cosmetic/controller/WebPageControllersTest.java",
+      "lines": 191,
+      "sha256": "d1b6f7487edcb0eb9b9ed74b3d28b64af17fe844632f947939ac214ffac44ca0",
+      "read_mode": "implementation/full inline-script inspection; markup/CSS normalized to semantic content where presentation-only"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/domain/dto/request/account/RegisterRequest.java",
+      "lines": 31,
+      "sha256": "f6d16a1811b5db03dc427bed6439e543b13e07539c44664a3c38fada19688ca4",
+      "read_mode": "full source"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java",
+      "lines": 122,
+      "sha256": "cb488611d76bb3fb2f523dbd74a3e2f53c96bf3059f187239b80b4b5551cb7be",
+      "read_mode": "full source"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/domain/dto/request/returns/ReturnRequestDto.java",
+      "lines": 47,
+      "sha256": "cc18e6170d5f5d0a0fc707e42f80ba565c61b12629cab67337ab08277d5168ec",
+      "read_mode": "full source"
+    },
+    {
+      "path": "src/main/java/com/thinh/cosmetic/domain/dto/response/account/LoginResponse.java",
+      "lines": 20,
+      "sha256": "3ea74a14a0168300ee8536892eaba7a33b335b4602340d568fa509cc67c1eb80",
+      "read_mode": "full source"
+    }
+  ],
+  "tech_verified": {
+    "frontend": "Spring MVC server-rendered Thymeleaf templates + HTML/CSS + Vanilla JavaScript Fetch API",
+    "not_react": true,
+    "common_library": "src/main/resources/static/js/api.js",
+    "theme": "localStorage dark/light design tokens",
+    "external_presentation_dependencies": [
+      "Google Fonts",
+      "Bootstrap Icons CDN",
+      "GSAP/ScrollTrigger CDN",
+      "remote image URLs"
+    ],
+    "auth": "Cookie JWT HttpOnly; apiFetch adds X-Requested-With; raw fetch mutation omissions are gaps"
+  },
+  "page_routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "template": "home",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/HomeController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/stores",
+      "template": "stores",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/HomeController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/brands",
+      "template": "brands",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/HomeController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/products",
+      "template": "product-list",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/product",
+      "template": "product-list",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/products/{id}",
+      "template": "product-detail",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/product/{id}",
+      "template": "product-detail",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/login",
+      "template": "auth/login",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AuthPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/register",
+      "template": "auth/register",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AuthPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/logout",
+      "template": "redirect:/login",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AuthPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/cart",
+      "template": "cart",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CartPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/checkout",
+      "template": "checkout",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/order-success",
+      "template": "order-success",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/account",
+      "template": "redirect:/account/profile",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/account/profile",
+      "template": "account/profile",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/account/orders",
+      "template": "account/orders",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/account/orders/{id}",
+      "template": "account/order-detail",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/account/wishlist",
+      "template": "account/wishlist",
+      "security": "ROLE_CUSTOMER",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/admin",
+      "template": "admin/dashboard",
+      "security": "ROLE_EMPLOYEE",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/orders",
+      "template": "admin/orders",
+      "security": "ROLE_EMPLOYEE",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/orders/{id}",
+      "template": "admin/order-detail",
+      "security": "ROLE_EMPLOYEE",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/inventory",
+      "template": "admin/inventory",
+      "security": "ROLE_EMPLOYEE",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/admin/products",
+      "template": "admin/products",
+      "security": "ROLE_EMPLOYEE",
+      "source": "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java"
+    },
+    {
+      "method": "ANY",
+      "path": "/error",
+      "template": "error/403|error/404|error/500",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CustomErrorController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/error/403",
+      "template": "error/403",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CustomErrorController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/error/404",
+      "template": "error/404",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CustomErrorController.java"
+    },
+    {
+      "method": "GET",
+      "path": "/error/500",
+      "template": "error/500",
+      "security": "permitAll",
+      "source": "src/main/java/com/thinh/cosmetic/controller/CustomErrorController.java"
+    }
+  ],
+  "ui_actions": [
+    {
+      "key": "browse_catalog",
+      "name": "Tra cứu, tìm kiếm và lọc mỹ phẩm",
+      "page": [
+        "/",
+        "/products",
+        "/product"
+      ],
+      "endpoint": "/products",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Guest",
+        "Customer",
+        "Employee"
+      ],
+      "notes": "SSR: ProductPageController.productList calls productService.searchAndFilter(keyword, brandId, categoryId, skinType, concern, priceRange, sortBy). Không fetch API public catalog trên storefront. page parameter chỉ đưa vào Model, không paginate.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java:27",
+        "src/main/resources/templates/product-list.html:37",
+        "src/main/resources/templates/fragments/header.html:67"
+      ]
+    },
+    {
+      "key": "view_product",
+      "name": "Xem chi tiết mỹ phẩm",
+      "page": [
+        "/products/{id}",
+        "/product/{id}"
+      ],
+      "endpoint": "/products/{id}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Guest",
+        "Customer",
+        "Employee"
+      ],
+      "notes": "SSR productService.getById; selected SKU updates price and code locally. Related products actually same category OR brand, limit 4; no BeautyProfile personalization.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java:63",
+        "src/main/resources/templates/product-detail.html:23",
+        "src/main/resources/templates/product-detail.html:295"
+      ]
+    },
+    {
+      "key": "view_brands",
+      "name": "Xem thương hiệu",
+      "page": "/brands",
+      "endpoint": "/brands",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Guest",
+        "Customer",
+        "Employee"
+      ],
+      "notes": "HomeController loads brandService.getAll; links filter catalog by brandId.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/HomeController.java:49",
+        "src/main/resources/templates/brands.html:29"
+      ]
+    },
+    {
+      "key": "view_stores",
+      "name": "Xem hệ thống cửa hàng",
+      "page": "/stores",
+      "endpoint": "/stores",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Guest",
+        "Customer",
+        "Employee"
+      ],
+      "notes": "HomeController loads storeService.getAll; cards show province/name/address/phone/hours. Không map/booking.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/HomeController.java:38",
+        "src/main/resources/templates/stores.html:29"
+      ]
+    },
+    {
+      "key": "view_sku_store_stock",
+      "name": "Kiểm tra còn hàng theo cửa hàng",
+      "page": "/products/{id}",
+      "endpoint": "/api/products/sku/{skuId}/stores",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Guest",
+        "Customer",
+        "Employee"
+      ],
+      "notes": "Modal per selectedSkuId displays storeName/address/phone/inStock/availableStock. Không giữ hàng.",
+      "sources": [
+        "src/main/resources/templates/product-detail.html:357",
+        "src/main/resources/templates/product-detail.html:383"
+      ]
+    },
+    {
+      "key": "register",
+      "name": "Đăng ký khách hàng",
+      "page": "/register",
+      "endpoint": "/api/auth/register",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Guest"
+      ],
+      "notes": "UI sends displayName rather than required RegisterRequest.fullName -> @Valid returns 400 before account creation. Even with corrected field, register responds 201 without JWT cookie and UI falsely says auto login without invoking login.",
+      "sources": [
+        "src/main/resources/templates/auth/register.html:102",
+        "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:31",
+        "src/main/java/com/thinh/cosmetic/domain/dto/request/account/RegisterRequest.java:16"
+      ]
+    },
+    {
+      "key": "login",
+      "name": "Đăng nhập",
+      "page": "/login",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Guest"
+      ],
+      "notes": "Identifier/password; apiFetch attaches X-Requested-With and backend login issues JWT cookie. UI checks res.isEmployee, but LoginResponse has accountType/redirectUrl and no isEmployee; UI ignores backend redirectUrl, so default employee login navigates / rather than /admin (unless request redirect parameter itself /admin). Remember checkbox unread.",
+      "sources": [
+        "src/main/resources/templates/auth/login.html:268",
+        "src/main/resources/static/js/api.js:65",
+        "src/main/resources/templates/auth/login.html:295",
+        "src/main/java/com/thinh/cosmetic/domain/dto/response/account/LoginResponse.java:15",
+        "src/main/java/com/thinh/cosmetic/service/account/impl/AccountServiceImpl.java:107"
+      ]
+    },
+    {
+      "key": "logout",
+      "name": "Đăng xuất",
+      "page": [
+        "all authenticated pages"
+      ],
+      "endpoint": "/api/auth/logout + /logout",
+      "method": "POST + GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer",
+        "Employee"
+      ],
+      "notes": "LUNEA.logout POST with credentials/include header then full GET /logout; AuthPageController evicts JWT cookie/clears context/session.",
+      "sources": [
+        "src/main/resources/static/js/api.js:512",
+        "src/main/java/com/thinh/cosmetic/controller/AuthPageController.java:30"
+      ]
+    },
+    {
+      "key": "reset_password",
+      "name": "Đặt lại mật khẩu",
+      "page": "/login",
+      "endpoint": "/api/auth/reset-password",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Guest"
+      ],
+      "notes": "Modal sends emailOrPhone/newPassword, confirm local. Raw fetch omits X-Requested-With, filter rejects 403. Backend does not use Email/OTP actor.",
+      "sources": [
+        "src/main/resources/templates/auth/login.html:213",
+        "src/main/resources/templates/auth/login.html:239",
+        "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java:36"
+      ]
+    },
+    {
+      "key": "view_profile",
+      "name": "Xem hồ sơ khách hàng",
+      "page": "/account/profile",
+      "endpoint": "/account/profile",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR calls customerService.getProfile and getAddresses; displays loyaltyPoints only (no redemption/accrual UI). Controller falls back customerId=1 when principal ID missing.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:35",
+        "src/main/resources/templates/account/profile.html:80"
+      ]
+    },
+    {
+      "key": "update_profile",
+      "name": "Cập nhật hồ sơ",
+      "page": "/account/profile",
+      "endpoint": "/api/customers/{customerId}/profile",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Full name/phone/dob/gender; email disabled, no password-change form.",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:324",
+        "src/main/resources/templates/account/profile.html:334"
+      ]
+    },
+    {
+      "key": "view_addresses",
+      "name": "Xem sổ địa chỉ",
+      "page": "/account/profile",
+      "endpoint": "/api/customers/{customerId}/addresses",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Initial SSR addresses; edit/default actions fetch actual list.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:43",
+        "src/main/resources/templates/account/profile.html:402"
+      ]
+    },
+    {
+      "key": "add_address",
+      "name": "Thêm địa chỉ nhận hàng",
+      "page": "/account/profile",
+      "endpoint": "/api/customers/{customerId}/addresses",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Recipient/phone/province/district/ward/detail/default from modal. Static locations includes 5 provinces but UI select only HCM/HN/DN.",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:384",
+        "src/main/resources/templates/account/profile.html:448"
+      ]
+    },
+    {
+      "key": "update_address",
+      "name": "Cập nhật địa chỉ nhận hàng",
+      "page": "/account/profile",
+      "endpoint": "/api/customers/{customerId}/addresses/{addressId}",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Edit fetch only fills recipient/phone/detail/default; province/district/ward not prefilled from existing record, can save stale controls.",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:398",
+        "src/main/resources/templates/account/profile.html:441"
+      ]
+    },
+    {
+      "key": "default_address",
+      "name": "Đặt địa chỉ mặc định",
+      "page": "/account/profile",
+      "endpoint": "/api/customers/{customerId}/addresses/{addressId}",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Fetch list, set target.isDefault=true, submit whole target. No dedicated endpoint.",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:464"
+      ]
+    },
+    {
+      "key": "delete_address",
+      "name": "Xóa địa chỉ nhận hàng",
+      "page": "/account/profile",
+      "endpoint": "/api/customers/{customerId}/addresses/{addressId}",
+      "method": "DELETE",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Confirmation; UI hides delete for default address, non-default card removed on success.",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:186",
+        "src/main/resources/templates/account/profile.html:482"
+      ]
+    },
+    {
+      "key": "view_wishlist",
+      "name": "Xem sản phẩm yêu thích",
+      "page": "/account/wishlist",
+      "endpoint": "/account/wishlist",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR wishListService.getWishList; card links to product detail, no move-to-cart operation.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:96",
+        "src/main/resources/templates/account/wishlist.html:102"
+      ]
+    },
+    {
+      "key": "add_wishlist",
+      "name": "Lưu sản phẩm yêu thích",
+      "page": [
+        "/",
+        "/products",
+        "/products/{id}"
+      ],
+      "endpoint": "/api/wishlist/products/{productId}",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "toggleWishlist raw fetch only Content-Type, lacks X-Requested-With. Blocked by filter with cookie JWT. Hearts not initialized from server wishlist state.",
+      "sources": [
+        "src/main/resources/static/js/api.js:167",
+        "src/main/resources/static/js/api.js:176",
+        "src/main/resources/templates/home.html:248",
+        "src/main/resources/templates/product-list.html:152",
+        "src/main/resources/templates/product-detail.html:105",
+        "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java:36"
+      ]
+    },
+    {
+      "key": "remove_wishlist",
+      "name": "Bỏ sản phẩm yêu thích",
+      "page": [
+        "/account/wishlist",
+        "/",
+        "/products",
+        "/products/{id}"
+      ],
+      "endpoint": "/api/wishlist/products/{productId}",
+      "method": "DELETE",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Both toggleWishlist and removeWishlistItem raw fetch omit X-Requested-With -> 403.",
+      "sources": [
+        "src/main/resources/static/js/api.js:167",
+        "src/main/resources/templates/account/wishlist.html:165",
+        "src/main/resources/templates/account/wishlist.html:172",
+        "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java:36"
+      ]
+    },
+    {
+      "key": "view_cart",
+      "name": "Xem giỏ hàng",
+      "page": "/cart",
+      "endpoint": "/cart + /api/cart",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR cartService.getCart; JS cart badge separately fetches /api/cart.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/CartPageController.java:24",
+        "src/main/resources/static/js/api.js:134",
+        "src/main/resources/templates/cart.html:35"
+      ]
+    },
+    {
+      "key": "add_cart",
+      "name": "Thêm mỹ phẩm vào giỏ",
+      "page": "/products/{id}",
+      "endpoint": "/api/cart/items",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Requires SKU selection; quantity 1..99; JSON skuId/quantity; updates badge. Backend actual stock checks delegated commerce.",
+      "sources": [
+        "src/main/resources/templates/product-detail.html:317",
+        "src/main/resources/static/js/api.js:157"
+      ]
+    },
+    {
+      "key": "update_cart",
+      "name": "Thay đổi số lượng trong giỏ",
+      "page": "/cart",
+      "endpoint": "/api/cart/items/{cartItemId}",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "updateQty calls API; response code expects itemSubtotal/cartSubtotal although CartResponse has items/subtotal/totalItems, therefore money stale until reload. +/- onclick embeds SSR quantity and repeats same target across clicks.",
+      "sources": [
+        "src/main/resources/templates/cart.html:70",
+        "src/main/resources/templates/cart.html:169",
+        "src/main/resources/templates/cart.html:182",
+        "src/main/java/com/thinh/cosmetic/domain/dto/response/cart/CartResponse.java:14"
+      ]
+    },
+    {
+      "key": "remove_cart",
+      "name": "Xóa mặt hàng khỏi giỏ",
+      "page": "/cart",
+      "endpoint": "/api/cart/items/{cartItemId}",
+      "method": "DELETE",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Confirm then reload. newQty<1 also routes to remove.",
+      "sources": [
+        "src/main/resources/templates/cart.html:201"
+      ]
+    },
+    {
+      "key": "checkout_form",
+      "name": "Chuẩn bị đặt hàng",
+      "page": "/checkout",
+      "endpoint": "/checkout",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR cart+saved addresses+stores loaded; UI selects existing address or new. Only standard delivery and COD. No store selection or deliveryMethod payload.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java:30",
+        "src/main/resources/templates/checkout.html:39",
+        "src/main/resources/templates/checkout.html:263"
+      ]
+    },
+    {
+      "key": "apply_voucher",
+      "name": "Áp dụng voucher khi đặt hàng",
+      "page": "/checkout",
+      "endpoint": "/api/orders/preview",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Payload only voucherCode. Uses preview.discountAmount/shippingFee. On every API error, hardcoded client discount for LUNEA10/GIAM50K/FREESHIP claims success regardless server validity.",
+      "sources": [
+        "src/main/resources/templates/checkout.html:295",
+        "src/main/resources/templates/checkout.html:302",
+        "src/main/resources/templates/checkout.html:311"
+      ]
+    },
+    {
+      "key": "place_order",
+      "name": "Đặt hàng thanh toán khi nhận",
+      "page": "/checkout",
+      "endpoint": "/api/orders/checkout",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "Sends recipientName/Phone, province/district/ward, shippingAddress, note, COD, voucherCode, customerAddressId. Does not send storeId/deliveryMethod/expectedTotal. Backend assigned store, response orderCode -> success page.",
+      "sources": [
+        "src/main/resources/templates/checkout.html:333",
+        "src/main/resources/templates/checkout.html:344",
+        "src/main/resources/templates/checkout.html:355"
+      ]
+    },
+    {
+      "key": "order_success",
+      "name": "Xem xác nhận đặt hàng",
+      "page": "/order-success",
+      "endpoint": "/order-success?orderCode={orderCode}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR getByOrderCode; page displays orderCode/store/recipient/total. Status text fixed Chờ xác nhận and fallback totals when no order. Controller has no owner check here (commerce/security root cross-check).",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java:52",
+        "src/main/resources/templates/order-success.html:44"
+      ]
+    },
+    {
+      "key": "view_my_orders",
+      "name": "Xem và lọc đơn hàng của tôi",
+      "page": "/account/orders",
+      "endpoint": "/account/orders",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR getByCustomer; status filtering local DOM including PENDING/CONFIRMED/PREPARING/SHIPPING/COMPLETED/CANCELLED.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:55",
+        "src/main/resources/templates/account/orders.html:198"
+      ]
+    },
+    {
+      "key": "view_order",
+      "name": "Xem chi tiết và tiến độ đơn",
+      "page": "/account/orders/{id}",
+      "endpoint": "/account/orders/{id}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR getById+getByOrder; checks customer owner only when principal and non-null customerId/order.customerId. Shows snapshot, delivery, totals, stepper, return records.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:72",
+        "src/main/resources/templates/account/order-detail.html:22"
+      ]
+    },
+    {
+      "key": "cancel_my_order",
+      "name": "Hủy đơn hàng của tôi",
+      "page": [
+        "/account/orders",
+        "/account/orders/{id}"
+      ],
+      "endpoint": "/api/orders/{orderId}/cancel",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "UI and OrderServiceImpl.cancelOrder both allow cancellation only PENDING. Confirmation and reload; staff cancellation differs (PENDING/CONFIRMED/PREPARING status workflow).",
+      "sources": [
+        "src/main/resources/templates/account/orders.html:172",
+        "src/main/resources/templates/account/orders.html:247",
+        "src/main/resources/templates/account/order-detail.html:247",
+        "src/main/resources/templates/account/order-detail.html:338",
+        "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java:459"
+      ]
+    },
+    {
+      "key": "request_return",
+      "name": "Gửi yêu cầu trả hàng",
+      "page": "/account/orders/{id}",
+      "endpoint": "/api/returns",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Partially Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "UI visible only COMPLETED and no prior request. Check subset order items; quantity hidden full purchased qty, no partial-quantity editing. Sends orderId/reason/description/items. Backend customer required association missing per commerce analysis.",
+      "sources": [
+        "src/main/resources/templates/account/order-detail.html:255",
+        "src/main/resources/templates/account/order-detail.html:290",
+        "src/main/resources/templates/account/order-detail.html:365",
+        "src/main/resources/templates/account/order-detail.html:392"
+      ]
+    },
+    {
+      "key": "view_return",
+      "name": "Theo dõi yêu cầu trả hàng",
+      "page": "/account/orders/{id}",
+      "endpoint": "/account/orders/{id}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Customer"
+      ],
+      "notes": "SSR returnService.getByOrder presents statuses/reason on same detail; no cancel/withdraw return UI.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:88",
+        "src/main/resources/templates/account/order-detail.html:220"
+      ]
+    },
+    {
+      "key": "dashboard",
+      "name": "Xem tổng quan vận hành",
+      "page": "/admin",
+      "endpoint": "/api/admin/orders?storeId={storeId}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "KPI computed in browser from live order list: sum totalAmount of COMPLETED, pending, preparing+shipping, recent first six orders. No date filter/time series/top-selling. Low stock fetched separately.",
+      "sources": [
+        "src/main/resources/templates/admin/dashboard.html:200",
+        "src/main/resources/templates/admin/dashboard.html:220"
+      ]
+    },
+    {
+      "key": "low_stock",
+      "name": "Xem cảnh báo tồn thấp",
+      "page": "/admin",
+      "endpoint": "/api/inventory/store/{storeId}/low-stock",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "Shows count/all and first five. With all-store dashboard, chooses options[1] (first store), no chain aggregation.",
+      "sources": [
+        "src/main/resources/templates/admin/dashboard.html:211",
+        "src/main/resources/templates/admin/dashboard.html:274"
+      ]
+    },
+    {
+      "key": "staff_orders",
+      "name": "Tra cứu đơn hàng trong phạm vi cửa hàng",
+      "page": "/admin/orders",
+      "endpoint": "/api/admin/orders?storeId={storeId}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "Branch selector from StoreScope; local status/code/name/phone filters. Admin any/all branches, other employee accessibleStores only.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java:25",
+        "src/main/resources/templates/admin/orders.html:113",
+        "src/main/resources/templates/admin/orders.html:172"
+      ]
+    },
+    {
+      "key": "staff_order_detail",
+      "name": "Xem đơn hàng cần xử lý",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/admin/orders/{orderId}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "AJAX render snapshots/prices/address/stepper; data-order-id from page Model.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:212"
+      ]
+    },
+    {
+      "key": "confirm_order",
+      "name": "Xác nhận đơn hàng",
+      "page": [
+        "/admin/orders",
+        "/admin/orders/{id}"
+      ],
+      "endpoint": "/api/admin/orders/{orderId}/status?status=CONFIRMED",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "State-dependent action; quick confirm in orders table; confirmation for detail. Header wrapper correct. No role/permission-specific hide beyond status; actual backend authorization must decide.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:457",
+        "src/main/resources/templates/admin/order-detail.html:473",
+        "src/main/resources/templates/admin/orders.html:243"
+      ]
+    },
+    {
+      "key": "prepare_order",
+      "name": "Chuyển đơn sang chuẩn bị hàng",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/admin/orders/{orderId}/status?status=PREPARING",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "State-dependent action; quick confirm in orders table; confirmation for detail. Header wrapper correct. No role/permission-specific hide beyond status; actual backend authorization must decide.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:393",
+        "src/main/resources/templates/admin/order-detail.html:457"
+      ]
+    },
+    {
+      "key": "ship_order",
+      "name": "Xác nhận bắt đầu giao hàng",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/admin/orders/{orderId}/status?status=SHIPPING",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "State-dependent action; quick confirm in orders table; confirmation for detail. Header wrapper correct. No role/permission-specific hide beyond status; actual backend authorization must decide.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:417",
+        "src/main/resources/templates/admin/order-detail.html:457"
+      ]
+    },
+    {
+      "key": "complete_order",
+      "name": "Xác nhận giao hàng và thu tiền COD",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/admin/orders/{orderId}/status?status=COMPLETED",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "State-dependent action; quick confirm in orders table; confirmation for detail. Header wrapper correct. No role/permission-specific hide beyond status; actual backend authorization must decide.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:435",
+        "src/main/resources/templates/admin/order-detail.html:457"
+      ]
+    },
+    {
+      "key": "staff_cancel_order",
+      "name": "Hủy đơn trước khi giao",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/admin/orders/{orderId}/status?status=CANCELLED",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "State-dependent action; quick confirm in orders table; confirmation for detail. Header wrapper correct. No role/permission-specific hide beyond status; actual backend authorization must decide.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:372",
+        "src/main/resources/templates/admin/order-detail.html:457"
+      ]
+    },
+    {
+      "key": "staff_view_returns",
+      "name": "Xem yêu cầu trả hàng của đơn",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/returns/order/{orderId}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "Displays first return only (returns[0]), hidden card if none.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:224",
+        "src/main/resources/templates/admin/order-detail.html:235"
+      ]
+    },
+    {
+      "key": "approve_return",
+      "name": "Chấp thuận yêu cầu trả hàng",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/returns/{returnId}/status?status=APPROVED",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "Buttons only for REQUESTED first return; no complete/restock button.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:253",
+        "src/main/resources/templates/admin/order-detail.html:285"
+      ]
+    },
+    {
+      "key": "reject_return",
+      "name": "Từ chối yêu cầu trả hàng",
+      "page": "/admin/orders/{id}",
+      "endpoint": "/api/returns/{returnId}/status?status=REJECTED",
+      "method": "PUT",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "Buttons only for REQUESTED first return; no complete/restock button.",
+      "sources": [
+        "src/main/resources/templates/admin/order-detail.html:253",
+        "src/main/resources/templates/admin/order-detail.html:285"
+      ]
+    },
+    {
+      "key": "view_inventory",
+      "name": "Tra cứu tồn kho cửa hàng",
+      "page": "/admin/inventory",
+      "endpoint": "/api/inventory/store/{storeId}",
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "SKU/name local filter; actual/held/available/minimum/status + sums KPI. Accessible branch options; query storeId in dashboard link ignored in initialization.",
+      "sources": [
+        "src/main/resources/templates/admin/inventory.html:19",
+        "src/main/resources/templates/admin/inventory.html:182",
+        "src/main/resources/templates/admin/inventory.html:219"
+      ]
+    },
+    {
+      "key": "adjust_inventory",
+      "name": "Điều chỉnh tồn thực tế",
+      "page": "/admin/inventory",
+      "endpoint": "/api/inventory/adjust",
+      "method": "POST",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "NewQuantity >= held UI enforced; required reason preset/custom. Sends storeId/skuId/newQuantity/reason. Reasons mentioning purchase/transfer only update one stock record, not actual purchase/transfer processes.",
+      "sources": [
+        "src/main/resources/templates/admin/inventory.html:163",
+        "src/main/resources/templates/admin/inventory.html:318",
+        "src/main/resources/templates/admin/inventory.html:344"
+      ]
+    },
+    {
+      "key": "admin_view_catalog",
+      "name": "Tra cứu sản phẩm và SKU toàn chuỗi",
+      "page": "/admin/products",
+      "endpoint": [
+        "/api/products",
+        "/api/brands",
+        "/api/categories"
+      ],
+      "method": "GET",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Employee"
+      ],
+      "notes": "Fetch public reads, client filter name/brand/category/origin, KPI total products/SKUs/featured/ACTIVE, show prices/stock/status/link storefront. No editing actions/forms/modal.",
+      "sources": [
+        "src/main/resources/templates/admin/products.html:120",
+        "src/main/resources/templates/admin/products.html:170",
+        "src/main/resources/templates/admin/products.html:194"
+      ]
+    },
+    {
+      "key": "theme",
+      "name": "Đổi giao diện sáng tối",
+      "page": "all pages",
+      "endpoint": null,
+      "method": "local",
+      "implemented_ui": true,
+      "integration_status": "Implemented",
+      "actors": [
+        "Guest",
+        "Customer",
+        "Employee"
+      ],
+      "notes": "localStorage lunea-theme + DOM data-theme. UI convenience, exclude main business use cases.",
+      "sources": [
+        "src/main/resources/static/js/api.js:269",
+        "src/main/resources/templates/fragments/header.html:78"
+      ]
+    }
+  ],
+  "roles_rbac_ui": {
+    "customer_pages": "ROLE_CUSTOMER enforced URL for account/cart/checkout/order-success",
+    "employee_pages": "ROLE_EMPLOYEE enforced URL for /admin/**",
+    "common_header": "currentUser.isEmployee/isCustomer determines selected links; several global customer links still visible to guests/employees",
+    "admin": "StoreScope.getAccessibleStoreIds returns null = all stores else filtered list. No finer permission checks in template controls.",
+    "sources": [
+      "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java:97",
+      "src/main/java/com/thinh/cosmetic/controller/AdminPageController.java:25",
+      "src/main/resources/templates/fragments/header.html:114",
+      "src/main/resources/templates/admin/fragments/sidebar.html:34"
+    ]
+  },
+  "ui_only": [
+    {
+      "key": "remember_login",
+      "name": "Ghi nhớ đăng nhập",
+      "sources": [
+        "src/main/resources/templates/auth/login.html:62"
+      ],
+      "reason": "Checkbox has no id/name and handleLogin never reads/sends it; no refresh token."
+    },
+    {
+      "key": "review_placeholder",
+      "name": "Xem đánh giá khách hàng trên chi tiết sản phẩm",
+      "sources": [
+        "src/main/resources/templates/product-detail.html:190"
+      ],
+      "reason": "Static single testimonial, no Review API fetch/create form; do not mark review UI integrated."
+    },
+    {
+      "key": "my_vouchers",
+      "name": "Xem voucher của tôi",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:65",
+        "src/main/resources/templates/account/orders.html:53",
+        "src/main/resources/templates/account/wishlist.html:54"
+      ],
+      "reason": "Toast hardcoded 3 vouchers or no vouchers, no fetch."
+    },
+    {
+      "key": "notifications",
+      "name": "Xem thông báo",
+      "sources": [
+        "src/main/resources/templates/account/orders.html:56"
+      ],
+      "reason": "Only toast Không có thông báo mới."
+    },
+    {
+      "key": "account_settings",
+      "name": "Cài đặt tài khoản",
+      "sources": [
+        "src/main/resources/templates/account/orders.html:59"
+      ],
+      "reason": "Only toast tính năng đang hoàn thiện."
+    },
+    {
+      "key": "promotion_nav",
+      "name": "Trang khuyến mãi",
+      "sources": [
+        "src/main/resources/templates/fragments/header.html:43",
+        "src/main/resources/templates/fragments/footer.html:39"
+      ],
+      "reason": "Link to /products?concern=Trị+Mụn, not real promotion/voucher catalogue."
+    },
+    {
+      "key": "blog_nav",
+      "name": "Blog",
+      "sources": [
+        "src/main/resources/templates/fragments/header.html:52"
+      ],
+      "reason": "Link / home; no blog route/entities/API."
+    },
+    {
+      "key": "book_consultation",
+      "name": "Đặt lịch tư vấn",
+      "sources": [
+        "src/main/resources/templates/home.html:191"
+      ],
+      "reason": "Link /stores only; no reservation form/API."
+    },
+    {
+      "key": "delivery_eta",
+      "name": "Tính ngày dự kiến giao hàng",
+      "sources": [
+        "src/main/resources/templates/checkout.html:127"
+      ],
+      "reason": "Fixed text 26 - 28/09/2026; no shipping-provider API/calculation."
+    },
+    {
+      "key": "voucher_fallback",
+      "name": "Voucher giảm giá dự phòng tại client",
+      "sources": [
+        "src/main/resources/templates/checkout.html:311"
+      ],
+      "reason": "Hardcoded codes after API error, may disagree persisted checkout."
+    },
+    {
+      "key": "static_policies",
+      "name": "Xem điều khoản/chính sách",
+      "sources": [
+        "src/main/resources/templates/fragments/footer.html:50",
+        "src/main/resources/templates/fragments/footer.html:77",
+        "src/main/resources/templates/fragments/footer.html:83"
+      ],
+      "reason": "Static informational toast; not policy administration or backend workflow."
+    }
+  ],
+  "backend_without_ui": [
+    {
+      "module": "account",
+      "features": [
+        "BeautyProfile read/update",
+        "Employee CRUD",
+        "Customer listing/admin management",
+        "Account lookup /api/auth/me"
+      ],
+      "evidence": "No page route, form or fetch targets for corresponding /api/customers/*/beauty-profile and /api/employees endpoints."
+    },
+    {
+      "module": "catalog",
+      "features": [
+        "Create/update/deactivate products",
+        "Create/update/deactivate brands/categories",
+        "SKU mutation if backend service exists",
+        "Image/attribute mutation if backend service exists"
+      ],
+      "evidence": "admin/products.html only GET fetches. Need operations agent verify which service operations exposed as endpoints; never infer missing APIs from design."
+    },
+    {
+      "module": "store",
+      "features": [
+        "Store create/update/deactivate",
+        "Stock transfer create/list/ship/receive"
+      ],
+      "evidence": "Only public /stores list; no back-office route/fetch for /api/stores mutation or /api/stock-transfers."
+    },
+    {
+      "module": "purchase",
+      "features": [
+        "Supplier CRUD",
+        "Purchase order create/list/detail/confirm"
+      ],
+      "evidence": "No page/fetch for /api/suppliers or /api/purchase-orders."
+    },
+    {
+      "module": "review",
+      "features": [
+        "Create review",
+        "Read real product reviews",
+        "List/moderate reviews"
+      ],
+      "evidence": "No /api/reviews calls, product review tab static."
+    },
+    {
+      "module": "returns",
+      "features": [
+        "Complete approved return",
+        "General return list/detail search"
+      ],
+      "evidence": "Admin UI only first per-order return, approve/reject; no COMPLETED button."
+    },
+    {
+      "module": "cart",
+      "features": [
+        "Clear all cart"
+      ],
+      "evidence": "DELETE /api/cart exists; no clear button/API call."
+    },
+    {
+      "module": "promotion",
+      "features": [
+        "Voucher administration"
+      ],
+      "evidence": "No voucher admin route/fetch; operations agent verifies whether backend exposed at all."
+    }
+  ],
+  "gaps": [
+    {
+      "key": "missing_csrf_header",
+      "severity": "blocks UI operation",
+      "detail": "Wishlist POST/DELETE and password reset POST raw fetch lack X-Requested-With, rejected by XRequestedWithFilter. No browser bearer header because JWT cookie is HttpOnly.",
+      "sources": [
+        "src/main/resources/static/js/api.js:176",
+        "src/main/resources/templates/account/wishlist.html:172",
+        "src/main/resources/templates/auth/login.html:239",
+        "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java:36"
+      ]
+    },
+    {
+      "key": "register_contract_and_no_auto_login",
+      "detail": "POST register UI sends displayName; DTO requires nonblank fullName with no JSON alias -> HTTP 400. Also missing cookie/login step, so auto-login promise is unimplemented.",
+      "sources": [
+        "src/main/resources/templates/auth/register.html:136",
+        "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:31",
+        "src/main/resources/templates/auth/register.html:129",
+        "src/main/java/com/thinh/cosmetic/domain/dto/request/account/RegisterRequest.java:16"
+      ]
+    },
+    {
+      "key": "cart_dto_mismatch",
+      "detail": "CartResponse.subtotal/items mismatch UI itemSubtotal/cartSubtotal; money/count header do not update after PUT; plus/minus target uses initial SSR quantity.",
+      "sources": [
+        "src/main/resources/templates/cart.html:70",
+        "src/main/resources/templates/cart.html:181",
+        "src/main/java/com/thinh/cosmetic/domain/dto/response/cart/CartResponse.java:14"
+      ]
+    },
+    {
+      "key": "edit_address_location_stale",
+      "detail": "Existing recipient/phone/detail/default filled; province/district/ward not copied. Save submits current modal selection.",
+      "sources": [
+        "src/main/resources/templates/account/profile.html:398",
+        "src/main/resources/templates/account/profile.html:423"
+      ]
+    },
+    {
+      "key": "checkout_locations_mocked",
+      "detail": "Checkout downloads JSON then ignores contents, hardcodes 3 provinces/3 unrelated wards, no district dropdown; hidden fields and address defaults can diverge visible selects.",
+      "sources": [
+        "src/main/resources/templates/checkout.html:246",
+        "src/main/resources/templates/checkout.html:251",
+        "src/main/resources/templates/checkout.html:254"
+      ]
+    },
+    {
+      "key": "pagination_absent",
+      "detail": "Product page parameter only Model; no pagination controls or paging passed to searchAndFilter.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java:39",
+        "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java:53",
+        "src/main/resources/templates/product-list.html:134"
+      ]
+    },
+    {
+      "key": "dashboard_scope_low_stock",
+      "detail": "All-store orders aggregate but lowStockStoreId falls back first branch; no chain-wide stock report.",
+      "sources": [
+        "src/main/resources/templates/admin/dashboard.html:211"
+      ]
+    },
+    {
+      "key": "inventory_query_ignored",
+      "detail": "Dashboard links /admin/inventory?storeId=X but inventory initialization never reads URL query; default primaryStoreId used.",
+      "sources": [
+        "src/main/resources/templates/admin/dashboard.html:295",
+        "src/main/resources/templates/admin/inventory.html:361"
+      ]
+    },
+    {
+      "key": "permission_ui_absent",
+      "detail": "Sidebar/orders/inventory controls never use sec:authorize/permission gating; only isEmployee/isCustomer header and status/StoreScope filtering. Do not interpret visible controls as granted authorization.",
+      "sources": [
+        "src/main/resources/templates/admin/fragments/sidebar.html:34",
+        "src/main/resources/templates/admin/order-detail.html:365",
+        "src/main/resources/templates/admin/inventory.html:262"
+      ]
+    },
+    {
+      "key": "return_partial_ui",
+      "detail": "Only full purchased quantity per selected item; first-return admin display, no restock/completion button; create backend persistence defect verified commerce agent.",
+      "sources": [
+        "src/main/resources/templates/account/order-detail.html:302",
+        "src/main/resources/templates/admin/order-detail.html:235",
+        "src/main/resources/templates/admin/order-detail.html:253"
+      ]
+    },
+    {
+      "key": "page_owner_check",
+      "detail": "order-success page looks up arbitrary orderCode without owner check. AccountPageController order-detail only conditional ownership; do not infer ownership from protected route alone.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/CheckoutPageController.java:60",
+        "src/main/java/com/thinh/cosmetic/controller/AccountPageController.java:87"
+      ]
+    },
+    {
+      "key": "login_response_mismatch",
+      "detail": "Login UI checks res.isEmployee which LoginResponse never contains, and ignores response.redirectUrl. Employee default login lands storefront / instead of /admin; cookie authentication still succeeds.",
+      "sources": [
+        "src/main/resources/templates/auth/login.html:295",
+        "src/main/java/com/thinh/cosmetic/domain/dto/response/account/LoginResponse.java:15",
+        "src/main/java/com/thinh/cosmetic/service/account/impl/AccountServiceImpl.java:107"
+      ]
+    }
+  ],
+  "designs_not_implemented": [
+    {
+      "feature": "React frontend",
+      "status": "Not implemented / initial context contradicted",
+      "actual": "No package.json/React source; MVC Thymeleaf templates+Vanilla JS."
+    },
+    {
+      "feature": "External payment/shipping/Maps/Cloudinary/email-OTP actors",
+      "status": "Design-only unless integration source is found by backend agents",
+      "actual": "No calls in frontend to payment/shipping/Maps/upload/mail; CDN fonts/icons/GSAP and remote product images are presentation dependencies, not business actors.",
+      "sources": [
+        "README.md:203"
+      ]
+    },
+    {
+      "feature": "Beauty Profile personalized recommendations",
+      "status": "Frontend not integrated",
+      "actual": "ProductPageController.relatedProducts simple category OR brand filtering; no beauty-profile UI.",
+      "sources": [
+        "src/main/java/com/thinh/cosmetic/controller/ProductPageController.java:78"
+      ]
+    },
+    {
+      "feature": "Store pickup / staff reassignment / advanced reporting",
+      "status": "No frontend implementation",
+      "actual": "Checkout COD/home-delivery only; no assignment control; dashboard browser sums order list only.",
+      "sources": [
+        "src/main/resources/templates/checkout.html:344",
+        "src/main/resources/templates/admin/dashboard.html:220"
+      ]
+    },
+    {
+      "feature": "Dynamic permission menus and product pagination in local plan",
+      "status": "Plan differs implementation",
+      "actual": "Sidebar unconditional; no pagination; docs checklist is not proof.",
+      "sources": [
+        "docs/KE_HOACH_HOAN_THANH_DU_AN_LOCAL.md:150",
+        "docs/KE_HOACH_HOAN_THANH_DU_AN_LOCAL.md:142"
+      ]
+    },
+    {
+      "feature": "Architecture docs versions",
+      "status": "Historical design not implementation",
+      "actual": "Base/Updated planned session+CSRF and ModelMapper/MapStruct; v2 planned JWT; source confirms JWT and Thymeleaf independently.",
+      "sources": [
+        "docs/LUNEA_Architecture.md:25",
+        "docs/LUNEA_Architecture_Updated.md:26",
+        "docs/LUNEA_Architecture_v2.md:26"
+      ]
+    },
+    {
+      "feature": "Khách tự hủy đơn ở CONFIRMED/PREPARING",
+      "status": "Historical design only; actual PENDING cancellation",
+      "actual": "UI shows PENDING only and OrderServiceImpl.cancelOrder enforces PENDING.",
+      "sources": [
+        "docs/LUNEA_Architecture.md:322",
+        "src/main/java/com/thinh/cosmetic/service/order/impl/OrderServiceImpl.java:467"
+      ]
+    }
+  ],
+  "notes": [
+    "Implemented_ui=true means a control/flow is coded, not that backend succeeds or authorization is correct. integration_status is source-inspection recommendation, runtime not exercised here.",
+    "All endpoint/operations source implementations verified by separate backend agents; frontend routes and calls were read directly.",
+    "No include/extend recommendation from UI navigation, auth preconditions, CRUD or sequential status buttons alone."
+  ],
+  "local_ui_goals": [
+    {
+      "name": "Chọn giao diện sáng/tối",
+      "implemented": true,
+      "evidence": "src/main/resources/static/js/api.js:274",
+      "notes": "LocalStorage preference; no backend"
+    },
+    {
+      "name": "In trang",
+      "implemented": false,
+      "evidence": "src/main/resources/static/css/print.css:4",
+      "notes": "Only @media print styles; no print button/window.print or specific invoice generation"
+    },
+    {
+      "name": "Đăng ký nhận bản tin",
+      "implemented": false,
+      "notes": "No newsletter/subscribe control or JS endpoint in repository templates/client JS."
+    }
+  ],
+  "historical_documents_reviewed": [
+    {
+      "path": "README.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/GIT_GUIDE(1).md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/GIT_GUIDE.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/Git_Tutorial.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/KE_HOACH_HOAN_THANH_DU_AN_LOCAL.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/LUNEA_Architecture.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/LUNEA_Architecture_Design.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/LUNEA_Architecture_Full.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/LUNEA_Architecture_Updated.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/LUNEA_Architecture_v2.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/PHAN_CONG_CODE_LUNEA_2_TUAN.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/PHAN_CONG_CODE_LUNEA_2_TUAN_DAY_DU.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    },
+    {
+      "path": "docs/POSTGRES_TEXT_MIGRATION.md",
+      "read_mode": "structural outline and relevant requirements/UI architecture sections; historical planning does not certify implementation"
+    }
+  ]
+}

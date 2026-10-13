@@ -1,0 +1,756 @@
+{
+  "files_read": [
+    ".gitattributes",
+    ".gitignore",
+    ".mvn/wrapper/maven-wrapper.properties",
+    "docker-compose.yml",
+    "pom.xml",
+    "src/main/java/com/thinh/cosmetic/CosmeticStoreChainManagementApplication.java",
+    "src/main/java/com/thinh/cosmetic/config/AppProperties.java",
+    "src/main/java/com/thinh/cosmetic/config/DataSeeder.java",
+    "src/main/java/com/thinh/cosmetic/config/SecurityConfig.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/BeautyProfileRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/CustomerAddressRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/CustomerProfileRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/EmployeeRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/LoginRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/RegisterRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/request/account/ResetPasswordRequest.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/ApiResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/ErrorResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/AccountResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/BeautyProfileResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/CustomerAddressResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/CustomerResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/EmployeeResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/LoginResponse.java",
+    "src/main/java/com/thinh/cosmetic/domain/dto/response/account/LoginResult.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/AccountEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/AuditLogEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/BeautyProfileEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/CustomerAddressEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/CustomerEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/EmployeeEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/EmployeeRoleEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/EmployeeRoleId.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/EmployeeStoreEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/EmployeeStoreId.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/PermissionEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/RoleEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/RolePermissionEntity.java",
+    "src/main/java/com/thinh/cosmetic/domain/entity/account/RolePermissionId.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/AccountType.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ActiveStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/Gender.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/PriceRange.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/ReceiptStatus.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/SkinType.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/SkincareNeed.java",
+    "src/main/java/com/thinh/cosmetic/domain/enums/VoucherType.java",
+    "src/main/java/com/thinh/cosmetic/exception/BusinessException.java",
+    "src/main/java/com/thinh/cosmetic/exception/ErrorCode.java",
+    "src/main/java/com/thinh/cosmetic/exception/GlobalExceptionHandler.java",
+    "src/main/java/com/thinh/cosmetic/exception/InsufficientStockException.java",
+    "src/main/java/com/thinh/cosmetic/exception/ResourceNotFoundException.java",
+    "src/main/java/com/thinh/cosmetic/mapper/account/CustomerAddressMapper.java",
+    "src/main/java/com/thinh/cosmetic/mapper/account/CustomerMapper.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/AccountRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/AutditLogRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/BeautyProfileRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/CustomerAddressRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/CustomerRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/EmployeeRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/EmployeeRoleRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/EmployeeStoreRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/PermissionRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/RolePermissionRepository.java",
+    "src/main/java/com/thinh/cosmetic/repository/account/RoleRepository.java",
+    "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+    "src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java",
+    "src/main/java/com/thinh/cosmetic/security/AppUserDetails.java",
+    "src/main/java/com/thinh/cosmetic/security/AppUserDetailsService.java",
+    "src/main/java/com/thinh/cosmetic/security/AuthCookieFactory.java",
+    "src/main/java/com/thinh/cosmetic/security/AuthPrincipal.java",
+    "src/main/java/com/thinh/cosmetic/security/CookieBearerTokenResolver.java",
+    "src/main/java/com/thinh/cosmetic/security/JsonAccessDeniedHandler.java",
+    "src/main/java/com/thinh/cosmetic/security/JsonAuthEntryPoint.java",
+    "src/main/java/com/thinh/cosmetic/security/JwtAuthConverter.java",
+    "src/main/java/com/thinh/cosmetic/security/JwtService.java",
+    "src/main/java/com/thinh/cosmetic/security/StoreScope.java",
+    "src/main/java/com/thinh/cosmetic/security/XRequestedWithFilter.java",
+    "src/main/java/com/thinh/cosmetic/service/account/AccountService.java",
+    "src/main/java/com/thinh/cosmetic/service/account/CustomerService.java",
+    "src/main/java/com/thinh/cosmetic/service/account/EmployeeService.java",
+    "src/main/java/com/thinh/cosmetic/service/account/impl/AccountServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+    "src/main/java/com/thinh/cosmetic/service/account/impl/EmployeeServiceImpl.java",
+    "src/main/resources/application-local.properties",
+    "src/main/resources/application-prod.properties",
+    "src/main/resources/application.properties",
+    "src/test/java/com/thinh/cosmetic/BrandTests.java",
+    "src/test/java/com/thinh/cosmetic/CosmeticStoreChainManagementApplicationTests.java",
+    "src/test/java/com/thinh/cosmetic/config/DataSeederTest.java",
+    "src/test/java/com/thinh/cosmetic/config/EnvironmentConfigurationTest.java",
+    "src/test/java/com/thinh/cosmetic/config/TextColumnMappingTest.java",
+    "src/test/java/com/thinh/cosmetic/service/AccountServiceTest.java",
+    "src/test/resources/application.properties"
+  ],
+  "use_cases": [
+    {
+      "key": "AUTH_REGISTER",
+      "name": "Đăng ký tài khoản khách hàng",
+      "module": "authentication",
+      "actors": [
+        "GUEST"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Tạo tài khoản CUSTOMER và hồ sơ khách hàng với mật khẩu băm BCrypt.",
+      "preconditions": "Email/SĐT chưa tồn tại; dữ liệu theo RegisterRequest; không cần xác thực.",
+      "main": [
+        "Khách nhập họ tên, email, SĐT và mật khẩu tối thiểu 6 ký tự.",
+        "Service chuẩn hóa email, SĐT và họ tên; kiểm tra trùng email/SĐT.",
+        "Lưu account ACTIVE, customer có loyaltyPoints=0 và joinDate hiện tại.",
+        "API trả hồ sơ HTTP 201 nếu request chứa fullName đúng; UI hiện tại gửi displayName nên không đến nhánh thành công."
+      ],
+      "alternatives": [
+        "Trùng email hoặc SĐT: 409 DUPLICATE_EMAIL/DUPLICATE_PHONE.",
+        "Dữ liệu sai @Valid: 400; không gửi email/OTP xác minh.",
+        "register.html gửi displayName thay vì fullName bắt buộc -> 400 validation; không tạo tài khoản từ form hiện tại.",
+        "Toast hứa tự động đăng nhập nhưng không có cookie/JWT hoặc lời gọi login."
+      ],
+      "postconditions": "Gọi API đúng payload tạo account/customer; form hiện tại chưa hoàn tất đăng ký.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java",
+          "class_name": "AuthRestController",
+          "method": "register",
+          "endpoint": "POST /api/auth/register"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/AccountServiceImpl.java",
+          "class_name": "AccountServiceImpl",
+          "method": "register",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "AUTH_LOGIN",
+      "name": "Đăng nhập",
+      "module": "authentication",
+      "actors": [
+        "GUEST",
+        "CUSTOMER",
+        "EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xác thực email/SĐT/username, cấp JWT HS256 qua cookie HttpOnly LUNEA_AT.",
+      "preconditions": "Có AccountEntity ACTIVE; mật khẩu đúng.",
+      "main": [
+        "Nhập identifier và password.",
+        "AuthenticationManager gọi AppUserDetailsService và kiểm mật khẩu.",
+        "Nạp account type, role và permission vào authorities; phát JWT ttl 7200 giây mặc định.",
+        "Trả cookie và redirectUrl /admin cho EMPLOYEE, / cho CUSTOMER."
+      ],
+      "alternatives": [
+        "Identifier rỗng hoặc sai mật khẩu/account INACTIVE: INVALID_CREDENTIALS.",
+        "Employee.status INACTIVE không được kiểm tại đăng nhập."
+      ],
+      "postconditions": "Client nhận JWT cookie và quyền snapshot tại thời điểm đăng nhập.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java",
+          "class_name": "AuthRestController",
+          "method": "login",
+          "endpoint": "POST /api/auth/login"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/AccountServiceImpl.java",
+          "class_name": "AccountServiceImpl",
+          "method": "login",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Checkbox Ghi nhớ đăng nhập không được đọc; không có refresh token."
+      ]
+    },
+    {
+      "key": "AUTH_LOGOUT",
+      "name": "Đăng xuất",
+      "module": "authentication",
+      "actors": [
+        "CUSTOMER",
+        "EMPLOYEE"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa cookie xác thực trên trình duyệt.",
+      "preconditions": "Client có cookie (API cũng chấp nhận chưa đăng nhập).",
+      "main": [
+        "Người dùng chọn đăng xuất.",
+        "Client POST /api/auth/logout có X-Requested-With.",
+        "Controller gửi Set-Cookie với Max-Age=0; UI chuyển login."
+      ],
+      "alternatives": [
+        "Bearer/JWT đã cấp không bị thu hồi phía server."
+      ],
+      "postconditions": "Cookie client bị xóa; token đã sao chép có hiệu lực tới exp.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java",
+          "class_name": "AuthRestController",
+          "method": "logout",
+          "endpoint": "POST /api/auth/logout"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/security/AuthCookieFactory.java",
+          "class_name": "AuthCookieFactory",
+          "method": "createLogoutCookie",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "Hành vi ở AuthRestController.logout/AuthCookieFactory.createLogoutCookie, không có AccountServiceImpl.logout. Spring Security cũng có /logout."
+      ]
+    },
+    {
+      "key": "AUTH_RESET",
+      "name": "Đặt lại mật khẩu",
+      "module": "authentication",
+      "actors": [
+        "GUEST"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Đổi mật khẩu theo email/SĐT/username đã nhập.",
+      "preconditions": "Account tồn tại; newPassword tối thiểu 6 ký tự; API public.",
+      "main": [
+        "Nhập emailOrPhone và newPassword.",
+        "Service tìm account, băm mật khẩu mới và lưu.",
+        "API trả thông báo thành công."
+      ],
+      "alternatives": [
+        "Không tìm thấy tài khoản: 404; identifier trống: 400.",
+        "UI fetch thiếu X-Requested-With nên filter trả 403 trước controller.",
+        "Không yêu cầu OTP, reset token hay chứng minh quyền sở hữu."
+      ],
+      "postconditions": "Nếu gọi API đúng header, hash mật khẩu đổi; UI hiện tại không hoàn thành.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java",
+          "class_name": "AuthRestController",
+          "method": "resetPassword",
+          "endpoint": "POST /api/auth/reset-password"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/AccountServiceImpl.java",
+          "class_name": "AccountServiceImpl",
+          "method": "resetPassword",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "CUSTOMER_READ",
+      "name": "Xem hồ sơ khách hàng",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem tên, thông tin cá nhân và điểm tích lũy của một customerId.",
+      "preconditions": "Customer id tồn tại; trang /account/profile yêu cầu ROLE_CUSTOMER nhưng API public.",
+      "main": [
+        "Trang lấy principal.customerId.",
+        "GET customer theo id.",
+        "Service tìm entity và map response; UI hiển thị hồ sơ."
+      ],
+      "alternatives": [
+        "Id không tồn tại: generic Exception được trả INTERNAL_ERROR 500.",
+        "API không kiểm ownership, cho phép đọc customer bất kỳ."
+      ],
+      "postconditions": "Không đổi dữ liệu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "getCustomerById",
+          "endpoint": "GET /api/customers/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "getCustomerById",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "CUSTOMER_EDIT",
+      "name": "Cập nhật hồ sơ khách hàng",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Cập nhật họ tên, ngày sinh, giới tính và số điện thoại.",
+      "preconditions": "Customer tồn tại; fullName hợp lệ theo CustomerProfileRequest.",
+      "main": [
+        "Nhập hồ sơ và gửi PUT.",
+        "Service đổi các field khác null; phone cập nhật trên AccountEntity.",
+        "Lưu và trả CustomerResponse."
+      ],
+      "alternatives": [
+        "API public, không xác minh customerId thuộc principal.",
+        "Phone trùng chỉ bị ràng buộc DB; CustomerMapper không map Account.phone vào CustomerResponse.phone."
+      ],
+      "postconditions": "Thông tin đã lưu; phone có thể không xuất hiện trong response.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "updateProfile",
+          "endpoint": "PUT /api/customers/{id}/profile"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "updateProfile",
+          "endpoint": ""
+        }
+      ],
+      "notes": [
+        "CustomerMapper chỉ mapping account.id và account.email; CustomerEntity không có phone -> CustomerResponse.phone không map."
+      ]
+    },
+    {
+      "key": "ADDRESS_READ",
+      "name": "Xem sổ địa chỉ",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Liệt kê địa chỉ theo customerId.",
+      "preconditions": "Trang hồ sơ cần ROLE_CUSTOMER; API public.",
+      "main": [
+        "UI chọn sổ địa chỉ.",
+        "Repository tìm customerEntityId.",
+        "Trả danh sách địa chỉ và cờ mặc định."
+      ],
+      "alternatives": [
+        "Id không có địa chỉ trả danh sách rỗng.",
+        "API không kiểm ownership."
+      ],
+      "postconditions": "Không đổi dữ liệu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "getAddresses",
+          "endpoint": "GET /api/customers/{id}/addresses"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "getAddresses",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "ADDRESS_ADD",
+      "name": "Thêm địa chỉ nhận hàng",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Lưu địa chỉ nhận hàng và tùy chọn đặt mặc định.",
+      "preconditions": "Customer tồn tại; recipientName/phone/province/ward/addressDetail hợp lệ.",
+      "main": [
+        "Nhập địa chỉ và cờ mặc định.",
+        "Nếu isDefault=true, đặt các địa chỉ đang có về false.",
+        "Map request, gán customer, lưu và trả 201."
+      ],
+      "alternatives": [
+        "Không có customer: 500; trường bắt buộc sai: 400.",
+        "isDefault bị bỏ qua/null có thể vi phạm Entity @NotNull; UI gửi boolean.",
+        "Không kiểm ownership."
+      ],
+      "postconditions": "Địa chỉ mới được lưu; khi thêm mặc định, các địa chỉ cũ bị bỏ mặc định.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "addAddress",
+          "endpoint": "POST /api/customers/{id}/addresses"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "addAddress",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "ADDRESS_EDIT",
+      "name": "Cập nhật địa chỉ nhận hàng",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Sửa các thông tin trên địa chỉ đã có.",
+      "preconditions": "Address id tồn tại; request hợp lệ.",
+      "main": [
+        "Gửi PUT customerId/addressId.",
+        "Service tìm theo addressId rồi mapper cập nhật field khác null.",
+        "Lưu địa chỉ và trả response."
+      ],
+      "alternatives": [
+        "Không so sánh address.customer với customerId; không kiểm principal.",
+        "Cập nhật isDefault=true không bỏ mặc định các địa chỉ khác.",
+        "UI không nạp lại tỉnh/quận/phường khi mở edit, có thể gửi sai."
+      ],
+      "postconditions": "Địa chỉ thay đổi; tính duy nhất địa chỉ mặc định chưa bảo đảm.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "updateAddress",
+          "endpoint": "PUT /api/customers/{id}/addresses/{addressId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "updateAddress",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "ADDRESS_DELETE",
+      "name": "Xóa địa chỉ nhận hàng",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xóa địa chỉ theo addressId.",
+      "preconditions": "Address id được chọn; API public.",
+      "main": [
+        "Người dùng chọn xóa.",
+        "Service gọi deleteById(addressId) và trả 204."
+      ],
+      "alternatives": [
+        "customerId bị bỏ qua, không kiểm ownership.",
+        "Xóa địa chỉ mặc định không chọn một địa chỉ khác làm mặc định."
+      ],
+      "postconditions": "Địa chỉ bị xóa nếu tồn tại.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "deleteAddress",
+          "endpoint": "DELETE /api/customers/{id}/addresses/{addressId}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "deleteAddress",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "BEAUTY_READ",
+      "name": "Xem hồ sơ làm đẹp",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Xem thông tin loại da, vấn đề da, nhu cầu và khoảng giá quan tâm.",
+      "preconditions": "Trang cần customer; API public.",
+      "main": [
+        "UI mở hồ sơ làm đẹp.",
+        "Service tìm BeautyProfile theo customerId.",
+        "Trả profile hoặc null."
+      ],
+      "alternatives": [
+        "Chưa có profile: response null, UI cho nhập mới.",
+        "Không xác minh chủ thể sở hữu."
+      ],
+      "postconditions": "Không đổi dữ liệu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "getBeautyProfile",
+          "endpoint": "GET /api/customers/{id}/beauty-profile"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "getBeautyProfile",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "BEAUTY_EDIT",
+      "name": "Cập nhật hồ sơ làm đẹp",
+      "module": "customers",
+      "actors": [
+        "CUSTOMER",
+        "PUBLIC"
+      ],
+      "status_backend": "Implemented",
+      "description": "Tạo hoặc cập nhật hồ sơ làm đẹp; không tự gợi ý sản phẩm.",
+      "preconditions": "Customer tồn tại; API public.",
+      "main": [
+        "Người dùng nhập loại da, nhu cầu và sở thích.",
+        "Tìm profile hiện có hoặc tạo mới gắn customer.",
+        "Gán toàn bộ field request, updatedAt rồi lưu."
+      ],
+      "alternatives": [
+        "Customer không tồn tại: 500.",
+        "DTO không có Bean Validation; entity có giới hạn kích thước, có thể lỗi khi lưu.",
+        "Field null ghi đè dữ liệu cũ; không kiểm ownership."
+      ],
+      "postconditions": "BeautyProfile được lưu; không có recommendation service.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "updateBeautyProfile",
+          "endpoint": "PUT /api/customers/{id}/beauty-profile"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "updateBeautyProfile",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "CUSTOMER_LIST",
+      "name": "Tra cứu danh sách khách hàng",
+      "module": "customers",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Backend Only",
+      "description": "Đọc toàn bộ hồ sơ khách hàng qua API, chưa có màn hình quản trị khách hàng.",
+      "preconditions": "API public, không cần CUSTOMER_MANAGE.",
+      "main": [
+        "Client gọi GET /api/customers.",
+        "Repository findAll, map từng hồ sơ.",
+        "Trả danh sách không phân trang."
+      ],
+      "alternatives": [
+        "Có thể rỗng; không filter phạm vi và không kiểm quyền."
+      ],
+      "postconditions": "Không đổi dữ liệu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java",
+          "class_name": "CustomerRestController",
+          "method": "getAllCustomers",
+          "endpoint": "GET /api/customers"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/CustomerServiceImpl.java",
+          "class_name": "CustomerServiceImpl",
+          "method": "getAllCustomers",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "EMPLOYEE_READ",
+      "name": "Tra cứu nhân viên",
+      "module": "employees",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Backend Only",
+      "description": "Xem danh sách hoặc chi tiết nhân viên kèm tên vai trò và chi nhánh.",
+      "preconditions": "API public; id tồn tại đối với chi tiết.",
+      "main": [
+        "Client gọi danh sách/chi tiết.",
+        "Tìm employee; query employeeRole và employeeStore.",
+        "Trả response tên vai trò/chi nhánh, trạng thái và tài khoản."
+      ],
+      "alternatives": [
+        "Id không tồn tại: 500 generic Exception.",
+        "Không EMPLOYEE_MANAGE; không phân trang."
+      ],
+      "postconditions": "Không đổi dữ liệu.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java",
+          "class_name": "EmployeeRestController",
+          "method": "getAll|getById",
+          "endpoint": "GET /api/employees; GET /api/employees/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/EmployeeServiceImpl.java",
+          "class_name": "EmployeeServiceImpl",
+          "method": "getAll|getById",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "EMPLOYEE_ADD",
+      "name": "Tạo tài khoản nhân viên",
+      "module": "employees",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Tạo account EMPLOYEE, employee và tùy chọn gán vai trò/chi nhánh.",
+      "preconditions": "email,password,fullName hợp lệ DTO; internalEmail cần cung cấp để service tạo username không rỗng.",
+      "main": [
+        "Client gửi thông tin employee với email và internalEmail.",
+        "Service dùng internalEmail cho account.email và username, kiểm trùng rồi băm password.",
+        "Lưu account và employee ACTIVE.",
+        "Gán từng roleId/storeId nếu tồn tại, trả 201."
+      ],
+      "alternatives": [
+        "DTO bắt buộc email nhưng service bỏ qua email; internalEmail không bắt buộc nên có thể lỗi DB/validation.",
+        "Role/store id không tồn tại bị bỏ qua im lặng.",
+        "Fallback password 123456 trong service không đi qua REST @Valid nếu password trống.",
+        "API public cho phép gán ADMIN nếu biết roleId."
+      ],
+      "postconditions": "Nếu dữ liệu đáp ứng cả DTO/entity, tạo employee/account và các liên kết.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java",
+          "class_name": "EmployeeRestController",
+          "method": "create",
+          "endpoint": "POST /api/employees"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/EmployeeServiceImpl.java",
+          "class_name": "EmployeeServiceImpl",
+          "method": "create",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "EMPLOYEE_EDIT",
+      "name": "Cập nhật nhân viên và phân công",
+      "module": "employees",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Đổi thông tin nhân viên, mật khẩu, danh sách vai trò và chi nhánh.",
+      "preconditions": "Employee tồn tại; REST dùng EmployeeRequest bắt buộc email/password/fullName ngay cả update.",
+      "main": [
+        "Client gửi thông tin cập nhật.",
+        "Service đổi fullName/phone và hash password account nếu có.",
+        "Nếu roleIds hoặc storeIds khác null, xóa liên kết cũ rồi tạo liên kết cho id hợp lệ.",
+        "Lưu employee và trả response."
+      ],
+      "alternatives": [
+        "Không đổi internalEmail/email/username dù DTO nhận.",
+        "Employee.phone đổi nhưng Account.phone không đồng bộ.",
+        "ID không tồn tại bị bỏ qua; danh sách rỗng xóa toàn bộ phân công.",
+        "API public; JWT đã phát giữ authorities cũ tới hết hạn."
+      ],
+      "postconditions": "Thông tin/phân công được lưu; quyền mới chỉ nạp khi đăng nhập lại.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java",
+          "class_name": "EmployeeRestController",
+          "method": "update",
+          "endpoint": "PUT /api/employees/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/EmployeeServiceImpl.java",
+          "class_name": "EmployeeServiceImpl",
+          "method": "update",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "key": "EMPLOYEE_DEACTIVATE",
+      "name": "Ngừng hoạt động nhân viên",
+      "module": "employees",
+      "actors": [
+        "PUBLIC"
+      ],
+      "status_backend": "Partially Implemented",
+      "description": "Đặt Employee.status=INACTIVE.",
+      "preconditions": "Employee tồn tại; API public.",
+      "main": [
+        "Client yêu cầu DELETE employee.",
+        "Service tìm employee, đặt trạng thái INACTIVE và lưu.",
+        "Trả 204."
+      ],
+      "alternatives": [
+        "Không đặt Account.status INACTIVE; AppUserDetailsService chỉ kiểm account, nhân viên vẫn đăng nhập được.",
+        "Không thu hồi JWT hiện hành."
+      ],
+      "postconditions": "Employee INACTIVE; không bảo đảm khóa tài khoản đăng nhập.",
+      "sources": [
+        {
+          "file": "src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java",
+          "class_name": "EmployeeRestController",
+          "method": "deactivate",
+          "endpoint": "DELETE /api/employees/{id}"
+        },
+        {
+          "file": "src/main/java/com/thinh/cosmetic/service/account/impl/EmployeeServiceImpl.java",
+          "class_name": "EmployeeServiceImpl",
+          "method": "deactivate",
+          "endpoint": ""
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "tech": [
+    "Spring Boot 4.1.1",
+    "Java target 21",
+    "Thymeleaf SSR + JavaScript",
+    "Spring Data JPA + PostgreSQL (H2 test)",
+    "JWT HS256 + BCrypt"
+  ],
+  "gaps": [
+    "SecurityConfig anyRequest permitAll + no @PreAuthorize exposes account/employee and operations APIs.",
+    "Permission entries alone do not implement protected management/reporting features.",
+    "AuditLog has entity/repository only; no audit service endpoint or writes.",
+    "No account customer lock/unlock endpoint.",
+    "No role/permission CRUD/list endpoint, roles assigned by EmployeeRequest ids.",
+    "No authentication external systems, OTP/email/refresh/revocation."
+  ]
+}

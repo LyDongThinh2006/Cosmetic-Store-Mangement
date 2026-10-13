@@ -1,0 +1,54 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A4A
+skinparam ArrowThickness 1
+skinparam actorStyle stickman
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam usecaseBorderColor #5C5544
+skinparam usecaseFontColor #252525
+skinparam rectangleBorderColor #565656
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam nodesep 32
+skinparam ranksep 70
+title Khách hàng — phần 3
+actor "Khách hàng" as A_CUSTOMER
+rectangle "Cosmetic Store Chain Management — LUNEA" as SYSTEM {
+  usecase "UC058\nLưu sản phẩm yêu thích" as UC058 #FFE7CE
+  usecase "UC059\nBỏ sản phẩm yêu thích" as UC059 #FFE7CE
+  usecase "UC060\nXem tổng tiền trước khi đặt\nhàng" as UC060 #FFF8DB
+  usecase "UC061\nÁp dụng mã ưu đãi khi thanh\ntoán" as UC061 #FFE7CE
+  usecase "UC062\nĐặt hàng thanh toán khi nhận" as UC062 #FFE7CE
+  usecase "UC063\nXem lịch sử đơn hàng" as UC063 #FFF8DB
+  usecase "UC064\nTheo dõi chi tiết đơn hàng" as UC064 #FFE7CE
+  usecase "UC065\nHủy đơn đang chờ xác nhận" as UC065 #FFF8DB
+  usecase "UC073\nGửi yêu cầu trả hàng" as UC073 #FFE7CE
+  usecase "UC074\nTheo dõi yêu cầu trả hàng" as UC074 #FFF8DB
+  usecase "UC084\nĐổi giao diện sáng tối" as UC084 #EDE5F4
+}
+A_CUSTOMER -- UC058
+A_CUSTOMER -- UC059
+A_CUSTOMER -- UC060
+A_CUSTOMER -- UC061
+A_CUSTOMER -- UC062
+A_CUSTOMER -- UC063
+A_CUSTOMER -- UC064
+A_CUSTOMER -- UC065
+A_CUSTOMER -- UC073
+A_CUSTOMER -- UC074
+A_CUSTOMER -- UC084
+legend bottom left
+|= Màu |= Implementation Status |
+|<#FFF8DB> | Implemented |
+|<#FFE7CE> | Partially Implemented |
+|<#E5EEF9> | Backend Only |
+|<#EDE5F4> | UI Only |
+Nguồn: source review 13/10/2026. Chưa chạy nghiệm thu ứng dụng.
+API công khai phản ánh permitAll hiện tại; xem báo cáo quyền.
+endlegend
+@enduml

@@ -1,0 +1,63 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A4A
+skinparam ArrowThickness 1
+skinparam actorStyle stickman
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam usecaseBorderColor #5C5544
+skinparam usecaseFontColor #252525
+skinparam rectangleBorderColor #565656
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam nodesep 32
+skinparam ranksep 70
+title Nhân viên kho — phần 1
+actor "Nhân viên kho" as A_WAREHOUSE_STAFF
+actor "Nhân viên" as A_EMPLOYEE
+A_WAREHOUSE_STAFF --|> A_EMPLOYEE
+rectangle "Cosmetic Store Chain Management — LUNEA" as SYSTEM {
+  usecase "UC002\nĐăng nhập" as UC002 #FFE7CE
+  usecase "UC003\nĐăng xuất" as UC003 #FFF8DB
+  usecase "UC019\nXem danh sách sản phẩm" as UC019 #FFF8DB
+  usecase "UC020\nTìm kiếm và lọc sản phẩm" as UC020 #FFF8DB
+  usecase "UC021\nXem chi tiết sản phẩm" as UC021 #FFF8DB
+  usecase "UC025\nXem thương hiệu" as UC025 #FFF8DB
+  usecase "UC029\nXem danh mục sản phẩm" as UC029 #FFF8DB
+  usecase "UC033\nXem hệ thống cửa hàng" as UC033 #FFF8DB
+  usecase "UC037\nTra cứu tồn sản phẩm theo\ncửa hàng" as UC037 #FFF8DB
+  usecase "UC038\nXem tồn kho cửa hàng" as UC038 #FFF8DB
+  usecase "UC039\nXem cảnh báo tồn thấp" as UC039 #FFF8DB
+  usecase "UC040\nĐiều chỉnh tồn kho" as UC040 #FFF8DB
+}
+A_EMPLOYEE -- UC002
+A_EMPLOYEE -- UC003
+A_EMPLOYEE -- UC019
+A_EMPLOYEE -- UC020
+A_EMPLOYEE -- UC021
+A_EMPLOYEE -- UC025
+A_EMPLOYEE -- UC029
+A_EMPLOYEE -- UC033
+A_EMPLOYEE -- UC037
+A_EMPLOYEE -- UC038
+A_EMPLOYEE -- UC039
+A_EMPLOYEE -- UC040
+note right of A_WAREHOUSE_STAFF
+Vẫn có thể xử lý đơn tại cửa hàng phân công như
+mọi EMPLOYEE; kho API không scope.
+Các association ở Nhân viên được kế thừa.
+end note
+legend bottom left
+|= Màu |= Implementation Status |
+|<#FFF8DB> | Implemented |
+|<#FFE7CE> | Partially Implemented |
+|<#E5EEF9> | Backend Only |
+|<#EDE5F4> | UI Only |
+Nguồn: source review 13/10/2026. Chưa chạy nghiệm thu ứng dụng.
+API công khai phản ánh permitAll hiện tại; xem báo cáo quyền.
+endlegend
+@enduml

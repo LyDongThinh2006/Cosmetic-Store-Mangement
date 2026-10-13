@@ -1,0 +1,41 @@
+@startuml
+!pragma layout smetana
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A4A
+skinparam ArrowThickness 1
+skinparam actorStyle stickman
+skinparam actorBackgroundColor #FFFFFF
+skinparam actorBorderColor #333333
+skinparam usecaseBorderColor #5C5544
+skinparam usecaseFontColor #252525
+skinparam rectangleBorderColor #565656
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam nodesep 32
+skinparam ranksep 70
+title Nhân viên kho — phần 3
+actor "Nhân viên kho" as A_WAREHOUSE_STAFF
+actor "Nhân viên" as A_EMPLOYEE
+A_WAREHOUSE_STAFF --|> A_EMPLOYEE
+rectangle "Cosmetic Store Chain Management — LUNEA" as SYSTEM {
+  usecase "UC084\nĐổi giao diện sáng tối" as UC084 #EDE5F4
+}
+A_EMPLOYEE -- UC084
+note right of A_WAREHOUSE_STAFF
+Vẫn có thể xử lý đơn tại cửa hàng phân công như
+mọi EMPLOYEE; kho API không scope.
+Các association ở Nhân viên được kế thừa.
+end note
+legend bottom left
+|= Màu |= Implementation Status |
+|<#FFF8DB> | Implemented |
+|<#FFE7CE> | Partially Implemented |
+|<#E5EEF9> | Backend Only |
+|<#EDE5F4> | UI Only |
+Nguồn: source review 13/10/2026. Chưa chạy nghiệm thu ứng dụng.
+API công khai phản ánh permitAll hiện tại; xem báo cáo quyền.
+endlegend
+@enduml
