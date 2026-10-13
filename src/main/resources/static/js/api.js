@@ -245,21 +245,26 @@ const LUNEA = (function () {
             revealElements.forEach(el => el.classList.add('is-revealed'));
         }
 
-        // 3. Subtle Hero Moon Cursor Parallax
-        const heroVisual = document.querySelector('.hero-visual');
-        const moonWrap = document.querySelector('.moon-image-wrapper');
-        if (heroVisual && moonWrap) {
-            heroVisual.addEventListener('mousemove', (e) => {
-                const rect = heroVisual.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width - 0.5;
-                const y = (e.clientY - rect.top) / rect.height - 0.5;
-                moonWrap.style.transform = `translate(${x * 16}px, ${y * 16}px) rotate(${x * 4}deg)`;
-            });
+        // 3. Subtle Hero & Auth Moon Cursor Parallax
+        const parallaxPairs = [
+            { container: document.querySelector('.hero-visual'), target: document.querySelector('.hero-visual .moon-image-wrapper') },
+            { container: document.querySelector('.auth-story-col'), target: document.querySelector('.auth-moon-backdrop .moon-image-wrapper, .auth-moon-visual .moon-image-wrapper') }
+        ];
 
-            heroVisual.addEventListener('mouseleave', () => {
-                moonWrap.style.transform = '';
-            });
-        }
+        parallaxPairs.forEach(({ container, target }) => {
+            if (container && target) {
+                container.addEventListener('mousemove', (e) => {
+                    const rect = container.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.clientY - rect.top) / rect.height - 0.5;
+                    target.style.transform = `translate(${x * 16}px, ${y * 16}px) rotate(${x * 4}deg)`;
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    target.style.transform = '';
+                });
+            }
+        });
     }
 
     // -------------------------------------------------------------
@@ -316,6 +321,16 @@ const LUNEA = (function () {
                 .fromTo('.hero-description', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
                 .fromTo('.hero-cta-group', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
                 .fromTo('.moon-image-wrapper', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.2)' }, '-=0.85');
+        }
+
+        // Auth Page Stagger Entrance
+        const authStory = document.querySelector('.auth-story-col');
+        if (authStory) {
+            const tlAuth = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.9 } });
+            tlAuth.fromTo('.auth-story-col .eyebrow-tag, .auth-story-col .hero-brand-title', { opacity: 0, y: 15 }, { opacity: 1, y: 0, delay: 0.1 })
+                .fromTo('.auth-story-col h1', { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.65')
+                .fromTo('.auth-story-col p', { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, '-=0.65')
+                .fromTo('.auth-moon-backdrop .moon-image-wrapper, .auth-moon-visual .moon-image-wrapper', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'back.out(1.2)' }, '-=0.85');
         }
 
         // Bento Grid Scroll Scale
