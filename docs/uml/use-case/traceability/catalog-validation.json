@@ -1,13 +1,13 @@
 {
   "source_files": 277,
   "missing_source_files": [],
-  "use_cases": 84,
+  "use_cases": 46,
   "entity_count": 37,
-  "actors": 8,
+  "actors": 7,
+  "source_behaviors_grouped": 83,
   "statuses": {
-    "Partially Implemented": 29,
-    "Implemented": 25,
-    "Backend Only": 29,
-    "UI Only": 1
+    "Partially Implemented": 18,
+    "Implemented": 14,
+    "Backend Only": 14
   }
 }

@@ -1,101 +1,101 @@
-# API inventory và coverage
+# API inventory và Use Case nghiệp vụ
 
-Mọi HTTP method và alias được liệt kê, nhưng không coi mỗi API là một use case. Bộ lọc bảo vệ xem security-and-actors.md.
+Giữ đủ HTTP methods và aliases; nhiều API có thể phục vụ các nhánh của cùng một use case. /api/auth/me là ngữ cảnh kỹ thuật.
 
-| HTTP | Path | Handler / nguồn | UC | Ghi chú |
+| HTTP | Path | Handler | Use Case mới | Ghi chú |
 |---|---|---|---|---|
-| POST | `/api/auth/register` | AuthRestController.register<br>[src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:31](../../../../src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java#L31) | UC001 |  |
-| POST | `/api/auth/login` | AuthRestController.login<br>[src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:37](../../../../src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java#L37) | UC002 |  |
-| POST | `/api/auth/logout` | AuthRestController.logout<br>[src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:47](../../../../src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java#L47) | UC003 |  |
-| POST | `/api/auth/reset-password` | AuthRestController.resetPassword<br>[src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:55](../../../../src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java#L55) | UC004 |  |
-| GET | `/api/auth/me` | AuthRestController.me<br>[src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java:61](../../../../src/main/java/com/thinh/cosmetic/rest/account/AuthRestController.java#L61) |  | Ngữ cảnh xác thực kỹ thuật cho client; không tách mục tiêu use case độc lập. |
-| GET | `/api/customers` | CustomerRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:24](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L24) | UC013 |  |
-| GET | `/api/customers/{id}` | CustomerRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:29](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L29) | UC005 |  |
-| PUT | `/api/customers/{id}/profile` | CustomerRestController.updateProfile<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:34](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L34) | UC006 |  |
-| GET | `/api/customers/{id}/addresses` | CustomerRestController.getAddresses<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:42](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L42) | UC007 |  |
-| POST | `/api/customers/{id}/addresses` | CustomerRestController.addAddress<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:47](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L47) | UC008 |  |
-| PUT | `/api/customers/{id}/addresses/{addressId}` | CustomerRestController.updateAddress<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:55](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L55) | UC009, UC014 |  |
-| DELETE | `/api/customers/{id}/addresses/{addressId}` | CustomerRestController.deleteAddress<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:64](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L64) | UC010 |  |
-| GET | `/api/customers/{id}/beauty-profile` | CustomerRestController.getBeautyProfile<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:70](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L70) | UC011 |  |
-| PUT | `/api/customers/{id}/beauty-profile` | CustomerRestController.updateBeautyProfile<br>[src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java:75](../../../../src/main/java/com/thinh/cosmetic/rest/account/CustomerRestController.java#L75) | UC012 |  |
-| POST | `/api/employees` | EmployeeRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java#L20) | UC016 |  |
-| GET | `/api/employees/{id}` | EmployeeRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java:25](../../../../src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java#L25) | UC015 |  |
-| GET | `/api/employees` | EmployeeRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java:30](../../../../src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java#L30) | UC015 |  |
-| PUT | `/api/employees/{id}` | EmployeeRestController.update<br>[src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java:35](../../../../src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java#L35) | UC017 |  |
-| DELETE | `/api/employees/{id}` | EmployeeRestController.deactivate<br>[src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java:43](../../../../src/main/java/com/thinh/cosmetic/rest/account/EmployeeRestController.java#L43) | UC018 |  |
-| GET | `/api/cart` | CartRestController.getCart<br>[src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java:30](../../../../src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java#L30) | UC052 |  |
-| POST | `/api/cart/items` | CartRestController.addItem<br>[src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java:38](../../../../src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java#L38) | UC053 |  |
-| PUT | `/api/cart/items/{cartItemId}` | CartRestController.updateItemQuantity<br>[src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java:47](../../../../src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java#L47) | UC054 |  |
-| DELETE | `/api/cart/items/{cartItemId}` | CartRestController.removeItem<br>[src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java:57](../../../../src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java#L57) | UC055 |  |
-| DELETE | `/api/cart` | CartRestController.clearCart<br>[src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java:66](../../../../src/main/java/com/thinh/cosmetic/rest/cart/CartRestController.java#L66) | UC056 |  |
-| GET | `/api/wishlist` | WishListRestController.getWishList<br>[src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java:27](../../../../src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java#L27) | UC057 |  |
-| POST | `/api/wishlist/products/{productId}` | WishListRestController.addProduct<br>[src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java:35](../../../../src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java#L35) | UC058 |  |
-| DELETE | `/api/wishlist/products/{productId}` | WishListRestController.removeProduct<br>[src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java:44](../../../../src/main/java/com/thinh/cosmetic/rest/cart/WishListRestController.java#L44) | UC059 |  |
-| POST | `api/brands` | BrandRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java#L20) | UC026 |  |
-| GET | `api/brands/{id}` | BrandRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java:29](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java#L29) | UC025 |  |
-| GET | `api/brands` | BrandRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java:36](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java#L36) | UC025 |  |
-| PUT | `api/brands/{id}` | BrandRestController.update<br>[src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java:41](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java#L41) | UC027 |  |
-| DELETE | `api/brands/{id}` | BrandRestController.delete<br>[src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java:49](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/BrandRestController.java#L49) | UC028 |  |
-| POST | `api/categories` | CategoryRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java#L20) | UC030 |  |
-| GET | `api/categories/{id}` | CategoryRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java:29](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java#L29) | UC029 |  |
-| GET | `api/categories` | CategoryRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java:38](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java#L38) | UC029 |  |
-| PUT | `api/categories/{id}` | CategoryRestController.update<br>[src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java:45](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java#L45) | UC031 |  |
-| DELETE | `api/categories/{id}` | CategoryRestController.delete<br>[src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java:55](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/CategoryRestController.java#L55) | UC032 |  |
-| POST | `api/products` | ProductRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java:23](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java#L23) | UC022 |  |
-| GET | `api/products/{id}` | ProductRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java:32](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java#L32) | UC021 |  |
-| GET | `api/products` | ProductRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java:41](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java#L41) | UC019, UC020 |  |
-| PUT | `api/products/{id}` | ProductRestController.update<br>[src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java:61](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java#L61) | UC023 |  |
-| DELETE | `api/products/{id}` | ProductRestController.delete<br>[src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java:71](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java#L71) | UC024 |  |
-| GET | `api/products/sku/{skuId}/stores` | ProductRestController.getSkuStoreStock<br>[src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java:82](../../../../src/main/java/com/thinh/cosmetic/rest/catalog/ProductRestController.java#L82) | UC037 |  |
-| GET | `/api/admin/orders` | AdminOrderRestController.getOrders<br>[src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java:21](../../../../src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java#L21) | UC066, UC083 |  |
-| GET | `/api/admin/orders/{id}` | AdminOrderRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java:29](../../../../src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java#L29) | UC067 |  |
-| PUT | `/api/admin/orders/{id}/status` | AdminOrderRestController.updateStatus<br>[src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java:37](../../../../src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java#L37) | UC068, UC069, UC070, UC071, UC072 |  |
-| POST | `/api/admin/orders/{id}/status` | AdminOrderRestController.updateStatus<br>[src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java:37](../../../../src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java#L37) | UC068, UC069, UC070, UC071, UC072 |  |
-| PUT | `/api/admin/orders/{id}/cancel` | AdminOrderRestController.cancelOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java:46](../../../../src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java#L46) | UC072 |  |
-| POST | `/api/admin/orders/{id}/cancel` | AdminOrderRestController.cancelOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java:46](../../../../src/main/java/com/thinh/cosmetic/rest/order/AdminOrderRestController.java#L46) | UC072 |  |
-| POST | `/api/orders/preview` | OrderRestController.previewOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:36](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L36) | UC060, UC061 |  |
-| POST | `/api/orders` | OrderRestController.placeOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:45](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L45) | UC062 |  |
-| POST | `/api/orders/checkout` | OrderRestController.placeOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:45](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L45) | UC062 |  |
-| GET | `/api/orders/{id}` | OrderRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:54](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L54) | UC064, UC067 |  |
-| GET | `/api/orders/code/{orderCode}` | OrderRestController.getByOrderCode<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:70](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L70) | UC064 |  |
-| GET | `/api/orders/customer/{customerId}` | OrderRestController.getByCustomer<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:84](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L84) | UC063 |  |
-| GET | `/api/orders/my-orders` | OrderRestController.getMyOrders<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:89](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L89) | UC063 |  |
-| GET | `/api/orders` | OrderRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:97](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L97) | UC066 |  |
-| PUT | `/api/orders/{id}/status` | OrderRestController.updateStatus<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:105](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L105) | UC068, UC069, UC070, UC071, UC072 |  |
-| POST | `/api/orders/{id}/status` | OrderRestController.updateStatus<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:105](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L105) | UC068, UC069, UC070, UC071, UC072 |  |
-| PUT | `/api/orders/{id}/cancel` | OrderRestController.cancelOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:114](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L114) | UC065 |  |
-| POST | `/api/orders/{id}/cancel` | OrderRestController.cancelOrder<br>[src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java:114](../../../../src/main/java/com/thinh/cosmetic/rest/order/OrderRestController.java#L114) | UC065 |  |
-| POST | `/api/purchase-orders` | PurchaseOrderRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java#L20) | UC049 |  |
-| GET | `/api/purchase-orders/{id}` | PurchaseOrderRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java:28](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java#L28) | UC050 |  |
-| GET | `/api/purchase-orders` | PurchaseOrderRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java:33](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java#L33) | UC050 |  |
-| PUT | `/api/purchase-orders/{id}/confirm` | PurchaseOrderRestController.confirm<br>[src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java:38](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/PurchaseOrderRestController.java#L38) | UC051 |  |
-| POST | `/api/suppliers` | SupplierRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java#L20) | UC046 |  |
-| GET | `/api/suppliers/{id}` | SupplierRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java:25](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java#L25) | UC045 |  |
-| GET | `/api/suppliers` | SupplierRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java:30](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java#L30) | UC045 |  |
-| PUT | `/api/suppliers/{id}` | SupplierRestController.update<br>[src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java:35](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java#L35) | UC047 |  |
-| DELETE | `/api/suppliers/{id}` | SupplierRestController.deactivate<br>[src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java:43](../../../../src/main/java/com/thinh/cosmetic/rest/purchase/SupplierRestController.java#L43) | UC048 |  |
-| POST | `/api/returns` | ReturnRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java:21](../../../../src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java#L21) | UC073 |  |
-| GET | `/api/returns/{id}` | ReturnRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java:26](../../../../src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java#L26) | UC074 |  |
-| GET | `/api/returns` | ReturnRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java:31](../../../../src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java#L31) | UC074 |  |
-| GET | `/api/returns/customer/{customerId}` | ReturnRestController.getByCustomer<br>[src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java:36](../../../../src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java#L36) | UC074 |  |
-| GET | `/api/returns/order/{orderId}` | ReturnRestController.getByOrder<br>[src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java:41](../../../../src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java#L41) | UC074 |  |
-| PUT | `/api/returns/{id}/status` | ReturnRestController.updateStatus<br>[src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java:46](../../../../src/main/java/com/thinh/cosmetic/rest/returns/ReturnRestController.java#L46) | UC075, UC076, UC077, UC078 |  |
-| POST | `/api/reviews` | ReviewRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java:21](../../../../src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java#L21) | UC080 |  |
-| GET | `/api/reviews/product/{productId}` | ReviewRestController.getByProduct<br>[src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java:29](../../../../src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java#L29) | UC079 |  |
-| GET | `/api/reviews` | ReviewRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java:34](../../../../src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java#L34) | UC081 |  |
-| PUT | `/api/reviews/{id}/status` | ReviewRestController.updateModerationStatus<br>[src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java:39](../../../../src/main/java/com/thinh/cosmetic/rest/review/ReviewRestController.java#L39) | UC082 |  |
-| GET | `/api/inventory/store/{storeId}` | InventoryRestController.getByStore<br>[src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java:19](../../../../src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java#L19) | UC038 |  |
-| GET | `/api/inventory/store/{storeId}/sku/{skuId}` | InventoryRestController.getByStoreAndSku<br>[src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java:24](../../../../src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java#L24) | UC038 |  |
-| GET | `/api/inventory/store/{storeId}/low-stock` | InventoryRestController.getLowStockItems<br>[src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java:32](../../../../src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java#L32) | UC039 |  |
-| POST | `/api/inventory/adjust` | InventoryRestController.adjustStock<br>[src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java:37](../../../../src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java#L37) | UC040 |  |
-| GET | `/api/inventory/store/{storeId}/sku/{skuId}/available` | InventoryRestController.getAvailableStock<br>[src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java:49](../../../../src/main/java/com/thinh/cosmetic/rest/store/InventoryRestController.java#L49) | UC038 |  |
-| POST | `/api/stock-transfers` | StockTransferRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java#L20) | UC041 |  |
-| GET | `/api/stock-transfers/{id}` | StockTransferRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java:28](../../../../src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java#L28) | UC042 |  |
-| GET | `/api/stock-transfers` | StockTransferRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java:33](../../../../src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java#L33) | UC042 |  |
-| PUT | `/api/stock-transfers/{id}/ship` | StockTransferRestController.confirmShipment<br>[src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java:38](../../../../src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java#L38) | UC043 |  |
-| PUT | `/api/stock-transfers/{id}/receive` | StockTransferRestController.confirmReceipt<br>[src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java:43](../../../../src/main/java/com/thinh/cosmetic/rest/store/StockTransferRestController.java#L43) | UC044 |  |
-| POST | `/api/stores` | StoreRestController.create<br>[src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java:20](../../../../src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java#L20) | UC034 |  |
-| GET | `/api/stores/{id}` | StoreRestController.getById<br>[src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java:25](../../../../src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java#L25) | UC033 |  |
-| GET | `/api/stores` | StoreRestController.getAll<br>[src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java:30](../../../../src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java#L30) | UC033 |  |
-| PUT | `/api/stores/{id}` | StoreRestController.update<br>[src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java:35](../../../../src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java#L35) | UC035 |  |
-| DELETE | `/api/stores/{id}` | StoreRestController.deactivate<br>[src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java:43](../../../../src/main/java/com/thinh/cosmetic/rest/store/StoreRestController.java#L43) | UC036 |  |
+| POST | /api/auth/register | AuthRestController.register | UC001 |  |
+| POST | /api/auth/login | AuthRestController.login | UC002 |  |
+| POST | /api/auth/logout | AuthRestController.logout | UC003 |  |
+| POST | /api/auth/reset-password | AuthRestController.resetPassword | UC004 |  |
+| GET | /api/auth/me | AuthRestController.me |  | Ngữ cảnh xác thực kỹ thuật cho client; không tách mục tiêu use case độc lập. |
+| GET | /api/customers | CustomerRestController.getAll | UC008 |  |
+| GET | /api/customers/{id} | CustomerRestController.getById | UC005 |  |
+| PUT | /api/customers/{id}/profile | CustomerRestController.updateProfile | UC005 |  |
+| GET | /api/customers/{id}/addresses | CustomerRestController.getAddresses | UC006 |  |
+| POST | /api/customers/{id}/addresses | CustomerRestController.addAddress | UC006 |  |
+| PUT | /api/customers/{id}/addresses/{addressId} | CustomerRestController.updateAddress | UC006 |  |
+| DELETE | /api/customers/{id}/addresses/{addressId} | CustomerRestController.deleteAddress | UC006 |  |
+| GET | /api/customers/{id}/beauty-profile | CustomerRestController.getBeautyProfile | UC007 |  |
+| PUT | /api/customers/{id}/beauty-profile | CustomerRestController.updateBeautyProfile | UC007 |  |
+| POST | /api/employees | EmployeeRestController.create | UC009 |  |
+| GET | /api/employees/{id} | EmployeeRestController.getById | UC009 |  |
+| GET | /api/employees | EmployeeRestController.getAll | UC009 |  |
+| PUT | /api/employees/{id} | EmployeeRestController.update | UC009 |  |
+| DELETE | /api/employees/{id} | EmployeeRestController.deactivate | UC009 |  |
+| GET | /api/cart | CartRestController.getCart | UC030 |  |
+| POST | /api/cart/items | CartRestController.addItem | UC030 |  |
+| PUT | /api/cart/items/{cartItemId} | CartRestController.updateItemQuantity | UC030 |  |
+| DELETE | /api/cart/items/{cartItemId} | CartRestController.removeItem | UC030 |  |
+| DELETE | /api/cart | CartRestController.clearCart | UC030 |  |
+| GET | /api/wishlist | WishListRestController.getWishList | UC031 |  |
+| POST | /api/wishlist/products/{productId} | WishListRestController.addProduct | UC031 |  |
+| DELETE | /api/wishlist/products/{productId} | WishListRestController.removeProduct | UC031 |  |
+| POST | api/brands | BrandRestController.create | UC014 |  |
+| GET | api/brands/{id} | BrandRestController.getById | UC013 |  |
+| GET | api/brands | BrandRestController.getAll | UC013 |  |
+| PUT | api/brands/{id} | BrandRestController.update | UC014 |  |
+| DELETE | api/brands/{id} | BrandRestController.delete | UC014 |  |
+| POST | api/categories | CategoryRestController.create | UC015 |  |
+| GET | api/categories/{id} | CategoryRestController.getById | UC013 |  |
+| GET | api/categories | CategoryRestController.getAll | UC013 |  |
+| PUT | api/categories/{id} | CategoryRestController.update | UC015 |  |
+| DELETE | api/categories/{id} | CategoryRestController.delete | UC015 |  |
+| POST | api/products | ProductRestController.create | UC012 |  |
+| GET | api/products/{id} | ProductRestController.getById | UC011 |  |
+| GET | api/products | ProductRestController.getAll | UC010 |  |
+| PUT | api/products/{id} | ProductRestController.update | UC012 |  |
+| DELETE | api/products/{id} | ProductRestController.delete | UC012 |  |
+| GET | api/products/sku/{skuId}/stores | ProductRestController.getSkuStoreStock | UC018 |  |
+| GET | /api/admin/orders | AdminOrderRestController.getOrders | UC037,UC046 |  |
+| GET | /api/admin/orders/{id} | AdminOrderRestController.getById | UC037 |  |
+| PUT | /api/admin/orders/{id}/status | AdminOrderRestController.updateStatus | UC038,UC039 |  |
+| POST | /api/admin/orders/{id}/status | AdminOrderRestController.updateStatus | UC038,UC039 |  |
+| PUT | /api/admin/orders/{id}/cancel | AdminOrderRestController.cancelOrder | UC039 |  |
+| POST | /api/admin/orders/{id}/cancel | AdminOrderRestController.cancelOrder | UC039 |  |
+| POST | /api/orders/preview | OrderRestController.previewOrder | UC032,UC033 |  |
+| POST | /api/orders | OrderRestController.placeOrder | UC034 |  |
+| POST | /api/orders/checkout | OrderRestController.placeOrder | UC034 |  |
+| GET | /api/orders/{id} | OrderRestController.getById | UC035,UC037 |  |
+| GET | /api/orders/code/{orderCode} | OrderRestController.getByOrderCode | UC035 |  |
+| GET | /api/orders/customer/{customerId} | OrderRestController.getByCustomer | UC035 |  |
+| GET | /api/orders/my-orders | OrderRestController.getMyOrders | UC035 |  |
+| GET | /api/orders | OrderRestController.getAll | UC037 |  |
+| PUT | /api/orders/{id}/status | OrderRestController.updateStatus | UC038,UC039 |  |
+| POST | /api/orders/{id}/status | OrderRestController.updateStatus | UC038,UC039 |  |
+| PUT | /api/orders/{id}/cancel | OrderRestController.cancelOrder | UC036 |  |
+| POST | /api/orders/{id}/cancel | OrderRestController.cancelOrder | UC036 |  |
+| POST | /api/purchase-orders | PurchaseOrderRestController.create | UC027 |  |
+| GET | /api/purchase-orders/{id} | PurchaseOrderRestController.getById | UC028 |  |
+| GET | /api/purchase-orders | PurchaseOrderRestController.getAll | UC028 |  |
+| PUT | /api/purchase-orders/{id}/confirm | PurchaseOrderRestController.confirm | UC029 |  |
+| POST | /api/suppliers | SupplierRestController.create | UC026 |  |
+| GET | /api/suppliers/{id} | SupplierRestController.getById | UC026 |  |
+| GET | /api/suppliers | SupplierRestController.getAll | UC026 |  |
+| PUT | /api/suppliers/{id} | SupplierRestController.update | UC026 |  |
+| DELETE | /api/suppliers/{id} | SupplierRestController.deactivate | UC026 |  |
+| POST | /api/returns | ReturnRestController.create | UC040 |  |
+| GET | /api/returns/{id} | ReturnRestController.getById | UC041 |  |
+| GET | /api/returns | ReturnRestController.getAll | UC041 |  |
+| GET | /api/returns/customer/{customerId} | ReturnRestController.getByCustomer | UC041 |  |
+| GET | /api/returns/order/{orderId} | ReturnRestController.getByOrder | UC041 |  |
+| PUT | /api/returns/{id}/status | ReturnRestController.updateStatus | UC042 |  |
+| POST | /api/reviews | ReviewRestController.create | UC044 |  |
+| GET | /api/reviews/product/{productId} | ReviewRestController.getByProduct | UC043 |  |
+| GET | /api/reviews | ReviewRestController.getAll | UC045 |  |
+| PUT | /api/reviews/{id}/status | ReviewRestController.updateModerationStatus | UC045 |  |
+| GET | /api/inventory/store/{storeId} | InventoryRestController.getByStore | UC019 |  |
+| GET | /api/inventory/store/{storeId}/sku/{skuId} | InventoryRestController.getByStoreAndSku | UC019 |  |
+| GET | /api/inventory/store/{storeId}/low-stock | InventoryRestController.getLowStockItems | UC020 |  |
+| POST | /api/inventory/adjust | InventoryRestController.adjustStock | UC021 |  |
+| GET | /api/inventory/store/{storeId}/sku/{skuId}/available | InventoryRestController.getAvailableStock | UC019 |  |
+| POST | /api/stock-transfers | StockTransferRestController.create | UC022 |  |
+| GET | /api/stock-transfers/{id} | StockTransferRestController.getById | UC023 |  |
+| GET | /api/stock-transfers | StockTransferRestController.getAll | UC023 |  |
+| PUT | /api/stock-transfers/{id}/ship | StockTransferRestController.confirmShipment | UC024 |  |
+| PUT | /api/stock-transfers/{id}/receive | StockTransferRestController.confirmReceipt | UC025 |  |
+| POST | /api/stores | StoreRestController.create | UC017 |  |
+| GET | /api/stores/{id} | StoreRestController.getById | UC016 |  |
+| GET | /api/stores | StoreRestController.getAll | UC016 |  |
+| PUT | /api/stores/{id} | StoreRestController.update | UC017 |  |
+| DELETE | /api/stores/{id} | StoreRestController.deactivate | UC017 |  |

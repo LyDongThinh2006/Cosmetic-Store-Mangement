@@ -47,4 +47,4 @@ CRUD SKU, ảnh/thuộc tính/upload Cloudinary; BeautyProfile recommendation; v
 
 Không chạy database, seed, migration, API mutation, Maven hoặc test suite ứng dụng trong lần tài liệu hóa này. Tests đã đọc chỉ là chứng cứ đối chiếu; mock save có thể bỏ qua validation thật. Render/syntax/document validation có kết quả riêng; không thay thế kiểm thử nghiệp vụ.
 
-Chưa có Enterprise Architect để kiểm thử import. Không xuất XMI và không khẳng định tương thích EA. PlantUML --xmi được tài liệu chính thức mô tả cho class diagrams; không dùng nó tạo XMI use case giả.
+Chưa có Enterprise Architect để kiểm thử import. Không xuất XMI và không khẳng định tương thích EA. Bộ bàn giao theo yêu cầu mới chỉ có PNG; không tạo XMI khi chưa kiểm chứng EA.

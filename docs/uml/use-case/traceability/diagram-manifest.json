@@ -1,9 +1,23 @@
 [
   {
-    "file": "overview/overall-system.puml",
-    "title": "Tổng quan hệ thống",
+    "file": "overview/overall-system.png",
+    "title": "Sơ đồ Use Case tổng quan",
     "group": "overview",
-    "use_cases": [],
+    "use_cases": [
+      "UC002",
+      "UC009",
+      "UC010",
+      "UC012",
+      "UC017",
+      "UC021",
+      "UC022",
+      "UC027",
+      "UC034",
+      "UC035",
+      "UC038",
+      "UC040",
+      "UC046"
+    ],
     "actors": [
       "GUEST",
       "CUSTOMER",
@@ -11,14 +25,16 @@
       "ADMIN",
       "ORDER_STAFF",
       "WAREHOUSE_STAFF",
-      "PRODUCT_MANAGER",
-      "PUBLIC"
+      "PRODUCT_MANAGER"
     ],
-    "summary": true
+    "relations": [],
+    "source_sha256": "dc05697ef1828a44b66721a24de328c28262b7c37f18366ae15d72ad0026146c",
+    "width": 1108,
+    "height": 1965
   },
   {
-    "file": "modules/authentication.puml",
-    "title": "Xác thực và phiên đăng nhập",
+    "file": "modules/authentication.png",
+    "title": "Tài khoản và xác thực",
     "group": "modules",
     "use_cases": [
       "UC001",
@@ -31,775 +47,254 @@
       "CUSTOMER",
       "EMPLOYEE"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "b7391f3947559a8c40b54bb3b930308cbe80496e5f70bd2c70fcdb21d387dd93",
+    "width": 970,
+    "height": 880
   },
   {
-    "file": "modules/customers.puml",
-    "title": "Hồ sơ khách hàng và địa chỉ",
+    "file": "modules/customers.png",
+    "title": "Hồ sơ khách hàng",
     "group": "modules",
     "use_cases": [
       "UC005",
       "UC006",
       "UC007",
-      "UC008",
-      "UC009",
-      "UC010",
-      "UC011",
-      "UC012",
-      "UC013",
-      "UC014"
+      "UC008"
     ],
     "actors": [
       "CUSTOMER",
-      "PUBLIC"
+      "EMPLOYEE"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "c993d0eadbb23b74750c0e5015cf5acbcb7c575142fd06701fab2c9cf6b4b615",
+    "width": 970,
+    "height": 832
   },
   {
-    "file": "modules/employees.puml",
-    "title": "Nhân viên và phân công",
+    "file": "modules/employees.png",
+    "title": "Quản lý nhân viên",
     "group": "modules",
     "use_cases": [
-      "UC015",
-      "UC016",
-      "UC017",
-      "UC018"
+      "UC009"
     ],
     "actors": [
-      "PUBLIC"
+      "ADMIN"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "e582948214d3a69d4c7283211ce187dc943c4f98c1f38091d21eaa114618625e",
+    "width": 970,
+    "height": 479
   },
   {
-    "file": "modules/catalog.puml",
+    "file": "modules/catalog.png",
     "title": "Sản phẩm và tra cứu mỹ phẩm",
     "group": "modules",
     "use_cases": [
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC022",
-      "UC023",
-      "UC024"
+      "UC010",
+      "UC011",
+      "UC012"
     ],
     "actors": [
-      "PUBLIC",
       "GUEST",
       "CUSTOMER",
-      "EMPLOYEE"
+      "EMPLOYEE",
+      "PRODUCT_MANAGER",
+      "ADMIN"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "d5a2b4b80b6b3e92a3bfb070720f7b03456779c135b7d5c55bbe5cfa9a40dc1b",
+    "width": 1002,
+    "height": 848
   },
   {
-    "file": "modules/brand_category.puml",
+    "file": "modules/brand_category.png",
     "title": "Thương hiệu và danh mục",
     "group": "modules",
     "use_cases": [
-      "UC025",
-      "UC026",
-      "UC027",
-      "UC028",
-      "UC029",
-      "UC030",
-      "UC031",
-      "UC032"
+      "UC013",
+      "UC014",
+      "UC015"
     ],
     "actors": [
-      "PUBLIC",
       "GUEST",
       "CUSTOMER",
-      "EMPLOYEE"
+      "EMPLOYEE",
+      "PRODUCT_MANAGER",
+      "ADMIN"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "2fd69b39b5576645e5adf9038c5c54cae474022b4a0efa7520a51fdb48cec58a",
+    "width": 1071,
+    "height": 860
   },
   {
-    "file": "modules/store.puml",
+    "file": "modules/store.png",
     "title": "Cửa hàng",
     "group": "modules",
     "use_cases": [
-      "UC033",
-      "UC034",
-      "UC035",
-      "UC036"
+      "UC016",
+      "UC017"
     ],
     "actors": [
-      "PUBLIC",
       "GUEST",
       "CUSTOMER",
-      "EMPLOYEE"
+      "EMPLOYEE",
+      "ADMIN"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "c5b8856212737df8bef2785bcd5f4b5405f48215639e92d930c19e9fb61877e0",
+    "width": 970,
+    "height": 741
   },
   {
-    "file": "modules/inventory.puml",
+    "file": "modules/inventory.png",
     "title": "Tồn kho",
     "group": "modules",
     "use_cases": [
-      "UC037",
-      "UC038",
-      "UC039",
-      "UC040"
-    ],
-    "actors": [
-      "PUBLIC",
-      "GUEST",
-      "CUSTOMER",
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/stock_transfer.puml",
-    "title": "Điều chuyển kho",
-    "group": "modules",
-    "use_cases": [
-      "UC041",
-      "UC042",
-      "UC043",
-      "UC044"
-    ],
-    "actors": [
-      "PUBLIC"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/purchase.puml",
-    "title": "Nhà cung cấp và nhập hàng",
-    "group": "modules",
-    "use_cases": [
-      "UC045",
-      "UC046",
-      "UC047",
-      "UC048",
-      "UC049",
-      "UC050",
-      "UC051"
-    ],
-    "actors": [
-      "PUBLIC"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/cart.puml",
-    "title": "Giỏ hàng",
-    "group": "modules",
-    "use_cases": [
-      "UC052",
-      "UC053",
-      "UC054",
-      "UC055",
-      "UC056"
-    ],
-    "actors": [
-      "CUSTOMER"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/wishlist.puml",
-    "title": "Yêu thích",
-    "group": "modules",
-    "use_cases": [
-      "UC057",
-      "UC058",
-      "UC059"
-    ],
-    "actors": [
-      "PUBLIC",
-      "CUSTOMER"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/order-1.puml",
-    "title": "Đặt hàng và xử lý đơn — phần 1",
-    "group": "modules",
-    "use_cases": [
-      "UC060",
-      "UC061",
-      "UC062",
-      "UC063",
-      "UC064",
-      "UC065"
-    ],
-    "actors": [
-      "CUSTOMER",
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/order-2.puml",
-    "title": "Đặt hàng và xử lý đơn — phần 2",
-    "group": "modules",
-    "use_cases": [
-      "UC066",
-      "UC067",
-      "UC068",
-      "UC069",
-      "UC070",
-      "UC071",
-      "UC072"
-    ],
-    "actors": [
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/returns.puml",
-    "title": "Yêu cầu trả hàng",
-    "group": "modules",
-    "use_cases": [
-      "UC073",
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC077",
-      "UC078"
-    ],
-    "actors": [
-      "PUBLIC",
-      "CUSTOMER",
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/review.puml",
-    "title": "Đánh giá sản phẩm",
-    "group": "modules",
-    "use_cases": [
-      "UC079",
-      "UC080",
-      "UC081",
-      "UC082"
-    ],
-    "actors": [
-      "PUBLIC",
-      "GUEST"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/dashboard.puml",
-    "title": "Tổng quan vận hành",
-    "group": "modules",
-    "use_cases": [
-      "UC083"
-    ],
-    "actors": [
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "modules/ui_preferences.puml",
-    "title": "Tùy chọn giao diện",
-    "group": "modules",
-    "use_cases": [
-      "UC084"
-    ],
-    "actors": [
-      "GUEST",
-      "CUSTOMER",
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/guest.puml",
-    "title": "Khách vãng lai",
-    "group": "actors",
-    "use_cases": [
-      "UC001",
-      "UC002",
-      "UC004",
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC079",
-      "UC084"
-    ],
-    "actors": [
-      "GUEST"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/customer-01.puml",
-    "title": "Khách hàng — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC002",
-      "UC003",
-      "UC005",
-      "UC006",
-      "UC007",
-      "UC008",
-      "UC009",
-      "UC010",
-      "UC011",
-      "UC012",
-      "UC014",
-      "UC019"
-    ],
-    "actors": [
-      "CUSTOMER"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/customer-02.puml",
-    "title": "Khách hàng — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC052",
-      "UC053",
-      "UC054",
-      "UC055",
-      "UC056",
-      "UC057"
-    ],
-    "actors": [
-      "CUSTOMER"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/customer-03.puml",
-    "title": "Khách hàng — phần 3",
-    "group": "actors",
-    "use_cases": [
-      "UC058",
-      "UC059",
-      "UC060",
-      "UC061",
-      "UC062",
-      "UC063",
-      "UC064",
-      "UC065",
-      "UC073",
-      "UC074",
-      "UC084"
-    ],
-    "actors": [
-      "CUSTOMER"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/employee-01.puml",
-    "title": "Nhân viên — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC002",
-      "UC003",
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC038",
-      "UC039",
-      "UC040"
-    ],
-    "actors": [
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/employee-02.puml",
-    "title": "Nhân viên — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC062",
-      "UC066",
-      "UC067",
-      "UC068",
-      "UC069",
-      "UC070",
-      "UC071",
-      "UC072",
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC083"
-    ],
-    "actors": [
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/employee-03.puml",
-    "title": "Nhân viên — phần 3",
-    "group": "actors",
-    "use_cases": [
-      "UC084"
-    ],
-    "actors": [
-      "EMPLOYEE"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/admin-01.puml",
-    "title": "Quản trị viên — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC002",
-      "UC003",
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC038",
-      "UC039",
-      "UC040"
-    ],
-    "actors": [
-      "ADMIN"
-    ],
-    "inheritance": "ADMIN"
-  },
-  {
-    "file": "actors/admin-02.puml",
-    "title": "Quản trị viên — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC062",
-      "UC066",
-      "UC067",
-      "UC068",
-      "UC069",
-      "UC070",
-      "UC071",
-      "UC072",
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC083"
-    ],
-    "actors": [
-      "ADMIN"
-    ],
-    "inheritance": "ADMIN"
-  },
-  {
-    "file": "actors/admin-03.puml",
-    "title": "Quản trị viên — phần 3",
-    "group": "actors",
-    "use_cases": [
-      "UC084"
-    ],
-    "actors": [
-      "ADMIN"
-    ],
-    "inheritance": "ADMIN"
-  },
-  {
-    "file": "actors/order_staff-01.puml",
-    "title": "Nhân viên xử lý đơn — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC002",
-      "UC003",
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC038",
-      "UC039",
-      "UC040"
-    ],
-    "actors": [
-      "ORDER_STAFF"
-    ],
-    "inheritance": "ORDER_STAFF"
-  },
-  {
-    "file": "actors/order_staff-02.puml",
-    "title": "Nhân viên xử lý đơn — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC062",
-      "UC066",
-      "UC067",
-      "UC068",
-      "UC069",
-      "UC070",
-      "UC071",
-      "UC072",
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC083"
-    ],
-    "actors": [
-      "ORDER_STAFF"
-    ],
-    "inheritance": "ORDER_STAFF"
-  },
-  {
-    "file": "actors/order_staff-03.puml",
-    "title": "Nhân viên xử lý đơn — phần 3",
-    "group": "actors",
-    "use_cases": [
-      "UC084"
-    ],
-    "actors": [
-      "ORDER_STAFF"
-    ],
-    "inheritance": "ORDER_STAFF"
-  },
-  {
-    "file": "actors/warehouse_staff-01.puml",
-    "title": "Nhân viên kho — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC002",
-      "UC003",
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC038",
-      "UC039",
-      "UC040"
-    ],
-    "actors": [
-      "WAREHOUSE_STAFF"
-    ],
-    "inheritance": "WAREHOUSE_STAFF"
-  },
-  {
-    "file": "actors/warehouse_staff-02.puml",
-    "title": "Nhân viên kho — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC062",
-      "UC066",
-      "UC067",
-      "UC068",
-      "UC069",
-      "UC070",
-      "UC071",
-      "UC072",
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC083"
-    ],
-    "actors": [
-      "WAREHOUSE_STAFF"
-    ],
-    "inheritance": "WAREHOUSE_STAFF"
-  },
-  {
-    "file": "actors/warehouse_staff-03.puml",
-    "title": "Nhân viên kho — phần 3",
-    "group": "actors",
-    "use_cases": [
-      "UC084"
-    ],
-    "actors": [
-      "WAREHOUSE_STAFF"
-    ],
-    "inheritance": "WAREHOUSE_STAFF"
-  },
-  {
-    "file": "actors/product_manager-01.puml",
-    "title": "Nhân viên quản lý sản phẩm — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC002",
-      "UC003",
-      "UC019",
-      "UC020",
-      "UC021",
-      "UC025",
-      "UC029",
-      "UC033",
-      "UC037",
-      "UC038",
-      "UC039",
-      "UC040"
-    ],
-    "actors": [
-      "PRODUCT_MANAGER"
-    ],
-    "inheritance": "PRODUCT_MANAGER"
-  },
-  {
-    "file": "actors/product_manager-02.puml",
-    "title": "Nhân viên quản lý sản phẩm — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC062",
-      "UC066",
-      "UC067",
-      "UC068",
-      "UC069",
-      "UC070",
-      "UC071",
-      "UC072",
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC083"
-    ],
-    "actors": [
-      "PRODUCT_MANAGER"
-    ],
-    "inheritance": "PRODUCT_MANAGER"
-  },
-  {
-    "file": "actors/product_manager-03.puml",
-    "title": "Nhân viên quản lý sản phẩm — phần 3",
-    "group": "actors",
-    "use_cases": [
-      "UC084"
-    ],
-    "actors": [
-      "PRODUCT_MANAGER"
-    ],
-    "inheritance": "PRODUCT_MANAGER"
-  },
-  {
-    "file": "actors/public-01.puml",
-    "title": "Người gọi API công khai — phần 1",
-    "group": "actors",
-    "use_cases": [
-      "UC005",
-      "UC006",
-      "UC007",
-      "UC008",
-      "UC009",
-      "UC010",
-      "UC011",
-      "UC012",
-      "UC013",
-      "UC014",
-      "UC015",
-      "UC016"
-    ],
-    "actors": [
-      "PUBLIC"
-    ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/public-02.puml",
-    "title": "Người gọi API công khai — phần 2",
-    "group": "actors",
-    "use_cases": [
-      "UC017",
       "UC018",
       "UC019",
       "UC020",
-      "UC021",
+      "UC021"
+    ],
+    "actors": [
+      "GUEST",
+      "CUSTOMER",
+      "EMPLOYEE"
+    ],
+    "relations": [],
+    "source_sha256": "e8a52b535b8f60907ca10cfe052ef857aa6d8e426f4fdf91355f52680b6bf4c8",
+    "width": 970,
+    "height": 933
+  },
+  {
+    "file": "modules/stock_transfer.png",
+    "title": "Điều chuyển kho",
+    "group": "modules",
+    "use_cases": [
       "UC022",
       "UC023",
       "UC024",
-      "UC025",
-      "UC026",
-      "UC027",
-      "UC028"
+      "UC025"
     ],
     "actors": [
-      "PUBLIC"
+      "EMPLOYEE"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "6c7d842b187153f06578b4efc1a0e4f2a65824450722658a71cd7ba31868db36",
+    "width": 970,
+    "height": 837
   },
   {
-    "file": "actors/public-03.puml",
-    "title": "Người gọi API công khai — phần 3",
-    "group": "actors",
+    "file": "modules/purchase.png",
+    "title": "Nhà cung cấp và nhập hàng",
+    "group": "modules",
     "use_cases": [
-      "UC029",
+      "UC026",
+      "UC027",
+      "UC028",
+      "UC029"
+    ],
+    "actors": [
+      "EMPLOYEE"
+    ],
+    "relations": [],
+    "source_sha256": "4e588348bac99fcc3721df161b410a38c40a41c70e6dc989ecdc03369d86cce0",
+    "width": 970,
+    "height": 833
+  },
+  {
+    "file": "modules/cart.png",
+    "title": "Giỏ hàng và yêu thích",
+    "group": "modules",
+    "use_cases": [
       "UC030",
-      "UC031",
+      "UC031"
+    ],
+    "actors": [
+      "CUSTOMER"
+    ],
+    "relations": [],
+    "source_sha256": "beb0b5e4e7dfae3bb1f835d56a69bfa32b7520c974080d8c8e9044ddaf327b28",
+    "width": 970,
+    "height": 587
+  },
+  {
+    "file": "modules/order.png",
+    "title": "Đặt hàng và vận hành đơn",
+    "group": "modules",
+    "use_cases": [
       "UC032",
       "UC033",
       "UC034",
       "UC035",
       "UC036",
       "UC037",
+      "UC038",
+      "UC039",
+      "UC046"
+    ],
+    "actors": [
+      "CUSTOMER",
+      "EMPLOYEE"
+    ],
+    "relations": [
+      {
+        "type": "extend",
+        "source": "UC033",
+        "target": "UC032",
+        "condition": "Khách cung cấp mã LUNEA10, GIAM50K hoặc FREESHIP.",
+        "extension_point": "Tính tổng cuối",
+        "evidence": "OrderServiceImpl.previewOrder có nhánh voucher; checkout.applyVoucher gửi mã và gọi preview."
+      },
+      {
+        "type": "extend",
+        "source": "UC033",
+        "target": "UC034",
+        "condition": "Khách cung cấp mã LUNEA10, GIAM50K hoặc FREESHIP.",
+        "extension_point": "Tính tổng cuối",
+        "evidence": "OrderServiceImpl.placeOrder có nhánh voucher; checkout.applyVoucher gửi mã và gọi preview."
+      }
+    ],
+    "source_sha256": "d851555c4be2a9facbc51929beefaeca5634e467e19ada2ec70d74683c6101bb",
+    "width": 1724,
+    "height": 1395
+  },
+  {
+    "file": "modules/returns.png",
+    "title": "Yêu cầu trả hàng",
+    "group": "modules",
+    "use_cases": [
+      "UC040",
       "UC041",
-      "UC042",
-      "UC043"
+      "UC042"
     ],
     "actors": [
-      "PUBLIC"
+      "CUSTOMER",
+      "EMPLOYEE"
     ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "c19d1f687e5a9ef0d9f8a837c3bc7fd0f5dfa59a225a8408feaf79180c4567b9",
+    "width": 970,
+    "height": 710
   },
   {
-    "file": "actors/public-04.puml",
-    "title": "Người gọi API công khai — phần 4",
-    "group": "actors",
+    "file": "modules/review.png",
+    "title": "Đánh giá sản phẩm",
+    "group": "modules",
     "use_cases": [
+      "UC043",
       "UC044",
-      "UC045",
-      "UC046",
-      "UC047",
-      "UC048",
-      "UC049",
-      "UC050",
-      "UC051",
-      "UC057",
-      "UC058",
-      "UC059",
-      "UC073"
+      "UC045"
     ],
     "actors": [
-      "PUBLIC"
+      "GUEST",
+      "CUSTOMER",
+      "EMPLOYEE"
     ],
-    "inheritance": null
-  },
-  {
-    "file": "actors/public-05.puml",
-    "title": "Người gọi API công khai — phần 5",
-    "group": "actors",
-    "use_cases": [
-      "UC074",
-      "UC075",
-      "UC076",
-      "UC077",
-      "UC078",
-      "UC079",
-      "UC080",
-      "UC081",
-      "UC082"
-    ],
-    "actors": [
-      "PUBLIC"
-    ],
-    "inheritance": null
+    "relations": [],
+    "source_sha256": "69c46c87e7dd2c79a726bb98df8a35d7e4845774f90f7c56e4ac42ebedebd81b",
+    "width": 970,
+    "height": 748
   }
 ]

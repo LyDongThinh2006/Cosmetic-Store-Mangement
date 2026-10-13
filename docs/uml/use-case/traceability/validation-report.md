@@ -1,16 +1,13 @@
-# Báo cáo kiểm tra
+# Kiểm tra bộ hình Use Case đã chỉnh
 
-- Source đã đọc: 277 tệp; ledger thiếu 0.
-- Đặc tả: 84 UC, 8 actor, 37 entity.
-- Diagram: 42 PlantUML; mỗi UC có trong module diagram.
-- API inventory: 95 tổ hợp HTTP method/path, kể cả alias; /api/auth/me là ngữ cảnh kỹ thuật.
-- Quan hệ: 4 actor generalization; 0 include, 0 extend, 0 use-case generalization.
-- Syntax PlantUML được kiểm tra trước render; SVG parse XML và PNG kiểm chữ ký/kích thước.
-- Association khớp actor–UC; generalization đúng hướng subtype→parent. Actor views có đủ UC được gán.
-- Source hash không đổi; liên kết file Markdown hợp lệ; UC labels trong SVG đầy đủ; không banner lỗi/deprecation.
-- Đã đối chiếu UI/REST/service/DTO/repository/entity/security; trạng thái cuối đã gộp lỗi tích hợp.
-- XMI không tạo vì không kiểm chứng import EA.
-- Chưa chạy app/tests/DB; kiểm tra tài liệu không xác nhận nghiệp vụ production.
+- 46 mục tiêu nghiệp vụ, 7 actor, 14 PNG.
+- Mỗi module chỉ có một hình; mỗi UC xuất hiện đúng một lần trong các hình chi tiết.
+- 83 hành vi nguồn được gộp đầy đủ; đổi theme là tiện ích trình bày được ghi riêng.
+- 4 actor generalization; 2 extend có điều kiện và extension point; không include từ đăng nhập/CRUD.
+- PlantUML đã qua check-syntax trước render; PNG có chữ ký và kích thước hợp lệ.
+- Hash source ứng dụng không thay đổi; nguồn dẫn và liên kết file đã kiểm tra.
+- Không còn .puml/.svg hoặc các loạt actor -01/-02/-03 trong bộ bàn giao.
+- Chưa chạy kiểm thử nghiệp vụ hoặc DB; không khẳng định model native EA/XMI đã import.
 
-**Lỗi kiểm tra tự động:** 0
+**Lỗi kiểm tra: 0**
 

@@ -1,0 +1,857 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/auth/register",
+    "controller": "AuthRestController",
+    "handler": "register",
+    "line": "31",
+    "use_cases": "UC001",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/login",
+    "controller": "AuthRestController",
+    "handler": "login",
+    "line": "37",
+    "use_cases": "UC002",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/logout",
+    "controller": "AuthRestController",
+    "handler": "logout",
+    "line": "47",
+    "use_cases": "UC003",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/reset-password",
+    "controller": "AuthRestController",
+    "handler": "resetPassword",
+    "line": "55",
+    "use_cases": "UC004",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/me",
+    "controller": "AuthRestController",
+    "handler": "me",
+    "line": "61",
+    "use_cases": "",
+    "note": "Ngữ cảnh xác thực kỹ thuật cho client; không tách mục tiêu use case độc lập."
+  },
+  {
+    "method": "GET",
+    "path": "/api/customers",
+    "controller": "CustomerRestController",
+    "handler": "getAll",
+    "line": "24",
+    "use_cases": "UC013",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/customers/{id}",
+    "controller": "CustomerRestController",
+    "handler": "getById",
+    "line": "29",
+    "use_cases": "UC005",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/customers/{id}/profile",
+    "controller": "CustomerRestController",
+    "handler": "updateProfile",
+    "line": "34",
+    "use_cases": "UC006",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/customers/{id}/addresses",
+    "controller": "CustomerRestController",
+    "handler": "getAddresses",
+    "line": "42",
+    "use_cases": "UC007",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/customers/{id}/addresses",
+    "controller": "CustomerRestController",
+    "handler": "addAddress",
+    "line": "47",
+    "use_cases": "UC008",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/customers/{id}/addresses/{addressId}",
+    "controller": "CustomerRestController",
+    "handler": "updateAddress",
+    "line": "55",
+    "use_cases": "UC009,UC014",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/customers/{id}/addresses/{addressId}",
+    "controller": "CustomerRestController",
+    "handler": "deleteAddress",
+    "line": "64",
+    "use_cases": "UC010",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/customers/{id}/beauty-profile",
+    "controller": "CustomerRestController",
+    "handler": "getBeautyProfile",
+    "line": "70",
+    "use_cases": "UC011",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/customers/{id}/beauty-profile",
+    "controller": "CustomerRestController",
+    "handler": "updateBeautyProfile",
+    "line": "75",
+    "use_cases": "UC012",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/employees",
+    "controller": "EmployeeRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC016",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/employees/{id}",
+    "controller": "EmployeeRestController",
+    "handler": "getById",
+    "line": "25",
+    "use_cases": "UC015",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/employees",
+    "controller": "EmployeeRestController",
+    "handler": "getAll",
+    "line": "30",
+    "use_cases": "UC015",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/employees/{id}",
+    "controller": "EmployeeRestController",
+    "handler": "update",
+    "line": "35",
+    "use_cases": "UC017",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/employees/{id}",
+    "controller": "EmployeeRestController",
+    "handler": "deactivate",
+    "line": "43",
+    "use_cases": "UC018",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/cart",
+    "controller": "CartRestController",
+    "handler": "getCart",
+    "line": "30",
+    "use_cases": "UC052",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/cart/items",
+    "controller": "CartRestController",
+    "handler": "addItem",
+    "line": "38",
+    "use_cases": "UC053",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/cart/items/{cartItemId}",
+    "controller": "CartRestController",
+    "handler": "updateItemQuantity",
+    "line": "47",
+    "use_cases": "UC054",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/cart/items/{cartItemId}",
+    "controller": "CartRestController",
+    "handler": "removeItem",
+    "line": "57",
+    "use_cases": "UC055",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/cart",
+    "controller": "CartRestController",
+    "handler": "clearCart",
+    "line": "66",
+    "use_cases": "UC056",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/wishlist",
+    "controller": "WishListRestController",
+    "handler": "getWishList",
+    "line": "27",
+    "use_cases": "UC057",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/wishlist/products/{productId}",
+    "controller": "WishListRestController",
+    "handler": "addProduct",
+    "line": "35",
+    "use_cases": "UC058",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/wishlist/products/{productId}",
+    "controller": "WishListRestController",
+    "handler": "removeProduct",
+    "line": "44",
+    "use_cases": "UC059",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "api/brands",
+    "controller": "BrandRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC026",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/brands/{id}",
+    "controller": "BrandRestController",
+    "handler": "getById",
+    "line": "29",
+    "use_cases": "UC025",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/brands",
+    "controller": "BrandRestController",
+    "handler": "getAll",
+    "line": "36",
+    "use_cases": "UC025",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "api/brands/{id}",
+    "controller": "BrandRestController",
+    "handler": "update",
+    "line": "41",
+    "use_cases": "UC027",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "api/brands/{id}",
+    "controller": "BrandRestController",
+    "handler": "delete",
+    "line": "49",
+    "use_cases": "UC028",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "api/categories",
+    "controller": "CategoryRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC030",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/categories/{id}",
+    "controller": "CategoryRestController",
+    "handler": "getById",
+    "line": "29",
+    "use_cases": "UC029",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/categories",
+    "controller": "CategoryRestController",
+    "handler": "getAll",
+    "line": "38",
+    "use_cases": "UC029",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "api/categories/{id}",
+    "controller": "CategoryRestController",
+    "handler": "update",
+    "line": "45",
+    "use_cases": "UC031",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "api/categories/{id}",
+    "controller": "CategoryRestController",
+    "handler": "delete",
+    "line": "55",
+    "use_cases": "UC032",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "api/products",
+    "controller": "ProductRestController",
+    "handler": "create",
+    "line": "23",
+    "use_cases": "UC022",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/products/{id}",
+    "controller": "ProductRestController",
+    "handler": "getById",
+    "line": "32",
+    "use_cases": "UC021",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/products",
+    "controller": "ProductRestController",
+    "handler": "getAll",
+    "line": "41",
+    "use_cases": "UC019,UC020",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "api/products/{id}",
+    "controller": "ProductRestController",
+    "handler": "update",
+    "line": "61",
+    "use_cases": "UC023",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "api/products/{id}",
+    "controller": "ProductRestController",
+    "handler": "delete",
+    "line": "71",
+    "use_cases": "UC024",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "api/products/sku/{skuId}/stores",
+    "controller": "ProductRestController",
+    "handler": "getSkuStoreStock",
+    "line": "82",
+    "use_cases": "UC037",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/orders",
+    "controller": "AdminOrderRestController",
+    "handler": "getOrders",
+    "line": "21",
+    "use_cases": "UC066,UC083",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/orders/{id}",
+    "controller": "AdminOrderRestController",
+    "handler": "getById",
+    "line": "29",
+    "use_cases": "UC067",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/orders/{id}/status",
+    "controller": "AdminOrderRestController",
+    "handler": "updateStatus",
+    "line": "37",
+    "use_cases": "UC068,UC069,UC070,UC071,UC072",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/orders/{id}/status",
+    "controller": "AdminOrderRestController",
+    "handler": "updateStatus",
+    "line": "37",
+    "use_cases": "UC068,UC069,UC070,UC071,UC072",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/orders/{id}/cancel",
+    "controller": "AdminOrderRestController",
+    "handler": "cancelOrder",
+    "line": "46",
+    "use_cases": "UC072",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/orders/{id}/cancel",
+    "controller": "AdminOrderRestController",
+    "handler": "cancelOrder",
+    "line": "46",
+    "use_cases": "UC072",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders/preview",
+    "controller": "OrderRestController",
+    "handler": "previewOrder",
+    "line": "36",
+    "use_cases": "UC060,UC061",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders",
+    "controller": "OrderRestController",
+    "handler": "placeOrder",
+    "line": "45",
+    "use_cases": "UC062",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders/checkout",
+    "controller": "OrderRestController",
+    "handler": "placeOrder",
+    "line": "45",
+    "use_cases": "UC062",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/orders/{id}",
+    "controller": "OrderRestController",
+    "handler": "getById",
+    "line": "54",
+    "use_cases": "UC064,UC067",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/orders/code/{orderCode}",
+    "controller": "OrderRestController",
+    "handler": "getByOrderCode",
+    "line": "70",
+    "use_cases": "UC064",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/orders/customer/{customerId}",
+    "controller": "OrderRestController",
+    "handler": "getByCustomer",
+    "line": "84",
+    "use_cases": "UC063",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/orders/my-orders",
+    "controller": "OrderRestController",
+    "handler": "getMyOrders",
+    "line": "89",
+    "use_cases": "UC063",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/orders",
+    "controller": "OrderRestController",
+    "handler": "getAll",
+    "line": "97",
+    "use_cases": "UC066",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/orders/{id}/status",
+    "controller": "OrderRestController",
+    "handler": "updateStatus",
+    "line": "105",
+    "use_cases": "UC068,UC069,UC070,UC071,UC072",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders/{id}/status",
+    "controller": "OrderRestController",
+    "handler": "updateStatus",
+    "line": "105",
+    "use_cases": "UC068,UC069,UC070,UC071,UC072",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/orders/{id}/cancel",
+    "controller": "OrderRestController",
+    "handler": "cancelOrder",
+    "line": "114",
+    "use_cases": "UC065",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/orders/{id}/cancel",
+    "controller": "OrderRestController",
+    "handler": "cancelOrder",
+    "line": "114",
+    "use_cases": "UC065",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/purchase-orders",
+    "controller": "PurchaseOrderRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC049",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders/{id}",
+    "controller": "PurchaseOrderRestController",
+    "handler": "getById",
+    "line": "28",
+    "use_cases": "UC050",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/purchase-orders",
+    "controller": "PurchaseOrderRestController",
+    "handler": "getAll",
+    "line": "33",
+    "use_cases": "UC050",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/purchase-orders/{id}/confirm",
+    "controller": "PurchaseOrderRestController",
+    "handler": "confirm",
+    "line": "38",
+    "use_cases": "UC051",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/suppliers",
+    "controller": "SupplierRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC046",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/suppliers/{id}",
+    "controller": "SupplierRestController",
+    "handler": "getById",
+    "line": "25",
+    "use_cases": "UC045",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/suppliers",
+    "controller": "SupplierRestController",
+    "handler": "getAll",
+    "line": "30",
+    "use_cases": "UC045",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/suppliers/{id}",
+    "controller": "SupplierRestController",
+    "handler": "update",
+    "line": "35",
+    "use_cases": "UC047",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/suppliers/{id}",
+    "controller": "SupplierRestController",
+    "handler": "deactivate",
+    "line": "43",
+    "use_cases": "UC048",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/returns",
+    "controller": "ReturnRestController",
+    "handler": "create",
+    "line": "21",
+    "use_cases": "UC073",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/returns/{id}",
+    "controller": "ReturnRestController",
+    "handler": "getById",
+    "line": "26",
+    "use_cases": "UC074",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/returns",
+    "controller": "ReturnRestController",
+    "handler": "getAll",
+    "line": "31",
+    "use_cases": "UC074",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/returns/customer/{customerId}",
+    "controller": "ReturnRestController",
+    "handler": "getByCustomer",
+    "line": "36",
+    "use_cases": "UC074",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/returns/order/{orderId}",
+    "controller": "ReturnRestController",
+    "handler": "getByOrder",
+    "line": "41",
+    "use_cases": "UC074",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/returns/{id}/status",
+    "controller": "ReturnRestController",
+    "handler": "updateStatus",
+    "line": "46",
+    "use_cases": "UC075,UC076,UC077,UC078",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/reviews",
+    "controller": "ReviewRestController",
+    "handler": "create",
+    "line": "21",
+    "use_cases": "UC080",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/reviews/product/{productId}",
+    "controller": "ReviewRestController",
+    "handler": "getByProduct",
+    "line": "29",
+    "use_cases": "UC079",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/reviews",
+    "controller": "ReviewRestController",
+    "handler": "getAll",
+    "line": "34",
+    "use_cases": "UC081",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/reviews/{id}/status",
+    "controller": "ReviewRestController",
+    "handler": "updateModerationStatus",
+    "line": "39",
+    "use_cases": "UC082",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/inventory/store/{storeId}",
+    "controller": "InventoryRestController",
+    "handler": "getByStore",
+    "line": "19",
+    "use_cases": "UC038",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/inventory/store/{storeId}/sku/{skuId}",
+    "controller": "InventoryRestController",
+    "handler": "getByStoreAndSku",
+    "line": "24",
+    "use_cases": "UC038",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/inventory/store/{storeId}/low-stock",
+    "controller": "InventoryRestController",
+    "handler": "getLowStockItems",
+    "line": "32",
+    "use_cases": "UC039",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/inventory/adjust",
+    "controller": "InventoryRestController",
+    "handler": "adjustStock",
+    "line": "37",
+    "use_cases": "UC040",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/inventory/store/{storeId}/sku/{skuId}/available",
+    "controller": "InventoryRestController",
+    "handler": "getAvailableStock",
+    "line": "49",
+    "use_cases": "UC038",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/stock-transfers",
+    "controller": "StockTransferRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC041",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/stock-transfers/{id}",
+    "controller": "StockTransferRestController",
+    "handler": "getById",
+    "line": "28",
+    "use_cases": "UC042",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/stock-transfers",
+    "controller": "StockTransferRestController",
+    "handler": "getAll",
+    "line": "33",
+    "use_cases": "UC042",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/stock-transfers/{id}/ship",
+    "controller": "StockTransferRestController",
+    "handler": "confirmShipment",
+    "line": "38",
+    "use_cases": "UC043",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/stock-transfers/{id}/receive",
+    "controller": "StockTransferRestController",
+    "handler": "confirmReceipt",
+    "line": "43",
+    "use_cases": "UC044",
+    "note": ""
+  },
+  {
+    "method": "POST",
+    "path": "/api/stores",
+    "controller": "StoreRestController",
+    "handler": "create",
+    "line": "20",
+    "use_cases": "UC034",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/stores/{id}",
+    "controller": "StoreRestController",
+    "handler": "getById",
+    "line": "25",
+    "use_cases": "UC033",
+    "note": ""
+  },
+  {
+    "method": "GET",
+    "path": "/api/stores",
+    "controller": "StoreRestController",
+    "handler": "getAll",
+    "line": "30",
+    "use_cases": "UC033",
+    "note": ""
+  },
+  {
+    "method": "PUT",
+    "path": "/api/stores/{id}",
+    "controller": "StoreRestController",
+    "handler": "update",
+    "line": "35",
+    "use_cases": "UC035",
+    "note": ""
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/stores/{id}",
+    "controller": "StoreRestController",
+    "handler": "deactivate",
+    "line": "43",
+    "use_cases": "UC036",
+    "note": ""
+  }
+]

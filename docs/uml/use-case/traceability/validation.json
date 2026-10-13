@@ -1,22 +1,15 @@
 {
   "date": "2026-10-13",
+  "business_use_cases": 46,
+  "actors": 7,
+  "png_diagrams": 14,
+  "source_behaviors_covered": 83,
   "source_files": 277,
-  "use_cases": 84,
-  "actors": 8,
-  "diagrams": 42,
-  "rest_method_path_variants": 95,
-  "covered_business_api_variants": 94,
-  "technical_endpoints": [
-    "GET /api/auth/me"
-  ],
-  "status_counts": {
-    "Partially Implemented": 29,
-    "Implemented": 25,
-    "Backend Only": 29,
-    "UI Only": 1
-  },
+  "include": 0,
+  "extend": 2,
+  "actor_generalization": 4,
   "errors": [],
-  "app_tests": "not run; static implementation review only",
-  "render_engine": "PlantUML 1.2026.8 / Smetana; Java headless",
-  "xmi": "not emitted; EA compatibility not verified"
+  "app_tests": "not run; documentation/source review only",
+  "xmi": "not emitted; EA import not verified",
+  "output": "one PNG per diagram"
 }

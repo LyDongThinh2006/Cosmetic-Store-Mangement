@@ -1,13 +1,13 @@
-# Kiểm tra quan hệ UML 2.x
+# Kiểm tra quan hệ UML sau khi đối chiếu PDF
 
-| Quan hệ | Kết quả | Bằng chứng / quyết định |
+| Quan hệ | Sử dụng | Bằng chứng / hướng |
 |---|---|---|
-| Association | Đường liền không mũi tên giữa actor và UC trực tiếp. | use-cases.json ghi actors/primary_actors/api_access_actors. API public không được gán độc quyền ADMIN. |
-| Include | 0 connector. | Không tách việc đọc repository, map DTO, giữ tồn hay tính giá thành UC kỹ thuật. Preview không bắt buộc trước đặt hàng. Login là precondition. |
-| Extend | 0 connector. | Voucher có nhánh điều kiện trong preview/place và UI gọi preview; không tuyên bố extension point chung độc lập chưa được xác minh. CRUD, click navigation, trạng thái tuần tự không tự tạo extend. |
-| Actor generalization | 4 quan hệ chuyên biệt → Nhân viên. | Role nằm trên account EMPLOYEE; AppUserDetailsService tự cấp ROLE_EMPLOYEE. Dùng --|> từ subtype tới parent, tam giác rỗng ở parent. |
-| Use-case generalization | 0 connector. | Các mục tiêu chưa có hợp đồng chuyên biệt hóa đủ chứng cứ; không dùng để gom CRUD. |
+| Association | Actor nghiệp vụ — mục tiêu trực tiếp | Đường liền không mũi tên. Vai trò không đồng nghĩa guard độc quyền; security-and-actors.md ghi quyền thật. |
+| Include | 0 | CRUD là nhánh lựa chọn; đăng nhập là điều kiện trước. Không tạo ellipse repository/map DTO/tính giá để có include. |
+| Extend | UC033 → UC032; UC033 → UC034 | Áp mã khi có LUNEA10/GIAM50K/FREESHIP tại extension point Tính tổng cuối. OrderServiceImpl.previewOrder/placeOrder có nhánh điều kiện cùng rule; checkout.applyVoucher gửi mã. |
+| Actor generalization | ADMIN/ORDER_STAFF/WAREHOUSE_STAFF/PRODUCT_MANAGER → EMPLOYEE | AppUserDetailsService luôn cấp ROLE_EMPLOYEE cho AccountType.EMPLOYEE rồi thêm role. Đường liền, tam giác rỗng tại Nhân viên. |
+| Use-case generalization | 0 | Các nhánh quản lý dữ liệu nằm trong scenario; không có hợp đồng chuyên biệt hóa đủ chứng cứ. |
 
-Không nối mọi UC tới Đăng nhập; không kế thừa ADMIN từ Customer/warehouse/order/product. Tất cả actor nằm ngoài rectangle system, ellipse nằm trong. Màu chỉ là trạng thái phân tích, không phải UML stereotype thay thế notation.
+Hướng extend tuân theo [SDE02b trang 27](<../../SDE02b - UML Use Case.pdf#page=27>): use case bổ sung → use case cơ sở. Áp mã là tùy chọn và use case cơ sở vẫn tính được tổng không có mã. Không nối tiến trình trạng thái như activity hoặc mọi chức năng tới Đăng nhập.
 
-Các sơ đồ actor chuyên biệt thể hiện association trên actor Nhân viên rồi nối subtype --|> Nhân viên; hành vi kế thừa được trình bày trong từng phần.
+Actor ở ngoài khung, mọi ellipse ở trong System Boundary có tên hệ thống. Sơ đồ tổng quan chọn các UC thật của catalogue; không tạo UC tổng hợp khác chưa được đặc tả.

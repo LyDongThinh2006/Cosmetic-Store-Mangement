@@ -1,0 +1,85 @@
+﻿previous_id,source_key,previous_name,new_id,new_goal,decision
+UC001,AUTH_REGISTER,Đăng ký tài khoản khách hàng,UC001,Đăng ký tài khoản khách hàng,grouped user goal
+UC002,AUTH_LOGIN,Đăng nhập,UC002,Đăng nhập,grouped user goal
+UC003,AUTH_LOGOUT,Đăng xuất,UC003,Đăng xuất,grouped user goal
+UC004,AUTH_RESET,Đặt lại mật khẩu,UC004,Đặt lại mật khẩu,grouped user goal
+UC005,CUSTOMER_READ,Xem hồ sơ khách hàng,UC005,Quản lý hồ sơ cá nhân,grouped user goal
+UC006,CUSTOMER_EDIT,Cập nhật hồ sơ khách hàng,UC005,Quản lý hồ sơ cá nhân,grouped user goal
+UC007,ADDRESS_READ,Xem sổ địa chỉ,UC006,Quản lý địa chỉ nhận hàng,grouped user goal
+UC008,ADDRESS_ADD,Thêm địa chỉ nhận hàng,UC006,Quản lý địa chỉ nhận hàng,grouped user goal
+UC009,ADDRESS_EDIT,Cập nhật địa chỉ nhận hàng,UC006,Quản lý địa chỉ nhận hàng,grouped user goal
+UC010,ADDRESS_DELETE,Xóa địa chỉ nhận hàng,UC006,Quản lý địa chỉ nhận hàng,grouped user goal
+UC011,BEAUTY_READ,Xem hồ sơ làm đẹp,UC007,Quản lý hồ sơ làm đẹp,grouped user goal
+UC012,BEAUTY_EDIT,Cập nhật hồ sơ làm đẹp,UC007,Quản lý hồ sơ làm đẹp,grouped user goal
+UC013,CUSTOMER_LIST,Tra cứu danh sách khách hàng,UC008,Tra cứu khách hàng,grouped user goal
+UC014,ADDRESS_DEFAULT,Đặt địa chỉ nhận hàng mặc định,UC006,Quản lý địa chỉ nhận hàng,grouped user goal
+UC015,EMPLOYEE_READ,Tra cứu nhân viên,UC009,Quản lý nhân viên và phân công,grouped user goal
+UC016,EMPLOYEE_ADD,Tạo tài khoản nhân viên,UC009,Quản lý nhân viên và phân công,grouped user goal
+UC017,EMPLOYEE_EDIT,Cập nhật nhân viên và phân công,UC009,Quản lý nhân viên và phân công,grouped user goal
+UC018,EMPLOYEE_DEACTIVATE,Ngừng hoạt động nhân viên,UC009,Quản lý nhân viên và phân công,grouped user goal
+UC019,catalog_browse,Xem danh sách sản phẩm,UC010,Tra cứu mỹ phẩm,grouped user goal
+UC020,catalog_search,Tìm kiếm và lọc sản phẩm,UC010,Tra cứu mỹ phẩm,grouped user goal
+UC021,catalog_detail,Xem chi tiết sản phẩm,UC011,Xem chi tiết mỹ phẩm,grouped user goal
+UC022,product_create,Thêm sản phẩm,UC012,Quản lý sản phẩm,grouped user goal
+UC023,product_update,Cập nhật sản phẩm,UC012,Quản lý sản phẩm,grouped user goal
+UC024,product_delete,Xóa sản phẩm,UC012,Quản lý sản phẩm,grouped user goal
+UC025,brand_browse,Xem thương hiệu,UC013,Tra cứu thương hiệu và danh mục,grouped user goal
+UC026,brand_create,Thêm thương hiệu,UC014,Quản lý thương hiệu,grouped user goal
+UC027,brand_update,Cập nhật thương hiệu,UC014,Quản lý thương hiệu,grouped user goal
+UC028,brand_delete,Xóa thương hiệu,UC014,Quản lý thương hiệu,grouped user goal
+UC029,category_browse,Xem danh mục sản phẩm,UC013,Tra cứu thương hiệu và danh mục,grouped user goal
+UC030,category_create,Thêm danh mục sản phẩm,UC015,Quản lý danh mục sản phẩm,grouped user goal
+UC031,category_update,Cập nhật danh mục sản phẩm,UC015,Quản lý danh mục sản phẩm,grouped user goal
+UC032,category_delete,Xóa danh mục sản phẩm,UC015,Quản lý danh mục sản phẩm,grouped user goal
+UC033,store_browse,Xem hệ thống cửa hàng,UC016,Tra cứu cửa hàng,grouped user goal
+UC034,store_create,Thêm cửa hàng,UC017,Quản lý cửa hàng,grouped user goal
+UC035,store_update,Cập nhật cửa hàng,UC017,Quản lý cửa hàng,grouped user goal
+UC036,store_deactivate,Ngừng hoạt động cửa hàng,UC017,Quản lý cửa hàng,grouped user goal
+UC037,stock_public,Tra cứu tồn sản phẩm theo cửa hàng,UC018,Kiểm tra còn hàng theo cửa hàng,grouped user goal
+UC038,inventory_browse,Xem tồn kho cửa hàng,UC019,Tra cứu tồn kho,grouped user goal
+UC039,inventory_low,Xem cảnh báo tồn thấp,UC020,Xem cảnh báo tồn thấp,grouped user goal
+UC040,inventory_adjust,Điều chỉnh tồn kho,UC021,Điều chỉnh tồn kho,grouped user goal
+UC041,transfer_create,Lập phiếu chuyển kho,UC022,Lập phiếu chuyển kho,grouped user goal
+UC042,transfer_browse,Xem phiếu chuyển kho,UC023,Tra cứu phiếu chuyển kho,grouped user goal
+UC043,transfer_ship,Xác nhận xuất chuyển kho,UC024,Xác nhận xuất chuyển kho,grouped user goal
+UC044,transfer_receive,Xác nhận nhận chuyển kho,UC025,Xác nhận nhận chuyển kho,grouped user goal
+UC045,supplier_browse,Xem nhà cung cấp,UC026,Quản lý nhà cung cấp,grouped user goal
+UC046,supplier_create,Thêm nhà cung cấp,UC026,Quản lý nhà cung cấp,grouped user goal
+UC047,supplier_update,Cập nhật nhà cung cấp,UC026,Quản lý nhà cung cấp,grouped user goal
+UC048,supplier_deactivate,Ngừng hợp tác nhà cung cấp,UC026,Quản lý nhà cung cấp,grouped user goal
+UC049,purchase_create,Lập đơn nhập hàng,UC027,Lập đơn nhập hàng,grouped user goal
+UC050,purchase_browse,Xem đơn nhập hàng,UC028,Tra cứu đơn nhập hàng,grouped user goal
+UC051,purchase_confirm,Xác nhận nhập hàng vào kho,UC029,Xác nhận nhập hàng vào kho,grouped user goal
+UC052,cart.view,Xem giỏ hàng,UC030,Quản lý giỏ hàng,grouped user goal
+UC053,cart.add,Thêm sản phẩm vào giỏ,UC030,Quản lý giỏ hàng,grouped user goal
+UC054,cart.quantity,Điều chỉnh số lượng trong giỏ,UC030,Quản lý giỏ hàng,grouped user goal
+UC055,cart.remove,Xóa sản phẩm khỏi giỏ,UC030,Quản lý giỏ hàng,grouped user goal
+UC056,cart.clear,Làm trống giỏ hàng,UC030,Quản lý giỏ hàng,grouped user goal
+UC057,wishlist.view,Xem sản phẩm yêu thích,UC031,Quản lý sản phẩm yêu thích,grouped user goal
+UC058,wishlist.add,Lưu sản phẩm yêu thích,UC031,Quản lý sản phẩm yêu thích,grouped user goal
+UC059,wishlist.remove,Bỏ sản phẩm yêu thích,UC031,Quản lý sản phẩm yêu thích,grouped user goal
+UC060,order.preview,Xem tổng tiền trước khi đặt hàng,UC032,Xem tổng tiền trước khi đặt,grouped user goal
+UC061,order.voucher,Áp dụng mã ưu đãi khi thanh toán,UC033,Áp dụng mã ưu đãi,grouped user goal
+UC062,order.place,Đặt hàng thanh toán khi nhận,UC034,Đặt hàng thanh toán khi nhận,grouped user goal
+UC063,order.history,Xem lịch sử đơn hàng,UC035,Tra cứu đơn hàng của tôi,grouped user goal
+UC064,order.detail,Theo dõi chi tiết đơn hàng,UC035,Tra cứu đơn hàng của tôi,grouped user goal
+UC065,order.cancel_customer,Hủy đơn đang chờ xác nhận,UC036,Hủy đơn chờ xác nhận,grouped user goal
+UC066,order.staff_list,Tra cứu đơn hàng trong phạm vi cửa hàng,UC037,Tra cứu đơn hàng cửa hàng,grouped user goal
+UC067,order.staff_detail,Xem chi tiết đơn của cửa hàng,UC037,Tra cứu đơn hàng cửa hàng,grouped user goal
+UC068,order.confirm,Xác nhận đơn hàng,UC038,Cập nhật tiến trình đơn hàng,grouped user goal
+UC069,order.prepare,Chuyển đơn sang chuẩn bị hàng,UC038,Cập nhật tiến trình đơn hàng,grouped user goal
+UC070,order.ship,Bàn giao đơn để giao hàng,UC038,Cập nhật tiến trình đơn hàng,grouped user goal
+UC071,order.complete,Ghi nhận đơn giao thành công,UC038,Cập nhật tiến trình đơn hàng,grouped user goal
+UC072,order.cancel_staff,Hủy đơn trong phạm vi cửa hàng,UC039,Hủy đơn hàng cửa hàng,grouped user goal
+UC073,return.create,Gửi yêu cầu trả hàng,UC040,Gửi yêu cầu trả hàng,grouped user goal
+UC074,return.view,Theo dõi yêu cầu trả hàng,UC041,Theo dõi yêu cầu trả hàng,grouped user goal
+UC075,return.approve,Duyệt yêu cầu trả hàng,UC042,Cập nhật xử lý trả hàng,grouped user goal
+UC076,return.reject,Từ chối yêu cầu trả hàng,UC042,Cập nhật xử lý trả hàng,grouped user goal
+UC077,return.process,Ghi nhận đang xử lý trả hàng,UC042,Cập nhật xử lý trả hàng,grouped user goal
+UC078,return.complete,Ghi nhận hoàn tất trả hàng,UC042,Cập nhật xử lý trả hàng,grouped user goal
+UC079,review.view_product,Xem đánh giá sản phẩm,UC043,Xem đánh giá sản phẩm,grouped user goal
+UC080,review.create,Viết đánh giá sản phẩm,UC044,Viết đánh giá sản phẩm,grouped user goal
+UC081,review.all,Kiểm tra danh sách đánh giá,UC045,Quản lý hiển thị đánh giá,grouped user goal
+UC082,review.moderate,Ẩn hoặc hiển thị đánh giá,UC045,Quản lý hiển thị đánh giá,grouped user goal
+UC083,dashboard.view,Xem tổng quan vận hành,UC046,Xem tổng quan vận hành,grouped user goal
+UC084,ui.theme,Đổi giao diện sáng tối,,,client presentation preference; excluded business diagram

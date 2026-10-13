@@ -1,0 +1,80 @@
+[
+  {
+    "file": "docs/uml/SDE02a - UML Fundamentals.pdf",
+    "pages": 36,
+    "sha256": "f418f87da40fab39016930283845ddbfa4f7215bf0a9a9efa470e295de5130c6",
+    "review": "Trang 6, 19, 25–26: góc nhìn người dùng; một sơ đồ chỉ cần biểu diễn phần liên quan của mô hình."
+  },
+  {
+    "file": "docs/uml/SDE02b - UML Use Case.pdf",
+    "pages": 50,
+    "sha256": "95d028263258f2ced5bdc34ec920ad426e12230f6cd568f9ad33702e75cce61f",
+    "review": "Trang 6–10, 16–23: actor/vai trò, mục tiêu trọn vẹn, luồng chính/ngoại lệ. Trang 26–27: include/extend. Trang 31–37: một use case có các nhánh CREATE/REVIEW/MODIFY/DELETE."
+  },
+  {
+    "file": "docs/uml/SDE02d - UML Interaction Diagram.pdf",
+    "pages": 52,
+    "sha256": "bd863959cacd92e9604bddce7d873631e27982966f7093e5fd0aa0147994babb",
+    "review": "Trang 4–5, 15–18: sequence/collaboration mô tả tương tác và hiện thực UC; không đưa controller/service/repository thành actor trên use-case diagram."
+  },
+  {
+    "file": "docs/uml/SDE02e - UML Activity Diagram.pdf",
+    "pages": 24,
+    "sha256": "43cb53796a96cf4afef4ad6027aafa8fa9c7f0c77927b3d08e837c7520a2fb59",
+    "review": "Trang 3–9, 20–21: chuỗi hành động, decision/swimlane thuộc activity; các trạng thái thao tác không tự tạo include/extend."
+  },
+  {
+    "file": "docs/uml/UML tieng Viet.pdf",
+    "pages": 104,
+    "sha256": "0001ad574fe89753382d6180164efbb9fd25399ffe80c5453a35a4998803ad64",
+    "review": "Chương Use Case trang 8–12: actor, ellipse, boundary, association, đặc tả, generalization/include/extend; trang 13 phân biệt What với How của activity."
+  },
+  {
+    "file": "docs/uml/V00 - Gioi thieu mon hoc.pdf",
+    "pages": 12,
+    "sha256": "4d61bd16012e8afe760e1c40fa5abdef9db9e705f107ded2ad4d6a1d7b3e4e65",
+    "review": "Phạm vi và công cụ môn học; không dùng ví dụ công nghệ trong bài giảng để phủ định stack thực tế của repository."
+  },
+  {
+    "file": "docs/uml/V01 - Tong quan ve CNPM.pdf",
+    "pages": 54,
+    "sha256": "d6574ae0f46d9dceeff6a6c46522bd500896d20ca87c2836de77417235672444",
+    "review": "Tổng quan kiến trúc/chất lượng/quy trình; không bổ sung yêu cầu mới cho cửa hàng mỹ phẩm từ ví dụ của giáo trình."
+  },
+  {
+    "file": "docs/uml/V02 - Xac dinh yeu cau.pdf",
+    "pages": 47,
+    "sha256": "d86ca5b5f285e535ec9f921ddce02a23f1095467f6328d44c41cd35c46e676db",
+    "review": "Trang 19–21, 34, 38–43: công việc xuất phát từ nghiệp vụ; mô hình cô đọng, nhiều mức chi tiết, không lệ thuộc cài đặt."
+  },
+  {
+    "file": "docs/uml/V03 - Thiet ke phan mem.pdf",
+    "pages": 37,
+    "sha256": "640c9c5db5da09a84e554bb5dd0f0883b25d1dcfc9e9494a7f0f0884d6de96dd",
+    "review": "Trang 7: đi từ tổng thể tới chi tiết; trang 14–27: DFD/phân rã, không dùng ký hiệu hay luồng DFD trong use-case diagram."
+  },
+  {
+    "file": "docs/uml/V04 - Thiet ke du lieu.pdf",
+    "pages": 42,
+    "sha256": "de2987c63266dad5b3e935ea57edbc38e09bbc75f3f9ed2eed6127724d3ca06a",
+    "review": "Trang 5–12, 24–29: entity/bảng/quan hệ dùng trong mô hình dữ liệu, không tự biến thành UC quản lý khi chưa có hành vi."
+  },
+  {
+    "file": "docs/uml/V05 - Thiet ke giao dien.pdf",
+    "pages": 35,
+    "sha256": "d631f2bca90c59f7815f95c7b7ed3a63c854ecacc1753abafa709bcf42449e8c",
+    "review": "Trang 5, 12–13: sơ đồ luân chuyển màn hình là đầu ra thiết kế UI, không phải use-case diagram; trang 18 khuyến nghị ẩn thông tin kỹ thuật thô."
+  },
+  {
+    "file": "docs/uml/V07 - Kiem thu.pdf",
+    "pages": 26,
+    "sha256": "e92c8438e984a10e520dd7809546bfa47417e99bfd2a5eb94fd71e508b45c110",
+    "review": "Trang 3–5, 7–13: phân biệt kiểm tra hình/source với thực nghiệm nghiệp vụ; không tuyên bố đã chạy test ứng dụng."
+  },
+  {
+    "file": "docs/uml/V08 - Suu lieu.pdf",
+    "pages": 17,
+    "sha256": "6eb9e87c96211e8ca0f8a33e5ef875e5332adb2a2ba463b2e5b3e2be5f1ba8da",
+    "review": "Trang 3–6, 13–14: tài liệu dễ dùng, có hình chức năng, thống nhất định dạng và cập nhật cùng hệ thống."
+  }
+]
