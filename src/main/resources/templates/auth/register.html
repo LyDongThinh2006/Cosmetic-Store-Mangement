@@ -10,8 +10,17 @@
     <main class="site-main" id="main-content"
         style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
         <div class="auth-split-wrapper reveal-on-scroll">
-            <!-- Left Side: Brand & Crescent Moon Visual (Page 7 PDF) -->
+            <!-- Left Side: Brand & Crescent Moon Visual in Background -->
             <div class="auth-story-col">
+                <!-- Celestial Background Moon -->
+                <div class="auth-moon-backdrop" aria-hidden="true">
+                    <div class="moon-image-wrapper">
+                        <img th:src="@{/images/moon-crescent.png}" src="/images/moon-crescent.png"
+                            alt="LUNEA Moonlight Crescent" class="hero-crescent-moon"
+                            width="860" height="860" loading="eager" fetchpriority="high" decoding="async">
+                    </div>
+                </div>
+
                 <span class="hero-brand-title" style="font-size: 2rem; margin-bottom: 12px;">LUNEA</span>
                 <h1
                     style="font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; line-height: 1.25; margin-bottom: 16px;">
@@ -21,10 +30,9 @@
                     style="font-size: 1rem; color: var(--color-text-secondary); max-width: 380px; line-height: 1.7; font-weight: 300;">
                     Lưu địa chỉ, theo dõi đơn hàng và tiếp tục mua sắm thuận tiện hơn.
                 </p>
-                <div class="auth-moon-visual">
-                    <img th:src="@{/images/moon-crescent.jpg}" src="/images/moon-crescent.jpg" alt="LUNEA Moonlight"
-                        width="440" height="440" fetchpriority="high" decoding="async"
-                        style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="hero-moon-tag" style="margin-top: 24px;">
+                    <span class="moon-glyph">✦</span>
+                    <span>ÁNH TRĂNG CỦA VẺ ĐẸP</span>
                 </div>
             </div>
 

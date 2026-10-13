@@ -1960,22 +1960,87 @@ h4,
 }
 
 .auth-story-col {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
+    z-index: 1;
 }
 
+.auth-story-col > *:not(.auth-moon-backdrop):not(.auth-moon-visual) {
+    position: relative;
+    z-index: 2;
+}
+
+/* Background Crescent Moon behind story column */
+.auth-moon-backdrop,
 .auth-moon-visual {
-    width: 240px;
-    height: 240px;
+    position: absolute;
+    top: 50%;
+    left: 42%;
+    transform: translate(-50%, -50%);
+    width: clamp(620px, 60vw, 860px);
+    height: clamp(620px, 60vw, 860px);
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.auth-moon-backdrop::before,
+.auth-moon-visual::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 680px;
+    height: 680px;
     border-radius: 50%;
-    overflow: hidden;
-    margin-top: 36px;
-    box-shadow: 0 0 45px rgba(223, 190, 123, 0.25);
-    animation: moonFloat 8s ease-in-out infinite alternate;
+    background: radial-gradient(circle, rgba(223, 190, 123, 0.22) 0%, rgba(223, 190, 123, 0.05) 55%, transparent 72%);
+    filter: blur(28px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.auth-moon-backdrop .moon-image-wrapper,
+.auth-moon-visual .moon-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    animation: moonFloatSubtle 9s ease-in-out infinite alternate;
+}
+
+.auth-moon-backdrop .hero-crescent-moon,
+.auth-moon-visual .hero-crescent-moon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    transition: filter var(--duration-base) var(--ease-spring);
+}
+
+[data-theme="dark"] .auth-moon-backdrop,
+[data-theme="dark"] .auth-moon-visual {
+    opacity: 0.92;
+}
+
+[data-theme="light"] .auth-moon-backdrop,
+[data-theme="light"] .auth-moon-visual {
+    opacity: 0.85;
 }
 
 .auth-form-card {
+    position: relative;
+    z-index: 2;
     background: var(--color-bg-card);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-sm);
