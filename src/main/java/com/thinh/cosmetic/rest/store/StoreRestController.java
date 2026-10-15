@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class StoreRestController {
     private final StoreService storeService;
 
+    @PreAuthorize("hasAuthority('STORE_MANAGE')")
     @PostMapping
     public ResponseEntity<StoreResponse> create(@Valid @RequestBody StoreRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(storeService.create(request));
@@ -32,6 +34,7 @@ public class StoreRestController {
         return ResponseEntity.ok(storeService.getAll());
     }
 
+    @PreAuthorize("hasAuthority('STORE_MANAGE')")
     @PutMapping("/{id}")
     public ResponseEntity<StoreResponse> update(
             @PathVariable Long id,
@@ -40,6 +43,7 @@ public class StoreRestController {
         return ResponseEntity.ok(storeService.update(id, request));
     }
 
+    @PreAuthorize("hasAuthority('STORE_MANAGE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) throws Exception {
         storeService.deactivate(id);

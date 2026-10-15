@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ProductRestController {
     private final ProductService productService;
     private final InventoryService inventoryService;
 
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
     @PostMapping
     public ResponseEntity<ProductResponse> create(
             @Valid @RequestBody ProductRequest request
@@ -58,6 +60,7 @@ public class ProductRestController {
                 .body(productService.getAll());
     }
 
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
     @PutMapping(path = "/{id}")
     public ResponseEntity<ProductResponse> update(
             @PathVariable Long id,
@@ -68,6 +71,7 @@ public class ProductRestController {
                 .body(productService.update(id, request));
     }
 
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id

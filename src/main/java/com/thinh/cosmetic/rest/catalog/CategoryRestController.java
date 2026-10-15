@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class CategoryRestController {
     private final CategoryService categoryService;
 
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
     @PostMapping
     public ResponseEntity<CategoryResponse> create(
             @Valid @RequestBody CategoryRequest request
@@ -42,6 +44,7 @@ public class CategoryRestController {
                 .body(categoryService.getAll());
     }
 
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
     @PutMapping(path = "/{id}")
     public ResponseEntity<CategoryResponse> update(
             @PathVariable Long id,
@@ -52,6 +55,7 @@ public class CategoryRestController {
                 .body(categoryService.update(id, request));
     }
 
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id

@@ -30,7 +30,7 @@ public class OrderRestController {
         if (customerId != null) {
             return customerId;
         }
-        return 1L;
+        throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng");
     }
 
     @PostMapping("/preview")
@@ -82,7 +82,13 @@ public class OrderRestController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OrderResponse>> getByCustomer(@PathVariable Long customerId) {
+    public ResponseEntity<List<OrderResponse>> getByCustomer(
+            @PathVariable Long customerId,
+            @AuthenticationPrincipal AuthPrincipal principal
+    ) {
+        if (principal != null && principal.isCustomer() && !customerId.equals(principal.getCustomerId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "Không thể xem đơn hàng của tài khoản khác");
+        }
         return ResponseEntity.ok(orderService.getByCustomer(customerId));
     }
 

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.security.AuthPrincipal;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -24,7 +26,7 @@ public class CartRestController {
         if (customerId != null) {
             return customerId;
         }
-        return 1L;
+        throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng");
     }
 
     @GetMapping
