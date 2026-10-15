@@ -6,5 +6,21 @@ public enum OrderStatus {
     PREPARING,
     SHIPPING,
     COMPLETED,
-    CANCELLED
+    CANCELLED;
+
+    public boolean canTransitionTo(OrderStatus next) {
+        if (next == null) {
+            return false;
+        }
+        if (this == next) {
+            return true;
+        }
+        return switch (this) {
+            case PENDING -> next == CONFIRMED || next == CANCELLED;
+            case CONFIRMED -> next == PREPARING || next == CANCELLED;
+            case PREPARING -> next == SHIPPING || next == CANCELLED;
+            case SHIPPING -> next == COMPLETED;
+            case COMPLETED, CANCELLED -> false;
+        };
+    }
 }

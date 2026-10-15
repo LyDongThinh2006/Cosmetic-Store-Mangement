@@ -12,7 +12,9 @@ import com.thinh.cosmetic.domain.entity.sales.OrderEntity;
 import com.thinh.cosmetic.domain.entity.sales.OrderItemEntity;
 import com.thinh.cosmetic.domain.entity.sales.OrderReservationEntity;
 
+import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
 import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.domain.enums.ReservationStatus;
 import com.thinh.cosmetic.domain.enums.OrderStatus;
 import com.thinh.cosmetic.domain.entity.catalog.ProductImageEntity;
@@ -41,7 +43,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -146,20 +151,51 @@ public class OrderServiceImpl implements OrderService {
         }
         BigDecimal totalAmount = subtotal.subtract(discountAmount).add(shippingFee).max(BigDecimal.ZERO);
 
-        // Store selection & stock check
-        StoreEntity assignedStore = null;
-        if (request.getFulfillmentStoreId() != null) {
-            assignedStore = storeRepository.findById(request.getFulfillmentStoreId()).orElse(null);
+        // Group required quantities by SKU to handle duplicate SKUs in cart correctly
+        Map<Long, Integer> skuQuantities = new HashMap<>();
+        for (CartItemEntity item : cartItems) {
+            skuQuantities.merge(item.getSku().getId(), item.getQuantity(), Integer::sum);
         }
 
-        if (assignedStore == null) {
+        // Store selection & stock check
+        StoreEntity assignedStore;
+        if (request.getFulfillmentStoreId() != null) {
+            StoreEntity requestedStore = storeRepository.findById(request.getFulfillmentStoreId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND, "Không tìm thấy chi nhánh: " + request.getFulfillmentStoreId()));
+
+            if (requestedStore.getStatus() != null && requestedStore.getStatus() != ActiveStatus.ACTIVE) {
+                throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK, "Chi nhánh hiện không hoạt động: " + requestedStore.getName());
+            }
+
+            for (Map.Entry<Long, Integer> entry : skuQuantities.entrySet()) {
+                Long skuId = entry.getKey();
+                int requiredQty = entry.getValue();
+                var invOpt = inventoryRepository.findByStoreIdAndSkuId(requestedStore.getId(), skuId);
+                if (invOpt.isEmpty()) {
+                    throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
+                            String.format("Chi nhánh '%s' không có thông tin tồn kho cho sản phẩm SKU #%d", requestedStore.getName(), skuId));
+                }
+                var inv = invOpt.get();
+                int availableStock = inv.getActualStock() - inv.getHeldQuantity();
+                if (availableStock < requiredQty) {
+                    throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
+                            String.format("Chi nhánh '%s' không đủ tồn kho khả dụng cho sản phẩm SKU #%d (cần %d, khả dụng %d)",
+                                    requestedStore.getName(), skuId, requiredQty, Math.max(0, availableStock)));
+                }
+            }
+            assignedStore = requestedStore;
+        } else {
             List<StoreEntity> stores = storeRepository.findAll();
+            List<StoreEntity> activeStores = stores.stream()
+                    .filter(s -> s.getStatus() == null || s.getStatus() == ActiveStatus.ACTIVE)
+                    .toList();
+
             List<StoreEntity> capableStores = new ArrayList<>();
-            for (StoreEntity store : stores) {
+            for (StoreEntity store : activeStores) {
                 boolean canFulfillAll = true;
-                for (CartItemEntity item : cartItems) {
-                    var inv = inventoryRepository.findByStoreIdAndSkuId(store.getId(), item.getSku().getId());
-                    if (inv.isEmpty() || (inv.get().getActualStock() - inv.get().getHeldQuantity()) < item.getQuantity()) {
+                for (Map.Entry<Long, Integer> entry : skuQuantities.entrySet()) {
+                    var invOpt = inventoryRepository.findByStoreIdAndSkuId(store.getId(), entry.getKey());
+                    if (invOpt.isEmpty() || (invOpt.get().getActualStock() - invOpt.get().getHeldQuantity()) < entry.getValue()) {
                         canFulfillAll = false;
                         break;
                     }
@@ -169,14 +205,25 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            if (!capableStores.isEmpty()) {
-                String provLower = province.toLowerCase();
+            if (capableStores.isEmpty()) {
+                throw new BusinessException(ErrorCode.NO_STORE_CAN_FULFILL,
+                        "Không có chi nhánh nào có đủ hàng để đáp ứng toàn bộ đơn hàng của bạn");
+            }
+
+            String provLower = (province != null) ? province.trim().toLowerCase() : "";
+            List<StoreEntity> sameProvinceStores = capableStores.stream()
+                    .filter(s -> s.getProvince() != null && !provLower.isEmpty() &&
+                            (provLower.contains(s.getProvince().toLowerCase()) || s.getProvince().toLowerCase().contains(provLower)))
+                    .sorted(Comparator.comparing(StoreEntity::getId))
+                    .toList();
+
+            if (!sameProvinceStores.isEmpty()) {
+                assignedStore = sameProvinceStores.get(0);
+            } else {
                 assignedStore = capableStores.stream()
-                        .filter(s -> s.getProvince() != null && (provLower.contains(s.getProvince().toLowerCase()) || s.getProvince().toLowerCase().contains(provLower)))
+                        .sorted(Comparator.comparing(StoreEntity::getId))
                         .findFirst()
-                        .orElse(capableStores.get(0));
-            } else if (!stores.isEmpty()) {
-                assignedStore = stores.get(0);
+                        .orElseThrow(() -> new BusinessException(ErrorCode.NO_STORE_CAN_FULFILL, "Không có chi nhánh phù hợp"));
             }
         }
 
@@ -202,8 +249,12 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         order = orderRepository.save(order);
 
+        // Sort items by SKU ID to prevent deadlocks across concurrent orders
+        List<CartItemEntity> sortedCartItems = new ArrayList<>(cartItems);
+        sortedCartItems.sort(Comparator.comparing(item -> item.getSku().getId()));
+
         List<OrderItemEntity> orderItems = new ArrayList<>();
-        for (CartItemEntity item : cartItems) {
+        for (CartItemEntity item : sortedCartItems) {
             ProductSkuEntity sku = item.getSku();
             BigDecimal price = sku.getPrice() != null ? sku.getPrice() : BigDecimal.ZERO;
             BigDecimal lineTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
@@ -211,7 +262,7 @@ public class OrderServiceImpl implements OrderService {
             OrderItemEntity orderItem = OrderItemEntity.builder()
                     .order(order)
                     .sku(sku)
-                    .snapshotProductName(sku.getProduct().getName())
+                    .snapshotProductName(sku.getProduct() != null ? sku.getProduct().getName() : "Sản phẩm")
                     .snapshotVariantName(sku.getVariantName())
                     .snapshotPrice(price)
                     .quantity(item.getQuantity())
@@ -219,22 +270,32 @@ public class OrderServiceImpl implements OrderService {
                     .build();
             orderItems.add(orderItemRepository.save(orderItem));
 
-            // Reserve stock (inventory hold)
-            if (assignedStore != null) {
-                stockHoldRepository.save(OrderReservationEntity.builder()
-                        .order(order)
-                        .sku(sku)
-                        .store(assignedStore)
-                        .quantity(item.getQuantity())
-                        .status(ReservationStatus.HELD)
-                        .build());
+            // Verify inventory record exists and re-check available stock at reservation time
+            InventoryEntity inv = inventoryRepository.findByStoreIdAndSkuId(assignedStore.getId(), sku.getId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
+                            String.format("Không tìm thấy bản ghi tồn kho cho sản phẩm SKU #%d tại chi nhánh '%s'", sku.getId(), assignedStore.getName())));
 
-                inventoryRepository.findByStoreIdAndSkuId(assignedStore.getId(), sku.getId())
-                        .ifPresent(inv -> {
-                            inv.setHeldQuantity(inv.getHeldQuantity() + item.getQuantity());
-                            inventoryRepository.save(inv);
-                        });
+            int availableStock = inv.getActualStock() - inv.getHeldQuantity();
+            if (availableStock < item.getQuantity()) {
+                throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
+                        String.format("Tồn kho khả dụng của sản phẩm '%s' không đủ (cần %d, khả dụng %d)",
+                                sku.getProduct() != null ? sku.getProduct().getName() : sku.getSkuCode(),
+                                item.getQuantity(), Math.max(0, availableStock)));
             }
+
+            // Update held stock in inventory first
+            inv.setHeldQuantity(inv.getHeldQuantity() + item.getQuantity());
+            inv.setUpdatedAt(LocalDateTime.now());
+            inventoryRepository.save(inv);
+
+            // Create hold reservation record
+            stockHoldRepository.save(OrderReservationEntity.builder()
+                    .order(order)
+                    .sku(sku)
+                    .store(assignedStore)
+                    .quantity(item.getQuantity())
+                    .status(ReservationStatus.HELD)
+                    .build());
         }
         order.setItems(orderItems);
 
@@ -405,22 +466,17 @@ public class OrderServiceImpl implements OrderService {
             return toResponse(order);
         }
 
-        if (currentStatus == OrderStatus.CANCELLED) {
-            throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION, "Đơn hàng đã bị hủy, không thể thay đổi trạng thái!");
-        }
-        if (currentStatus == OrderStatus.COMPLETED) {
-            throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION, "Đơn hàng đã hoàn thành, không thể thay đổi trạng thái!");
+        if (!currentStatus.canTransitionTo(status)) {
+            throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION,
+                    String.format("Không thể chuyển trạng thái đơn hàng từ %s sang %s", currentStatus, status));
         }
 
         order.setStatus(status);
 
         if (status == OrderStatus.CONFIRMED) {
             order.setConfirmedAt(LocalDateTime.now());
-        } else if (status == OrderStatus.SHIPPING || status == OrderStatus.COMPLETED) {
-            if (status == OrderStatus.COMPLETED) {
-                order.setCompletedAt(LocalDateTime.now());
-            }
-            // Deduct actual stock on shipping or completed if not already committed
+        } else if (status == OrderStatus.SHIPPING) {
+            // Deduct actual stock on shipping (commit hold)
             List<OrderReservationEntity> holds = stockHoldRepository.findByOrderId(id);
             for (OrderReservationEntity hold : holds) {
                 if (hold.getStatus() == ReservationStatus.HELD) {
@@ -431,6 +487,25 @@ public class OrderServiceImpl implements OrderService {
                             .ifPresent(inv -> {
                                 inv.setActualStock(Math.max(0, inv.getActualStock() - hold.getQuantity()));
                                 inv.setHeldQuantity(Math.max(0, inv.getHeldQuantity() - hold.getQuantity()));
+                                inv.setUpdatedAt(LocalDateTime.now());
+                                inventoryRepository.save(inv);
+                            });
+                }
+            }
+        } else if (status == OrderStatus.COMPLETED) {
+            order.setCompletedAt(LocalDateTime.now());
+            // Safety: commit any remaining held stock if somehow not already committed
+            List<OrderReservationEntity> holds = stockHoldRepository.findByOrderId(id);
+            for (OrderReservationEntity hold : holds) {
+                if (hold.getStatus() == ReservationStatus.HELD) {
+                    hold.setStatus(ReservationStatus.COMMITTED);
+                    stockHoldRepository.save(hold);
+
+                    inventoryRepository.findByStoreIdAndSkuId(hold.getStore().getId(), hold.getSku().getId())
+                            .ifPresent(inv -> {
+                                inv.setActualStock(Math.max(0, inv.getActualStock() - hold.getQuantity()));
+                                inv.setHeldQuantity(Math.max(0, inv.getHeldQuantity() - hold.getQuantity()));
+                                inv.setUpdatedAt(LocalDateTime.now());
                                 inventoryRepository.save(inv);
                             });
                 }
@@ -447,6 +522,7 @@ public class OrderServiceImpl implements OrderService {
                     inventoryRepository.findByStoreIdAndSkuId(hold.getStore().getId(), hold.getSku().getId())
                             .ifPresent(inv -> {
                                 inv.setHeldQuantity(Math.max(0, inv.getHeldQuantity() - hold.getQuantity()));
+                                inv.setUpdatedAt(LocalDateTime.now());
                                 inventoryRepository.save(inv);
                             });
                 }

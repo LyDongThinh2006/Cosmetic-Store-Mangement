@@ -310,4 +310,191 @@ class OrderServiceTest {
         assertNotNull(orders);
         verify(orderRepository).findByAssignedStoreIdInOrderByCreatedAtDesc(List.of(1L));
     }
+
+    @Test
+    @DisplayName("Place order fails if customer requested store does not have enough stock")
+    void testPlaceOrderRequestedStoreInsufficientStockFails() {
+        CartItemEntity cartItem = CartItemEntity.builder()
+                .id(50L)
+                .cart(cart)
+                .sku(sku)
+                .quantity(10)
+                .build();
+
+        inventory.setActualStock(5);
+        inventory.setHeldQuantity(0);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(cartRepository.findByCustomerId(1L)).thenReturn(Optional.of(cart));
+        when(cartItemRepository.findByCartId(5L)).thenReturn(List.of(cartItem));
+        when(storeRepository.findById(1L)).thenReturn(Optional.of(store));
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
+
+        OrderRequest request = OrderRequest.builder()
+                .fulfillmentStoreId(1L)
+                .build();
+
+        BusinessException ex = assertThrows(BusinessException.class, () -> orderService.placeOrder(1L, request));
+        assertEquals(ErrorCode.INSUFFICIENT_STOCK, ex.getErrorCode());
+        verify(orderRepository, never()).save(any());
+        verify(stockHoldRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Place order fails if no store can fulfill all items (no fallback to default store)")
+    void testPlaceOrderNoStoreCanFulfillFails() {
+        CartItemEntity cartItem = CartItemEntity.builder()
+                .id(50L)
+                .cart(cart)
+                .sku(sku)
+                .quantity(10)
+                .build();
+
+        inventory.setActualStock(5); // Only 5 in stock, needs 10
+        inventory.setHeldQuantity(0);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(cartRepository.findByCustomerId(1L)).thenReturn(Optional.of(cart));
+        when(cartItemRepository.findByCartId(5L)).thenReturn(List.of(cartItem));
+        when(storeRepository.findAll()).thenReturn(List.of(store));
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
+
+        OrderRequest request = OrderRequest.builder().build();
+
+        BusinessException ex = assertThrows(BusinessException.class, () -> orderService.placeOrder(1L, request));
+        assertEquals(ErrorCode.NO_STORE_CAN_FULFILL, ex.getErrorCode());
+        verify(orderRepository, never()).save(any());
+        verify(stockHoldRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Place order fails if inventory record is missing when holding stock")
+    void testPlaceOrderMissingInventoryRecordFails() {
+        CartItemEntity cartItem = CartItemEntity.builder()
+                .id(50L)
+                .cart(cart)
+                .sku(sku)
+                .quantity(2)
+                .build();
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(cartRepository.findByCustomerId(1L)).thenReturn(Optional.of(cart));
+        when(cartItemRepository.findByCartId(5L)).thenReturn(List.of(cartItem));
+        when(storeRepository.findAll()).thenReturn(List.of(store));
+        // First call during capableStores check finds inventory, but during reserve it's missing
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L))
+                .thenReturn(Optional.of(inventory))
+                .thenReturn(Optional.empty());
+
+        OrderRequest request = OrderRequest.builder().build();
+
+        BusinessException ex = assertThrows(BusinessException.class, () -> orderService.placeOrder(1L, request));
+        assertEquals(ErrorCode.INSUFFICIENT_STOCK, ex.getErrorCode());
+        // Verify stockHold was never saved because inventory lookup failed first
+        verify(stockHoldRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Invalid status transitions are rejected")
+    void testInvalidStatusTransitions() {
+        OrderEntity pendingOrder = OrderEntity.builder()
+                .id(1L)
+                .status(OrderStatus.PENDING)
+                .build();
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(pendingOrder));
+
+        // PENDING -> SHIPPING should fail
+        BusinessException ex1 = assertThrows(BusinessException.class,
+                () -> orderService.updateStatus(1L, OrderStatus.SHIPPING));
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, ex1.getErrorCode());
+
+        // PENDING -> COMPLETED should fail
+        BusinessException ex2 = assertThrows(BusinessException.class,
+                () -> orderService.updateStatus(1L, OrderStatus.COMPLETED));
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, ex2.getErrorCode());
+
+        OrderEntity shippingOrder = OrderEntity.builder()
+                .id(2L)
+                .status(OrderStatus.SHIPPING)
+                .build();
+        when(orderRepository.findById(2L)).thenReturn(Optional.of(shippingOrder));
+
+        // SHIPPING -> CANCELLED should fail
+        BusinessException ex3 = assertThrows(BusinessException.class,
+                () -> orderService.updateStatus(2L, OrderStatus.CANCELLED));
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, ex3.getErrorCode());
+
+        // SHIPPING -> PREPARING should fail
+        BusinessException ex4 = assertThrows(BusinessException.class,
+                () -> orderService.updateStatus(2L, OrderStatus.PREPARING));
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, ex4.getErrorCode());
+
+        OrderEntity completedOrder = OrderEntity.builder()
+                .id(3L)
+                .status(OrderStatus.COMPLETED)
+                .build();
+        when(orderRepository.findById(3L)).thenReturn(Optional.of(completedOrder));
+
+        // COMPLETED -> CANCELLED should fail
+        BusinessException ex5 = assertThrows(BusinessException.class,
+                () -> orderService.updateStatus(3L, OrderStatus.CANCELLED));
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, ex5.getErrorCode());
+
+        OrderEntity cancelledOrder = OrderEntity.builder()
+                .id(4L)
+                .status(OrderStatus.CANCELLED)
+                .build();
+        when(orderRepository.findById(4L)).thenReturn(Optional.of(cancelledOrder));
+
+        // CANCELLED -> PENDING should fail
+        BusinessException ex6 = assertThrows(BusinessException.class,
+                () -> orderService.updateStatus(4L, OrderStatus.PENDING));
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, ex6.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Full valid status workflow: PENDING -> CONFIRMED -> PREPARING -> SHIPPING -> COMPLETED")
+    void testValidStatusTransitionsFullWorkflow() throws Exception {
+        OrderEntity order = OrderEntity.builder()
+                .id(100L)
+                .status(OrderStatus.PENDING)
+                .assignedStore(store)
+                .build();
+        when(orderRepository.findById(100L)).thenReturn(Optional.of(order));
+        when(orderRepository.save(any(OrderEntity.class))).thenAnswer(i -> i.getArgument(0));
+
+        // 1. PENDING -> CONFIRMED
+        OrderResponse res1 = orderService.updateStatus(100L, OrderStatus.CONFIRMED);
+        assertEquals(OrderStatus.CONFIRMED, res1.getStatus());
+        assertNotNull(order.getConfirmedAt());
+
+        // 2. CONFIRMED -> PREPARING
+        OrderResponse res2 = orderService.updateStatus(100L, OrderStatus.PREPARING);
+        assertEquals(OrderStatus.PREPARING, res2.getStatus());
+
+        // 3. PREPARING -> SHIPPING
+        OrderReservationEntity hold = OrderReservationEntity.builder()
+                .id(1L)
+                .order(order)
+                .store(store)
+                .sku(sku)
+                .quantity(2)
+                .status(ReservationStatus.HELD)
+                .build();
+        inventory.setActualStock(10);
+        inventory.setHeldQuantity(2);
+        when(stockHoldRepository.findByOrderId(100L)).thenReturn(List.of(hold));
+        when(inventoryRepository.findByStoreIdAndSkuId(1L, 100L)).thenReturn(Optional.of(inventory));
+
+        OrderResponse res3 = orderService.updateStatus(100L, OrderStatus.SHIPPING);
+        assertEquals(OrderStatus.SHIPPING, res3.getStatus());
+        assertEquals(ReservationStatus.COMMITTED, hold.getStatus());
+        assertEquals(8, inventory.getActualStock());
+        assertEquals(0, inventory.getHeldQuantity());
+
+        // 4. SHIPPING -> COMPLETED
+        OrderResponse res4 = orderService.updateStatus(100L, OrderStatus.COMPLETED);
+        assertEquals(OrderStatus.COMPLETED, res4.getStatus());
+        assertNotNull(order.getCompletedAt());
+    }
 }
