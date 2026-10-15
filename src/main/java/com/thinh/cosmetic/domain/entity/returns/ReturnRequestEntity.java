@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,7 +48,11 @@ public class ReturnRequestEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "refund_amount", precision = 18, scale = 2)
+    private BigDecimal refundAmount;
+
     @NotNull(message = "Status cannot be null")
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
     private ReturnStatus status;

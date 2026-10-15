@@ -261,6 +261,17 @@
                             </button>
                         </div>
                     `;
+                } else if (ret.status === 'APPROVED') {
+                    actionBtns = `
+                        <div style="display: flex; gap: 10px; margin-top: 16px;">
+                            <button type="button" class="admin-btn admin-btn-primary" style="flex: 1; background: var(--color-gold-primary); color: #000; border: none;" onclick="updateReturnStatus(${ret.id}, 'COMPLETED')">
+                                <i class="bi bi-box-seam"></i> Nhận Hàng & Nhập Kho
+                            </button>
+                            <button type="button" class="admin-btn admin-btn-danger" style="flex: 1;" onclick="updateReturnStatus(${ret.id}, 'REJECTED')">
+                                <i class="bi bi-x-lg"></i> Hàng Lỗi / Từ Chối
+                            </button>
+                        </div>
+                    `;
                 }
 
                 content.innerHTML = `
@@ -283,9 +294,14 @@
         }
 
         async function updateReturnStatus(returnId, newStatus) {
-            const confirmMsg = newStatus === 'APPROVED' 
-                ? 'Xác nhận chấp thuận yêu cầu đổi trả cho đơn hàng này?'
-                : 'Xác nhận từ chối yêu cầu đổi trả này?';
+            let confirmMsg = 'Xác nhận cập nhật trạng thái yêu cầu đổi trả này?';
+            if (newStatus === 'APPROVED') {
+                confirmMsg = 'Xác nhận chấp thuận yêu cầu đổi trả cho đơn hàng này? Khách hàng sẽ tiến hành gửi hàng về.';
+            } else if (newStatus === 'COMPLETED') {
+                confirmMsg = 'Xác nhận đã nhận hàng hoàn trả? Hệ thống sẽ tự động cập nhật cộng lại tồn kho chi nhánh cho các sản phẩm này!';
+            } else if (newStatus === 'REJECTED') {
+                confirmMsg = 'Xác nhận từ chối yêu cầu đổi trả này?';
+            }
             if (!confirm(confirmMsg)) return;
             try {
                 await LUNEA.apiFetch(`/api/returns/${returnId}/status?status=${newStatus}`, { method: 'PUT' });
@@ -295,6 +311,7 @@
                 console.error("Update return status error:", e);
             }
         }
+
 
         function renderOrderView(order) {
             // Header

@@ -13,9 +13,13 @@ public class ReviewResponse {
     private Long id;
     private Long productId;
     private String productName;
+    private Long customerId;
     private String customerName;
+    private Long orderId;
+    private String orderCode;
     private Integer rating;
     private String comment;
     private ReviewStatus moderationStatus;
     private LocalDateTime createdAt;
 }
+

@@ -17,12 +17,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @Transactional
 public class BrandTests {
+
+    private static final SimpleGrantedAuthority ROLE_EMPLOYEE = new SimpleGrantedAuthority("ROLE_EMPLOYEE");
+    private static final SimpleGrantedAuthority CATALOG_MANAGE = new SimpleGrantedAuthority("CATALOG_MANAGE");
+
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final BrandService brandService;
@@ -46,6 +53,7 @@ public class BrandTests {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/brands")
+                                .with(user("admin").authorities(ROLE_EMPLOYEE, CATALOG_MANAGE))
                                 .header("X-Requested-With", "fetch")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
@@ -67,6 +75,7 @@ public class BrandTests {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/brands")
+                                .with(user("admin").authorities(ROLE_EMPLOYEE, CATALOG_MANAGE))
                                 .header("X-Requested-With", "fetch")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(brandJson)
@@ -141,6 +150,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/brands/1")
+                        .with(user("admin").authorities(ROLE_EMPLOYEE, CATALOG_MANAGE))
                         .header("X-Requested-With", "fetch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
@@ -167,6 +177,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/brands/1")
+                        .with(user("admin").authorities(ROLE_EMPLOYEE, CATALOG_MANAGE))
                         .header("X-Requested-With", "fetch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
@@ -191,6 +202,7 @@ public class BrandTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/brands/1")
+                        .with(user("admin").authorities(ROLE_EMPLOYEE, CATALOG_MANAGE))
                         .header("X-Requested-With", "fetch")
         ).andExpect(
                 MockMvcResultMatchers.status().isNoContent()

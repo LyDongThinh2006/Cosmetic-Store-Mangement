@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,8 +14,13 @@ import java.util.List;
 public class ReturnRequestResponse {
     private Long id;
     private Long orderId;
+    private String orderCode;
+    private Long customerId;
+    private String customerName;
     private String reason;
+    private String description;
     private ReturnStatus status;
+    private BigDecimal refundAmount;
     private LocalDateTime requestedAt;
     private String processedByName;
     private LocalDateTime processedAt;
@@ -24,8 +30,13 @@ public class ReturnRequestResponse {
     public static class ReturnItemResponse {
         private Long id;
         private Long orderItemId;
+        private Long skuId;
         private String productName;
+        private String variantName;
+        private BigDecimal unitPrice;
         private Integer quantity;
+        private BigDecimal refundAmount;
         private String detailReason;
     }
 }
+

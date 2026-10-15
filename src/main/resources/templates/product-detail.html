@@ -188,16 +188,27 @@
 
                 <div id="tab-reviews" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-reviews" tabindex="0" style="display: none; max-width: 680px;" hidden>
                     <h4 style="font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 16px;">Đánh giá từ khách hàng</h4>
-                    <div style="padding: 20px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--color-border-subtle);">
-                        <div style="display: flex; gap: 4px; color: var(--color-gold-primary); margin-bottom: 6px;">
-                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <div th:if="${reviews != null and !reviews.isEmpty()}" style="display: flex; flex-direction: column; gap: 14px;">
+                        <div th:each="r : ${reviews}" style="padding: 20px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--color-border-subtle);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <div style="display: flex; gap: 4px; color: var(--color-gold-primary);">
+                                    <i th:each="star : ${#numbers.sequence(1, r.rating)}" class="bi bi-star-fill"></i>
+                                    <i th:if="${r.rating < 5}" th:each="star : ${#numbers.sequence(r.rating + 1, 5)}" class="bi bi-star" style="color: var(--color-text-muted);"></i>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--color-text-muted);" th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}">15/10/2026</span>
+                            </div>
+                            <p style="font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.6; margin: 0;" th:text="${r.comment != null and !r.comment.isBlank() ? r.comment : 'Khách hàng không để lại nhận xét chi tiết.'}">
+                                Nhận xét...
+                            </p>
+                            <span style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 8px; display: block;">— <strong th:text="${r.customerName != null ? r.customerName : 'Khách hàng LUNEA'}">Minh Anh</strong> <span style="color: var(--color-success); margin-left: 6px;"><i class="bi bi-patch-check-fill"></i> Đã mua hàng</span></span>
                         </div>
-                        <p style="font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.6;">
-                            "Sản phẩm chính hãng đóng gói rất kỹ, da dùng sau 3 ngày thấy đủ ẩm và căng bóng rõ rệt!"
-                        </p>
-                        <span style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 8px; display: block;">— Minh Anh (Đã mua tại chi nhánh Đồng Khởi, Q1)</span>
+                    </div>
+                    <div th:if="${reviews == null or reviews.isEmpty()}" style="padding: 24px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--color-border-subtle); text-align: center; color: var(--color-text-muted); font-size: 0.88rem;">
+                        <i class="bi bi-chat-square-heart" style="font-size: 1.6rem; color: var(--color-gold-primary); display: block; margin-bottom: 8px;"></i>
+                        Chưa có đánh giá nào cho sản phẩm này. Khách hàng đã mua đơn hàng thành công có thể gửi đánh giá từ trang Đơn Hàng Của Tôi.
                     </div>
                 </div>
+
             </div>
 
             <!-- "Có thể bạn quan tâm" Related Products Grid (Page 3 PDF) -->

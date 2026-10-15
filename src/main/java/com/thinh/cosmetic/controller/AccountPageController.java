@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
 import com.thinh.cosmetic.service.account.CustomerService;
+import java.util.List;
+
 import com.thinh.cosmetic.service.cart.WishListService;
 import com.thinh.cosmetic.service.order.OrderService;
 import com.thinh.cosmetic.service.returns.ReturnService;
+
+import com.thinh.cosmetic.service.review.ReviewService;
 
 @Slf4j
 @Controller
@@ -24,6 +28,8 @@ public class AccountPageController {
     private final OrderService orderService;
     private final ReturnService returnService;
     private final WishListService wishListService;
+    private final ReviewService reviewService;
+
 
     @GetMapping("/account")
     public String account() {
@@ -87,9 +93,19 @@ public class AccountPageController {
             }
             model.addAttribute("order", order);
             model.addAttribute("returnRequests", returnService.getByOrder(id));
+            if (principal != null && principal.getCustomerId() != null) {
+                try {
+                    model.addAttribute("customerReviews", reviewService.getByCustomer(principal.getCustomerId()));
+                } catch (Exception ex) {
+                    model.addAttribute("customerReviews", List.of());
+                }
+            } else {
+                model.addAttribute("customerReviews", List.of());
+            }
         } catch (Exception e) {
             log.warn("Failed to load order with ID {}: {}", id, e.getMessage());
         }
+
         return "account/order-detail";
     }
 

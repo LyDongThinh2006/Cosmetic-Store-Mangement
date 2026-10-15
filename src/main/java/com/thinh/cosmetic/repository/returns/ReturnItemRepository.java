@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ReturnItemRepository extends JpaRepository<ReturnItemEntity, Long> {
     List<ReturnItemEntity> findByReturnRequestId(Long returnRequestId);
+    List<ReturnItemEntity> findByOrderItemId(Long orderItemId);
 }

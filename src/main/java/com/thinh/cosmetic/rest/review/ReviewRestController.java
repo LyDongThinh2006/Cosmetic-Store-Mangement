@@ -27,22 +27,30 @@ public class ReviewRestController {
     @PostMapping
     public ResponseEntity<ReviewResponse> create(
             @AuthenticationPrincipal AuthPrincipal principal,
-            @RequestParam(required = false) Long customerId,
             @Valid @RequestBody ReviewRequest request
     ) throws Exception {
-        Long resolvedCustomerId = (principal != null && principal.getCustomerId() != null)
-                ? principal.getCustomerId()
-                : customerId;
-        if (resolvedCustomerId == null) {
-            throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng");
+        if (principal == null || principal.getCustomerId() == null) {
+            throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng từ phiên đăng nhập");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.create(resolvedCustomerId, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.create(principal.getCustomerId(), request));
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @GetMapping("/my-reviews")
+    public ResponseEntity<List<ReviewResponse>> getMyReviews(
+            @AuthenticationPrincipal AuthPrincipal principal
+    ) {
+        if (principal == null || principal.getCustomerId() == null) {
+            throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng từ phiên đăng nhập");
+        }
+        return ResponseEntity.ok(reviewService.getByCustomer(principal.getCustomerId()));
     }
 
     @GetMapping("/product/{productId}")
     public ResponseEntity<List<ReviewResponse>> getByProduct(@PathVariable Long productId) {
         return ResponseEntity.ok(reviewService.getByProduct(productId));
     }
+
 
     @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
     @GetMapping

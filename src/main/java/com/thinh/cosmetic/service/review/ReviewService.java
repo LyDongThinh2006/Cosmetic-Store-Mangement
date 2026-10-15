@@ -9,6 +9,8 @@ import java.util.List;
 public interface ReviewService {
     ReviewResponse create(Long customerId, ReviewRequest request) throws Exception;
     List<ReviewResponse> getByProduct(Long productId);
+    List<ReviewResponse> getByCustomer(Long customerId);
     List<ReviewResponse> getAll();
     ReviewResponse updateModerationStatus(Long id, ReviewStatus status) throws Exception;
+
 }

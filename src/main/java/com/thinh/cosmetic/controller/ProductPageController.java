@@ -15,6 +15,7 @@ import com.thinh.cosmetic.domain.dto.response.catalog.ProductResponse;
 import com.thinh.cosmetic.service.catalog.BrandService;
 import com.thinh.cosmetic.service.catalog.CategoryService;
 import com.thinh.cosmetic.service.catalog.ProductService;
+import com.thinh.cosmetic.service.review.ReviewService;
 
 @Slf4j
 @Controller
@@ -24,6 +25,8 @@ public class ProductPageController {
     private final ProductService productService;
     private final BrandService brandService;
     private final CategoryService categoryService;
+    private final ReviewService reviewService;
+
 
     @GetMapping({"/products", "/product"})
     public String productList(
@@ -95,9 +98,16 @@ public class ProductPageController {
         model.addAttribute("activeNav", "products");
         model.addAttribute("productId", id);
         model.addAttribute("product", product);
+        try {
+            model.addAttribute("reviews", reviewService.getByProduct(id));
+        } catch (Exception e) {
+            log.warn("Failed to load reviews for product id {}: {}", id, e.getMessage());
+            model.addAttribute("reviews", List.of());
+        }
         if (principal != null) {
             model.addAttribute("currentUser", principal);
         }
+
         return "product-detail";
     }
 

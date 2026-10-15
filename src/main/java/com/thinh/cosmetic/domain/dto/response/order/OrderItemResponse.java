@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 public class OrderItemResponse {
     private Long id;
     private Long skuId;
+    private Long productId;
     private String productName;
+
     private String variantName;
     private String imageUrl;
     private BigDecimal price;

@@ -127,12 +127,15 @@ public class SecurityConfig {
                         // ─── API đánh giá & đổi trả & khách hàng ───
                         .requestMatchers("/api/customers/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/reviews").hasAuthority("ROLE_CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/my-reviews").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers(HttpMethod.PUT, "/api/reviews/*/status").hasAuthority("ROLE_EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/reviews").hasAuthority("ROLE_EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/returns").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/api/returns/customer/**", "/api/returns/order/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/returns/*/status").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.GET, "/api/returns", "/api/returns/{id}").hasAuthority("ROLE_EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/returns").hasAuthority("ROLE_EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/returns/{id}").authenticated()
+
 
                         .requestMatchers("/api/orders", "/api/orders/**").authenticated()
                         .requestMatchers("/api/account/**").authenticated()

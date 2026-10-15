@@ -187,12 +187,24 @@
                                 <div style="font-size: 0.8rem; color: var(--color-text-muted);" 
                                      th:text="${item.variantName} + ' × ' + ${item.quantity}">30 ml × 1</div>
                             </div>
-                            <div style="font-weight: 600; color: var(--color-text-primary); font-size: 1rem;" 
-                                 th:text="${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
-                                892.000 ₫
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; color: var(--color-text-primary); font-size: 1rem; margin-bottom: 6px;" 
+                                     th:text="${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')} + ' ₫'">
+                                    892.000 ₫
+                                </div>
+                                <!-- Review Button if COMPLETED -->
+                                <div th:if="${order.status.name() == 'COMPLETED' and item.productId != null}">
+                                    <button type="button" 
+                                            class="btn-product-outline" 
+                                            style="padding: 4px 12px; font-size: 0.78rem; border-color: rgba(212, 175, 55, 0.4); color: var(--color-gold-primary); cursor: pointer;"
+                                            th:onclick="'openReviewModal(' + ${item.productId} + ', ' + ${order.id} + ', \'' + ${#strings.escapeJavaScript(item.productName)} + '\')'">
+                                        <i class="bi bi-star"></i> Đánh giá
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Price Calculations (Synchronized with Admin) -->
                     <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 10px; max-width: 360px; margin-left: auto;">
@@ -270,8 +282,71 @@
         </div>
     </main>
 
+    <!-- Product Review Modal (Ưu tiên 3) -->
+    <div th:if="${order != null}" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle" tabindex="-1"
+         style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-gold); border-radius: 12px; max-width: 520px; width: 90%; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 14px;">
+                <div>
+                    <h3 id="reviewModalTitle" style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--color-text-primary); margin: 0 0 4px 0;">
+                        Đánh giá sản phẩm
+                    </h3>
+                    <p id="reviewProductName" style="font-size: 0.86rem; color: var(--color-gold-light); margin: 0; font-weight: 500;">
+                        Tên sản phẩm
+                    </p>
+                </div>
+                <button type="button" onclick="closeReviewModal()" aria-label="Đóng hộp thoại đánh giá" style="background: none; border: none; font-size: 1.5rem; color: var(--color-text-muted); cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+
+            <form id="reviewForm" onsubmit="submitProductReview(event)">
+                <input type="hidden" id="reviewProductId" value="">
+                <input type="hidden" id="reviewOrderId" th:value="${order.id}">
+                <input type="hidden" id="reviewRating" value="5">
+
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 8px;">
+                        Chất lượng sản phẩm
+                    </label>
+                    <div id="starContainer" style="display: inline-flex; gap: 8px; font-size: 1.8rem; color: var(--color-gold-primary); cursor: pointer;">
+                        <i class="bi bi-star-fill star-item" data-rating="1" onclick="setRating(1)"></i>
+                        <i class="bi bi-star-fill star-item" data-rating="2" onclick="setRating(2)"></i>
+                        <i class="bi bi-star-fill star-item" data-rating="3" onclick="setRating(3)"></i>
+                        <i class="bi bi-star-fill star-item" data-rating="4" onclick="setRating(4)"></i>
+                        <i class="bi bi-star-fill star-item" data-rating="5" onclick="setRating(5)"></i>
+                    </div>
+                    <div id="ratingLabel" style="font-size: 0.82rem; color: var(--color-gold-primary); margin-top: 4px; font-weight: 600;">
+                        Tuyệt vời (5 sao)
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="reviewComment" style="display: block; font-size: 0.85rem; color: var(--color-text-primary); margin-bottom: 6px;">
+                        Nhận xét của bạn
+                    </label>
+                    <textarea id="reviewComment" rows="4" class="form-input" style="width: 100%; border-radius: 6px; resize: vertical; font-size: 0.9rem;"
+                              placeholder="Chia sẻ cảm nhận về bao bì, kết cấu, hiệu quả trên da..."></textarea>
+                </div>
+
+                <p style="font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 20px; line-height: 1.4;">
+                    <i class="bi bi-shield-check" style="color: var(--color-gold-primary); margin-right: 4px;"></i>
+                    Đánh giá từ khách hàng đã mua sẽ được đội ngũ LUNEA kiểm duyệt trước khi hiển thị công khai.
+                </p>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" onclick="closeReviewModal()" class="btn-product-outline" style="width: auto; padding: 10px 20px;">
+                        Hủy
+                    </button>
+                    <button type="submit" id="btnSubmitReview" class="btn-hero-champagne" style="width: auto; padding: 10px 24px;">
+                        Gửi đánh giá
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Return Request Modal (UC26 & KH-QĐ14) -->
     <div th:if="${order != null}" id="returnModal" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle" tabindex="-1"
+
          style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
         <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-gold); border-radius: 12px; max-width: 580px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 14px;">
@@ -409,6 +484,80 @@
                 btn.disabled = false;
             }
         }
+
+        // ─── Review Modal Functions ───
+        const ratingLabels = {
+            1: 'Rất tệ (1 sao)',
+            2: 'Chưa hài lòng (2 sao)',
+            3: 'Bình thường (3 sao)',
+            4: 'Hài lòng (4 sao)',
+            5: 'Tuyệt vời (5 sao)'
+        };
+
+        function openReviewModal(productId, orderId, productName) {
+            document.getElementById('reviewProductId').value = productId;
+            document.getElementById('reviewOrderId').value = orderId;
+            document.getElementById('reviewProductName').textContent = productName;
+            document.getElementById('reviewComment').value = '';
+            setRating(5);
+            const modal = document.getElementById('reviewModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            if (modal) modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function setRating(rating) {
+            document.getElementById('reviewRating').value = rating;
+            document.getElementById('ratingLabel').textContent = ratingLabels[rating] || (rating + ' sao');
+            document.querySelectorAll('#starContainer .star-item').forEach(star => {
+                const r = parseInt(star.getAttribute('data-rating'));
+                if (r <= rating) {
+                    star.className = 'bi bi-star-fill star-item';
+                } else {
+                    star.className = 'bi bi-star star-item';
+                }
+            });
+        }
+
+        async function submitProductReview(e) {
+            e.preventDefault();
+            const productId = parseInt(document.getElementById('reviewProductId').value);
+            const orderId = parseInt(document.getElementById('reviewOrderId').value);
+            const rating = parseInt(document.getElementById('reviewRating').value) || 5;
+            const comment = (document.getElementById('reviewComment').value || '').trim();
+
+            const btn = document.getElementById('btnSubmitReview');
+            btn.disabled = true;
+
+            try {
+                await LUNEA.apiFetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: productId,
+                        orderId: orderId,
+                        rating: rating,
+                        comment: comment
+                    })
+                });
+
+                LUNEA.showToast('Cảm ơn bạn! Đánh giá đã được gửi và đang chờ kiểm duyệt trước khi hiển thị công khai.', 'success');
+                closeReviewModal();
+                setTimeout(() => window.location.reload(), 1200);
+            } catch (err) {
+                console.error("Submit review error:", err);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
     </script>
 
     <!-- Footer Fragment -->

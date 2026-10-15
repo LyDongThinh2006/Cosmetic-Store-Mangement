@@ -29,13 +29,25 @@ public class ReturnRestController {
             @AuthenticationPrincipal AuthPrincipal principal,
             @Valid @RequestBody ReturnRequestDto request
     ) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(returnService.create(request));
+        Long customerId = (principal != null) ? principal.getCustomerId() : null;
+        if (customerId == null) {
+            throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng từ phiên đăng nhập");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(returnService.create(customerId, request));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
     @GetMapping("/{id}")
-    public ResponseEntity<ReturnRequestResponse> getById(@PathVariable Long id) throws Exception {
-        return ResponseEntity.ok(returnService.getById(id));
+    public ResponseEntity<ReturnRequestResponse> getById(
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @PathVariable Long id
+    ) throws Exception {
+        ReturnRequestResponse response = returnService.getById(id);
+        if (principal != null && principal.isCustomer()) {
+            if (response.getCustomerId() != null && !response.getCustomerId().equals(principal.getCustomerId())) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Không có quyền xem yêu cầu trả hàng của tài khoản khác");
+            }
+        }
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
@@ -57,9 +69,19 @@ public class ReturnRestController {
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<List<ReturnRequestResponse>> getByOrder(@PathVariable Long orderId) {
-        return ResponseEntity.ok(returnService.getByOrder(orderId));
+    public ResponseEntity<List<ReturnRequestResponse>> getByOrder(
+            @AuthenticationPrincipal AuthPrincipal principal,
+            @PathVariable Long orderId
+    ) {
+        List<ReturnRequestResponse> list = returnService.getByOrder(orderId);
+        if (principal != null && principal.isCustomer() && !list.isEmpty()) {
+            if (list.get(0).getCustomerId() != null && !principal.getCustomerId().equals(list.get(0).getCustomerId())) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Không có quyền xem yêu cầu trả hàng của đơn hàng này");
+            }
+        }
+        return ResponseEntity.ok(list);
     }
+
 
     @PreAuthorize("hasAuthority('ROLE_EMPLOYEE') and hasAuthority('ORDER_PROCESS')")
     @PutMapping("/{id}/status")

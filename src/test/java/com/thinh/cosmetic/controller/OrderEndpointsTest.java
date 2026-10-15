@@ -41,10 +41,12 @@ public class OrderEndpointsTest {
     @DisplayName("Khách hàng truy cập /api/orders/my-orders nhận 200 OK")
     void testCustomerCanAccessMyOrdersApi() throws Exception {
         mockMvc.perform(get("/api/orders/my-orders")
+                        .param("customerId", "1")
                         .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
+
 
     @Test
     @DisplayName("Chưa đăng nhập gọi /api/orders/preview bị chặn 401 Unauthorized khi gửi kèm X-Requested-With")

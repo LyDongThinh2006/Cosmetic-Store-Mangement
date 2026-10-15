@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,7 +38,11 @@ public class ReturnItemEntity {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Column(name = "refund_amount", precision = 18, scale = 2)
+    private BigDecimal refundAmount;
+
     @Size(max = 255, message = "Detail reason must not exceed 255 characters")
     @Column(name = "detail_reason", length = 255)
     private String detailReason;
 }
+
