@@ -12,6 +12,7 @@ import java.util.List;
 public class EmployeeResponse {
     private Long id;
     private Long accountId;
+    private String username;
     private String email;
     private String fullName;
     private String internalEmail;

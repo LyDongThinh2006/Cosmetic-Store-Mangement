@@ -29,6 +29,20 @@ public class AdminPageController {
 
         if (principal != null) {
             model.addAttribute("currentUser", principal);
+
+            // Xác định chức danh thực tế của nhân sự
+            String staffRoleTitle = "Nhân Viên Hệ Thống";
+            if (principal.isAdmin()) {
+                staffRoleTitle = "Quản Trị Viên (Admin)";
+            } else if (principal.hasAnyAuthority("ROLE_WAREHOUSE_STAFF", "WAREHOUSE_STAFF")) {
+                staffRoleTitle = "Quản Lý Kho / Thủ Kho";
+            } else if (principal.hasAnyAuthority("ROLE_ORDER_STAFF", "ORDER_STAFF")) {
+                staffRoleTitle = "Nhân Viên Đơn Hàng";
+            } else if (principal.hasAnyAuthority("ROLE_PRODUCT_MANAGER", "PRODUCT_MANAGER")) {
+                staffRoleTitle = "Quản Lý Sản Phẩm";
+            }
+            model.addAttribute("staffRoleTitle", staffRoleTitle);
+
             List<Long> accessibleIds = storeScope.getAccessibleStoreIds(principal);
             if (accessibleIds == null) {
                 model.addAttribute("isAllStoresAdmin", true);

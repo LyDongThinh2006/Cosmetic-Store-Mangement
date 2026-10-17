@@ -15,6 +15,7 @@ import com.thinh.cosmetic.repository.account.PermissionRepository;
 import com.thinh.cosmetic.repository.account.RolePermissionRepository;
 import com.thinh.cosmetic.repository.account.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class AppUserDetailsService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
@@ -40,6 +40,35 @@ public class AppUserDetailsService implements UserDetailsService {
     private final RolePermissionRepository rolePermissionRepository;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
+
+    @Autowired
+    public AppUserDetailsService(
+            AccountRepository accountRepository,
+            CustomerRepository customerRepository,
+            EmployeeRepository employeeRepository,
+            EmployeeRoleRepository employeeRoleRepository,
+            RolePermissionRepository rolePermissionRepository,
+            @Autowired(required = false) RoleRepository roleRepository,
+            @Autowired(required = false) PermissionRepository permissionRepository
+    ) {
+        this.accountRepository = accountRepository;
+        this.customerRepository = customerRepository;
+        this.employeeRepository = employeeRepository;
+        this.employeeRoleRepository = employeeRoleRepository;
+        this.rolePermissionRepository = rolePermissionRepository;
+        this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
+    }
+
+    public AppUserDetailsService(
+            AccountRepository accountRepository,
+            CustomerRepository customerRepository,
+            EmployeeRepository employeeRepository,
+            EmployeeRoleRepository employeeRoleRepository,
+            RolePermissionRepository rolePermissionRepository
+    ) {
+        this(accountRepository, customerRepository, employeeRepository, employeeRoleRepository, rolePermissionRepository, null, null);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -86,20 +115,24 @@ public class AppUserDetailsService implements UserDetailsService {
                     authorities.add(new SimpleGrantedAuthority("ALL_STORES"));
 
                     // Tự động cấp tất cả các vai trò quản lý (Thủ kho, Đơn hàng, Quản lý sản phẩm,...)
-                    roleRepository.findAll().forEach(r -> {
-                        if (r.getName() != null && !r.getName().isBlank()) {
-                            String roleName = r.getName().trim().toUpperCase();
-                            authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
-                            authorities.add(new SimpleGrantedAuthority(roleName));
-                        }
-                    });
+                    if (roleRepository != null) {
+                        roleRepository.findAll().forEach(r -> {
+                            if (r.getName() != null && !r.getName().isBlank()) {
+                                String roleName = r.getName().trim().toUpperCase();
+                                authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
+                                authorities.add(new SimpleGrantedAuthority(roleName));
+                            }
+                        });
+                    }
 
                     // Tự động cấp tất cả các Permissions trong toàn hệ thống
-                    permissionRepository.findAll().forEach(p -> {
-                        if (p.getCode() != null && !p.getCode().isBlank()) {
-                            authorities.add(new SimpleGrantedAuthority(p.getCode().trim().toUpperCase()));
-                        }
-                    });
+                    if (permissionRepository != null) {
+                        permissionRepository.findAll().forEach(p -> {
+                            if (p.getCode() != null && !p.getCode().isBlank()) {
+                                authorities.add(new SimpleGrantedAuthority(p.getCode().trim().toUpperCase()));
+                            }
+                        });
+                    }
                 } else {
                     for (EmployeeRoleEntity er : employeeRoles) {
                         if (er.getRole() != null && er.getRole().getName() != null) {

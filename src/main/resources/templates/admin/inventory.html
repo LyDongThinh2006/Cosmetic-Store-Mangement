@@ -176,6 +176,10 @@
     <!-- Global Toast Component -->
     <div th:replace="~{fragments/toast :: toast}"></div>
 
+    <script sec:authorize="hasAnyAuthority('INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')">
+        window.canAdjustInventory = true;
+    </script>
+
     <script>
         let inventoryData = [];
 
@@ -262,9 +266,13 @@
                         <td style="text-align: center; color: var(--color-text-muted); font-size: 0.8rem;">${i.minimumStock}</td>
                         <td style="text-align: center;">${statusBadge}</td>
                         <td style="text-align: right;">
-                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.78rem;" onclick='openAdjustModal(${JSON.stringify(i)})'>
-                                <i class="bi bi-pencil"></i> Chỉnh kho
-                            </button>
+                            ${window.canAdjustInventory ? `
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.78rem;" onclick='openAdjustModal(${JSON.stringify(i)})'>
+                                    <i class="bi bi-pencil"></i> Chỉnh kho
+                                </button>
+                            ` : `
+                                <span style="font-size: 0.75rem; color: var(--color-text-muted); padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.03);"><i class="bi bi-eye"></i> Chỉ xem</span>
+                            `}
                         </td>
                     </tr>
                 `;

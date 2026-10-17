@@ -37,6 +37,7 @@ public class StoreScope {
         return employeeStores.stream()
                 .filter(es -> es.getStore() != null && es.getStore().getId() != null
                         && (es.getStore().getStatus() == null || es.getStore().getStatus() == com.thinh.cosmetic.domain.enums.ActiveStatus.ACTIVE))
+                .sorted((a, b) -> Boolean.compare(Boolean.TRUE.equals(b.getIsPrimary()), Boolean.TRUE.equals(a.getIsPrimary())))
                 .map(es -> es.getStore().getId())
                 .toList();
     }

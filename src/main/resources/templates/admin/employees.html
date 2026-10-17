@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('employees')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Nhân Sự & Phân Quyền', 'Quản lý tài khoản nhân viên, phân cấp vai trò quản lý và gán chi nhánh chuỗi cửa hàng')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Action Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên, email, SĐT..." oninput="filterEmployees()" style="padding-left: 36px; min-width: 260px;">
+                    </div>
+
+                    <select id="roleFilter" class="admin-select" onchange="filterEmployees()" style="min-width: 170px;">
+                        <option value="">Tất cả vai trò</option>
+                    </select>
+
+                    <select id="storeFilter" class="admin-select" onchange="filterEmployees()" style="min-width: 190px;">
+                        <option value="">Tất cả chi nhánh</option>
+                        <option th:each="st : ${allStores}" th:value="${st.name}" th:text="${st.name}">Chi nhánh</option>
+                    </select>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterEmployees()" style="min-width: 150px;">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="ACTIVE">Đang hoạt động</option>
+                        <option value="INACTIVE">Đã khóa</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadData()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="openCreateModal()">
+                        <i class="bi bi-person-plus-fill"></i>
+                        <span>+ Thêm Nhân Viên / Quản Lý</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Nhân Sự</span>
+                        <div class="kpi-icon blue"><i class="bi bi-people-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotal">0</div>
+                    <div class="kpi-sub"><span>Tài khoản nhân sự toàn hệ thống</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Quản Trị Viên (Admin)</span>
+                        <div class="kpi-icon gold"><i class="bi bi-shield-check"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiAdmin">0</div>
+                    <div class="kpi-sub"><span>Toàn quyền quản trị hệ thống</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Quản Lý / Thủ Kho</span>
+                        <div class="kpi-icon amber"><i class="bi bi-boxes"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiWarehouse" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Chuyên trách nghiệp vụ kho</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Hoạt Động (Active)</span>
+                        <div class="kpi-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiActive" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Tài khoản có thể đăng nhập</span></div>
+                </div>
+            </div>
+
+            <!-- Employee List Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-table"></i>
+                        <span>Danh Sách Nhân Sự & Phân Cấp Quản Trị</span>
+                    </h3>
+                    <span id="employeeCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 nhân sự</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nhân Viên</th>
+                                <th>Email Đăng Nhập</th>
+                                <th>Số Điện Thoại</th>
+                                <th>Vai Trò (Roles)</th>
+                                <th>Chi Nhánh Công Tác</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                                    <div class="spinner" style="margin: 0 auto 12px;"></div>
+                                    Đang tải danh sách nhân sự...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Thêm / Sửa Nhân Viên -->
+    <div id="employeeModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 38px; height: 38px; border-radius: var(--radius-xs); background: rgba(223, 190, 123, 0.15); color: var(--color-gold-primary); display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0;">
+                        <i id="modalHeaderIcon" class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="modalTitle" style="font-size: 1.08rem; font-weight: 700; margin: 0; color: var(--color-text-primary);">
+                            Thêm Nhân Viên / Quản Lý Mới
+                        </h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Thiết lập thông tin tài khoản, phân cấp vai trò và gán chi nhánh trực thuộc
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeEmployeeModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <form id="employeeForm" class="admin-modal-form" onsubmit="handleSaveEmployee(event)">
+                <input type="hidden" id="employeeId" value="">
+
+                <div class="admin-modal-body">
+                    <div class="employee-form-layout">
+                        <!-- Cột 1: Thông tin cá nhân & Tài khoản -->
+                        <div class="form-section-card" style="box-sizing: border-box;">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                    <span>Thông Tin Tài Khoản</span>
+                                </h4>
+                                <span class="section-hint">Định danh nhân sự</span>
+                            </div>
+
+                            <!-- Họ và tên (Full width) -->
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label">
+                                    Họ và Tên <span class="required">*</span>:
+                                </label>
+                                <input type="text" id="formFullName" class="admin-input" required placeholder="Ví dụ: Nguyễn Văn An">
+                            </div>
+
+                            <!-- Số Điện Thoại -->
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label">
+                                    Số Điện Thoại:
+                                </label>
+                                <input type="text" id="formPhone" class="admin-input" placeholder="Ví dụ: 0901234567">
+                            </div>
+
+                            <!-- Email Nội Bộ -->
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label">
+                                    Email Nội Bộ <span class="required">*</span>:
+                                </label>
+                                <input type="email" id="formEmail" class="admin-input" required placeholder="warehouse.hcm@lunea.vn">
+                            </div>
+
+                            <!-- Tên Đăng Nhập (1 hàng giữa Email và Mật khẩu) -->
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label">
+                                    Tên Đăng Nhập (Username):
+                                </label>
+                                <input type="text" id="formUsername" class="admin-input" placeholder="Ví dụ: warehouse_hcm">
+                                <small class="form-field-hint" style="font-size: 0.72rem; color: var(--color-text-muted); display: block; margin-top: 3px;">
+                                    <i class="bi bi-info-circle" style="margin-right: 3px;"></i>Để trống sẽ tự tạo theo Email
+                                </small>
+                            </div>
+
+                            <!-- Mật Khẩu -->
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label">
+                                    Mật Khẩu <span id="pwdRequiredStar" class="required" style="display: none;">*</span>:
+                                </label>
+                                <div style="position: relative; width: 100%;">
+                                    <input type="password" id="formPassword" class="admin-input" placeholder="Tối thiểu 6 ký tự" style="padding-right: 38px;">
+                                    <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer; padding: 4px; font-size: 1rem; line-height: 1;" title="Hiện/ẩn mật khẩu">
+                                        <i id="pwdToggleIcon" class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <small id="pwdHint" style="font-size: 0.72rem; color: var(--color-gold-light); display: none; margin-top: 3px;"><i class="bi bi-shield-check" style="margin-right: 3px;"></i>Để trống nếu không muốn đổi mật khẩu</small>
+                                <small id="pwdDefaultHint" style="font-size: 0.72rem; color: var(--color-text-muted); display: block; margin-top: 3px;"><i class="bi bi-key" style="margin-right: 3px;"></i>Mặc định tài khoản mới: 123456</small>
+                            </div>
+
+                            <!-- Trạng Thái Tài Khoản -->
+                            <div>
+                                <label class="form-field-label">
+                                    Trạng Thái Tài Khoản:
+                                </label>
+                                <select id="formStatus" class="admin-select">
+                                    <option value="ACTIVE">Hoạt động bình thường (ACTIVE)</option>
+                                    <option value="INACTIVE">Tạm khóa đăng nhập (INACTIVE)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Cột 2: Phân cấp vai trò & Chi nhánh -->
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Phân Cấp Vai Trò (Roles) -->
+                            <div class="form-section-card">
+                                <div class="form-section-header">
+                                    <h4 class="section-title">
+                                        <i class="bi bi-shield-lock-fill"></i>
+                                        <span>Phân Cấp Vai Trò</span>
+                                        <span class="required">*</span>
+                                    </h4>
+                                    <span class="section-hint">(Chọn ít nhất 1)</span>
+                                </div>
+                                <div id="rolesCheckboxContainer" style="display: flex; flex-direction: column; gap: 6px;">
+                                    <!-- Sẽ render động các role từ API -->
+                                </div>
+                            </div>
+
+                            <!-- Gán Chi Nhánh Công Tác (Stores) -->
+                            <div class="form-section-card">
+                                <div class="form-section-header">
+                                    <h4 class="section-title">
+                                        <i class="bi bi-shop"></i>
+                                        <span>Chi Nhánh Trực Thuộc</span>
+                                    </h4>
+                                    <span class="section-hint">(Có thể chọn nhiều)</span>
+                                </div>
+                                <div id="storesCheckboxContainer" class="stores-select-grid" style="max-height: none;">
+                                    <!-- Sẽ render động từ danh sách stores -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Quyền hạn sẽ được áp dụng ngay sau khi lưu</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeEmployeeModal()">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy bỏ</span>
+                        </button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="btnSubmitEmployee">
+                            <i class="bi bi-check-lg"></i>
+                            <span id="btnSubmitText">Lưu Nhân Sự</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let allEmployees = [];
+        let allRoles = [];
+        let allStores = [];
+
+        // Khởi động trang
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+        });
+
+        async function loadData() {
+            try {
+                // Tải song song Roles, Stores và Employees
+                const [rolesRes, storesRes, employeesRes] = await Promise.all([
+                    LUNEA.apiFetch('/api/roles').catch(() => []),
+                    LUNEA.apiFetch('/api/stores').catch(() => []),
+                    LUNEA.apiFetch('/api/employees').catch(() => [])
+                ]);
+
+                allRoles = rolesRes || [];
+                allStores = storesRes || [];
+                allEmployees = employeesRes || [];
+
+                populateRoleFilter(allRoles);
+                renderRoleCheckboxes(allRoles);
+                renderStoreCheckboxes(allStores);
+
+                updateKPIs(allEmployees);
+                filterEmployees();
+            } catch (err) {
+                console.error("Lỗi khi tải dữ liệu:", err);
+                LUNEA.showToast("Không thể tải danh sách nhân sự", "error");
+            }
+        }
+
+        function populateRoleFilter(roles) {
+            const select = document.getElementById('roleFilter');
+            select.innerHTML = '<option value="">Tất cả vai trò</option>';
+            roles.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.name;
+                opt.textContent = formatRoleName(r.name);
+                select.appendChild(opt);
+            });
+        }
+
+        function renderRoleCheckboxes(roles) {
+            const container = document.getElementById('rolesCheckboxContainer');
+            container.innerHTML = '';
+
+            const roleMeta = {
+                'ADMIN': { icon: 'bi-shield-check', color: '#dfbe7b', tag: 'Toàn quyền', desc: 'Có quyền truy cập toàn bộ 5 phân hệ và quản lý tài khoản hệ thống' },
+                'WAREHOUSE_STAFF': { icon: 'bi-boxes', color: '#fbbf24', tag: 'Kho hàng', desc: 'Chuyên trách tồn kho, phiếu nhập xuất và kiểm kê hàng hóa chi nhánh' },
+                'ORDER_STAFF': { icon: 'bi-receipt', color: '#60a5fa', tag: 'Đơn hàng', desc: 'Tiếp nhận xử lý đơn đặt hàng và tra cứu số lượng khả dụng' },
+                'PRODUCT_MANAGER': { icon: 'bi-tags-fill', color: '#c084fc', tag: 'Sản phẩm', desc: 'Quản lý thông tin danh mục, sản phẩm, bảng giá và định mức' }
+            };
+
+            roles.forEach(r => {
+                const meta = roleMeta[r.name] || { icon: 'bi-person-badge', color: '#dfbe7b', tag: 'Nhân sự', desc: r.description || '' };
+                const label = document.createElement('label');
+                label.className = 'selectable-card';
+                label.innerHTML = `
+                    <input type="checkbox" name="roleIds" value="${r.id}">
+                    <i class="bi ${meta.icon} card-icon" style="color: ${meta.color};"></i>
+                    <div class="card-content">
+                        <div class="card-header-row">
+                            <span class="card-title">${formatRoleName(r.name)}</span>
+                            <span class="card-badge" style="background: rgba(255,255,255,0.06); color: ${meta.color}; border: 1px solid rgba(255,255,255,0.12);">${meta.tag}</span>
+                        </div>
+                        <div class="card-desc">${r.description || meta.desc}</div>
+                    </div>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function renderStoreCheckboxes(stores) {
+            const container = document.getElementById('storesCheckboxContainer');
+            container.innerHTML = '';
+            if (!stores || stores.length === 0) {
+                container.innerHTML = '<div style="font-size: 0.8rem; color: var(--color-text-muted); padding: 8px; grid-column: span 2;">Không có chi nhánh nào khả dụng</div>';
+                return;
+            }
+
+            stores.forEach(s => {
+                const label = document.createElement('label');
+                label.className = 'store-select-item';
+                label.innerHTML = `
+                    <input type="checkbox" name="storeIds" value="${s.id}">
+                    <i class="bi bi-geo-alt" style="color: var(--color-gold-primary); font-size: 0.95rem; flex-shrink: 0;"></i>
+                    <div style="min-width: 0; flex: 1;">
+                        <div class="store-name" title="${s.name}">${s.name}</div>
+                        ${s.province ? `<div class="store-sub">${s.province}</div>` : ''}
+                    </div>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function formatRoleName(roleCode) {
+            if (!roleCode) return '';
+            const map = {
+                'ADMIN': 'Quản Trị Viên (Admin)',
+                'WAREHOUSE_STAFF': 'Quản Lý / Thủ Kho',
+                'ORDER_STAFF': 'Nhân Viên Đơn Hàng',
+                'PRODUCT_MANAGER': 'Quản Lý Sản Phẩm'
+            };
+            return map[roleCode] || roleCode;
+        }
+
+        function getRoleBadgeClass(roleCode) {
+            if (!roleCode) return 'badge-neutral';
+            if (roleCode === 'ADMIN') return 'badge-gold';
+            if (roleCode === 'WAREHOUSE_STAFF') return 'badge-amber';
+            if (roleCode === 'ORDER_STAFF') return 'badge-blue';
+            if (roleCode === 'PRODUCT_MANAGER') return 'badge-purple';
+            return 'badge-neutral';
+        }
+
+        function updateKPIs(items) {
+            document.getElementById('kpiTotal').textContent = items.length;
+            const admins = items.filter(e => (e.roles || []).includes('ADMIN')).length;
+            const warehouse = items.filter(e => (e.roles || []).includes('WAREHOUSE_STAFF')).length;
+            const active = items.filter(e => e.status === 'ACTIVE').length;
+
+            document.getElementById('kpiAdmin').textContent = admins;
+            document.getElementById('kpiWarehouse').textContent = warehouse;
+            document.getElementById('kpiActive').textContent = active;
+            document.getElementById('employeeCountBadge').textContent = `${items.length} nhân sự`;
+        }
+
+        function filterEmployees() {
+            const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const store = document.getElementById('storeFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = allEmployees.filter(e => {
+                const matchQuery = !query || 
+                    (e.fullName && e.fullName.toLowerCase().includes(query)) ||
+                    (e.internalEmail && e.internalEmail.toLowerCase().includes(query)) ||
+                    (e.phone && e.phone.includes(query));
+
+                const matchRole = !role || (e.roles && e.roles.includes(role));
+                const matchStore = !store || (e.stores && e.stores.includes(store));
+                const matchStatus = !status || e.status === status;
+
+                return matchQuery && matchRole && matchStore && matchStatus;
+            });
+
+            renderEmployeeTable(filtered);
+        }
+
+        function renderEmployeeTable(items) {
+            const tbody = document.getElementById('employeeTableBody');
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 48px 16px; color: var(--color-text-muted);">
+                            <i class="bi bi-people" style="font-size: 2.2rem; display: block; margin-bottom: 10px; color: var(--color-text-muted);"></i>
+                            Không tìm thấy nhân viên nào phù hợp tiêu chí lọc.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map(e => {
+                const rolesHtml = (e.roles && e.roles.length > 0)
+                    ? e.roles.map(r => {
+                        let badgeStyle = 'background: rgba(255, 255, 255, 0.08); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.15);';
+                        if (r === 'ADMIN') {
+                            badgeStyle = 'background: rgba(223, 190, 123, 0.18); color: #dfbe7b; border: 1px solid rgba(223, 190, 123, 0.4);';
+                        } else if (r === 'WAREHOUSE_STAFF') {
+                            badgeStyle = 'background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);';
+                        } else if (r === 'ORDER_STAFF') {
+                            badgeStyle = 'background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4);';
+                        } else if (r === 'PRODUCT_MANAGER') {
+                            badgeStyle = 'background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);';
+                        }
+                        return `<span style="${badgeStyle} padding: 3px 8px; border-radius: 4px; font-weight: 600; font-size: 0.74rem; display: inline-block; margin: 2px 4px 2px 0;">${formatRoleName(r)}</span>`;
+                    }).join('')
+                    : '<span style="color: var(--color-text-muted); font-size: 0.8rem;">Chưa gán vai trò</span>';
+
+                const storesHtml = (e.stores && e.stores.length > 0)
+                    ? e.stores.map(s => `<span style="background: rgba(255, 255, 255, 0.04); color: var(--color-text-secondary); border: 1px solid var(--color-border-subtle); padding: 3px 8px; border-radius: 4px; font-size: 0.74rem; display: inline-block; margin: 2px 4px 2px 0;"><i class="bi bi-geo-alt" style="margin-right: 3px; color: var(--color-gold-primary);"></i>${s}</span>`).join('')
+                    : '<span style="color: var(--color-text-muted); font-size: 0.8rem;">Toàn chuỗi / Chưa gán</span>';
+
+                const isActive = e.status === 'ACTIVE';
+                const statusBadge = isActive
+                    ? '<span class="status-pill completed"><i class="bi bi-check2"></i> Hoạt động</span>'
+                    : '<span class="status-pill cancelled"><i class="bi bi-lock-fill"></i> Đã khóa</span>';
+
+                const toggleActionText = isActive ? 'Khóa' : 'Kích hoạt';
+                const toggleActionIcon = isActive ? 'bi-lock' : 'bi-unlock';
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(223, 190, 123, 0.15); color: var(--color-gold-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                                    ${(e.fullName || 'NV').charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--color-text-primary);">${e.fullName || 'Chưa cập nhật'}</div>
+                                    <div style="font-size: 0.75rem; color: var(--color-text-muted);">Mã: NV-${String(e.id).padStart(4, '0')}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color: var(--color-text-secondary); font-size: 0.85rem;">
+                            <div><i class="bi bi-envelope" style="margin-right: 4px; color: var(--color-gold-primary);"></i>${e.internalEmail || e.email || '—'}</div>
+                            ${e.username ? `<div style="font-size: 0.74rem; color: var(--color-gold-light); margin-top: 2px;"><i class="bi bi-person-badge" style="margin-right: 3px;"></i>${e.username}</div>` : ''}
+                        </td>
+                        <td style="color: var(--color-text-secondary); font-size: 0.85rem;">
+                            ${e.phone ? `<i class="bi bi-telephone" style="margin-right: 4px;"></i>${e.phone}` : '—'}
+                        </td>
+                        <td>${rolesHtml}</td>
+                        <td>${storesHtml}</td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 6px;">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="openEditModal(${e.id})" title="Chỉnh sửa nhân sự">
+                                    <i class="bi bi-pencil"></i>
+                                    <span>Sửa</span>
+                                </button>
+                                <button type="button" class="admin-btn ${isActive ? 'admin-btn-outline' : 'admin-btn-primary'}" style="padding: 5px 10px; font-size: 0.8rem; ${isActive ? 'color: var(--color-danger); border-color: rgba(239,68,68,0.3);' : ''}" onclick="toggleEmployeeStatus(${e.id}, ${isActive})" title="${toggleActionText} tài khoản">
+                                    <i class="bi ${toggleActionIcon}"></i>
+                                    <span>${toggleActionText}</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openCreateModal() {
+            const titleEl = document.getElementById('modalTitle');
+            if (titleEl) titleEl.textContent = 'Thêm Nhân Viên / Quản Lý Mới';
+            const iconEl = document.getElementById('modalHeaderIcon');
+            if (iconEl) iconEl.className = 'bi bi-person-plus-fill';
+            document.getElementById('btnSubmitText').textContent = 'Lưu Nhân Sự';
+            document.getElementById('employeeId').value = '';
+            document.getElementById('formFullName').value = '';
+            document.getElementById('formUsername').value = '';
+            document.getElementById('formPhone').value = '';
+            document.getElementById('formEmail').value = '';
+            document.getElementById('formPassword').value = '';
+            document.getElementById('formPassword').type = 'password';
+            const pwdToggleIcon = document.getElementById('pwdToggleIcon');
+            if (pwdToggleIcon) pwdToggleIcon.className = 'bi bi-eye';
+            document.getElementById('formPassword').required = false;
+            document.getElementById('pwdRequiredStar').style.display = 'none';
+            document.getElementById('pwdHint').style.display = 'none';
+            const pwdDefaultHint = document.getElementById('pwdDefaultHint');
+            if (pwdDefaultHint) pwdDefaultHint.style.display = 'block';
+            document.getElementById('formStatus').value = 'ACTIVE';
+
+            // Reset checkboxes
+            document.querySelectorAll('#rolesCheckboxContainer input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('#storesCheckboxContainer input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            const modal = document.getElementById('employeeModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                const nameInput = document.getElementById('formFullName');
+                if (nameInput) nameInput.focus();
+            }, 60);
+        }
+
+        async function openEditModal(id) {
+            const emp = allEmployees.find(e => e.id === id);
+            if (!emp) return;
+
+            const titleEl = document.getElementById('modalTitle');
+            if (titleEl) titleEl.textContent = 'Chỉnh Sửa Thông Tin Nhân Sự';
+            const iconEl = document.getElementById('modalHeaderIcon');
+            if (iconEl) iconEl.className = 'bi bi-pencil-square';
+            document.getElementById('btnSubmitText').textContent = 'Cập Nhật';
+            document.getElementById('employeeId').value = emp.id;
+            document.getElementById('formFullName').value = emp.fullName || '';
+            document.getElementById('formUsername').value = emp.username || '';
+            document.getElementById('formPhone').value = emp.phone || '';
+            document.getElementById('formEmail').value = emp.internalEmail || emp.email || '';
+            document.getElementById('formPassword').value = '';
+            document.getElementById('formPassword').type = 'password';
+            const pwdToggleIcon = document.getElementById('pwdToggleIcon');
+            if (pwdToggleIcon) pwdToggleIcon.className = 'bi bi-eye';
+            document.getElementById('formPassword').required = false;
+            document.getElementById('pwdRequiredStar').style.display = 'none';
+            document.getElementById('pwdHint').style.display = 'block';
+            const pwdDefaultHint = document.getElementById('pwdDefaultHint');
+            if (pwdDefaultHint) pwdDefaultHint.style.display = 'none';
+            document.getElementById('formStatus').value = emp.status || 'ACTIVE';
+
+            // Check roles
+            const roleIds = emp.roleIds || [];
+            document.querySelectorAll('#rolesCheckboxContainer input[type="checkbox"]').forEach(cb => {
+                cb.checked = roleIds.includes(parseInt(cb.value));
+            });
+
+            // Check stores
+            const storeIds = emp.storeIds || [];
+            document.querySelectorAll('#storesCheckboxContainer input[type="checkbox"]').forEach(cb => {
+                cb.checked = storeIds.includes(parseInt(cb.value));
+            });
+
+            const modal = document.getElementById('employeeModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('formPassword');
+            const icon = document.getElementById('pwdToggleIcon');
+            if (!pwdInput || !icon) return;
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                pwdInput.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        function closeEmployeeModal() {
+            const modal = document.getElementById('employeeModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Đóng modal khi bấm ra ngoài vùng backdrop
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('employeeModal');
+            if (e.target === modal) {
+                closeEmployeeModal();
+            }
+        });
+
+        async function handleSaveEmployee(e) {
+            e.preventDefault();
+            const id = document.getElementById('employeeId').value;
+            const isEdit = Boolean(id);
+
+            const fullName = document.getElementById('formFullName').value.trim();
+            const username = document.getElementById('formUsername').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const phone = document.getElementById('formPhone').value.trim();
+            const password = document.getElementById('formPassword').value.trim();
+            const status = document.getElementById('formStatus').value;
+
+            const selectedRoleIds = Array.from(document.querySelectorAll('#rolesCheckboxContainer input[type="checkbox"]:checked'))
+                .map(cb => parseInt(cb.value));
+
+            if (selectedRoleIds.length === 0) {
+                LUNEA.showToast("Vui lòng chọn ít nhất 1 vai trò cho nhân sự!", "warning");
+                return;
+            }
+
+            const selectedStoreIds = Array.from(document.querySelectorAll('#storesCheckboxContainer input[type="checkbox"]:checked'))
+                .map(cb => parseInt(cb.value));
+
+            const payload = {
+                fullName,
+                email,
+                internalEmail: email,
+                phone,
+                roleIds: selectedRoleIds,
+                storeIds: selectedStoreIds,
+                status
+            };
+
+            if (username) {
+                payload.username = username;
+            }
+
+            if (password) {
+                payload.password = password;
+            } else if (!isEdit) {
+                payload.password = "123456"; // Default password if empty on create
+            }
+
+            const btnSubmit = document.getElementById('btnSubmitEmployee');
+            btnSubmit.disabled = true;
+
+            try {
+                if (isEdit) {
+                    await LUNEA.apiFetch(`/api/employees/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.showToast("Cập nhật thông tin nhân sự thành công!", "success");
+                } else {
+                    await LUNEA.apiFetch('/api/employees', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.showToast("Thêm mới nhân sự & phân quyền thành công!", "success");
+                }
+                closeEmployeeModal();
+                await loadData();
+            } catch (err) {
+                console.error("Lỗi khi lưu nhân viên:", err);
+                LUNEA.showToast(err.message || "Không thể lưu thông tin nhân viên", "error");
+            } finally {
+                btnSubmit.disabled = false;
+            }
+        }
+
+        async function toggleEmployeeStatus(id, currentActive) {
+            const emp = allEmployees.find(e => e.id === id);
+            const name = emp ? emp.fullName : `NV #${id}`;
+            const actionText = currentActive ? "khóa" : "mở khóa";
+
+            if (!confirm(`Bạn có chắc chắn muốn ${actionText} tài khoản của "${name}" không?`)) {
+                return;
+            }
+
+            try {
+                const endpoint = currentActive 
+                    ? `/api/employees/${id}/deactivate`
+                    : `/api/employees/${id}/activate`;
+
+                await LUNEA.apiFetch(endpoint, { method: 'PUT' });
+                LUNEA.showToast(`Đã ${actionText} tài khoản thành công!`, "success");
+                await loadData();
+            } catch (err) {
+                console.error("Lỗi khi cập nhật trạng thái:", err);
+                LUNEA.showToast(err.message || "Thao tác thất bại", "error");
+            }
+        }
+    </script>
+</body>
+</html>

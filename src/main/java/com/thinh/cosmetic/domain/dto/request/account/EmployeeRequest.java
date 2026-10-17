@@ -20,12 +20,14 @@ public class EmployeeRequest {
     @Size(max = 150, message = "Full name must not exceed 150 characters")
     private String fullName;
 
+    @Size(max = 100, message = "Username must not exceed 100 characters")
+    private String username;
+
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Email format is invalid")
     @Size(max = 150, message = "Email must not exceed 150 characters")
     private String email;
 
-    @NotBlank(message = "Password cannot be blank")
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 

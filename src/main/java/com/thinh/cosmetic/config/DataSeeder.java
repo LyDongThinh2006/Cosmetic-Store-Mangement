@@ -25,9 +25,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
@@ -53,11 +54,57 @@ public class DataSeeder implements CommandLineRunner {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
+    public DataSeeder(
+            RoleRepository roleRepository,
+            PermissionRepository permissionRepository,
+            RolePermissionRepository rolePermissionRepository,
+            AccountRepository accountRepository,
+            EmployeeRepository employeeRepository,
+            EmployeeRoleRepository employeeRoleRepository,
+            EmployeeStoreRepository employeeStoreRepository,
+            CustomerRepository customerRepository,
+            CustomerAddressRepository customerAddressRepository,
+            CartRepository cartRepository,
+            StoreRepository storeRepository,
+            BrandRepository brandRepository,
+            CategoryRepository categoryRepository,
+            ProductRepository productRepository,
+            ProductSkuRepository productSkuRepository,
+            ProductImageRepository productImageRepository,
+            AttributeRepository attributeRepository,
+            ProductAttributeValueRepository productAttributeValueRepository,
+            InventoryRepository inventoryRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
+        this.rolePermissionRepository = rolePermissionRepository;
+        this.accountRepository = accountRepository;
+        this.employeeRepository = employeeRepository;
+        this.employeeRoleRepository = employeeRoleRepository;
+        this.employeeStoreRepository = employeeStoreRepository;
+        this.customerRepository = customerRepository;
+        this.customerAddressRepository = customerAddressRepository;
+        this.cartRepository = cartRepository;
+        this.storeRepository = storeRepository;
+        this.brandRepository = brandRepository;
+        this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
+        this.productSkuRepository = productSkuRepository;
+        this.productImageRepository = productImageRepository;
+        this.attributeRepository = attributeRepository;
+        this.productAttributeValueRepository = productAttributeValueRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     @Transactional
     public void run(String... args) {
         if (roleRepository.count() > 0 && accountRepository.count() > 0 && storeRepository.count() > 0) {
-            log.info(">>> [DataSeeder] Dữ liệu đã tồn tại trong SQL Server. Bỏ qua nạp dữ liệu mẫu.");
+            log.info(">>> [DataSeeder] Dữ liệu đã tồn tại trong SQL Server. Bỏ qua nạp dữ liệu danh mục & tồn kho.");
+            ensureDemoAccountsExist();
             return;
         }
 
@@ -655,5 +702,158 @@ public class DataSeeder implements CommandLineRunner {
                 .minimumStock(5)
                 .updatedAt(LocalDateTime.now())
                 .build());
+    }
+
+    public void ensureDemoAccountsExist() {
+        log.info(">>> [DataSeeder] Kiểm tra và đảm bảo các tài khoản mẫu nghiệp vụ tồn tại...");
+
+        // 1. Đảm bảo permissions
+        List<PermissionEntity> allExistingPerms = permissionRepository.findAll();
+        Map<String, PermissionEntity> permMap = new HashMap<>();
+        for (PermissionEntity p : allExistingPerms) {
+            permMap.put(p.getCode(), p);
+        }
+
+        List<PermissionEntity> requiredPerms = List.of(
+                PermissionEntity.builder().code("CATALOG_MANAGE").name("Quản lý danh mục & sản phẩm").description("Toàn quyền thêm/sửa/xóa sản phẩm và thương hiệu").build(),
+                PermissionEntity.builder().code("ORDER_VIEW").name("Xem đơn hàng").description("Xem danh sách và chi tiết đơn hàng trong phạm vi chi nhánh").build(),
+                PermissionEntity.builder().code("ORDER_PROCESS").name("Xử lý đơn hàng").description("Duyệt trạng thái đơn hàng, hủy đơn theo phạm vi chi nhánh").build(),
+                PermissionEntity.builder().code("INVENTORY_VIEW").name("Tra cứu tồn kho").description("Xem tồn kho các sản phẩm theo chi nhánh").build(),
+                PermissionEntity.builder().code("INVENTORY_ADJUST").name("Điều chỉnh tồn kho").description("Cập nhật số lượng tồn kho thực tế kèm lý do").build(),
+                PermissionEntity.builder().code("STORE_MANAGE").name("Quản lý chi nhánh").description("Thêm, sửa thông tin các chi nhánh chuỗi cửa hàng").build(),
+                PermissionEntity.builder().code("EMPLOYEE_MANAGE").name("Quản lý nhân viên").description("Quản lý tài khoản, phân vai trò và gán chi nhánh").build(),
+                PermissionEntity.builder().code("VOUCHER_MANAGE").name("Quản lý voucher").description("Quản lý mã giảm giá khuyến mãi").build(),
+                PermissionEntity.builder().code("PURCHASE_MANAGE").name("Quản lý nhập hàng").description("Quản lý nhà cung cấp và xác nhận phiếu nhập").build(),
+                PermissionEntity.builder().code("CUSTOMER_MANAGE").name("Quản lý khách hàng").description("Xem và khóa/mở khóa tài khoản khách").build(),
+                PermissionEntity.builder().code("REPORT_VIEW").name("Xem báo cáo thống kê").description("Xem dashboard doanh thu và biểu đồ đơn").build(),
+                PermissionEntity.builder().code("AUDIT_VIEW").name("Xem nhật ký kiểm toán").description("Tra cứu lịch sử thao tác hệ thống").build()
+        );
+
+        for (PermissionEntity req : requiredPerms) {
+            if (!permMap.containsKey(req.getCode())) {
+                PermissionEntity saved = permissionRepository.save(req);
+                permMap.put(saved.getCode(), saved);
+            }
+        }
+
+        // 2. Đảm bảo roles
+        RoleEntity adminRole = roleRepository.findByName("ADMIN").orElseGet(() ->
+                roleRepository.save(RoleEntity.builder().name("ADMIN").description("Quản trị viên toàn hệ thống").build()));
+        RoleEntity orderRole = roleRepository.findByName("ORDER_STAFF").orElseGet(() ->
+                roleRepository.save(RoleEntity.builder().name("ORDER_STAFF").description("Nhân viên xử lý đơn hàng chi nhánh").build()));
+        RoleEntity warehouseRole = roleRepository.findByName("WAREHOUSE_STAFF").orElseGet(() ->
+                roleRepository.save(RoleEntity.builder().name("WAREHOUSE_STAFF").description("Nhân viên thủ kho chi nhánh").build()));
+        RoleEntity productRole = roleRepository.findByName("PRODUCT_MANAGER").orElseGet(() ->
+                roleRepository.save(RoleEntity.builder().name("PRODUCT_MANAGER").description("Quản lý danh mục sản phẩm").build()));
+
+        // Gán permissions cho roles nếu chưa có
+        for (PermissionEntity p : permMap.values()) {
+            assignPermIfMissing(adminRole, p);
+        }
+        assignPermIfMissing(orderRole, permMap.get("ORDER_VIEW"));
+        assignPermIfMissing(orderRole, permMap.get("ORDER_PROCESS"));
+        assignPermIfMissing(orderRole, permMap.get("INVENTORY_VIEW"));
+
+        assignPermIfMissing(warehouseRole, permMap.get("INVENTORY_VIEW"));
+        assignPermIfMissing(warehouseRole, permMap.get("INVENTORY_ADJUST"));
+        assignPermIfMissing(warehouseRole, permMap.get("PURCHASE_MANAGE"));
+
+        assignPermIfMissing(productRole, permMap.get("CATALOG_MANAGE"));
+        assignPermIfMissing(productRole, permMap.get("INVENTORY_VIEW"));
+
+        // 3. Tìm chi nhánh HCM và HN
+        List<StoreEntity> stores = storeRepository.findAll();
+        StoreEntity storeHcm = stores.stream()
+                .filter(s -> s.getName() != null && (s.getName().contains("HCM") || s.getName().contains("Đồng Khởi") || s.getName().contains("Hồ Chí Minh")))
+                .findFirst()
+                .orElse(stores.isEmpty() ? null : stores.get(0));
+        StoreEntity storeHn = stores.stream()
+                .filter(s -> s.getName() != null && (s.getName().contains("Hà Nội") || s.getName().contains("Cầu Giấy")))
+                .findFirst()
+                .orElse(stores.size() > 1 ? stores.get(1) : storeHcm);
+
+        // 4. Đồng bộ các tài khoản mẫu nghiệp vụ:
+        // Admin: admin / 123456
+        ensureEmployeeAccount("admin", "admin@lunea.test", "0900000001", "Nguyễn Quản Trị Hệ Thống", "123456", adminRole, storeHcm);
+
+        // Thủ kho HCM: warehouse_hcm / 123456 (Vai trò WAREHOUSE_STAFF)
+        ensureEmployeeAccount("warehouse_hcm", "warehouse.hcm@lunea.test", "0900000004", "Phạm Văn Kho (Thủ kho HCM)", "123456", warehouseRole, storeHcm);
+
+        // Nhân viên đơn hàng HCM: order_hcm / 123456 (Vai trò ORDER_STAFF)
+        ensureEmployeeAccount("order_hcm", "order.hcm@lunea.test", "0900000002", "Trần Minh Quân (Đơn hàng HCM)", "123456", orderRole, storeHcm);
+
+        // Nhân viên đơn hàng HN: order_hn / 123456 (Vai trò ORDER_STAFF)
+        ensureEmployeeAccount("order_hn", "order.hn@lunea.test", "0900000003", "Lê Thu Hà (Đơn hàng Hà Nội)", "123456", orderRole, storeHn);
+    }
+
+    private void assignPermIfMissing(RoleEntity role, PermissionEntity perm) {
+        if (role == null || perm == null) return;
+        List<RolePermissionEntity> list = rolePermissionRepository.findByRoleIdIn(List.of(role.getId()));
+        boolean exists = list.stream().anyMatch(rp -> rp.getPermission() != null && perm.getId().equals(rp.getPermission().getId()));
+        if (!exists) {
+            rolePermissionRepository.save(RolePermissionEntity.builder().role(role).permission(perm).build());
+        }
+    }
+
+    private void ensureEmployeeAccount(String username, String email, String phone, String fullName, String rawPassword, RoleEntity role, StoreEntity store) {
+        String defaultPasswordHash = passwordEncoder.encode(rawPassword);
+        AccountEntity account = accountRepository.findByUsername(username)
+                .or(() -> accountRepository.findByEmail(email))
+                .orElse(null);
+
+        if (account == null) {
+            account = accountRepository.save(AccountEntity.builder()
+                    .username(username)
+                    .email(email)
+                    .phone(phone)
+                    .passwordHash(defaultPasswordHash)
+                    .accountType(AccountType.EMPLOYEE)
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+            log.info(">>> [DataSeeder] Đã tạo tài khoản demo: {} / {}", username, rawPassword);
+        } else {
+            account.setUsername(username);
+            account.setEmail(email);
+            account.setPasswordHash(defaultPasswordHash);
+            account.setStatus(ActiveStatus.ACTIVE);
+            account.setAccountType(AccountType.EMPLOYEE);
+            account = accountRepository.save(account);
+            log.info(">>> [DataSeeder] Đã đồng bộ tài khoản demo: {} / {}", username, rawPassword);
+        }
+
+        EmployeeEntity employee = employeeRepository.findByAccountId(account.getId()).orElse(null);
+        if (employee == null) {
+            employee = employeeRepository.save(EmployeeEntity.builder()
+                    .account(account)
+                    .fullName(fullName)
+                    .internalEmail(email)
+                    .phone(phone)
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+        } else {
+            employee.setStatus(ActiveStatus.ACTIVE);
+            if (employee.getFullName() == null || employee.getFullName().isBlank()) {
+                employee.setFullName(fullName);
+            }
+            employee = employeeRepository.save(employee);
+        }
+
+        if (role != null) {
+            final EmployeeEntity finalEmp = employee;
+            List<EmployeeRoleEntity> existingRoles = employeeRoleRepository.findByEmployeeId(employee.getId());
+            boolean hasRole = existingRoles.stream().anyMatch(er -> er.getRole() != null && role.getId().equals(er.getRole().getId()));
+            if (!hasRole) {
+                employeeRoleRepository.save(EmployeeRoleEntity.builder().employee(finalEmp).role(role).build());
+            }
+        }
+
+        if (store != null) {
+            final EmployeeEntity finalEmp = employee;
+            List<EmployeeStoreEntity> existingStores = employeeStoreRepository.findByEmployeeId(employee.getId());
+            boolean hasStore = existingStores.stream().anyMatch(es -> es.getStore() != null && store.getId().equals(es.getStore().getId()));
+            if (!hasStore) {
+                employeeStoreRepository.save(EmployeeStoreEntity.builder().employee(finalEmp).store(store).isPrimary(true).build());
+            }
+        }
     }
 }

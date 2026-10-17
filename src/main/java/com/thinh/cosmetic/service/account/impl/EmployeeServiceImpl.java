@@ -32,17 +32,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponse create(EmployeeRequest request) throws Exception {
-        if (accountRepository.existsByEmail(request.getInternalEmail())) {
-            throw new Exception("Email already exists: " + request.getInternalEmail());
+        String targetEmail = (request.getInternalEmail() != null && !request.getInternalEmail().isBlank())
+                ? request.getInternalEmail().trim()
+                : (request.getEmail() != null ? request.getEmail().trim() : null);
+
+        if (targetEmail == null || targetEmail.isBlank()) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Email nhân viên không được để trống");
+        }
+
+        if (accountRepository.existsByEmail(targetEmail)) {
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL, "Email đã tồn tại: " + targetEmail);
         }
 
         String rawPassword = (request.getPassword() != null && !request.getPassword().isBlank()) 
                 ? request.getPassword() 
                 : "123456";
 
+        String username = request.getUsername();
+        if (username == null || username.isBlank()) {
+            username = targetEmail.contains("@") ? targetEmail.substring(0, targetEmail.indexOf('@')) : targetEmail;
+        }
+        username = username.trim();
+        if (accountRepository.existsByUsername(username)) {
+            username = targetEmail;
+        }
+
         AccountEntity account = AccountEntity.builder()
-                .username(request.getInternalEmail())
-                .email(request.getInternalEmail())
+                .username(username)
+                .email(targetEmail)
                 .phone(request.getPhone())
                 .passwordHash(passwordEncoder.encode(rawPassword))
                 .accountType(AccountType.EMPLOYEE)
@@ -53,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeEntity employee = EmployeeEntity.builder()
                 .account(account)
                 .fullName(request.getFullName())
-                .internalEmail(request.getInternalEmail())
+                .internalEmail(targetEmail)
                 .phone(request.getPhone())
                 .status(request.getStatus() != null ? request.getStatus() : ActiveStatus.ACTIVE)
                 .build();
@@ -70,11 +87,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (request.getStoreIds() != null) {
+            boolean first = true;
             for (Long storeId : request.getStoreIds()) {
                 StoreEntity store = storeRepository.findById(storeId).orElse(null);
                 if (store != null) {
                     employeeStoreRepository.save(EmployeeStoreEntity.builder()
-                            .employee(employee).store(store).build());
+                            .employee(employee)
+                            .store(store)
+                            .isPrimary(first)
+                            .build());
+                    first = false;
                 }
             }
         }
@@ -100,8 +122,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponse update(Long id, EmployeeRequest request) throws Exception {
         EmployeeEntity employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.EMPLOYEE_NOT_FOUND, "Không tìm thấy nhân viên #" + id));
+
         if (request.getFullName() != null) employee.setFullName(request.getFullName());
         if (request.getPhone() != null) employee.setPhone(request.getPhone());
+
+        String newEmail = (request.getInternalEmail() != null && !request.getInternalEmail().isBlank())
+                ? request.getInternalEmail().trim()
+                : (request.getEmail() != null ? request.getEmail().trim() : null);
+
+        if (newEmail != null && employee.getAccount() != null && !newEmail.equalsIgnoreCase(employee.getAccount().getEmail())) {
+            if (accountRepository.existsByEmail(newEmail)) {
+                throw new BusinessException(ErrorCode.DUPLICATE_EMAIL, "Email đã tồn tại: " + newEmail);
+            }
+            employee.setInternalEmail(newEmail);
+            employee.getAccount().setEmail(newEmail);
+            employee.getAccount().setUsername(newEmail);
+            accountRepository.save(employee.getAccount());
+        }
 
         if (request.getStatus() != null) {
             employee.setStatus(request.getStatus());
@@ -129,11 +166,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (request.getStoreIds() != null) {
             employeeStoreRepository.deleteByEmployeeId(employee.getId());
+            boolean first = true;
             for (Long storeId : request.getStoreIds()) {
                 StoreEntity store = storeRepository.findById(storeId).orElse(null);
                 if (store != null) {
                     employeeStoreRepository.save(EmployeeStoreEntity.builder()
-                            .employee(employee).store(store).build());
+                            .employee(employee)
+                            .store(store)
+                            .isPrimary(first)
+                            .build());
+                    first = false;
                 }
             }
         }
@@ -189,6 +231,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return EmployeeResponse.builder()
                 .id(e.getId())
                 .accountId(e.getAccount() != null ? e.getAccount().getId() : null)
+                .username(e.getAccount() != null ? e.getAccount().getUsername() : null)
                 .email(e.getAccount() != null ? e.getAccount().getEmail() : null)
                 .fullName(e.getFullName())
                 .internalEmail(e.getInternalEmail())
