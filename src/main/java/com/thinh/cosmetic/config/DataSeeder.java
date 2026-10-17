@@ -129,8 +129,8 @@ public class DataSeeder implements CommandLineRunner {
         // Order staff có quyền xem và xử lý đơn + xem tồn
         assignPerms(orderStaffRole, perms, "ORDER_VIEW", "ORDER_PROCESS", "INVENTORY_VIEW");
 
-        // Warehouse staff có quyền xem tồn và điều chỉnh tồn
-        assignPerms(warehouseRole, perms, "INVENTORY_VIEW", "INVENTORY_ADJUST");
+        // Warehouse staff có quyền xem tồn, điều chỉnh tồn và quản lý nhập hàng
+        assignPerms(warehouseRole, perms, "INVENTORY_VIEW", "INVENTORY_ADJUST", "PURCHASE_MANAGE");
 
         // Product manager có quyền catalog và xem tồn
         assignPerms(productManagerRole, perms, "CATALOG_MANAGE", "INVENTORY_VIEW");

@@ -11,7 +11,9 @@ import com.thinh.cosmetic.repository.account.AccountRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
 import com.thinh.cosmetic.repository.account.EmployeeRoleRepository;
+import com.thinh.cosmetic.repository.account.PermissionRepository;
 import com.thinh.cosmetic.repository.account.RolePermissionRepository;
+import com.thinh.cosmetic.repository.account.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,6 +38,8 @@ public class AppUserDetailsService implements UserDetailsService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeRoleRepository employeeRoleRepository;
     private final RolePermissionRepository rolePermissionRepository;
+    private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,23 +76,49 @@ public class AppUserDetailsService implements UserDetailsService {
 
             if (employee != null) {
                 List<EmployeeRoleEntity> employeeRoles = employeeRoleRepository.findByEmployeeId(employee.getId());
-                for (EmployeeRoleEntity er : employeeRoles) {
-                    if (er.getRole() != null && er.getRole().getName() != null) {
-                        authorities.add(new SimpleGrantedAuthority("ROLE_" + er.getRole().getName()));
-                        authorities.add(new SimpleGrantedAuthority(er.getRole().getName()));
+                boolean isAdmin = "admin".equalsIgnoreCase(account.getUsername()) || employeeRoles.stream()
+                        .anyMatch(er -> er.getRole() != null && "ADMIN".equalsIgnoreCase(er.getRole().getName()));
+
+                if (isAdmin) {
+                    // Admin có FULL QUYỀN của tất cả các quản lý và toàn bộ hệ thống
+                    authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                    authorities.add(new SimpleGrantedAuthority("ADMIN"));
+                    authorities.add(new SimpleGrantedAuthority("ALL_STORES"));
+
+                    // Tự động cấp tất cả các vai trò quản lý (Thủ kho, Đơn hàng, Quản lý sản phẩm,...)
+                    roleRepository.findAll().forEach(r -> {
+                        if (r.getName() != null && !r.getName().isBlank()) {
+                            String roleName = r.getName().trim().toUpperCase();
+                            authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
+                            authorities.add(new SimpleGrantedAuthority(roleName));
+                        }
+                    });
+
+                    // Tự động cấp tất cả các Permissions trong toàn hệ thống
+                    permissionRepository.findAll().forEach(p -> {
+                        if (p.getCode() != null && !p.getCode().isBlank()) {
+                            authorities.add(new SimpleGrantedAuthority(p.getCode().trim().toUpperCase()));
+                        }
+                    });
+                } else {
+                    for (EmployeeRoleEntity er : employeeRoles) {
+                        if (er.getRole() != null && er.getRole().getName() != null) {
+                            authorities.add(new SimpleGrantedAuthority("ROLE_" + er.getRole().getName()));
+                            authorities.add(new SimpleGrantedAuthority(er.getRole().getName()));
+                        }
                     }
-                }
 
-                List<Long> roleIds = employeeRoles.stream()
-                        .filter(er -> er.getRole() != null && er.getRole().getId() != null)
-                        .map(er -> er.getRole().getId())
-                        .toList();
+                    List<Long> roleIds = employeeRoles.stream()
+                            .filter(er -> er.getRole() != null && er.getRole().getId() != null)
+                            .map(er -> er.getRole().getId())
+                            .toList();
 
-                if (!roleIds.isEmpty()) {
-                    List<RolePermissionEntity> rolePerms = rolePermissionRepository.findByRoleIdIn(roleIds);
-                    for (RolePermissionEntity rp : rolePerms) {
-                        if (rp.getPermission() != null && rp.getPermission().getCode() != null) {
-                            authorities.add(new SimpleGrantedAuthority(rp.getPermission().getCode()));
+                    if (!roleIds.isEmpty()) {
+                        List<RolePermissionEntity> rolePerms = rolePermissionRepository.findByRoleIdIn(roleIds);
+                        for (RolePermissionEntity rp : rolePerms) {
+                            if (rp.getPermission() != null && rp.getPermission().getCode() != null) {
+                                authorities.add(new SimpleGrantedAuthority(rp.getPermission().getCode()));
+                            }
                         }
                     }
                 }

@@ -154,7 +154,7 @@ const LUNEA = (function () {
 
             // 403 Forbidden
             if (response.status === 403) {
-                if (!isAuthPage) {
+                if (!skipAuthToast && !isAuthPage) {
                     showToast('Bạn không có quyền thực hiện thao tác này.', 'error', 3500);
                 }
                 throw new Error('ACCESS_DENIED');
@@ -191,7 +191,8 @@ const LUNEA = (function () {
     // Cart Helper Methods
     async function updateCartBadge() {
         const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
-        if (isAuthPage) return null;
+        const isAdminPage = window.location.pathname.startsWith('/admin');
+        if (isAuthPage || isAdminPage) return null;
 
         try {
             const cart = await apiFetch('/api/cart', {
@@ -241,7 +242,8 @@ const LUNEA = (function () {
         }
 
         const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
-        if (isAuthPage) return null;
+        const isAdminPage = window.location.pathname.startsWith('/admin');
+        if (isAuthPage || isAdminPage) return null;
 
         try {
             const wishlist = await apiFetch('/api/wishlist', {
@@ -268,7 +270,8 @@ const LUNEA = (function () {
 
     async function syncWishlistState() {
         const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
-        if (isAuthPage) return;
+        const isAdminPage = window.location.pathname.startsWith('/admin');
+        if (isAuthPage || isAdminPage) return;
 
         try {
             const productIds = await apiFetch('/api/wishlist/product-ids', {
@@ -679,9 +682,10 @@ const LUNEA = (function () {
         // Initialize Theme UI
         initTheme();
 
-        // Refresh cart & wishlist state (skip for auth pages)
+        // Refresh cart & wishlist state (skip for auth pages and back-office admin pages)
         const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
-        if (!isAuthPage) {
+        const isAdminPage = window.location.pathname.startsWith('/admin');
+        if (!isAuthPage && !isAdminPage) {
             updateCartBadge();
             syncWishlistState();
         }

@@ -6,6 +6,7 @@ import com.thinh.cosmetic.security.StoreScope;
 import com.thinh.cosmetic.service.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,12 +54,33 @@ public class AdminPageController {
 
     @GetMapping("/admin")
     public String dashboard(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        if (principal != null) {
+            boolean canViewReports = principal.isAdmin() || principal.hasAuthority("REPORT_VIEW");
+            if (!canViewReports) {
+                // Điều hướng nhân viên chuyên trách đến đúng nghiệp vụ của họ
+                if (principal.hasAnyAuthority("ROLE_WAREHOUSE_STAFF", "INVENTORY_ADJUST")
+                        && !principal.hasAnyAuthority("ROLE_ORDER_STAFF", "ORDER_VIEW")) {
+                    return "redirect:/admin/inventory";
+                }
+                if (principal.hasAnyAuthority("ROLE_ORDER_STAFF", "ORDER_VIEW")) {
+                    return "redirect:/admin/orders";
+                }
+                if (principal.hasAnyAuthority("ROLE_PRODUCT_MANAGER", "CATALOG_MANAGE")) {
+                    return "redirect:/admin/products";
+                }
+                if (principal.hasAnyAuthority("EMPLOYEE_MANAGE")) {
+                    return "redirect:/admin/employees";
+                }
+            }
+        }
+
         model.addAttribute("pageTitle", "Tổng Quan Quản Trị | LUNEA Back-office");
         model.addAttribute("activeMenu", "dashboard");
         populateCommonAdminAttributes(principal, model);
         return "admin/dashboard";
     }
 
+    @PreAuthorize("hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN')")
     @GetMapping("/admin/orders")
     public String orders(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Đơn Hàng Chi Nhánh | LUNEA Back-office");
@@ -67,6 +89,7 @@ public class AdminPageController {
         return "admin/orders";
     }
 
+    @PreAuthorize("hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN')")
     @GetMapping("/admin/orders/{id}")
     public String orderDetail(
             @PathVariable("id") Long id,
@@ -80,6 +103,7 @@ public class AdminPageController {
         return "admin/order-detail";
     }
 
+    @PreAuthorize("hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN')")
     @GetMapping("/admin/inventory")
     public String inventory(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Tồn Kho Chi Nhánh | LUNEA Back-office");
@@ -88,11 +112,21 @@ public class AdminPageController {
         return "admin/inventory";
     }
 
+    @PreAuthorize("hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN')")
     @GetMapping("/admin/products")
     public String products(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Sản Phẩm Chuỗi | LUNEA Back-office");
         model.addAttribute("activeMenu", "products");
         populateCommonAdminAttributes(principal, model);
         return "admin/products";
+    }
+
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
+    @GetMapping("/admin/employees")
+    public String employees(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Quản Lý Nhân Sự & Phân Quyền | LUNEA Back-office");
+        model.addAttribute("activeMenu", "employees");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/employees";
     }
 }

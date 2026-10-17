@@ -166,10 +166,25 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private EmployeeResponse toResponse(EmployeeEntity e) {
-        List<String> roles = employeeRoleRepository.findByEmployeeId(e.getId())
-                .stream().map(r -> r.getRole().getName()).toList();
-        List<String> stores = employeeStoreRepository.findByEmployeeId(e.getId())
-                .stream().map(s -> s.getStore().getName()).toList();
+        List<EmployeeRoleEntity> empRoles = employeeRoleRepository.findByEmployeeId(e.getId());
+        List<String> roles = empRoles.stream()
+                .filter(r -> r.getRole() != null)
+                .map(r -> r.getRole().getName())
+                .toList();
+        List<Long> roleIds = empRoles.stream()
+                .filter(r -> r.getRole() != null && r.getRole().getId() != null)
+                .map(r -> r.getRole().getId())
+                .toList();
+
+        List<EmployeeStoreEntity> empStores = employeeStoreRepository.findByEmployeeId(e.getId());
+        List<String> stores = empStores.stream()
+                .filter(s -> s.getStore() != null)
+                .map(s -> s.getStore().getName())
+                .toList();
+        List<Long> storeIds = empStores.stream()
+                .filter(s -> s.getStore() != null && s.getStore().getId() != null)
+                .map(s -> s.getStore().getId())
+                .toList();
 
         return EmployeeResponse.builder()
                 .id(e.getId())
@@ -180,7 +195,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .phone(e.getPhone())
                 .status(e.getStatus())
                 .roles(roles)
+                .roleIds(roleIds)
                 .stores(stores)
+                .storeIds(storeIds)
                 .build();
     }
 }

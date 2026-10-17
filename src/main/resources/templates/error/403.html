@@ -14,16 +14,20 @@
                     <div class="eyebrow-tag" style="margin-bottom: 12px; color: var(--color-danger); border-color: var(--color-danger-border);">403 Forbidden</div>
                     <h1 style="font-size: 1.8rem; margin-bottom: 12px;">Quyền Truy Cập Bị Từ Chối</h1>
                     <p style="color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
-                        Bạn không có quyền hạn truy cập tài nguyên hoặc khu vực quản trị này. Nếu bạn là nhân viên, vui lòng đăng nhập bằng tài khoản nội bộ phù hợp.
+                        Tài khoản của bạn không có đủ thẩm quyền để thực hiện hoặc xem nghiệp vụ này. Vui lòng bấm quay lại trang làm việc trước đó hoặc liên hệ Quản trị viên hệ thống (Admin).
                     </p>
                     <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
-                        <a th:href="@{/}" href="/" class="btn-lunea-gold">
-                            <i class="bi bi-house"></i>
-                            <span>Về Trang Chủ</span>
+                        <button type="button" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '/admin'; }" class="btn-lunea-gold" style="border: none; cursor: pointer; text-decoration: none;">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>Quay Lại</span>
+                        </button>
+                        <a th:href="@{/admin}" href="/admin" class="btn-lunea-outline">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Trang Quản Trị</span>
                         </a>
-                        <a th:href="@{/login}" href="/login" class="btn-lunea-outline">
-                            <i class="bi bi-box-arrow-in-right"></i>
-                            <span>Đăng Nhập Khác</span>
+                        <a th:href="@{/}" href="/" class="btn-lunea-outline">
+                            <i class="bi bi-house"></i>
+                            <span>Trang Chủ</span>
                         </a>
                     </div>
                 </div>

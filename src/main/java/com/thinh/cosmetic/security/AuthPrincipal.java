@@ -30,4 +30,21 @@ public class AuthPrincipal implements Serializable {
     public boolean isEmployee() {
         return accountType == AccountType.EMPLOYEE;
     }
+
+    public boolean hasAuthority(String authority) {
+        if (authorities == null || authority == null) return false;
+        return authorities.stream().anyMatch(a -> authority.equalsIgnoreCase(a.getAuthority()));
+    }
+
+    public boolean hasAnyAuthority(String... auths) {
+        if (authorities == null || auths == null) return false;
+        for (String auth : auths) {
+            if (hasAuthority(auth)) return true;
+        }
+        return false;
+    }
+
+    public boolean isAdmin() {
+        return hasAnyAuthority("ROLE_ADMIN", "ADMIN");
+    }
 }

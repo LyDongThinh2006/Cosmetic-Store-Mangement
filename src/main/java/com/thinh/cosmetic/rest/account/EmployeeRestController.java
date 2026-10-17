@@ -15,29 +15,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+@PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
 public class EmployeeRestController {
     private final EmployeeService employeeService;
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody EmployeeRequest request) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.create(request));
     }
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(employeeService.getById(id));
     }
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<EmployeeResponse>> getAll() {
         return ResponseEntity.ok(employeeService.getAll());
     }
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponse> update(
             @PathVariable Long id,
@@ -46,21 +46,21 @@ public class EmployeeRestController {
         return ResponseEntity.ok(employeeService.update(id, request));
     }
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) throws Exception {
         employeeService.deactivate(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @PutMapping("/{id}/activate")
     public ResponseEntity<Void> activate(@PathVariable Long id) throws Exception {
         employeeService.activate(id);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivatePut(@PathVariable Long id) throws Exception {
         employeeService.deactivate(id);

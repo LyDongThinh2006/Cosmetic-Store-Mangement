@@ -18,5 +18,7 @@ public class EmployeeResponse {
     private String phone;
     private ActiveStatus status;
     private List<String> roles;
+    private List<Long> roleIds;
     private List<String> stores;
+    private List<Long> storeIds;
 }

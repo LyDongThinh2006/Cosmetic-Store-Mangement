@@ -97,28 +97,38 @@ public class SecurityConfig {
                                 "/api/stores", "/api/stores/{id}",
                                 "/api/reviews/product/**").permitAll()
 
-                        // ─── API quản trị — chỉ nhân viên ───
-                        .requestMatchers("/admin", "/admin/**", "/api/admin/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers("/api/inventory/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/products", "/api/products/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/categories", "/api/categories/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/brands", "/api/brands/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.PUT, "/api/brands/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/brands/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers("/api/employees/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/stores").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.PUT, "/api/stores/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/stores/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers("/api/purchase-orders/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers("/api/suppliers/**").hasAuthority("ROLE_EMPLOYEE")
-                        .requestMatchers("/api/stock-transfers/**").hasAuthority("ROLE_EMPLOYEE")
+                        // ─── Module Quản lý Nhân sự & Phân quyền (Chỉ Admin / EMPLOYEE_MANAGE) ───
+                        .requestMatchers("/admin/employees", "/admin/employees/**",
+                                "/api/employees", "/api/employees/**",
+                                "/api/roles", "/api/roles/**").hasAnyAuthority("EMPLOYEE_MANAGE", "ROLE_ADMIN")
 
-                        // ─── API đơn hàng & giỏ hàng ───
-                        .requestMatchers("/api/orders/{id}/status").hasAuthority("ROLE_EMPLOYEE")
+                        // ─── Module Quản lý Đơn hàng (Admin / Nhân viên đơn hàng) ───
+                        .requestMatchers("/admin/orders", "/admin/orders/**").hasAnyAuthority("ORDER_VIEW", "ORDER_PROCESS", "ROLE_ORDER_STAFF", "ROLE_ADMIN")
+                        .requestMatchers("/api/orders/{id}/status").hasAnyAuthority("ORDER_PROCESS", "ROLE_ORDER_STAFF", "ROLE_ADMIN")
+
+                        // ─── Module Quản lý Tồn kho & Nhập hàng (Admin / Quản lý kho / Thủ kho) ───
+                        .requestMatchers("/admin/inventory", "/admin/inventory/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers("/api/inventory/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers("/api/purchase-orders/**", "/api/suppliers/**").hasAnyAuthority("PURCHASE_MANAGE", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers("/api/stock-transfers/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
+
+                        // ─── Module Quản lý Sản phẩm, Danh mục & Chi nhánh ───
+                        .requestMatchers("/admin/products", "/admin/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/products", "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/categories", "/api/categories/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/brands", "/api/brands/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/brands/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/brands/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/stores").hasAnyAuthority("STORE_MANAGE", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/stores/**").hasAnyAuthority("STORE_MANAGE", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/stores/**").hasAnyAuthority("STORE_MANAGE", "ROLE_ADMIN")
+
+                        // ─── Portal Quản trị chung (Chuyển tiếp theo nghiệp vụ nhân viên) ───
+                        .requestMatchers("/admin", "/api/admin/**").hasAuthority("ROLE_EMPLOYEE")
                         .requestMatchers("/api/orders/my-orders", "/api/orders/preview").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/api/orders/{id}/cancel").hasAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/cart", "/checkout", "/order-success", "/account", "/account/**",
