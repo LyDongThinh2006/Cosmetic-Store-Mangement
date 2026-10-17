@@ -102,7 +102,7 @@
                         <button type="button" id="btnAddToCart" onclick="handleAddToCart()" class="btn-add-cart-champagne" style="flex: 1;">
                             <span>Thêm vào giỏ hàng</span>
                         </button>
-                        <button type="button" id="btnAddToWishlist" th:onclick="'LUNEA.toggleWishlist(this, ' + ${product.id} + ')'" 
+                        <button type="button" id="btnAddToWishlist" th:data-product-id="${product.id}" th:onclick="'LUNEA.toggleWishlist(this, ' + ${product.id} + ')'" 
                                 class="btn-icon-wishlist" title="Thêm vào danh sách yêu thích" aria-label="Thêm vào danh sách yêu thích"
                                 style="width: 48px; height: 48px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); background: var(--color-bg-card); color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.25rem; transition: all var(--duration-fast); flex-shrink: 0;">
                             <i class="bi bi-heart" aria-hidden="true"></i>
@@ -220,7 +220,7 @@
                             <div class="product-badge-group">
                                 <span class="badge-pill badge-neutral">Gợi ý</span>
                             </div>
-                            <button type="button" class="wishlist-heart-btn" aria-label="Thêm vào danh sách yêu thích" th:onclick="'LUNEA.toggleWishlist(this, ' + ${rp.id} + ')'"><i class="bi bi-heart" aria-hidden="true"></i></button>
+                            <button type="button" class="wishlist-heart-btn" aria-label="Thêm vào danh sách yêu thích" th:data-product-id="${rp.id}" th:onclick="'LUNEA.toggleWishlist(this, ' + ${rp.id} + ')'"><i class="bi bi-heart" aria-hidden="true"></i></button>
                         </div>
                         <div class="product-image-box">
                             <a th:href="@{/products/{id}(id=${rp.id})}">

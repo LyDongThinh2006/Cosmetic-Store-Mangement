@@ -150,6 +150,7 @@
                                     <span th:unless="${p.inStock}" class="badge-pill badge-muted">Tạm hết hàng</span>
                                 </div>
                                 <button type="button" class="wishlist-heart-btn" aria-label="Lưu vào yêu thích" 
+                                        th:data-product-id="${p.id}"
                                         th:onclick="'LUNEA.toggleWishlist(this, ' + ${p.id} + ')'">
                                     <i class="bi bi-heart"></i>
                                 </button>

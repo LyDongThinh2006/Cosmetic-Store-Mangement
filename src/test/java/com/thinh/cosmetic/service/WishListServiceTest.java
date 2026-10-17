@@ -7,12 +7,14 @@ import com.thinh.cosmetic.domain.entity.catalog.WishListItemEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductImageEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.repository.cart.WishListItemRepository;
 import com.thinh.cosmetic.repository.cart.WishListRepository;
 import com.thinh.cosmetic.repository.catalog.ProductImageRepository;
 import com.thinh.cosmetic.repository.catalog.ProductRepository;
 import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
+import com.thinh.cosmetic.service.cart.CartService;
 import com.thinh.cosmetic.service.cart.impl.WishListServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +31,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +55,9 @@ class WishListServiceTest {
     @Mock
     private ProductSkuRepository productSkuRepository;
 
+    @Mock
+    private CartService cartService;
+
     @InjectMocks
     private WishListServiceImpl wishListService;
 
@@ -66,7 +72,11 @@ class WishListServiceTest {
         customer = CustomerEntity.builder().id(1L).fullName("Minh Anh").build();
         wishList = WishListEntity.builder().id(10L).customer(customer).build();
 
-        sku = ProductSkuEntity.builder().id(100L).price(BigDecimal.valueOf(350000)).build();
+        sku = ProductSkuEntity.builder()
+                .id(100L)
+                .price(BigDecimal.valueOf(350000))
+                .status(ActiveStatus.ACTIVE)
+                .build();
         ProductImageEntity img = ProductImageEntity.builder().id(1L).imageUrl("https://example.com/serum.jpg").build();
 
         product = ProductEntity.builder()
@@ -125,5 +135,41 @@ class WishListServiceTest {
         verify(wishListItemRepository).deleteByWishListIdAndProductId(10L, 5L);
         assertNotNull(response);
         assertTrue(response.getItems().isEmpty());
+    }
+
+    @Test
+    @DisplayName("UC14: Clear wishlist deletes all items by wishListId")
+    void testClearWishList() throws Exception {
+        when(wishListRepository.findByCustomerId(1L)).thenReturn(Optional.of(wishList));
+
+        wishListService.clearWishList(1L);
+
+        verify(wishListItemRepository).deleteByWishListId(10L);
+    }
+
+    @Test
+    @DisplayName("UC14: Get wishlist product IDs returns list of IDs")
+    void testGetWishListProductIds() throws Exception {
+        when(wishListRepository.findByCustomerId(1L)).thenReturn(Optional.of(wishList));
+        when(wishListItemRepository.findByWishListId(10L)).thenReturn(List.of(wishListItem));
+
+        List<Long> ids = wishListService.getWishListProductIds(1L);
+
+        assertNotNull(ids);
+        assertEquals(1, ids.size());
+        assertEquals(5L, ids.get(0));
+    }
+
+    @Test
+    @DisplayName("UC14: Move all to cart adds items to cart")
+    void testMoveAllToCart() throws Exception {
+        when(wishListRepository.findByCustomerId(1L)).thenReturn(Optional.of(wishList));
+        when(wishListItemRepository.findByWishListId(10L)).thenReturn(List.of(wishListItem));
+        when(productSkuRepository.findByProductId(5L)).thenReturn(List.of(sku));
+
+        WishListResponse response = wishListService.moveAllToCart(1L);
+
+        verify(cartService).addItem(eq(1L), any());
+        assertNotNull(response);
     }
 }

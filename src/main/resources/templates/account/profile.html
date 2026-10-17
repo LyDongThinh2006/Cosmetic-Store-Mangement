@@ -39,35 +39,36 @@
                     </div>
 
                     <!-- Sidebar Links -->
+                    <!-- Sidebar Links -->
                     <nav role="tablist" aria-label="Hồ sơ tài khoản" style="display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem;">
                         <button type="button" role="tab" id="btnTabProfile" aria-controls="tab-profile" aria-selected="true" onclick="switchAccountTab('tab-profile', this)"
-                                class="account-nav-btn active" style="text-align: left; background: var(--color-border-subtle); color: var(--color-text-primary); border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                                class="account-nav-btn active">
                             <i class="bi bi-person"></i>
                             <span>Thông tin cá nhân</span>
                         </button>
 
                         <button type="button" role="tab" id="btnTabAddresses" aria-controls="tab-addresses" aria-selected="false" onclick="switchAccountTab('tab-addresses', this)"
-                                class="account-nav-btn" style="text-align: left; background: none; color: var(--color-text-muted); border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                                class="account-nav-btn">
                             <i class="bi bi-geo-alt"></i>
                             <span>Sổ địa chỉ nhận hàng</span>
                         </button>
 
-                        <a th:href="@{/account/orders}" href="/account/orders" style="padding: 12px 16px; border-radius: 8px; color: var(--color-text-muted); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color var(--duration-fast);">
+                        <a th:href="@{/account/orders}" href="/account/orders" class="account-nav-link">
                             <i class="bi bi-box-seam"></i>
                             <span>Đơn hàng của tôi</span>
                         </a>
 
-                        <a th:href="@{/account/wishlist}" href="/account/wishlist" style="padding: 12px 16px; border-radius: 8px; color: var(--color-text-muted); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color var(--duration-fast);">
+                        <a th:href="@{/account/wishlist}" href="/account/wishlist" class="account-nav-link">
                             <i class="bi bi-heart"></i>
                             <span>Sản phẩm yêu thích</span>
                         </a>
 
-                        <button type="button" onclick="LUNEA.showToast('Bạn đang có 3 mã ưu đãi có thể sử dụng tại bước thanh toán.', 'info')" style="padding: 12px 16px; border-radius: 8px; color: var(--color-text-muted); background: none; border: none; text-align: left; cursor: pointer; font-size: inherit; display: flex; align-items: center; gap: 10px; width: 100%;">
+                        <button type="button" onclick="LUNEA.showToast('Bạn đang có 3 mã ưu đãi có thể sử dụng tại bước thanh toán.', 'info')" class="account-nav-link">
                             <i class="bi bi-ticket-perforated"></i>
                             <span>Voucher của tôi</span>
                         </button>
 
-                        <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" style="padding: 12px 16px; border-radius: 8px; color: var(--color-danger); text-decoration: none; display: flex; align-items: center; gap: 10px; margin-top: 12px;">
+                        <a th:href="@{/logout}" href="/logout" onclick="LUNEA.logout(event)" class="account-nav-link" style="color: var(--color-danger); margin-top: 12px;">
                             <i class="bi bi-box-arrow-right"></i>
                             <span>Đăng xuất</span>
                         </a>
@@ -301,9 +302,7 @@
                 el.hidden = true;
             });
             document.querySelectorAll('.account-nav-btn').forEach(b => {
-                b.style.background = 'none';
-                b.style.color = 'var(--color-text-muted)';
-                b.style.fontWeight = 'normal';
+                b.classList.remove('active');
                 b.setAttribute('aria-selected', 'false');
             });
 
@@ -314,9 +313,7 @@
             }
 
             if (btn) {
-                btn.style.background = 'var(--color-border-subtle)';
-                btn.style.color = 'var(--color-text-primary)';
-                btn.style.fontWeight = '600';
+                btn.classList.add('active');
                 btn.setAttribute('aria-selected', 'true');
             }
         }

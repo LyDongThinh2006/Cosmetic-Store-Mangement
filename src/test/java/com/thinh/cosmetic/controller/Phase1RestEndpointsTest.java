@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -89,6 +90,42 @@ public class Phase1RestEndpointsTest {
         mockMvc.perform(get("/api/wishlist")
                         .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("UC14: API lấy danh sách product IDs yêu thích trả về 200")
+    void testWishlistProductIdsEndpoint() throws Exception {
+        mockMvc.perform(get("/api/wishlist/product-ids")
+                        .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("UC14: API thêm sản phẩm vào wishlist trả về 200")
+    void testWishlistAddProductEndpoint() throws Exception {
+        mockMvc.perform(post("/api/wishlist/products/1")
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("UC14: API xóa sản phẩm khỏi wishlist trả về 200")
+    void testWishlistRemoveProductEndpoint() throws Exception {
+        mockMvc.perform(delete("/api/wishlist/products/1")
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("UC14: API xóa toàn bộ wishlist trả về 204 No Content")
+    void testWishlistClearEndpoint() throws Exception {
+        mockMvc.perform(delete("/api/wishlist")
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .with(user("khach01").authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
+                .andExpect(status().isNoContent());
     }
 
     @Test
