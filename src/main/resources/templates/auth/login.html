@@ -118,57 +118,133 @@
         </div>
     </main>
 
-    <!-- Forgot Password Modal (UC03) -->
+    <!-- Forgot Password Modal with OTP (UC03) -->
     <div id="forgotPasswordModal" class="modal-overlay" role="dialog" aria-modal="true"
         aria-labelledby="forgotPasswordTitle" tabindex="-1"
         style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;">
         <div
-            style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); width: 100%; max-width: 440px; padding: 32px; box-shadow: var(--shadow-modal); position: relative; margin: 20px;">
+            style="background: var(--color-bg-card); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); width: 100%; max-width: 460px; padding: 32px; box-shadow: var(--shadow-modal); position: relative; margin: 20px;">
             <button type="button" onclick="closeForgotPasswordModal()" aria-label="Đóng hộp thoại khôi phục mật khẩu"
                 style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--color-text-muted); font-size: 1.2rem; cursor: pointer;">
                 <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
-            <div style="margin-bottom: 24px;">
-                <span class="eyebrow-tag" style="margin-bottom: 8px;">Khôi phục tài khoản</span>
-                <h3 id="forgotPasswordTitle"
-                    style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--color-text-primary); margin-top: 4px; margin-bottom: 8px;">
-                    Quên Mật Khẩu
-                </h3>
-                <p style="font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.6;">
-                    Nhập email hoặc số điện thoại để thiết lập lại mật khẩu mới cho tài khoản của bạn.
-                </p>
+
+            <!-- STEP 1: Enter Identifier & Request OTP -->
+            <div id="forgotStep1">
+                <div style="margin-bottom: 24px;">
+                    <span class="eyebrow-tag" style="margin-bottom: 8px;">Khôi phục tài khoản (Bước 1/2)</span>
+                    <h3 id="forgotPasswordTitle"
+                        style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--color-text-primary); margin-top: 4px; margin-bottom: 8px;">
+                        Quên Mật Khẩu
+                    </h3>
+                    <p style="font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.6;">
+                        Nhập email hoặc số điện thoại đã đăng ký để nhận mã xác thực OTP bảo mật.
+                    </p>
+                </div>
+
+                <form id="forgotStep1Form" onsubmit="handleSendOtp(event)">
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label class="form-label" for="resetIdentifier">Email hoặc số điện thoại *</label>
+                        <input type="text" id="resetIdentifier" class="form-control-lunea" required autocomplete="username"
+                            placeholder="Ví dụ: khach01@lunea.test hoặc 0987654321">
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button type="button" onclick="closeForgotPasswordModal()" class="btn btn-outline"
+                            style="padding: 10px 20px;">
+                            Hủy
+                        </button>
+                        <button type="submit" id="btnSendOtpSubmit" class="btn-lunea-gold"
+                            style="padding: 10px 24px;">
+                            <span>Gửi mã OTP</span>
+                            <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <form id="forgotPasswordForm" onsubmit="handleResetPassword(event)">
-                <div class="form-group" style="margin-bottom: 16px;">
-                    <label class="form-label" for="resetIdentifier">Email hoặc số điện thoại *</label>
-                    <input type="text" id="resetIdentifier" class="form-control-lunea" required autocomplete="username"
-                        placeholder="Ví dụ: khach01@lunea.test">
+            <!-- STEP 2: Verify OTP & Set New Password -->
+            <div id="forgotStep2" style="display: none;">
+                <div style="margin-bottom: 20px;">
+                    <span class="eyebrow-tag" style="margin-bottom: 8px;">Khôi phục tài khoản (Bước 2/2)</span>
+                    <h3 style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--color-text-primary); margin-top: 4px; margin-bottom: 8px;">
+                        Xác Thực OTP
+                    </h3>
+                    <div style="padding: 10px 14px; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 4px; font-size: 0.85rem; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <div>
+                            <i class="bi bi-shield-lock text-gold me-1"></i>
+                            Gửi đến: <strong id="otpTargetDisplay" style="color: var(--color-gold-light);"></strong>
+                        </div>
+                        <button type="button" onclick="goToForgotStep1()" style="background: none; border: none; color: var(--color-gold-light); font-size: 0.82rem; text-decoration: underline; cursor: pointer; padding: 0;">
+                            Đổi lại
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 16px;">
-                    <label class="form-label" for="resetNewPassword">Mật khẩu mới *</label>
-                    <input type="password" id="resetNewPassword" class="form-control-lunea" required minlength="6"
-                        autocomplete="new-password" placeholder="Tối thiểu 6 ký tự">
+                <!-- Demo OTP Badge (Convenient for local test/demo) -->
+                <div id="demoOtpAlert" style="display: none; margin-bottom: 16px; padding: 10px 14px; background: rgba(16, 185, 129, 0.1); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 4px; font-size: 0.85rem; color: #10b981;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span>💡 Mã OTP demo: <b id="demoOtpCode" style="font-size: 1.1rem; letter-spacing: 2px;"></b></span>
+                        <button type="button" onclick="fillDemoOtp()" class="btn btn-sm btn-outline" style="padding: 2px 10px; font-size: 0.78rem; border-color: #10b981; color: #10b981;">
+                            Dán mã
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label class="form-label" for="resetConfirmPassword">Xác nhận mật khẩu mới *</label>
-                    <input type="password" id="resetConfirmPassword" class="form-control-lunea" required minlength="6"
-                        autocomplete="new-password" placeholder="Nhập lại mật khẩu mới">
-                </div>
+                <form id="forgotPasswordForm" onsubmit="handleResetPassword(event)">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                            <label class="form-label" for="resetOtp" style="margin-bottom: 0;">Mã xác thực OTP *</label>
+                            <div style="font-size: 0.8rem;">
+                                <span id="otpCountdownText" style="color: var(--color-text-muted);">Gửi lại sau <b id="otpCountdownSec" style="color: var(--color-gold-light);">60</b>s</span>
+                                <button type="button" id="btnResendOtp" onclick="handleResendOtp()" style="display: none; background: none; border: none; color: var(--color-gold-light); text-decoration: underline; cursor: pointer; padding: 0; font-size: 0.82rem;">
+                                    Gửi lại mã OTP
+                                </button>
+                            </div>
+                        </div>
+                        <input type="text" id="resetOtp" class="form-control-lunea" required maxlength="6" pattern="[0-9]{6}"
+                            autocomplete="one-time-code" placeholder="Nhập 6 số OTP"
+                            style="letter-spacing: 6px; font-weight: 700; font-size: 1.15rem; text-align: center;">
+                    </div>
 
-                <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                    <button type="button" onclick="closeForgotPasswordModal()" class="btn btn-outline"
-                        style="padding: 10px 20px;">
-                        Hủy
-                    </button>
-                    <button type="submit" id="btnResetPasswordSubmit" class="btn-lunea-gold"
-                        style="padding: 10px 24px;">
-                        <span>Xác nhận đổi mật khẩu</span>
-                    </button>
-                </div>
-            </form>
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label class="form-label" for="resetNewPassword">Mật khẩu mới *</label>
+                        <div style="position: relative;">
+                            <input type="password" id="resetNewPassword" class="form-control-lunea" required minlength="6"
+                                autocomplete="new-password" placeholder="Tối thiểu 6 ký tự" style="padding-right: 42px;">
+                            <button type="button" onclick="toggleResetPasswordVisibility('resetNewPassword', 'eyeIconNew')"
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;"
+                                aria-label="Hiện/ẩn mật khẩu">
+                                <i class="bi bi-eye" id="eyeIconNew"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label class="form-label" for="resetConfirmPassword">Xác nhận mật khẩu mới *</label>
+                        <div style="position: relative;">
+                            <input type="password" id="resetConfirmPassword" class="form-control-lunea" required minlength="6"
+                                autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" style="padding-right: 42px;">
+                            <button type="button" onclick="toggleResetPasswordVisibility('resetConfirmPassword', 'eyeIconConfirm')"
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;"
+                                aria-label="Hiện/ẩn mật khẩu">
+                                <i class="bi bi-eye" id="eyeIconConfirm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button type="button" onclick="goToForgotStep1()" class="btn btn-outline"
+                            style="padding: 10px 18px;">
+                            Quay lại
+                        </button>
+                        <button type="submit" id="btnResetPasswordSubmit" class="btn-lunea-gold"
+                            style="padding: 10px 24px;">
+                            <span>Xác nhận đổi mật khẩu</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -177,6 +253,9 @@
 
     <!-- Client-side Login Script -->
     <script th:inline="javascript">
+        let otpCountdownTimer = null;
+        let lastKnownOtp = '';
+
         function togglePasswordVisibility() {
             const pwd = document.getElementById('loginPassword');
             const eye = document.getElementById('eyeIcon');
@@ -186,6 +265,19 @@
             } else {
                 pwd.type = 'password';
                 eye.className = 'bi bi-eye';
+            }
+        }
+
+        function toggleResetPasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
             }
         }
 
@@ -203,8 +295,7 @@
                 if (currentId) {
                     document.getElementById('resetIdentifier').value = currentId;
                 }
-                document.getElementById('resetNewPassword').value = '';
-                document.getElementById('resetConfirmPassword').value = '';
+                goToForgotStep1();
                 setTimeout(() => {
                     const focusTarget = document.getElementById('resetIdentifier');
                     if (focusTarget) focusTarget.focus();
@@ -216,17 +307,162 @@
             const modal = document.getElementById('forgotPasswordModal');
             if (modal) modal.style.display = 'none';
             document.body.style.overflow = '';
+            clearInterval(otpCountdownTimer);
+        }
+
+        function goToForgotStep1() {
+            document.getElementById('forgotStep1').style.display = 'block';
+            document.getElementById('forgotStep2').style.display = 'none';
+        }
+
+        function goToForgotStep2() {
+            document.getElementById('forgotStep1').style.display = 'none';
+            document.getElementById('forgotStep2').style.display = 'block';
+            document.getElementById('resetOtp').value = '';
+            document.getElementById('resetNewPassword').value = '';
+            document.getElementById('resetConfirmPassword').value = '';
+            setTimeout(() => {
+                const otpInput = document.getElementById('resetOtp');
+                if (otpInput) otpInput.focus();
+            }, 50);
+        }
+
+        function fillDemoOtp() {
+            if (lastKnownOtp) {
+                document.getElementById('resetOtp').value = lastKnownOtp;
+                const newPwdInput = document.getElementById('resetNewPassword');
+                if (newPwdInput) newPwdInput.focus();
+            }
+        }
+
+        function startOtpCountdown(seconds = 60) {
+            clearInterval(otpCountdownTimer);
+            let remaining = seconds;
+            const textSpan = document.getElementById('otpCountdownText');
+            const secSpan = document.getElementById('otpCountdownSec');
+            const resendBtn = document.getElementById('btnResendOtp');
+
+            if (textSpan) textSpan.style.display = 'inline';
+            if (resendBtn) resendBtn.style.display = 'none';
+            if (secSpan) secSpan.textContent = remaining;
+
+            otpCountdownTimer = setInterval(() => {
+                remaining--;
+                if (remaining <= 0) {
+                    clearInterval(otpCountdownTimer);
+                    if (textSpan) textSpan.style.display = 'none';
+                    if (resendBtn) resendBtn.style.display = 'inline';
+                } else {
+                    if (secSpan) secSpan.textContent = remaining;
+                }
+            }, 1000);
+        }
+
+        async function handleSendOtp(e) {
+            if (e) e.preventDefault();
+            const identifier = document.getElementById('resetIdentifier').value.trim();
+            const btn = document.getElementById('btnSendOtpSubmit');
+
+            if (!identifier) {
+                LUNEA.showToast('Vui lòng nhập email hoặc số điện thoại', 'warning');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang gửi OTP...</span>';
+
+            try {
+                const response = await fetch('/api/auth/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'fetch'
+                    },
+                    body: JSON.stringify({ emailOrPhone: identifier })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    LUNEA.showToast(data.message || 'Mã OTP đã được gửi thành công!', 'success');
+                    document.getElementById('otpTargetDisplay').textContent = data.maskedDestination || identifier;
+
+                    // If debugOtp is returned (dev/demo mode), display helpful banner
+                    const demoAlert = document.getElementById('demoOtpAlert');
+                    const demoCode = document.getElementById('demoOtpCode');
+                    if (data.debugOtp && demoAlert && demoCode) {
+                        lastKnownOtp = data.debugOtp;
+                        demoCode.textContent = data.debugOtp;
+                        demoAlert.style.display = 'block';
+                    } else if (demoAlert) {
+                        demoAlert.style.display = 'none';
+                    }
+
+                    goToForgotStep2();
+                    startOtpCountdown(60);
+                } else {
+                    LUNEA.showToast(data.message || 'Không thể gửi mã OTP. Vui lòng thử lại.', 'error');
+                }
+            } catch (err) {
+                console.error('Send OTP error:', err);
+                LUNEA.showToast('Có lỗi xảy ra khi kết nối máy chủ.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Gửi mã OTP</span><i class="bi bi-arrow-right ms-1"></i>';
+            }
+        }
+
+        async function handleResendOtp() {
+            const identifier = document.getElementById('resetIdentifier').value.trim();
+            const resendBtn = document.getElementById('btnResendOtp');
+            if (!identifier) return;
+
+            resendBtn.textContent = 'Đang gửi lại...';
+            try {
+                const response = await fetch('/api/auth/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'fetch'
+                    },
+                    body: JSON.stringify({ emailOrPhone: identifier })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    LUNEA.showToast('Mã OTP mới đã được gửi!', 'success');
+                    if (data.debugOtp) {
+                        lastKnownOtp = data.debugOtp;
+                        const demoCode = document.getElementById('demoOtpCode');
+                        if (demoCode) demoCode.textContent = data.debugOtp;
+                    }
+                    startOtpCountdown(60);
+                } else {
+                    LUNEA.showToast(data.message || 'Không thể gửi lại mã OTP', 'error');
+                    resendBtn.textContent = 'Gửi lại mã OTP';
+                }
+            } catch (err) {
+                LUNEA.showToast('Lỗi kết nối máy chủ khi gửi lại OTP', 'error');
+                resendBtn.textContent = 'Gửi lại mã OTP';
+            }
         }
 
         async function handleResetPassword(e) {
             e.preventDefault();
             const identifier = document.getElementById('resetIdentifier').value.trim();
+            const otp = document.getElementById('resetOtp').value.trim();
             const newPassword = document.getElementById('resetNewPassword').value;
             const confirmPassword = document.getElementById('resetConfirmPassword').value;
             const btn = document.getElementById('btnResetPasswordSubmit');
 
             if (!identifier) {
                 LUNEA.showToast('Vui lòng nhập email hoặc số điện thoại', 'warning');
+                return;
+            }
+
+            if (!otp || otp.length !== 6) {
+                LUNEA.showToast('Vui lòng nhập đúng 6 chữ số mã OTP', 'warning');
                 return;
             }
 
@@ -241,14 +477,18 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>Đang xử lý...</span>';
+            btn.innerHTML = '<span>Đang xác thực & đổi mật khẩu...</span>';
 
             try {
                 const response = await fetch('/api/auth/reset-password', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'fetch'
+                    },
                     body: JSON.stringify({
                         emailOrPhone: identifier,
+                        otp: otp,
                         newPassword: newPassword
                     })
                 });
@@ -258,9 +498,14 @@
                 if (response.ok) {
                     LUNEA.showToast(data.message || 'Đặt lại mật khẩu thành công!', 'success');
                     closeForgotPasswordModal();
-                    // Pre-fill login form
+                    // Pre-fill login form with new credentials
                     document.getElementById('loginIdentifier').value = identifier;
                     document.getElementById('loginPassword').value = newPassword;
+                    // Focus login button
+                    setTimeout(() => {
+                        const loginBtn = document.getElementById('btnLoginSubmit');
+                        if (loginBtn) loginBtn.focus();
+                    }, 200);
                 } else {
                     LUNEA.showToast(data.message || 'Không thể đặt lại mật khẩu', 'error');
                 }
@@ -272,6 +517,14 @@
                 btn.innerHTML = '<span>Xác nhận đổi mật khẩu</span>';
             }
         }
+
+        // Auto open forgot password modal if navigated with ?forgot=true
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('forgot') === 'true' || params.get('reset') === 'true') {
+                openForgotPasswordModal();
+            }
+        });
 
         async function handleLogin(e) {
             e.preventDefault();

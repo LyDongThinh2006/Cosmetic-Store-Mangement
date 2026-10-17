@@ -27,6 +27,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thinh.cosmetic.domain.dto.request.account.SendOtpRequest;
+import com.thinh.cosmetic.domain.dto.request.account.VerifyOtpRequest;
+import com.thinh.cosmetic.domain.dto.response.account.SendOtpResponse;
+import com.thinh.cosmetic.service.account.OtpService;
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -42,6 +46,7 @@ public class AccountServiceImpl implements AccountService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final AppProperties appProperties;
+    private final OtpService otpService;
 
     @Override
     public CustomerResponse register(RegisterRequest request) {
@@ -120,18 +125,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public SendOtpResponse sendResetPasswordOtp(SendOtpRequest request) {
+        return otpService.sendPasswordResetOtp(request);
+    }
+
+    @Override
+    public void verifyResetPasswordOtp(VerifyOtpRequest request) {
+        otpService.verifyOtp(request);
+    }
+
+    @Override
     public void resetPassword(ResetPasswordRequest request) {
-        String identifier = request.getEmailOrPhone() != null ? request.getEmailOrPhone().trim() : "";
-        if (identifier.isBlank()) {
-            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Email hoặc số điện thoại không được để trống");
-        }
-
-        String normalizedPhone = identifier.replaceAll("\\s+", "").replace("+84", "0");
-
-        AccountEntity account = accountRepository.findByEmailIgnoreCaseOrPhoneOrUsernameIgnoreCase(identifier, normalizedPhone, identifier)
-                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy tài khoản tương ứng với thông tin đã nhập"));
-
-        account.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-        accountRepository.save(account);
+        otpService.completePasswordReset(request);
     }
 }

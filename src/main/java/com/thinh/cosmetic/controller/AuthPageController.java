@@ -74,4 +74,9 @@ public class AuthPageController {
         model.addAttribute("pageTitle", "Đăng Ký Tài Khoản | LUNEA");
         return "auth/register";
     }
+
+    @GetMapping("/reset-password")
+    public String resetPasswordPage() {
+        return "redirect:/login?forgot=true";
+    }
 }

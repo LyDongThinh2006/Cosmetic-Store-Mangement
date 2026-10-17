@@ -2,9 +2,13 @@ package com.thinh.cosmetic.rest.account;
 
 import com.thinh.cosmetic.domain.dto.request.account.LoginRequest;
 import com.thinh.cosmetic.domain.dto.request.account.RegisterRequest;
+import com.thinh.cosmetic.domain.dto.request.account.ResetPasswordRequest;
+import com.thinh.cosmetic.domain.dto.request.account.SendOtpRequest;
+import com.thinh.cosmetic.domain.dto.request.account.VerifyOtpRequest;
 import com.thinh.cosmetic.domain.dto.response.account.CustomerResponse;
 import com.thinh.cosmetic.domain.dto.response.account.LoginResponse;
 import com.thinh.cosmetic.domain.dto.response.account.LoginResult;
+import com.thinh.cosmetic.domain.dto.response.account.SendOtpResponse;
 import com.thinh.cosmetic.security.AuthCookieFactory;
 import com.thinh.cosmetic.security.AuthPrincipal;
 import com.thinh.cosmetic.service.account.AccountService;
@@ -14,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import com.thinh.cosmetic.domain.dto.request.account.ResetPasswordRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +53,24 @@ public class AuthRestController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, logoutCookie.toString())
                 .build();
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<SendOtpResponse> sendOtp(@Valid @RequestBody SendOtpRequest request) {
+        SendOtpResponse response = accountService.sendResetPasswordOtp(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<SendOtpResponse> forgotPassword(@Valid @RequestBody SendOtpRequest request) {
+        SendOtpResponse response = accountService.sendResetPasswordOtp(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Map<String, Object>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        accountService.verifyResetPasswordOtp(request);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Mã OTP hợp lệ"));
     }
 
     @PostMapping("/reset-password")

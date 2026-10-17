@@ -40,6 +40,28 @@ public class Phase1RestEndpointsTest {
     }
 
     @Test
+    @DisplayName("UC03: Public API gửi mã OTP trả về 400 nếu email/sđt trống")
+    void testSendOtpValidation() throws Exception {
+        mockMvc.perform(post("/api/auth/send-otp")
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"emailOrPhone\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("UC03: Public API gửi mã OTP trả về 200 khi tài khoản hợp lệ")
+    void testSendOtpEndpoint() throws Exception {
+        mockMvc.perform(post("/api/auth/send-otp")
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"emailOrPhone\":\"khach01@lunea.test\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.debugOtp").isNotEmpty());
+    }
+
+    @Test
     @DisplayName("UC14: API Wishlist trả về 200 khi khách hàng truy cập")
     void testWishlistEndpoint() throws Exception {
         mockMvc.perform(get("/api/wishlist")

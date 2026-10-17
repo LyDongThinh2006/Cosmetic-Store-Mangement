@@ -2,15 +2,17 @@ package com.thinh.cosmetic.service;
 
 import com.thinh.cosmetic.config.AppProperties;
 import com.thinh.cosmetic.domain.dto.request.account.ResetPasswordRequest;
+import com.thinh.cosmetic.domain.dto.request.account.SendOtpRequest;
+import com.thinh.cosmetic.domain.dto.request.account.VerifyOtpRequest;
+import com.thinh.cosmetic.domain.dto.response.account.SendOtpResponse;
 import com.thinh.cosmetic.domain.entity.account.AccountEntity;
 import com.thinh.cosmetic.domain.enums.AccountType;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
-import com.thinh.cosmetic.exception.BusinessException;
-import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.mapper.account.CustomerMapper;
 import com.thinh.cosmetic.repository.account.AccountRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
 import com.thinh.cosmetic.security.JwtService;
+import com.thinh.cosmetic.service.account.OtpService;
 import com.thinh.cosmetic.service.account.impl.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,6 +51,9 @@ class AccountServiceTest {
     @Mock
     private AppProperties appProperties;
 
+    @Mock
+    private OtpService otpService;
+
     @InjectMocks
     private AccountServiceImpl accountService;
 
@@ -70,49 +73,56 @@ class AccountServiceTest {
     }
 
     @Test
-    @DisplayName("UC03: Reset password successfully updates hashed password")
+    @DisplayName("UC03: Reset password delegates to OtpService")
     void testResetPasswordSuccess() {
-        when(accountRepository.findByEmailIgnoreCaseOrPhoneOrUsernameIgnoreCase("khach01@lunea.test", "khach01@lunea.test", "khach01@lunea.test"))
-                .thenReturn(Optional.of(account));
-        when(passwordEncoder.encode("newPassword123")).thenReturn("new_hashed_password");
-        when(accountRepository.save(any(AccountEntity.class))).thenAnswer(i -> i.getArgument(0));
-
         ResetPasswordRequest request = ResetPasswordRequest.builder()
                 .emailOrPhone("khach01@lunea.test")
+                .otp("123456")
                 .newPassword("newPassword123")
                 .build();
+
+        doNothing().when(otpService).completePasswordReset(request);
 
         assertDoesNotThrow(() -> accountService.resetPassword(request));
-        assertEquals("new_hashed_password", account.getPasswordHash());
-        verify(accountRepository).save(account);
+        verify(otpService).completePasswordReset(request);
     }
 
     @Test
-    @DisplayName("UC03: Reset password throws RESOURCE_NOT_FOUND if user does not exist")
-    void testResetPasswordUserNotFound() {
-        when(accountRepository.findByEmailIgnoreCaseOrPhoneOrUsernameIgnoreCase("unknown@lunea.test", "unknown@lunea.test", "unknown@lunea.test"))
-                .thenReturn(Optional.empty());
-
-        ResetPasswordRequest request = ResetPasswordRequest.builder()
-                .emailOrPhone("unknown@lunea.test")
-                .newPassword("newPassword123")
+    @DisplayName("UC03: Send OTP delegates to OtpService")
+    void testSendResetPasswordOtp() {
+        SendOtpRequest request = SendOtpRequest.builder()
+                .emailOrPhone("khach01@lunea.test")
                 .build();
 
-        BusinessException exception = assertThrows(BusinessException.class, () -> accountService.resetPassword(request));
-        assertEquals(ErrorCode.RESOURCE_NOT_FOUND, exception.getErrorCode());
-        verify(accountRepository, never()).save(any());
+        SendOtpResponse mockResponse = SendOtpResponse.builder()
+                .success(true)
+                .message("OTP sent")
+                .emailOrPhone("khach01@lunea.test")
+                .maskedDestination("kh***1@lunea.test")
+                .expiresInSeconds(300)
+                .debugOtp("123456")
+                .build();
+
+        when(otpService.sendPasswordResetOtp(request)).thenReturn(mockResponse);
+
+        SendOtpResponse response = accountService.sendResetPasswordOtp(request);
+        assertNotNull(response);
+        assertTrue(response.isSuccess());
+        assertEquals("kh***1@lunea.test", response.getMaskedDestination());
+        verify(otpService).sendPasswordResetOtp(request);
     }
 
     @Test
-    @DisplayName("UC03: Reset password throws VALIDATION_ERROR if emailOrPhone is blank")
-    void testResetPasswordBlankIdentifier() {
-        ResetPasswordRequest request = ResetPasswordRequest.builder()
-                .emailOrPhone("   ")
-                .newPassword("newPassword123")
+    @DisplayName("UC03: Verify OTP delegates to OtpService")
+    void testVerifyResetPasswordOtp() {
+        VerifyOtpRequest request = VerifyOtpRequest.builder()
+                .emailOrPhone("khach01@lunea.test")
+                .otp("123456")
                 .build();
 
-        BusinessException exception = assertThrows(BusinessException.class, () -> accountService.resetPassword(request));
-        assertEquals(ErrorCode.VALIDATION_ERROR, exception.getErrorCode());
-        verify(accountRepository, never()).save(any());
+        when(otpService.verifyOtp(request)).thenReturn(null);
+
+        assertDoesNotThrow(() -> accountService.verifyResetPasswordOtp(request));
+        verify(otpService).verifyOtp(request);
     }
 }

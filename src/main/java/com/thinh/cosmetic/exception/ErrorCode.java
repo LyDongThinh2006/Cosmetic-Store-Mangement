@@ -11,6 +11,10 @@ public enum ErrorCode {
     PAYMENT_METHOD_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "Payment method is not supported"),
     DELIVERY_METHOD_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "Delivery method is not supported"),
     CONFIRM_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "Confirm password does not match"),
+    INVALID_OTP(HttpStatus.BAD_REQUEST, "Mã OTP không chính xác hoặc không tồn tại"),
+    OTP_EXPIRED(HttpStatus.BAD_REQUEST, "Mã OTP đã hết hạn"),
+    OTP_MAX_ATTEMPTS(HttpStatus.BAD_REQUEST, "Bạn đã nhập sai mã OTP quá số lần quy định"),
+    OTP_COOLDOWN(HttpStatus.BAD_REQUEST, "Vui lòng chờ trước khi gửi lại mã OTP"),
 
     // 401 & 403
     UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "User is unauthenticated"),
