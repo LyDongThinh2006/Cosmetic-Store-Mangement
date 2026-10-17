@@ -169,41 +169,147 @@ const LUNEA = (function () {
         }
     }
 
+    // Wishlist Helper Methods & State Synchronization
+    async function updateWishlistBadge(count) {
+        if (count !== undefined && count !== null) {
+            const badges = document.querySelectorAll('.wishlist-badge-count');
+            badges.forEach(b => {
+                b.textContent = count;
+                b.style.display = count > 0 ? 'flex' : 'none';
+            });
+            return count;
+        }
+
+        const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
+        if (isAuthPage) return null;
+
+        try {
+            const wishlist = await apiFetch('/api/wishlist', {
+                method: 'GET',
+                skipAuthRedirect: true,
+                skipAuthToast: true
+            });
+            const itemCount = wishlist && wishlist.items ? wishlist.items.length : 0;
+            const badges = document.querySelectorAll('.wishlist-badge-count');
+            badges.forEach(b => {
+                b.textContent = itemCount;
+                b.style.display = itemCount > 0 ? 'flex' : 'none';
+            });
+            return itemCount;
+        } catch (e) {
+            const badges = document.querySelectorAll('.wishlist-badge-count');
+            badges.forEach(b => {
+                b.textContent = 0;
+                b.style.display = 'none';
+            });
+            return 0;
+        }
+    }
+
+    async function syncWishlistState() {
+        const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
+        if (isAuthPage) return;
+
+        try {
+            const productIds = await apiFetch('/api/wishlist/product-ids', {
+                method: 'GET',
+                skipAuthRedirect: true,
+                skipAuthToast: true
+            });
+
+            if (Array.isArray(productIds)) {
+                updateWishlistBadge(productIds.length);
+                const idSet = new Set(productIds.map(Number));
+                const buttons = document.querySelectorAll('.wishlist-heart-btn[data-product-id], #btnAddToWishlist[data-product-id]');
+                buttons.forEach(btn => {
+                    const pid = Number(btn.getAttribute('data-product-id'));
+                    const isFav = idSet.has(pid);
+                    btn.classList.toggle('active', isFav);
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.className = isFav ? 'bi bi-heart-fill' : 'bi bi-heart';
+                        icon.style.color = isFav ? '#f43f5e' : '';
+                    }
+                });
+            }
+        } catch (e) {
+            // Not authenticated - keep outline hearts
+        }
+    }
+
     // Interactive Wishlist Toggle with REST API integration
     async function toggleWishlist(btn, productId) {
         if (!btn) return;
         const pId = productId || btn.getAttribute('data-product-id');
-        const icon = btn.querySelector('i');
-        const willBeActive = !btn.classList.contains('active');
+        if (!pId) return;
 
-        if (pId) {
-            try {
-                const method = willBeActive ? 'POST' : 'DELETE';
-                const res = await fetch('/api/wishlist/products/' + pId, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                if (res.ok) {
-                    btn.classList.toggle('active', willBeActive);
-                    if (icon) {
-                        icon.className = willBeActive ? 'bi bi-heart-fill' : 'bi bi-heart';
-                        icon.style.color = willBeActive ? '#f43f5e' : '';
-                    }
-                    showToast(willBeActive ? 'Đã thêm vào danh sách yêu thích.' : 'Đã bỏ khỏi danh sách yêu thích.', 'success');
-                } else {
-                    showToast('Vui lòng đăng nhập để lưu vào danh sách yêu thích.', 'warning');
+        const isCurrentlyActive = btn.classList.contains('active');
+        const willBeActive = !isCurrentlyActive;
+        const method = willBeActive ? 'POST' : 'DELETE';
+
+        try {
+            const res = await apiFetch('/api/wishlist/products/' + pId, {
+                method: method,
+                skipAuthToast: true,
+                skipAuthRedirect: true
+            });
+
+            const relatedButtons = document.querySelectorAll(`.wishlist-heart-btn[data-product-id="${pId}"], #btnAddToWishlist[data-product-id="${pId}"]`);
+            const targetButtons = relatedButtons.length > 0 ? relatedButtons : [btn];
+
+            targetButtons.forEach(b => {
+                b.classList.toggle('active', willBeActive);
+                const icon = b.querySelector('i');
+                if (icon) {
+                    icon.className = willBeActive ? 'bi bi-heart-fill' : 'bi bi-heart';
+                    icon.style.color = willBeActive ? '#f43f5e' : '';
                 }
-            } catch (e) {
+            });
+
+            if (res && res.items) {
+                updateWishlistBadge(res.items.length);
+            } else {
+                updateWishlistBadge();
+            }
+
+            showToast(willBeActive ? 'Đã thêm sản phẩm vào danh sách yêu thích.' : 'Đã bỏ sản phẩm khỏi danh sách yêu thích.', 'success');
+        } catch (e) {
+            if (e.message === 'UNAUTHENTICATED' || (e.data && e.data.status === 401)) {
+                showToast('Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích.', 'warning');
+                setTimeout(() => {
+                    const currentPath = window.location.pathname + window.location.search;
+                    window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+                }, 1400);
+            } else {
                 console.error(e);
                 showToast('Không thể cập nhật danh sách yêu thích lúc này.', 'error');
             }
-        } else {
-            const isActive = btn.classList.toggle('active');
-            if (icon) {
-                icon.className = isActive ? 'bi bi-heart-fill' : 'bi bi-heart';
-                icon.style.color = isActive ? '#f43f5e' : '';
-            }
-            showToast(isActive ? 'Đã thêm sản phẩm vào danh sách yêu thích của bạn.' : 'Đã bỏ sản phẩm khỏi danh sách yêu thích.', 'info');
+        }
+    }
+
+    async function clearWishlist() {
+        try {
+            await apiFetch('/api/wishlist', {
+                method: 'DELETE'
+            });
+            updateWishlistBadge(0);
+            showToast('Đã xóa tất cả sản phẩm khỏi danh sách yêu thích.', 'success');
+            return true;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async function moveAllWishlistToCart() {
+        try {
+            const res = await apiFetch('/api/wishlist/move-all-to-cart', {
+                method: 'POST'
+            });
+            await updateCartBadge();
+            showToast('Đã thêm các sản phẩm còn hàng vào giỏ hàng thành công!', 'success');
+            return res;
+        } catch (e) {
+            throw e;
         }
     }
 
@@ -513,11 +619,11 @@ const LUNEA = (function () {
         // Initialize Theme UI
         initTheme();
 
-        // Refresh cart count (skip for auth pages)
+        // Refresh cart & wishlist state (skip for auth pages)
         const isAuthPage = window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register');
-        const badge = document.querySelector('.cart-badge-count');
-        if (badge && !isAuthPage) {
+        if (!isAuthPage) {
             updateCartBadge();
+            syncWishlistState();
         }
 
         // Initialize scroll motion & GSAP
@@ -557,6 +663,10 @@ const LUNEA = (function () {
         apiFetch,
         addToCart,
         updateCartBadge,
+        updateWishlistBadge,
+        syncWishlistState,
+        clearWishlist,
+        moveAllWishlistToCart,
         logout,
         toggleWishlist,
         initScrollMotion,
