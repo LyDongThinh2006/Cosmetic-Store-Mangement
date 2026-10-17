@@ -181,14 +181,10 @@
                     </div>
                 </div>
 
-                <!-- Demo OTP Badge (Convenient for local test/demo) -->
-                <div id="demoOtpAlert" style="display: none; margin-bottom: 16px; padding: 10px 14px; background: rgba(16, 185, 129, 0.1); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 4px; font-size: 0.85rem; color: #10b981;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span>💡 Mã OTP demo: <b id="demoOtpCode" style="font-size: 1.1rem; letter-spacing: 2px;"></b></span>
-                        <button type="button" onclick="fillDemoOtp()" class="btn btn-sm btn-outline" style="padding: 2px 10px; font-size: 0.78rem; border-color: #10b981; color: #10b981;">
-                            Dán mã
-                        </button>
-                    </div>
+                <!-- OTP Error Alert Banner -->
+                <div id="resetOtpErrorAlert" style="display: none; margin-bottom: 16px; padding: 12px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 6px; font-size: 0.88rem; color: #fca5a5; align-items: center; gap: 10px;">
+                    <i class="bi bi-exclamation-triangle-fill" style="color: #ef4444; font-size: 1.15rem; flex-shrink: 0;"></i>
+                    <span id="resetOtpErrorMessage" style="line-height: 1.45;">Mã OTP không chính xác. Vui lòng kiểm tra lại!</span>
                 </div>
 
                 <form id="forgotPasswordForm" onsubmit="handleResetPassword(event)">
@@ -203,7 +199,7 @@
                             </div>
                         </div>
                         <input type="text" id="resetOtp" class="form-control-lunea" required maxlength="6" pattern="[0-9]{6}"
-                            autocomplete="one-time-code" placeholder="Nhập 6 số OTP"
+                            autocomplete="one-time-code" placeholder="Nhập 6 số OTP" oninput="clearResetOtpError()"
                             style="letter-spacing: 6px; font-weight: 700; font-size: 1.15rem; text-align: center;">
                     </div>
 
@@ -254,7 +250,6 @@
     <!-- Client-side Login Script -->
     <script th:inline="javascript">
         let otpCountdownTimer = null;
-        let lastKnownOtp = '';
 
         function togglePasswordVisibility() {
             const pwd = document.getElementById('loginPassword');
@@ -321,17 +316,40 @@
             document.getElementById('resetOtp').value = '';
             document.getElementById('resetNewPassword').value = '';
             document.getElementById('resetConfirmPassword').value = '';
+            clearResetOtpError();
             setTimeout(() => {
                 const otpInput = document.getElementById('resetOtp');
                 if (otpInput) otpInput.focus();
             }, 50);
         }
 
-        function fillDemoOtp() {
-            if (lastKnownOtp) {
-                document.getElementById('resetOtp').value = lastKnownOtp;
-                const newPwdInput = document.getElementById('resetNewPassword');
-                if (newPwdInput) newPwdInput.focus();
+        function showResetOtpError(msg) {
+            const alertBox = document.getElementById('resetOtpErrorAlert');
+            const msgSpan = document.getElementById('resetOtpErrorMessage');
+            const otpInput = document.getElementById('resetOtp');
+            if (alertBox && msgSpan) {
+                msgSpan.textContent = msg || 'Mã OTP không chính xác. Vui lòng kiểm tra lại!';
+                alertBox.style.display = 'flex';
+            }
+            if (otpInput) {
+                otpInput.style.borderColor = '#ef4444';
+                otpInput.style.boxShadow = '0 0 12px rgba(239, 68, 68, 0.35)';
+                otpInput.classList.remove('shake-anim');
+                void otpInput.offsetWidth;
+                otpInput.classList.add('shake-anim');
+                otpInput.focus();
+                otpInput.select();
+            }
+        }
+
+        function clearResetOtpError() {
+            const alertBox = document.getElementById('resetOtpErrorAlert');
+            const otpInput = document.getElementById('resetOtp');
+            if (alertBox) alertBox.style.display = 'none';
+            if (otpInput) {
+                otpInput.style.borderColor = '';
+                otpInput.style.boxShadow = '';
+                otpInput.classList.remove('shake-anim');
             }
         }
 
@@ -387,16 +405,7 @@
                     LUNEA.showToast(data.message || 'Mã OTP đã được gửi thành công!', 'success');
                     document.getElementById('otpTargetDisplay').textContent = data.maskedDestination || identifier;
 
-                    // If debugOtp is returned (dev/demo mode), display helpful banner
-                    const demoAlert = document.getElementById('demoOtpAlert');
-                    const demoCode = document.getElementById('demoOtpCode');
-                    if (data.debugOtp && demoAlert && demoCode) {
-                        lastKnownOtp = data.debugOtp;
-                        demoCode.textContent = data.debugOtp;
-                        demoAlert.style.display = 'block';
-                    } else if (demoAlert) {
-                        demoAlert.style.display = 'none';
-                    }
+
 
                     goToForgotStep2();
                     startOtpCountdown(60);
@@ -432,11 +441,6 @@
 
                 if (response.ok) {
                     LUNEA.showToast('Mã OTP mới đã được gửi!', 'success');
-                    if (data.debugOtp) {
-                        lastKnownOtp = data.debugOtp;
-                        const demoCode = document.getElementById('demoOtpCode');
-                        if (demoCode) demoCode.textContent = data.debugOtp;
-                    }
                     startOtpCountdown(60);
                 } else {
                     LUNEA.showToast(data.message || 'Không thể gửi lại mã OTP', 'error');
@@ -462,7 +466,9 @@
             }
 
             if (!otp || otp.length !== 6) {
-                LUNEA.showToast('Vui lòng nhập đúng 6 chữ số mã OTP', 'warning');
+                const msg = 'Vui lòng nhập đúng 6 chữ số mã OTP';
+                showResetOtpError(msg);
+                LUNEA.showToast(msg, 'warning');
                 return;
             }
 
@@ -496,6 +502,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    clearResetOtpError();
                     LUNEA.showToast(data.message || 'Đặt lại mật khẩu thành công!', 'success');
                     closeForgotPasswordModal();
                     // Pre-fill login form with new credentials
@@ -507,7 +514,16 @@
                         if (loginBtn) loginBtn.focus();
                     }, 200);
                 } else {
-                    LUNEA.showToast(data.message || 'Không thể đặt lại mật khẩu', 'error');
+                    let errorMsg = data.message;
+                    if (data.fieldErrors && data.fieldErrors.length > 0) {
+                        const otpErr = data.fieldErrors.find(f => f.field === 'otp');
+                        errorMsg = otpErr ? otpErr.message : data.fieldErrors[0].message;
+                    }
+                    if (!errorMsg || errorMsg === 'Validation failed for request payload') {
+                        errorMsg = 'Mã OTP không chính xác. Vui lòng kiểm tra lại!';
+                    }
+                    showResetOtpError(errorMsg);
+                    LUNEA.showToast(errorMsg, 'error');
                 }
             } catch (err) {
                 console.error('Reset password error:', err);

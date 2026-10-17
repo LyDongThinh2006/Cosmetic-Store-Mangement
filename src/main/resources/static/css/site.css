@@ -146,11 +146,11 @@ h4,
     gap: 8px;
     padding: 4px 16px;
     border-radius: var(--radius-full);
-    font-family: var(--font-brand);
-    font-size: 0.68rem;
-    font-weight: 600;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.12em;
     background: rgba(223, 190, 123, 0.08);
     color: var(--color-gold-light);
     border: 1px solid var(--color-border-gold);
@@ -269,7 +269,8 @@ h4,
     align-items: center;
     gap: 8px;
     color: var(--color-text-muted);
-    font-family: var(--font-brand);
+    font-family: var(--font-sans);
+    font-weight: 600;
 }
 
 .utility-moon-dot {
@@ -815,9 +816,10 @@ h4,
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: var(--font-brand);
+    font-family: var(--font-sans);
     font-size: 0.75rem;
-    letter-spacing: 0.25em;
+    font-weight: 600;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     opacity: 0.9;
     transition: color var(--duration-fast);
@@ -1126,10 +1128,10 @@ h4,
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: var(--font-brand);
-    font-size: 0.68rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-gold-light);
     margin-bottom: 2px;
@@ -2451,6 +2453,107 @@ select.form-control-lunea option {
     .auth-story-col {
         display: none;
     }
+}
+
+/* ==========================================================================
+   FLOATING LUXURY TOAST NOTIFICATIONS & ANIMATIONS
+   ========================================================================== */
+#toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 440px;
+    width: calc(100% - 48px);
+    pointer-events: none;
+}
+
+.lunea-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm, 10px);
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    line-height: 1.45;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 1px rgba(255, 255, 255, 0.1);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.lunea-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.lunea-toast.error {
+    background: linear-gradient(135deg, rgba(35, 12, 12, 0.95) 0%, rgba(55, 18, 18, 0.95) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #fecaca;
+}
+
+.lunea-toast.error .lunea-toast-icon {
+    color: #ef4444;
+}
+
+.lunea-toast.success {
+    background: linear-gradient(135deg, rgba(10, 30, 20, 0.95) 0%, rgba(15, 45, 30, 0.95) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #a7f3d0;
+}
+
+.lunea-toast.success .lunea-toast-icon {
+    color: #10b981;
+}
+
+.lunea-toast.warning {
+    background: linear-gradient(135deg, rgba(35, 28, 10, 0.95) 0%, rgba(50, 40, 15, 0.95) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    color: #fde68a;
+}
+
+.lunea-toast.warning .lunea-toast-icon {
+    color: #f59e0b;
+}
+
+.lunea-toast.info {
+    background: linear-gradient(135deg, rgba(16, 24, 38, 0.95) 0%, rgba(24, 36, 56, 0.95) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: var(--color-text-primary);
+}
+
+.lunea-toast.info .lunea-toast-icon {
+    color: var(--color-gold-light);
+}
+
+.lunea-toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lunea-toast-message {
+    flex: 1;
+}
+
+@keyframes shake-anim {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+.shake-anim {
+    animation: shake-anim 0.35s ease-in-out;
 }
 
 /* ==========================================================================

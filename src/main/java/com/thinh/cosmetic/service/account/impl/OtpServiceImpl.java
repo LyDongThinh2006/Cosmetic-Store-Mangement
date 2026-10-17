@@ -34,7 +34,7 @@ import java.util.Optional;
 public class OtpServiceImpl implements OtpService {
 
     private static final int OTP_EXPIRY_MINUTES = 5;
-    private static final int OTP_COOLDOWN_SECONDS = 60;
+    private static final int OTP_COOLDOWN_SECONDS = 30;
     private static final int MAX_FAILED_ATTEMPTS = 5;
 
     private final AccountRepository accountRepository;
@@ -81,9 +81,13 @@ public class OtpServiceImpl implements OtpService {
         }
         passwordResetOtpRepository.saveAll(activeOtps);
 
-        // Generate cryptographically secure 6-digit OTP (100000 - 999999)
-        int code = 100000 + secureRandom.nextInt(900000);
-        String otpCode = String.valueOf(code);
+        // Generate cryptographically secure 6-digit OTP guaranteed distinct from previous code
+        String lastOtpCode = lastOtpOpt.map(PasswordResetOtpEntity::getOtpCode).orElse(null);
+        String otpCode;
+        do {
+            int code = 100000 + secureRandom.nextInt(900000);
+            otpCode = String.valueOf(code);
+        } while (otpCode.equals(lastOtpCode));
 
         PasswordResetOtpEntity otpEntity = PasswordResetOtpEntity.builder()
                 .account(account)
@@ -228,9 +232,13 @@ public class OtpServiceImpl implements OtpService {
         }
         registrationOtpRepository.saveAll(activeOtps);
 
-        // Generate cryptographically secure 6-digit OTP (100000 - 999999)
-        int code = 100000 + secureRandom.nextInt(900000);
-        String otpCode = String.valueOf(code);
+        // Generate cryptographically secure 6-digit OTP guaranteed distinct from previous code
+        String lastOtpCode = lastOtpOpt.map(RegistrationOtpEntity::getOtpCode).orElse(null);
+        String otpCode;
+        do {
+            int code = 100000 + secureRandom.nextInt(900000);
+            otpCode = String.valueOf(code);
+        } while (otpCode.equals(lastOtpCode));
 
         RegistrationOtpEntity otpEntity = RegistrationOtpEntity.builder()
                 .email(email)
