@@ -3213,7 +3213,32 @@ select.form-control-lunea option {
 
 .lunea-toast-message {
     flex: 1;
+    word-break: break-word;
 }
+
+.lunea-toast-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: currentColor;
+    opacity: 0.6;
+    padding: 2px 4px;
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    border-radius: 4px;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+.lunea-toast-close:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
 
 @keyframes shake-anim {
     0%, 100% { transform: translateX(0); }

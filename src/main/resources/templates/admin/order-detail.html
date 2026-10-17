@@ -309,6 +309,7 @@
                 loadReturnRequests();
             } catch (e) {
                 console.error("Update return status error:", e);
+                LUNEA.toastError(e.message || "Không thể cập nhật yêu cầu đổi trả");
             }
         }
 
@@ -494,6 +495,7 @@
                 renderOrderView(res);
             } catch (err) {
                 console.error("Update status error:", err);
+                LUNEA.toastError(err.message || "Không thể cập nhật trạng thái đơn hàng");
             }
         }
 

@@ -910,3 +910,163 @@
         max-width: 100%;
     }
 }
+
+/* ==========================================================================
+   BACK-OFFICE LUXURY TOAST NOTIFICATIONS (Top-Centered, Non-Obstructive)
+   Prevents any interference or overlap with right-hand CRUD actions / tables
+   ========================================================================== */
+#toast-container,
+.admin-body #toast-container {
+    position: fixed !important;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    max-width: min(520px, calc(100vw - 32px));
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@media (min-width: 993px) {
+    /* Optically center directly over the main content area (offset by 270px sidebar) */
+    .admin-body #toast-container {
+        left: calc(270px + (100vw - 270px) / 2);
+    }
+}
+
+.lunea-toast {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 18px;
+    border-radius: var(--radius-md, 12px);
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    line-height: 1.4;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.15);
+    transform: translateY(-20px) scale(0.96);
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    cursor: pointer;
+    user-select: none;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.lunea-toast.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* Success state */
+.lunea-toast.success {
+    background: linear-gradient(135deg, rgba(8, 28, 18, 0.96) 0%, rgba(14, 42, 28, 0.96) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #a7f3d0;
+}
+.lunea-toast.success .lunea-toast-icon {
+    color: #10b981;
+}
+
+/* Error state */
+.lunea-toast.error {
+    background: linear-gradient(135deg, rgba(38, 12, 14, 0.96) 0%, rgba(54, 18, 20, 0.96) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #fecaca;
+}
+.lunea-toast.error .lunea-toast-icon {
+    color: #ef4444;
+}
+
+/* Warning state */
+.lunea-toast.warning {
+    background: linear-gradient(135deg, rgba(36, 26, 8, 0.96) 0%, rgba(52, 38, 12, 0.96) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    color: #fde68a;
+}
+.lunea-toast.warning .lunea-toast-icon {
+    color: #f59e0b;
+}
+
+/* Info state */
+.lunea-toast.info {
+    background: linear-gradient(135deg, rgba(14, 20, 32, 0.96) 0%, rgba(22, 30, 48, 0.96) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: var(--color-text-primary, #f8fafc);
+}
+.lunea-toast.info .lunea-toast-icon {
+    color: var(--color-gold-light, #fbeac0);
+}
+
+.lunea-toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lunea-toast-message {
+    flex: 1;
+    word-break: break-word;
+    font-size: 0.86rem;
+}
+
+/* Close button */
+.lunea-toast-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: currentColor;
+    opacity: 0.6;
+    padding: 2px 4px;
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    border-radius: 4px;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+.lunea-toast-close:hover {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .lunea-toast.success {
+    background: #ecfdf5;
+    border-color: #059669;
+    color: #065f46;
+    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .lunea-toast.error {
+    background: #fef2f2;
+    border-color: #dc2626;
+    color: #991b1b;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .lunea-toast.warning {
+    background: #fffbeb;
+    border-color: #d97706;
+    color: #92400e;
+    box-shadow: 0 8px 24px rgba(217, 119, 6, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .lunea-toast.info {
+    background: #f8fafc;
+    border-color: #c5a059;
+    color: #1e293b;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+}

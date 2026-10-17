@@ -249,6 +249,7 @@
                 await loadOrders();
             } catch (err) {
                 console.error("Quick confirm error:", err);
+                LUNEA.toastError(err.message || `Lỗi khi duyệt đơn hàng ${orderCode}`);
             }
         }
 

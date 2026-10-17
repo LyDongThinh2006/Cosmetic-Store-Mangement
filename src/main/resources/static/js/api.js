@@ -14,31 +14,96 @@ const LUNEA = (function () {
         }).format(amount).replace('VND', '₫');
     }
 
-    // Floating Luxury Toast Notification
-    function showToast(message, type = 'info', duration = 3500) {
+    // Floating Luxury Toast Notification (Centered & Non-Obstructive)
+    function showToast(message, type = 'info', duration = 3000) {
         let container = document.getElementById('toast-container');
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
+            container.setAttribute('aria-live', 'polite');
+            container.setAttribute('aria-atomic', 'true');
             document.body.appendChild(container);
+        }
+
+        // Limit maximum simultaneous toasts to 3 to prevent screen obstruction
+        const existingToasts = container.querySelectorAll('.lunea-toast');
+        if (existingToasts.length >= 3) {
+            const oldest = existingToasts[0];
+            oldest.classList.remove('show');
+            setTimeout(() => {
+                if (oldest.parentElement) oldest.parentElement.removeChild(oldest);
+            }, 200);
         }
 
         const toast = document.createElement('div');
         toast.className = `lunea-toast ${type}`;
+        toast.setAttribute('role', 'alert');
 
         let iconSvg = '';
         if (type === 'success') {
-            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+            iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
         } else if (type === 'error') {
-            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+            iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        } else if (type === 'warning') {
+            iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
         } else {
-            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+            iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
         }
 
         toast.innerHTML = `
             <div class="lunea-toast-icon">${iconSvg}</div>
             <div class="lunea-toast-message">${message}</div>
+            <button type="button" class="lunea-toast-close" aria-label="Đóng thông báo" title="Đóng">&times;</button>
         `;
+
+        let isDismissed = false;
+        let dismissTimer = null;
+
+        function dismiss() {
+            if (isDismissed) return;
+            isDismissed = true;
+            if (dismissTimer) clearTimeout(dismissTimer);
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentElement) toast.parentElement.removeChild(toast);
+            }, 280);
+        }
+
+        const closeBtn = toast.querySelector('.lunea-toast-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dismiss();
+            });
+        }
+
+        // Clicking anywhere on toast dismisses it instantly
+        toast.addEventListener('click', () => {
+            dismiss();
+        });
+
+        // Hover pause functionality
+        const actualDuration = type === 'error' ? Math.max(duration, 3800) : duration;
+        let remainingTime = actualDuration;
+        let timerStart = Date.now();
+
+        function startTimer(time) {
+            timerStart = Date.now();
+            dismissTimer = setTimeout(dismiss, time);
+        }
+
+        toast.addEventListener('mouseenter', () => {
+            if (dismissTimer) {
+                clearTimeout(dismissTimer);
+                remainingTime -= (Date.now() - timerStart);
+            }
+        });
+
+        toast.addEventListener('mouseleave', () => {
+            if (!isDismissed) {
+                startTimer(Math.max(remainingTime, 1000));
+            }
+        });
 
         container.appendChild(toast);
 
@@ -47,14 +112,9 @@ const LUNEA = (function () {
             toast.classList.add('show');
         });
 
-        // Auto remove
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                if (toast.parentElement) toast.parentElement.removeChild(toast);
-            }, 300);
-        }, duration);
+        startTimer(actualDuration);
     }
+
 
     // Unified API Fetch Wrapper
     async function apiFetch(url, options = {}) {

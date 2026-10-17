@@ -255,7 +255,16 @@
                                 ${p.status === 'ACTIVE' ? 'Đang bán' : 'Ngừng bán'}
                             </span>
                         </td>
-                        <td style="text-align: right;">
+                        <td style="text-align: right; white-space: nowrap;">
+                            ${p.status === 'ACTIVE' ? `
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4); margin-right: 6px;" onclick="toggleProductStatus(${p.id}, 'ACTIVE', '${escapeProductParam(p.name)}')" title="Tạm ngừng kinh doanh sản phẩm">
+                                    <i class="bi bi-pause-circle"></i> Ngừng bán
+                                </button>
+                            ` : `
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #34d399; border-color: rgba(52, 211, 153, 0.4); margin-right: 6px;" onclick="toggleProductStatus(${p.id}, 'INACTIVE', '${escapeProductParam(p.name)}')" title="Kích hoạt kinh doanh sản phẩm">
+                                    <i class="bi bi-play-circle"></i> Kích hoạt
+                                </button>
+                            `}
                             <a href="/products/${p.id}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem;">
                                 Xem web <i class="bi bi-box-arrow-up-right"></i>
                             </a>
@@ -263,6 +272,26 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        function escapeProductParam(str) {
+            return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        async function toggleProductStatus(id, currentStatus, name) {
+            const isActivating = currentStatus !== 'ACTIVE';
+            const actionText = isActivating ? 'kích hoạt kinh doanh' : 'ngừng kinh doanh';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionText} sản phẩm "${name}"?`)) return;
+
+            try {
+                const endpoint = isActivating ? `/api/products/${id}/activate` : `/api/products/${id}/deactivate`;
+                await LUNEA.apiFetch(endpoint, { method: 'PUT' });
+                LUNEA.toastSuccess(`Đã ${actionText} sản phẩm "${name}" thành công!`);
+                await loadProducts();
+            } catch (err) {
+                console.error("Toggle product status error:", err);
+                LUNEA.toastError(err.message || `Không thể ${actionText} sản phẩm "${name}"`);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
