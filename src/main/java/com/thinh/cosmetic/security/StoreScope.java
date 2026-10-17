@@ -35,7 +35,8 @@ public class StoreScope {
 
         List<EmployeeStoreEntity> employeeStores = employeeStoreRepository.findByEmployeeId(principal.getEmployeeId());
         return employeeStores.stream()
-                .filter(es -> es.getStore() != null && es.getStore().getId() != null)
+                .filter(es -> es.getStore() != null && es.getStore().getId() != null
+                        && (es.getStore().getStatus() == null || es.getStore().getStatus() == com.thinh.cosmetic.domain.enums.ActiveStatus.ACTIVE))
                 .map(es -> es.getStore().getId())
                 .toList();
     }

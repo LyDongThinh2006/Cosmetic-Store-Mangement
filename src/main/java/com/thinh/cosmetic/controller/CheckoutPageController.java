@@ -38,7 +38,7 @@ public class CheckoutPageController {
                 log.warn("Failed to load checkout data: {}", e.getMessage());
             }
         }
-        model.addAttribute("stores", storeService.getAll());
+        model.addAttribute("stores", storeService.getActiveStores());
         return "checkout";
     }
 

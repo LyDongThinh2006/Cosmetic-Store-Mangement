@@ -9,6 +9,8 @@ public interface StoreService {
     StoreResponse create(StoreRequest request);
     StoreResponse getById(Long id) throws Exception;
     List<StoreResponse> getAll();
+    List<StoreResponse> getActiveStores();
     StoreResponse update(Long id, StoreRequest request) throws Exception;
     void deactivate(Long id) throws Exception;
+    void activate(Long id) throws Exception;
 }

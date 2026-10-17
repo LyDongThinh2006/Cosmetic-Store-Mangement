@@ -40,7 +40,7 @@ public class HomeController {
     public String stores(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Hệ Thống Chuỗi Cửa Hàng | LUNEA");
         model.addAttribute("activeNav", "stores");
-        model.addAttribute("stores", storeService.getAll());
+        model.addAttribute("stores", storeService.getActiveStores());
         if (principal != null) {
             model.addAttribute("currentUser", principal);
         }

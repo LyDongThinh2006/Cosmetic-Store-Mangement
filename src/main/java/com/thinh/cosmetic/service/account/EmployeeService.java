@@ -11,4 +11,5 @@ public interface EmployeeService {
     List<EmployeeResponse> getAll();
     EmployeeResponse update(Long id, EmployeeRequest request) throws Exception;
     void deactivate(Long id) throws Exception;
+    void activate(Long id) throws Exception;
 }

@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface StockTransferItemRepository extends JpaRepository<StockTransferItemEntity, Long> {
     List<StockTransferItemEntity> findByStockTransferId(Long transferId);
+    boolean existsBySkuIdIn(List<Long> skuIds);
+    boolean existsBySkuId(Long skuId);
 }

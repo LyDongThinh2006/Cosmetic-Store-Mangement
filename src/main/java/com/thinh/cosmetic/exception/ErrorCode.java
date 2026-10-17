@@ -27,6 +27,8 @@ public enum ErrorCode {
     EMPLOYEE_NOT_FOUND(HttpStatus.NOT_FOUND, "Employee not found"),
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "Brand not found"),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category not found"),
+    ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer address not found"),
+    CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "Cart item not found"),
 
     // 409 Conflict
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "Email already exists"),
@@ -35,6 +37,7 @@ public enum ErrorCode {
     INSUFFICIENT_STOCK(HttpStatus.CONFLICT, "Insufficient stock for requested item"),
     NO_STORE_CAN_FULFILL(HttpStatus.CONFLICT, "No store can fulfill this order"),
     SKU_UNAVAILABLE(HttpStatus.CONFLICT, "SKU is currently unavailable"),
+    PRODUCT_NOT_AVAILABLE(HttpStatus.CONFLICT, "Product or item is no longer available"),
     PRICE_CHANGED(HttpStatus.CONFLICT, "Product price has changed"),
     INVALID_STATUS_TRANSITION(HttpStatus.CONFLICT, "Invalid status transition"),
     ORDER_NOT_CANCELLABLE(HttpStatus.CONFLICT, "Order cannot be cancelled in its current state"),

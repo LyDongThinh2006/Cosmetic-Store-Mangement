@@ -38,10 +38,11 @@ public class CategoryRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAll() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(categoryService.getAll());
+    public ResponseEntity<List<CategoryResponse>> getAll(@RequestParam(required = false) com.thinh.cosmetic.domain.enums.ActiveStatus status) {
+        if (status == com.thinh.cosmetic.domain.enums.ActiveStatus.ACTIVE) {
+            return ResponseEntity.ok(categoryService.getActiveCategories());
+        }
+        return ResponseEntity.ok(categoryService.getAll());
     }
 
     @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
@@ -65,5 +66,23 @@ public class CategoryRestController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/activate")
+    public ResponseEntity<Void> activate(
+            @PathVariable Long id
+    ) throws Exception {
+        categoryService.activate(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(
+            @PathVariable Long id
+    ) throws Exception {
+        categoryService.deactivate(id);
+        return ResponseEntity.ok().build();
     }
 }

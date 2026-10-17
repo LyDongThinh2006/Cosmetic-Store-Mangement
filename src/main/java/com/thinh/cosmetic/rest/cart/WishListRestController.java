@@ -15,11 +15,19 @@ public class WishListRestController {
     private final WishListService wishListService;
 
     private Long resolveCustomerId(AuthPrincipal principal, Long customerId) {
-        if (principal != null && principal.getCustomerId() != null) {
+        if (principal != null && principal.isCustomer()) {
+            if (customerId != null && !customerId.equals(principal.getCustomerId())) {
+                throw new com.thinh.cosmetic.exception.BusinessException(
+                        com.thinh.cosmetic.exception.ErrorCode.ACCESS_DENIED,
+                        "Không có quyền thao tác trên danh sách yêu thích của người khác");
+            }
             return principal.getCustomerId();
         }
         if (customerId != null) {
             return customerId;
+        }
+        if (principal != null && principal.getCustomerId() != null) {
+            return principal.getCustomerId();
         }
         return 1L;
     }

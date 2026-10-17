@@ -20,11 +20,32 @@ public class CartRestController {
     private final CartService cartService;
 
     private Long resolveCustomerId(AuthPrincipal principal, Long customerId) {
-        if (principal != null && principal.getCustomerId() != null) {
+        if (principal == null) {
+            if (customerId != null) {
+                return customerId;
+            }
+            throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Vui lòng đăng nhập để thao tác giỏ hàng");
+        }
+        if (principal.isCustomer()) {
+            if (customerId != null && !customerId.equals(principal.getCustomerId())) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Không có quyền thao tác trên giỏ hàng của khách hàng khác");
+            }
             return principal.getCustomerId();
         }
-        if (customerId != null) {
-            return customerId;
+        if (principal.isEmployee()) {
+            boolean hasManage = principal.getAuthorities() != null &&
+                    principal.getAuthorities().stream().anyMatch(a ->
+                            "CUSTOMER_MANAGE".equals(a.getAuthority()) || "ORDER_MANAGE".equals(a.getAuthority()) || "ROLE_ADMIN".equals(a.getAuthority()) || "ADMIN".equals(a.getAuthority()));
+            if (!hasManage) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Nhân viên không có quyền quản lý giỏ hàng của khách hàng");
+            }
+            if (customerId != null) {
+                return customerId;
+            }
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Cần cung cấp customerId khi nhân viên thao tác giỏ hàng");
+        }
+        if (principal.getCustomerId() != null) {
+            return principal.getCustomerId();
         }
         throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được tài khoản khách hàng");
     }

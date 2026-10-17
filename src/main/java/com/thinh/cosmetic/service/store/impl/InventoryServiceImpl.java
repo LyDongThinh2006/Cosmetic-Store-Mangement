@@ -85,7 +85,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public List<StoreStockResponse> getStoreStockBySku(Long skuId) {
-        List<StoreEntity> stores = storeRepository.findAll();
+        List<StoreEntity> stores = storeRepository.findAll().stream()
+                .filter(s -> s.getStatus() == null || s.getStatus() == com.thinh.cosmetic.domain.enums.ActiveStatus.ACTIVE)
+                .toList();
         Map<Long, InventoryEntity> map = inventoryRepository.findBySkuId(skuId).stream()
                 .collect(Collectors.toMap(i -> i.getStore().getId(), i -> i, (a, b) -> a));
 

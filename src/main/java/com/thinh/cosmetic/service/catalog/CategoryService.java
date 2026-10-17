@@ -12,7 +12,13 @@ public interface CategoryService {
 
     List<CategoryResponse> getAll();
 
+    List<CategoryResponse> getActiveCategories();
+
     CategoryResponse update(Long id, CategoryRequest request) throws Exception;
 
     void delete(Long id) throws Exception;
+
+    void deactivate(Long id) throws Exception;
+
+    void activate(Long id) throws Exception;
 }

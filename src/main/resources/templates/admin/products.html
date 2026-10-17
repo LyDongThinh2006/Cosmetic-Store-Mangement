@@ -25,6 +25,12 @@
                     <select id="categoryFilter" class="admin-select" onchange="filterProducts()" style="min-width: 170px;">
                         <option value="">Tất cả Danh mục</option>
                     </select>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterProducts()" style="min-width: 150px;">
+                        <option value="">Tất cả Trạng thái</option>
+                        <option value="ACTIVE">Đang kinh doanh</option>
+                        <option value="INACTIVE">Ngừng kinh doanh</option>
+                    </select>
                 </div>
 
                 <div class="filter-group">
@@ -119,11 +125,11 @@
 
         async function loadProducts() {
             try {
-                // Parallel fetch products, brands, categories
+                // Parallel fetch products, brands, categories (includeInactive=true for back-office admin)
                 const [products, brands, categories] = await Promise.all([
-                    LUNEA.apiFetch('/api/products'),
-                    LUNEA.apiFetch('/api/brands').catch(() => []),
-                    LUNEA.apiFetch('/api/categories').catch(() => [])
+                    LUNEA.apiFetch('/api/products?includeInactive=true'),
+                    LUNEA.apiFetch('/api/brands?includeInactive=true').catch(() => []),
+                    LUNEA.apiFetch('/api/categories?includeInactive=true').catch(() => [])
                 ]);
 
                 allProducts = products || [];
@@ -173,9 +179,13 @@
             const term = document.getElementById('searchInput').value.trim().toLowerCase();
             const brand = document.getElementById('brandFilter').value;
             const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter') ? document.getElementById('statusFilter').value : '';
 
             let filtered = allProducts;
 
+            if (status) {
+                filtered = filtered.filter(p => p.status === status);
+            }
             if (brand) {
                 filtered = filtered.filter(p => p.brand && p.brand.name === brand);
             }

@@ -47,7 +47,12 @@ public class CartServiceImpl implements CartService {
     public CartResponse addItem(Long customerId, CartItemRequest request) throws Exception {
         CartEntity cart = getOrCreateCart(customerId);
         ProductSkuEntity sku = skuRepository.findById(request.getSkuId())
-                .orElseThrow(() -> new Exception("Product SKU not found: " + request.getSkuId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SKU_NOT_FOUND, "Product SKU not found: " + request.getSkuId()));
+
+        if (sku.getStatus() == com.thinh.cosmetic.domain.enums.ActiveStatus.INACTIVE ||
+                (sku.getProduct() != null && sku.getProduct().getStatus() == com.thinh.cosmetic.domain.enums.ActiveStatus.INACTIVE)) {
+            throw new BusinessException(ErrorCode.PRODUCT_NOT_AVAILABLE, "Sản phẩm hoặc biến thể này đã ngừng kinh doanh");
+        }
 
         CartItemEntity item = cartItemRepository.findByCartIdAndSkuId(cart.getId(), sku.getId())
                 .orElse(null);
@@ -82,7 +87,11 @@ public class CartServiceImpl implements CartService {
     public CartResponse updateItemQuantity(Long customerId, Long cartItemId, Integer quantity) throws Exception {
         CartEntity cart = getOrCreateCart(customerId);
         CartItemEntity item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new Exception("Cart item not found: " + cartItemId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND, "Không tìm thấy mặt hàng trong giỏ: " + cartItemId));
+
+        if (item.getCart() == null || !cart.getId().equals(item.getCart().getId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "Mặt hàng này không thuộc giỏ hàng của bạn");
+        }
 
         if (quantity <= 0) {
             cartItemRepository.delete(item);
@@ -105,7 +114,13 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartResponse removeItem(Long customerId, Long cartItemId) throws Exception {
         CartEntity cart = getOrCreateCart(customerId);
-        cartItemRepository.deleteById(cartItemId);
+        CartItemEntity item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND, "Không tìm thấy mặt hàng trong giỏ: " + cartItemId));
+
+        if (item.getCart() == null || !cart.getId().equals(item.getCart().getId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "Mặt hàng này không thuộc giỏ hàng của bạn");
+        }
+        cartItemRepository.delete(item);
         return toCartResponse(cart);
     }
 

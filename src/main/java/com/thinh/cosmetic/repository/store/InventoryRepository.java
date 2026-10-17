@@ -14,4 +14,6 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity, Long
 
     @Query("SELECT i FROM InventoryEntity i WHERE i.store.id = :storeId AND i.actualStock <= i.minimumStock")
     List<InventoryEntity> findLowStock(@Param("storeId") Long storeId);
+
+    boolean existsBySkuIdIn(List<Long> skuIds);
 }

@@ -18,5 +18,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
     @Query("SELECT COUNT(r) > 0 FROM ReviewEntity r WHERE r.customer.id = :customerId AND r.order.id = :orderId AND r.product.id = :productId")
     boolean existsByCustomerIdAndOrderIdAndProductId(@Param("customerId") Long customerId, @Param("orderId") Long orderId, @Param("productId") Long productId);
+
+    boolean existsByProductId(Long productId);
 }
 

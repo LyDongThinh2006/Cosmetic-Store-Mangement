@@ -30,7 +30,10 @@ public class StoreRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreResponse>> getAll() {
+    public ResponseEntity<List<StoreResponse>> getAll(@RequestParam(required = false) com.thinh.cosmetic.domain.enums.ActiveStatus status) {
+        if (status == com.thinh.cosmetic.domain.enums.ActiveStatus.ACTIVE) {
+            return ResponseEntity.ok(storeService.getActiveStores());
+        }
         return ResponseEntity.ok(storeService.getAll());
     }
 
@@ -48,5 +51,19 @@ public class StoreRestController {
     public ResponseEntity<Void> deactivate(@PathVariable Long id) throws Exception {
         storeService.deactivate(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('STORE_MANAGE')")
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<Void> activate(@PathVariable Long id) throws Exception {
+        storeService.activate(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('STORE_MANAGE')")
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivatePut(@PathVariable Long id) throws Exception {
+        storeService.deactivate(id);
+        return ResponseEntity.ok().build();
     }
 }

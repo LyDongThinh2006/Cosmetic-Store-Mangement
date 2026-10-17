@@ -79,7 +79,8 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return account != null && account.getStatus() == ActiveStatus.ACTIVE;
+        return account != null && account.getStatus() == ActiveStatus.ACTIVE
+                && (employee == null || employee.getStatus() == ActiveStatus.ACTIVE);
     }
 
     @Override
@@ -89,6 +90,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return account != null && account.getStatus() == ActiveStatus.ACTIVE;
+        return account != null && account.getStatus() == ActiveStatus.ACTIVE
+                && (employee == null || employee.getStatus() == ActiveStatus.ACTIVE);
     }
 }

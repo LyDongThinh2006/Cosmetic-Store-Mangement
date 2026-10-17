@@ -6,7 +6,10 @@ import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.domain.entity.inventory.*;
 import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
 import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.domain.enums.PurchaseOrderStatus;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
 import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
 import com.thinh.cosmetic.repository.purchase.*;
@@ -37,9 +40,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public PurchaseOrderResponse create(PurchaseOrderRequest request, Long employeeId) throws Exception {
         SupplierEntity supplier = supplierRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new Exception("Supplier not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Supplier not found"));
         StoreEntity store = storeRepository.findById(request.getReceivingStoreId())
-                .orElseThrow(() -> new Exception("Store not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND, "Store not found"));
+
+        if (store.getStatus() == ActiveStatus.INACTIVE) {
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND, "Chi nhánh nhận đã ngừng hoạt động: " + store.getName());
+        }
 
         PurchaseOrderEntity po = PurchaseOrderEntity.builder()
                 .supplier(supplier)

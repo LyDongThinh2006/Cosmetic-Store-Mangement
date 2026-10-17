@@ -12,7 +12,13 @@ public interface BrandService {
 
     List<BrandResponse> getAll();
 
+    List<BrandResponse> getActiveBrands();
+
     BrandResponse update(Long id, BrandRequest request) throws Exception;
 
     void delete(Long id) throws Exception;
+
+    void deactivate(Long id) throws Exception;
+
+    void activate(Long id) throws Exception;
 }

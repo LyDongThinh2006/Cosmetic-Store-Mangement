@@ -52,4 +52,18 @@ public class EmployeeRestController {
         employeeService.deactivate(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<Void> activate(@PathVariable Long id) throws Exception {
+        employeeService.activate(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('EMPLOYEE_MANAGE')")
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivatePut(@PathVariable Long id) throws Exception {
+        employeeService.deactivate(id);
+        return ResponseEntity.ok().build();
+    }
 }

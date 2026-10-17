@@ -87,7 +87,11 @@ public class OrderServiceImpl implements OrderService {
         // Resolve address details
         CustomerAddressEntity address = null;
         if (request.getCustomerAddressId() != null) {
-            address = addressRepository.findById(request.getCustomerAddressId()).orElse(null);
+            address = addressRepository.findById(request.getCustomerAddressId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND, "Không tìm thấy địa chỉ giao hàng: " + request.getCustomerAddressId()));
+            if (address.getCustomerEntity() == null || !customer.getId().equals(address.getCustomerEntity().getId())) {
+                throw new BusinessException(ErrorCode.ACCESS_DENIED, "Địa chỉ giao hàng không thuộc tài khoản của bạn");
+            }
         }
 
         String recipientName = (address != null && address.getRecipientName() != null && !address.getRecipientName().isBlank())
@@ -163,8 +167,8 @@ public class OrderServiceImpl implements OrderService {
             StoreEntity requestedStore = storeRepository.findById(request.getFulfillmentStoreId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND, "Không tìm thấy chi nhánh: " + request.getFulfillmentStoreId()));
 
-            if (requestedStore.getStatus() != null && requestedStore.getStatus() != ActiveStatus.ACTIVE) {
-                throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK, "Chi nhánh hiện không hoạt động: " + requestedStore.getName());
+            if (requestedStore.getStatus() == ActiveStatus.INACTIVE) {
+                throw new BusinessException(ErrorCode.STORE_NOT_FOUND, "Chi nhánh đã ngừng hoạt động: " + requestedStore.getName());
             }
 
             for (Map.Entry<Long, Integer> entry : skuQuantities.entrySet()) {

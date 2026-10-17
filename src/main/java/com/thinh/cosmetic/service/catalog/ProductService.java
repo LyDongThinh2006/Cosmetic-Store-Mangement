@@ -13,6 +13,8 @@ public interface ProductService {
 
     List<ProductResponse> getAll();
 
+    List<ProductResponse> getAll(boolean includeInactive);
+
     List<ProductResponse> searchAndFilter(
             String keyword,
             Long brandId,
@@ -23,7 +25,22 @@ public interface ProductService {
             String sortBy
     );
 
+    List<ProductResponse> searchAndFilter(
+            String keyword,
+            Long brandId,
+            Long categoryId,
+            String skinType,
+            String concern,
+            String priceRange,
+            String sortBy,
+            boolean includeInactive
+    );
+
     ProductResponse update(Long id, ProductRequest request) throws Exception;
 
     void delete(Long id) throws Exception;
+
+    void deactivate(Long id) throws Exception;
+
+    void activate(Long id) throws Exception;
 }

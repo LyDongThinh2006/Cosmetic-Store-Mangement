@@ -48,16 +48,17 @@ public class ProductRestController {
             @RequestParam(required = false) String skinType,
             @RequestParam(required = false) String concern,
             @RequestParam(required = false) String priceRange,
-            @RequestParam(required = false) String sortBy
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInactive
     ) {
         if (keyword != null || brandId != null || categoryId != null || skinType != null || concern != null || priceRange != null || sortBy != null) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(productService.searchAndFilter(keyword, brandId, categoryId, skinType, concern, priceRange, sortBy));
+                    .body(productService.searchAndFilter(keyword, brandId, categoryId, skinType, concern, priceRange, sortBy, includeInactive));
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(productService.getAll());
+                .body(productService.getAll(includeInactive));
     }
 
     @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
@@ -81,6 +82,24 @@ public class ProductRestController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/activate")
+    public ResponseEntity<Void> activate(
+            @PathVariable Long id
+    ) throws Exception {
+        productService.activate(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(
+            @PathVariable Long id
+    ) throws Exception {
+        productService.deactivate(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/sku/{skuId}/stores")

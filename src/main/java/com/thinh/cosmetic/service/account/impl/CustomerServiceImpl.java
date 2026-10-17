@@ -14,6 +14,8 @@ import com.thinh.cosmetic.mapper.account.CustomerMapper;
 import com.thinh.cosmetic.repository.account.BeautyProfileRepository;
 import com.thinh.cosmetic.repository.account.CustomerAddressRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.service.account.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -72,14 +74,22 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerAddressResponse updateAddress(Long customerId, Long addressId, CustomerAddressRequest request) throws Exception {
         CustomerAddressEntity address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new Exception("Address not found: " + addressId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND, "Không tìm thấy địa chỉ #" + addressId));
+        if (address.getCustomerEntity() == null || !customerId.equals(address.getCustomerEntity().getId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "Địa chỉ này không thuộc về tài khoản của bạn");
+        }
         addressMapper.updateEntity(request, address);
         return addressMapper.toResponse(addressRepository.save(address));
     }
 
     @Override
     public void deleteAddress(Long customerId, Long addressId) throws Exception {
-        addressRepository.deleteById(addressId);
+        CustomerAddressEntity address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ADDRESS_NOT_FOUND, "Không tìm thấy địa chỉ #" + addressId));
+        if (address.getCustomerEntity() == null || !customerId.equals(address.getCustomerEntity().getId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "Địa chỉ này không thuộc về tài khoản của bạn");
+        }
+        addressRepository.delete(address);
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.repository.account.*;
 import com.thinh.cosmetic.repository.store.StoreRepository;
 import com.thinh.cosmetic.service.account.EmployeeService;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .phone(request.getPhone())
                 .passwordHash(passwordEncoder.encode(rawPassword))
                 .accountType(AccountType.EMPLOYEE)
+                .status(request.getStatus() != null ? request.getStatus() : ActiveStatus.ACTIVE)
                 .build();
         account = accountRepository.save(account);
 
@@ -52,7 +55,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .fullName(request.getFullName())
                 .internalEmail(request.getInternalEmail())
                 .phone(request.getPhone())
-                .status(ActiveStatus.ACTIVE)
+                .status(request.getStatus() != null ? request.getStatus() : ActiveStatus.ACTIVE)
                 .build();
         employee = employeeRepository.save(employee);
 
@@ -83,7 +86,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional(readOnly = true)
     public EmployeeResponse getById(Long id) throws Exception {
         EmployeeEntity employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new Exception("Employee not found: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.EMPLOYEE_NOT_FOUND, "Không tìm thấy nhân viên #" + id));
         return toResponse(employee);
     }
 
@@ -96,12 +99,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse update(Long id, EmployeeRequest request) throws Exception {
         EmployeeEntity employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new Exception("Employee not found: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.EMPLOYEE_NOT_FOUND, "Không tìm thấy nhân viên #" + id));
         if (request.getFullName() != null) employee.setFullName(request.getFullName());
         if (request.getPhone() != null) employee.setPhone(request.getPhone());
 
+        if (request.getStatus() != null) {
+            employee.setStatus(request.getStatus());
+            if (employee.getAccount() != null) {
+                employee.getAccount().setStatus(request.getStatus());
+                accountRepository.save(employee.getAccount());
+            }
+        }
+
         if (request.getPassword() != null && !request.getPassword().isBlank() && employee.getAccount() != null) {
             employee.getAccount().setPasswordHash(passwordEncoder.encode(request.getPassword()));
+            accountRepository.save(employee.getAccount());
         }
 
         if (request.getRoleIds() != null) {
@@ -132,8 +144,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deactivate(Long id) throws Exception {
         EmployeeEntity employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new Exception("Employee not found: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.EMPLOYEE_NOT_FOUND, "Không tìm thấy nhân viên #" + id));
         employee.setStatus(ActiveStatus.INACTIVE);
+        if (employee.getAccount() != null) {
+            employee.getAccount().setStatus(ActiveStatus.INACTIVE);
+            accountRepository.save(employee.getAccount());
+        }
+        employeeRepository.save(employee);
+    }
+
+    @Override
+    public void activate(Long id) throws Exception {
+        EmployeeEntity employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.EMPLOYEE_NOT_FOUND, "Không tìm thấy nhân viên #" + id));
+        employee.setStatus(ActiveStatus.ACTIVE);
+        if (employee.getAccount() != null) {
+            employee.getAccount().setStatus(ActiveStatus.ACTIVE);
+            accountRepository.save(employee.getAccount());
+        }
         employeeRepository.save(employee);
     }
 

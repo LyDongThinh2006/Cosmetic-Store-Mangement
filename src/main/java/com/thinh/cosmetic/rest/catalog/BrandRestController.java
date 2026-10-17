@@ -36,7 +36,10 @@ public class BrandRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BrandResponse>> getAll() {
+    public ResponseEntity<List<BrandResponse>> getAll(@RequestParam(required = false) com.thinh.cosmetic.domain.enums.ActiveStatus status) {
+        if (status == com.thinh.cosmetic.domain.enums.ActiveStatus.ACTIVE) {
+            return ResponseEntity.ok(brandService.getActiveBrands());
+        }
         return ResponseEntity.ok(brandService.getAll());
     }
 
@@ -56,5 +59,23 @@ public class BrandRestController {
     ) throws Exception {
         brandService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/activate")
+    public ResponseEntity<Void> activate(
+            @PathVariable Long id
+    ) throws Exception {
+        brandService.activate(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(
+            @PathVariable Long id
+    ) throws Exception {
+        brandService.deactivate(id);
+        return ResponseEntity.ok().build();
     }
 }

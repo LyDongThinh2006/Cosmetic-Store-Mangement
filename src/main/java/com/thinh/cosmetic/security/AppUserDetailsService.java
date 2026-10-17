@@ -65,6 +65,9 @@ public class AppUserDetailsService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         } else if (account.getAccountType() == AccountType.EMPLOYEE) {
             employee = employeeRepository.findByAccountId(account.getId()).orElse(null);
+            if (employee == null || employee.getStatus() == ActiveStatus.INACTIVE) {
+                throw new BadCredentialsException("Email/SĐT hoặc mật khẩu không đúng, hoặc tài khoản đã bị khóa");
+            }
             authorities.add(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
 
             if (employee != null) {

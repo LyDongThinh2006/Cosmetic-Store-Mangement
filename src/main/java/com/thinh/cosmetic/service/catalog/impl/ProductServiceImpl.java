@@ -19,10 +19,18 @@ import com.thinh.cosmetic.domain.entity.catalog.ProductAttributeValueEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductImageEntity;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.domain.entity.inventory.InventoryEntity;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
+import com.thinh.cosmetic.repository.cart.CartItemRepository;
 import com.thinh.cosmetic.repository.catalog.ProductAttributeValueRepository;
 import com.thinh.cosmetic.repository.catalog.ProductImageRepository;
 import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
+import com.thinh.cosmetic.repository.order.OrderItemRepository;
+import com.thinh.cosmetic.repository.purchase.PurchaseOrderItemRepository;
+import com.thinh.cosmetic.repository.review.ReviewRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;
+import com.thinh.cosmetic.repository.store.StockTransferItemRepository;
 
 import java.math.BigDecimal;
 import java.text.Normalizer;
@@ -44,6 +52,11 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
     private final InventoryRepository inventoryRepository;
     private final ProductAttributeValueRepository productAttributeValueRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final PurchaseOrderItemRepository purchaseOrderItemRepository;
+    private final StockTransferItemRepository stockTransferItemRepository;
+    private final ReviewRepository reviewRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Override
     public ProductResponse create(ProductRequest request) throws Exception {
@@ -76,18 +89,22 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductResponse getById(Long id) throws Exception {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new Exception(
-                                "Product not found: " + id
-                        ));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "Product not found: " + id));
         return enrich(product, productMapper.toResponse(product));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ProductResponse> getAll() {
+        return getAll(false);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getAll(boolean includeInactive) {
         return productRepository.findAll()
                 .stream()
+                .filter(p -> includeInactive || p.getStatus() == null || p.getStatus() == ActiveStatus.ACTIVE)
                 .map(p -> enrich(p, productMapper.toResponse(p)))
                 .toList();
     }
@@ -103,7 +120,22 @@ public class ProductServiceImpl implements ProductService {
             String priceRange,
             String sortBy
     ) {
-        List<ProductResponse> all = getAll();
+        return searchAndFilter(keyword, brandId, categoryId, skinType, concern, priceRange, sortBy, false);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchAndFilter(
+            String keyword,
+            Long brandId,
+            Long categoryId,
+            String skinType,
+            String concern,
+            String priceRange,
+            String sortBy,
+            boolean includeInactive
+    ) {
+        List<ProductResponse> all = getAll(includeInactive);
 
         return all.stream()
                 .filter(p -> matchesKeyword(p, keyword))
@@ -262,43 +294,87 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse update(Long id, ProductRequest request) throws Exception {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new Exception(
-                                "Product not found: " + id
-                        ));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "Product not found: " + id));
 
         productMapper.updateEntity(request, product);
+        if (request.getStatus() != null) {
+            product.setStatus(request.getStatus());
+        }
 
         if (request.getBrandId() != null){
             BrandEntity brand = brandRepository.findById(request.getBrandId())
-                    .orElseThrow(() ->
-                            new Exception(
-                                    "Brand not found: " + request.getBrandId()
-                            ));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.BRAND_NOT_FOUND, "Brand not found: " + request.getBrandId()));
             product.setBrand(brand);
         }
 
         if (request.getCategoryId() != null) {
             CategoryEntity category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() ->
-                            new Exception(
-                                    "Category not found: " + request.getCategoryId()
-                            ));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND, "Category not found: " + request.getCategoryId()));
             product.setCategory(category);
         }
 
         ProductEntity savedProduct = productRepository.save(product);
 
-        return productMapper.toResponse(savedProduct);
+        return enrich(savedProduct, productMapper.toResponse(savedProduct));
     }
 
     @Override
     public void delete(Long id) throws Exception {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new Exception(
-                                "Product not found: " + id
-                        ));
-        productRepository.deleteById(id);
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "Product not found: " + id));
+
+        List<ProductSkuEntity> skus = productSkuRepository.findByProductId(product.getId());
+        List<Long> skuIds = skus.stream().map(ProductSkuEntity::getId).toList();
+
+        boolean hasOrderItems = !skuIds.isEmpty() && orderItemRepository.existsBySkuIdIn(skuIds);
+        boolean hasPurchaseOrders = !skuIds.isEmpty() && purchaseOrderItemRepository.existsBySkuIdIn(skuIds);
+        boolean hasStockTransfers = !skuIds.isEmpty() && stockTransferItemRepository.existsBySkuIdIn(skuIds);
+        boolean hasInventory = !skuIds.isEmpty() && inventoryRepository.existsBySkuIdIn(skuIds);
+        boolean hasReviews = reviewRepository.existsByProductId(product.getId());
+
+        if (hasOrderItems || hasPurchaseOrders || hasStockTransfers || hasInventory || hasReviews) {
+            // Apply soft-delete / deactivation policy to preserve order and transaction history
+            product.setStatus(ActiveStatus.INACTIVE);
+            for (ProductSkuEntity sku : skus) {
+                sku.setStatus(ActiveStatus.INACTIVE);
+                productSkuRepository.save(sku);
+            }
+            productRepository.save(product);
+        } else {
+            // Clean hard delete of unreferenced product
+            if (!skuIds.isEmpty()) {
+                cartItemRepository.deleteBySkuIdIn(skuIds);
+            }
+            productAttributeValueRepository.deleteByProductId(product.getId());
+            productImageRepository.deleteByProductId(product.getId());
+            productSkuRepository.deleteAll(skus);
+            productRepository.delete(product);
+        }
+    }
+
+    @Override
+    public void deactivate(Long id) throws Exception {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "Product not found: " + id));
+        product.setStatus(ActiveStatus.INACTIVE);
+        List<ProductSkuEntity> skus = productSkuRepository.findByProductId(product.getId());
+        for (ProductSkuEntity sku : skus) {
+            sku.setStatus(ActiveStatus.INACTIVE);
+            productSkuRepository.save(sku);
+        }
+        productRepository.save(product);
+    }
+
+    @Override
+    public void activate(Long id) throws Exception {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "Product not found: " + id));
+        product.setStatus(ActiveStatus.ACTIVE);
+        List<ProductSkuEntity> skus = productSkuRepository.findByProductId(product.getId());
+        for (ProductSkuEntity sku : skus) {
+            sku.setStatus(ActiveStatus.ACTIVE);
+            productSkuRepository.save(sku);
+        }
+        productRepository.save(product);
     }
 }

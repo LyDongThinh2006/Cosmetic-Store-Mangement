@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrderItemEntity, Long> {
     List<PurchaseOrderItemEntity> findByPurchaseOrderId(Long purchaseOrderId);
+    boolean existsBySkuIdIn(List<Long> skuIds);
+    boolean existsBySkuId(Long skuId);
 }

@@ -1,5 +1,6 @@
 package com.thinh.cosmetic.domain.dto.request.account;
 
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -38,4 +39,6 @@ public class EmployeeRequest {
     private List<Long> roleIds;
 
     private List<Long> storeIds;
+
+    private ActiveStatus status;
 }

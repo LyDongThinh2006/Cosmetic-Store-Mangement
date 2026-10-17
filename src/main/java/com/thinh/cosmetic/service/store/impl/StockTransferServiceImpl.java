@@ -4,7 +4,10 @@ import com.thinh.cosmetic.domain.dto.request.store.StockTransferRequest;
 import com.thinh.cosmetic.domain.dto.response.store.StockTransferResponse;
 import com.thinh.cosmetic.domain.entity.catalog.ProductSkuEntity;
 import com.thinh.cosmetic.domain.entity.inventory.*;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.domain.enums.TransferStatus;
+import com.thinh.cosmetic.exception.BusinessException;
+import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
 import com.thinh.cosmetic.repository.catalog.ProductSkuRepository;
 import com.thinh.cosmetic.repository.store.*;
@@ -31,9 +34,16 @@ public class StockTransferServiceImpl implements StockTransferService {
     @Override
     public StockTransferResponse create(StockTransferRequest request, Long employeeId) throws Exception {
         StoreEntity source = storeRepository.findById(request.getSourceStoreId())
-                .orElseThrow(() -> new Exception("Source store not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND, "Source store not found"));
         StoreEntity destination = storeRepository.findById(request.getDestinationStoreId())
-                .orElseThrow(() -> new Exception("Destination store not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND, "Destination store not found"));
+
+        if (source.getStatus() == ActiveStatus.INACTIVE) {
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND, "Chi nhánh xuất đã ngừng hoạt động: " + source.getName());
+        }
+        if (destination.getStatus() == ActiveStatus.INACTIVE) {
+            throw new BusinessException(ErrorCode.STORE_NOT_FOUND, "Chi nhánh nhận đã ngừng hoạt động: " + destination.getName());
+        }
 
         StockTransferEntity transfer = StockTransferEntity.builder()
                 .sourceStore(source)

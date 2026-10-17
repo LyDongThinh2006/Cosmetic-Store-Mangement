@@ -10,4 +10,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> findByBrandId(Long brandId);
     List<ProductEntity> findByIsFeaturedTrue();
     List<ProductEntity> findByNameContainingIgnoreCase(String keyword);
+    List<ProductEntity> findByStatus(com.thinh.cosmetic.domain.enums.ActiveStatus status);
+    boolean existsByBrandId(Long brandId);
+    long countByBrandId(Long brandId);
+    boolean existsByCategoryId(Long categoryId);
+    long countByCategoryId(Long categoryId);
 }
