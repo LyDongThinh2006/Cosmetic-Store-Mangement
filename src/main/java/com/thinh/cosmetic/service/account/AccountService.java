@@ -15,4 +15,5 @@ public interface AccountService {
     void resetPassword(ResetPasswordRequest request);
     SendOtpResponse sendResetPasswordOtp(SendOtpRequest request);
     void verifyResetPasswordOtp(VerifyOtpRequest request);
+    SendOtpResponse sendRegistrationOtp(SendOtpRequest request);
 }

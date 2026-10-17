@@ -53,6 +53,10 @@ public class AccountServiceImpl implements AccountService {
         String email = request.getEmail() != null ? request.getEmail().trim().toLowerCase() : "";
         String phone = request.getPhone() != null ? request.getPhone().replaceAll("\\s+", "").replace("+84", "0") : null;
         String fullName = request.getFullName() != null ? request.getFullName().trim() : "";
+        String otp = request.getOtp() != null ? request.getOtp().trim() : "";
+
+        // Verify registration OTP
+        otpService.completeRegistrationOtp(email, otp);
 
         if (accountRepository.existsByEmail(email)) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL, "Email already exists: " + email);
@@ -137,5 +141,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void resetPassword(ResetPasswordRequest request) {
         otpService.completePasswordReset(request);
+    }
+
+    @Override
+    public SendOtpResponse sendRegistrationOtp(SendOtpRequest request) {
+        return otpService.sendRegistrationOtp(request);
     }
 }

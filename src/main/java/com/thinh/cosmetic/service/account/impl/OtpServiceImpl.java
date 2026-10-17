@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thinh.cosmetic.domain.entity.account.RegistrationOtpEntity;
+import com.thinh.cosmetic.repository.account.RegistrationOtpRepository;
 import com.thinh.cosmetic.service.notification.EmailService;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -37,6 +39,7 @@ public class OtpServiceImpl implements OtpService {
 
     private final AccountRepository accountRepository;
     private final PasswordResetOtpRepository passwordResetOtpRepository;
+    private final RegistrationOtpRepository registrationOtpRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
@@ -191,6 +194,120 @@ public class OtpServiceImpl implements OtpService {
         passwordResetOtpRepository.save(otpEntity);
 
         log.info(">>> [LUNEA OTP] Đặt lại mật khẩu thành công cho tài khoản: {}", account.getUsername());
+    }
+
+    @Override
+    public SendOtpResponse sendRegistrationOtp(SendOtpRequest request) {
+        String email = request.getEmailOrPhone() != null ? request.getEmailOrPhone().trim().toLowerCase() : "";
+        if (email.isBlank() || !email.contains("@")) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Địa chỉ email không hợp lệ");
+        }
+
+        if (accountRepository.existsByEmail(email)) {
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL, "Email này đã được sử dụng. Vui lòng đăng nhập hoặc dùng email khác.");
+        }
+
+        // Check 60-second cooldown from the most recently generated registration OTP for this email
+        Optional<RegistrationOtpEntity> lastOtpOpt = registrationOtpRepository.findTopByEmailIgnoreCaseOrderByCreatedAtDesc(email);
+        if (lastOtpOpt.isPresent() && lastOtpOpt.get().getCreatedAt() != null) {
+            LocalDateTime createdAt = lastOtpOpt.get().getCreatedAt();
+            LocalDateTime cooldownUntil = createdAt.plusSeconds(OTP_COOLDOWN_SECONDS);
+            if (cooldownUntil.isAfter(LocalDateTime.now())) {
+                long waitSeconds = Duration.between(LocalDateTime.now(), cooldownUntil).getSeconds() + 1;
+                throw new BusinessException(
+                        ErrorCode.OTP_COOLDOWN,
+                        "Vui lòng đợi " + Math.max(1, waitSeconds) + " giây trước khi yêu cầu gửi lại mã OTP mới."
+                );
+            }
+        }
+
+        // Invalidate any existing unused registration OTPs for this email
+        List<RegistrationOtpEntity> activeOtps = registrationOtpRepository.findByEmailIgnoreCaseAndUsedFalse(email);
+        for (RegistrationOtpEntity oldOtp : activeOtps) {
+            oldOtp.setUsed(true);
+        }
+        registrationOtpRepository.saveAll(activeOtps);
+
+        // Generate cryptographically secure 6-digit OTP (100000 - 999999)
+        int code = 100000 + secureRandom.nextInt(900000);
+        String otpCode = String.valueOf(code);
+
+        RegistrationOtpEntity otpEntity = RegistrationOtpEntity.builder()
+                .email(email)
+                .otpCode(otpCode)
+                .expiryTime(LocalDateTime.now().plusMinutes(OTP_EXPIRY_MINUTES))
+                .used(false)
+                .failedAttempts(0)
+                .build();
+
+        registrationOtpRepository.save(otpEntity);
+
+        String maskedEmail = maskIdentifier(email);
+
+        // Send branded registration OTP email
+        emailService.sendRegistrationOtpEmail(email, otpCode, OTP_EXPIRY_MINUTES);
+
+        log.info("=================================================================");
+        log.info(">>> [LUNEA OTP ĐĂNG KÝ] MÃ KÍCH HOẠT TÀI KHOẢN CHO [{}]: {}", email, otpCode);
+        log.info(">>> [LUNEA OTP ĐĂNG KÝ] Hiệu lực: {} phút | Hết hạn: {}",
+                OTP_EXPIRY_MINUTES, otpEntity.getExpiryTime());
+        log.info("=================================================================");
+
+        return SendOtpResponse.builder()
+                .success(true)
+                .message("Mã xác thực OTP đã được gửi thành công đến " + maskedEmail + ". Mã có hiệu lực trong " + OTP_EXPIRY_MINUTES + " phút.")
+                .emailOrPhone(email)
+                .maskedDestination(maskedEmail)
+                .expiresInSeconds(OTP_EXPIRY_MINUTES * 60L)
+                .debugOtp(otpCode)
+                .build();
+    }
+
+    @Override
+    public RegistrationOtpEntity verifyRegistrationOtp(String email, String otp) {
+        String normalizedEmail = email != null ? email.trim().toLowerCase() : "";
+        String cleanOtp = otp != null ? otp.trim() : "";
+
+        if (normalizedEmail.isBlank() || cleanOtp.isBlank()) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Email và mã OTP không được để trống");
+        }
+
+        RegistrationOtpEntity otpEntity = registrationOtpRepository.findTopByEmailIgnoreCaseAndUsedFalseOrderByCreatedAtDesc(normalizedEmail)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_OTP, "Không tìm thấy mã OTP hợp lệ hoặc mã đã được sử dụng. Vui lòng yêu cầu mã mới."));
+
+        if (otpEntity.getFailedAttempts() >= MAX_FAILED_ATTEMPTS) {
+            otpEntity.setUsed(true);
+            registrationOtpRepository.save(otpEntity);
+            throw new BusinessException(ErrorCode.OTP_MAX_ATTEMPTS, "Bạn đã nhập sai mã OTP quá " + MAX_FAILED_ATTEMPTS + " lần. Vui lòng yêu cầu mã mới.");
+        }
+
+        if (otpEntity.getExpiryTime().isBefore(LocalDateTime.now())) {
+            otpEntity.setUsed(true);
+            registrationOtpRepository.save(otpEntity);
+            throw new BusinessException(ErrorCode.OTP_EXPIRED, "Mã OTP đã hết hạn. Vui lòng yêu cầu gửi lại mã mới.");
+        }
+
+        if (!otpEntity.getOtpCode().equals(cleanOtp)) {
+            otpEntity.setFailedAttempts(otpEntity.getFailedAttempts() + 1);
+            registrationOtpRepository.save(otpEntity);
+            int remaining = MAX_FAILED_ATTEMPTS - otpEntity.getFailedAttempts();
+            if (remaining <= 0) {
+                otpEntity.setUsed(true);
+                registrationOtpRepository.save(otpEntity);
+                throw new BusinessException(ErrorCode.OTP_MAX_ATTEMPTS, "Bạn đã nhập sai mã OTP quá " + MAX_FAILED_ATTEMPTS + " lần. Vui lòng yêu cầu mã mới.");
+            }
+            throw new BusinessException(ErrorCode.INVALID_OTP, "Mã OTP không chính xác. Bạn còn " + remaining + " lần thử.");
+        }
+
+        return otpEntity;
+    }
+
+    @Override
+    public void completeRegistrationOtp(String email, String otp) {
+        RegistrationOtpEntity otpEntity = verifyRegistrationOtp(email, otp);
+        otpEntity.setUsed(true);
+        registrationOtpRepository.save(otpEntity);
+        log.info(">>> [LUNEA OTP ĐĂNG KÝ] Xác thực OTP thành công cho email: {}", email);
     }
 
     @Override

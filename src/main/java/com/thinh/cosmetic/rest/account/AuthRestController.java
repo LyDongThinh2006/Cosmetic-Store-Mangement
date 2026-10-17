@@ -31,6 +31,12 @@ public class AuthRestController {
     private final AccountService accountService;
     private final AuthCookieFactory authCookieFactory;
 
+    @PostMapping("/register/send-otp")
+    public ResponseEntity<SendOtpResponse> sendRegisterOtp(@Valid @RequestBody SendOtpRequest request) {
+        SendOtpResponse response = accountService.sendRegistrationOtp(request);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<CustomerResponse> register(@Valid @RequestBody RegisterRequest request) {
         CustomerResponse response = accountService.register(request);

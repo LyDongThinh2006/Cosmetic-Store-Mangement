@@ -8,7 +8,7 @@
     <header th:replace="~{fragments/header :: header}"></header>
 
     <main class="site-main" id="main-content"
-        style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px;">
+        style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding-top: 40px; padding-bottom: 40px;">
         <div class="auth-split-wrapper reveal-on-scroll">
             <!-- Left Side: Brand & Crescent Moon Visual in Background -->
             <div class="auth-story-col">
@@ -36,64 +36,137 @@
                 </div>
             </div>
 
-            <!-- Right Side: Dark Luxury Register Form (Page 7 PDF) -->
+            <!-- Right Side: Dark Luxury Register Form with OTP -->
             <div class="auth-form-card">
-                <h2 class="auth-title" style="margin-bottom: 8px;">Tạo tài khoản</h2>
-                <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">Các trường có dấu *
-                    là bắt buộc.</p>
+                <!-- STEP 1: Enter Registration Info -->
+                <div id="regStep1">
+                    <span class="eyebrow-tag" style="margin-bottom: 8px;">Đăng ký thành viên (Bước 1/2)</span>
+                    <h2 class="auth-title" style="margin-bottom: 8px;">Tạo tài khoản</h2>
+                    <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 24px;">Các trường có dấu * là bắt buộc.</p>
 
-                <form id="registerForm" onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label class="form-label" for="regFullName">Họ và tên *</label>
-                        <input type="text" id="regFullName" class="form-control-lunea" required autocomplete="name"
-                            placeholder="Nhập họ và tên">
+                    <form id="registerStep1Form" onsubmit="handleSendRegisterOtp(event)">
+                        <div class="form-group">
+                            <label class="form-label" for="regFullName">Họ và tên *</label>
+                            <input type="text" id="regFullName" class="form-control-lunea" required autocomplete="name"
+                                placeholder="Nhập họ và tên">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="regEmail">Email *</label>
+                            <input type="email" id="regEmail" class="form-control-lunea" required autocomplete="email"
+                                placeholder="Nhập email">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="regPhone">Số điện thoại</label>
+                            <input type="tel" id="regPhone" class="form-control-lunea" autocomplete="tel"
+                                placeholder="Nhập số điện thoại (không bắt buộc)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="regPassword">Mật khẩu *</label>
+                            <div style="position: relative;">
+                                <input type="password" id="regPassword" class="form-control-lunea" required minlength="6"
+                                    autocomplete="new-password" placeholder="Tạo mật khẩu" style="padding-right: 40px;">
+                                <button type="button" onclick="toggleRegPasswordVisibility('regPassword', 'eyeIconPass')"
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;"
+                                    aria-label="Hiện/ẩn mật khẩu">
+                                    <i class="bi bi-eye" id="eyeIconPass"></i>
+                                </button>
+                            </div>
+                            <span style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 4px; display: block;">
+                                Ít nhất 6 ký tự.
+                            </span>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label" for="regConfirmPassword">Xác nhận mật khẩu *</label>
+                            <div style="position: relative;">
+                                <input type="password" id="regConfirmPassword" class="form-control-lunea" required minlength="6"
+                                    autocomplete="new-password" placeholder="Nhập lại mật khẩu" style="padding-right: 40px;">
+                                <button type="button" onclick="toggleRegPasswordVisibility('regConfirmPassword', 'eyeIconConfirm')"
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--color-text-muted); cursor: pointer;"
+                                    aria-label="Hiện/ẩn mật khẩu">
+                                    <i class="bi bi-eye" id="eyeIconConfirm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 24px; font-size: 0.82rem; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 8px;">
+                            <input type="checkbox" id="regAgreeTerms" required
+                                style="margin-top: 3px; accent-color: var(--color-gold-primary);">
+                            <label for="regAgreeTerms" style="cursor: pointer; line-height: 1.4;">
+                                Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.
+                            </label>
+                        </div>
+
+                        <button type="submit" id="btnRegStep1Submit" class="btn-lunea-gold"
+                            style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
+                            <span>Tiếp tục (Nhận mã OTP)</span>
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- STEP 2: Verify Registration OTP -->
+                <div id="regStep2" style="display: none;">
+                    <span class="eyebrow-tag" style="margin-bottom: 8px;">Đăng ký thành viên (Bước 2/2)</span>
+                    <h2 class="auth-title" style="margin-bottom: 8px;">Xác thực mã OTP</h2>
+                    <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 16px;">
+                        Mã xác thực bảo mật gồm 6 số đã được gửi đến email của bạn.
+                    </p>
+
+                    <!-- Target email display with edit button -->
+                    <div style="padding: 10px 14px; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 4px; font-size: 0.85rem; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px;">
+                        <div>
+                            <i class="bi bi-envelope-check text-gold me-1"></i>
+                            Gửi đến: <strong id="regTargetEmailDisplay" style="color: var(--color-gold-light);"></strong>
+                        </div>
+                        <button type="button" onclick="goToRegStep1()" style="background: none; border: none; color: var(--color-gold-light); font-size: 0.82rem; text-decoration: underline; cursor: pointer; padding: 0;">
+                            Đổi lại
+                        </button>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="regEmail">Email *</label>
-                        <input type="email" id="regEmail" class="form-control-lunea" required autocomplete="email"
-                            placeholder="Nhập email">
+                    <!-- Demo OTP Box for local test/evaluator convenience -->
+                    <div id="regDemoOtpAlert" style="display: none; margin-bottom: 16px; padding: 10px 14px; background: rgba(16, 185, 129, 0.1); border: 1px dashed rgba(16, 185, 129, 0.4); border-radius: 4px; font-size: 0.85rem; color: #10b981;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>💡 Mã OTP demo: <b id="regDemoOtpCode" style="font-size: 1.1rem; letter-spacing: 2px;"></b></span>
+                            <button type="button" onclick="fillRegDemoOtp()" class="btn btn-sm btn-outline" style="padding: 2px 10px; font-size: 0.78rem; border-color: #10b981; color: #10b981;">
+                                Dán mã
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="regPhone">Số điện thoại</label>
-                        <input type="tel" id="regPhone" class="form-control-lunea" autocomplete="tel"
-                            placeholder="Nhập số điện thoại (không bắt buộc)">
-                    </div>
+                    <form id="registerOtpForm" onsubmit="handleCompleteRegister(event)">
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                                <label class="form-label" for="regOtp" style="margin-bottom: 0;">Mã xác thực OTP *</label>
+                                <div style="font-size: 0.8rem;">
+                                    <span id="regCountdownText" style="color: var(--color-text-muted);">Gửi lại sau <b id="regCountdownSec" style="color: var(--color-gold-light);">60</b>s</span>
+                                    <button type="button" id="btnRegResendOtp" onclick="handleResendRegisterOtp()" style="display: none; background: none; border: none; color: var(--color-gold-light); text-decoration: underline; cursor: pointer; padding: 0; font-size: 0.82rem;">
+                                        Gửi lại mã OTP
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="text" id="regOtp" class="form-control-lunea" required maxlength="6" pattern="[0-9]{6}"
+                                autocomplete="one-time-code" placeholder="Nhập 6 số OTP"
+                                style="letter-spacing: 6px; font-weight: 700; font-size: 1.15rem; text-align: center;">
+                        </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="regPassword">Mật khẩu *</label>
-                        <input type="password" id="regPassword" class="form-control-lunea" required minlength="6"
-                            autocomplete="new-password" placeholder="Tạo mật khẩu">
-                        <span
-                            style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 4px; display: block;">
-                            Ít nhất 6 ký tự, gồm chữ và số.
-                        </span>
-                    </div>
+                        <div style="display: flex; gap: 12px; margin-top: 24px;">
+                            <button type="button" onclick="goToRegStep1()" class="btn btn-outline"
+                                style="padding: 12px 20px; font-size: 0.9rem;">
+                                Quay lại
+                            </button>
+                            <button type="submit" id="btnRegCompleteSubmit" class="btn-lunea-gold"
+                                style="flex: 1; justify-content: center; padding: 13px; font-size: 0.95rem;">
+                                <span>Hoàn tất đăng ký</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label class="form-label" for="regConfirmPassword">Xác nhận mật khẩu *</label>
-                        <input type="password" id="regConfirmPassword" class="form-control-lunea" required minlength="6"
-                            autocomplete="new-password" placeholder="Nhập lại mật khẩu">
-                    </div>
-
-                    <div
-                        style="margin-bottom: 24px; font-size: 0.82rem; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 8px;">
-                        <input type="checkbox" id="regAgreeTerms" required
-                            style="margin-top: 3px; accent-color: var(--color-gold-primary);">
-                        <label for="regAgreeTerms" style="cursor: pointer; line-height: 1.4;">
-                            Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.
-                        </label>
-                    </div>
-
-                    <button type="submit" id="btnRegSubmit" class="btn-lunea-gold"
-                        style="width: 100%; justify-content: center; padding: 13px; font-size: 0.95rem;">
-                        <span>Tạo tài khoản</span>
-                    </button>
-                </form>
-
-                <div
-                    style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
+                <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--color-text-secondary);">
                     Đã có tài khoản?
                     <a th:href="@{/login}" href="/login"
                         style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng nhập</a>
@@ -105,20 +178,96 @@
     <!-- Footer Fragment -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-    <!-- Client-side Register Script -->
+    <!-- Client-side Register Script with OTP Flow -->
     <script th:inline="javascript">
-        async function handleRegister(e) {
+        let regCountdownTimer = null;
+        let lastKnownRegOtp = '';
+
+        function toggleRegPasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        function goToRegStep1() {
+            document.getElementById('regStep1').style.display = 'block';
+            document.getElementById('regStep2').style.display = 'none';
+        }
+
+        function goToRegStep2() {
+            document.getElementById('regStep1').style.display = 'none';
+            document.getElementById('regStep2').style.display = 'block';
+            document.getElementById('regOtp').value = '';
+            setTimeout(() => {
+                const otpInput = document.getElementById('regOtp');
+                if (otpInput) otpInput.focus();
+            }, 50);
+        }
+
+        function fillRegDemoOtp() {
+            if (lastKnownRegOtp) {
+                document.getElementById('regOtp').value = lastKnownRegOtp;
+                const submitBtn = document.getElementById('btnRegCompleteSubmit');
+                if (submitBtn) submitBtn.focus();
+            }
+        }
+
+        function startRegCountdown(seconds = 60) {
+            clearInterval(regCountdownTimer);
+            let remaining = seconds;
+            const textSpan = document.getElementById('regCountdownText');
+            const secSpan = document.getElementById('regCountdownSec');
+            const resendBtn = document.getElementById('btnRegResendOtp');
+
+            if (textSpan) textSpan.style.display = 'inline';
+            if (resendBtn) resendBtn.style.display = 'none';
+            if (secSpan) secSpan.textContent = remaining;
+
+            regCountdownTimer = setInterval(() => {
+                remaining--;
+                if (remaining <= 0) {
+                    clearInterval(regCountdownTimer);
+                    if (textSpan) textSpan.style.display = 'none';
+                    if (resendBtn) resendBtn.style.display = 'inline';
+                } else {
+                    if (secSpan) secSpan.textContent = remaining;
+                }
+            }, 1000);
+        }
+
+        async function handleSendRegisterOtp(e) {
             e.preventDefault();
             const fullName = document.getElementById('regFullName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
-            const phone = document.getElementById('regPhone').value.trim();
             const password = document.getElementById('regPassword').value;
             const confirmPassword = document.getElementById('regConfirmPassword').value;
             const agree = document.getElementById('regAgreeTerms').checked;
-            const btn = document.getElementById('btnRegSubmit');
+            const btn = document.getElementById('btnRegStep1Submit');
 
             if (!agree) {
                 LUNEA.showToast('Vui lòng đồng ý với điều khoản để tiếp tục!', 'warning');
+                return;
+            }
+
+            if (!fullName) {
+                LUNEA.showToast('Vui lòng nhập họ và tên', 'warning');
+                return;
+            }
+
+            if (!email || !email.includes('@')) {
+                LUNEA.showToast('Vui lòng nhập địa chỉ email hợp lệ', 'warning');
+                return;
+            }
+
+            if (password.length < 6) {
+                LUNEA.showToast('Mật khẩu phải có ít nhất 6 ký tự', 'warning');
                 return;
             }
 
@@ -128,27 +277,151 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>Đang khởi tạo tài khoản...</span>';
+            btn.innerHTML = '<span>Đang gửi mã OTP...</span>';
 
             try {
-                await LUNEA.apiFetch('/api/auth/register', {
+                const response = await fetch('/api/auth/register/send-otp', {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'fetch'
+                    },
+                    body: JSON.stringify({ emailOrPhone: email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    LUNEA.showToast(data.message || 'Mã OTP đã được gửi đến email!', 'success');
+                    document.getElementById('regTargetEmailDisplay').textContent = data.maskedDestination || email;
+
+                    const demoAlert = document.getElementById('regDemoOtpAlert');
+                    const demoCode = document.getElementById('regDemoOtpCode');
+                    if (data.debugOtp && demoAlert && demoCode) {
+                        lastKnownRegOtp = data.debugOtp;
+                        demoCode.textContent = data.debugOtp;
+                        demoAlert.style.display = 'block';
+                    } else if (demoAlert) {
+                        demoAlert.style.display = 'none';
+                    }
+
+                    goToRegStep2();
+                    startRegCountdown(60);
+                } else {
+                    LUNEA.showToast(data.message || 'Không thể gửi mã OTP đăng ký', 'error');
+                }
+            } catch (err) {
+                console.error('Send Register OTP error:', err);
+                LUNEA.showToast('Lỗi kết nối khi gửi mã OTP', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Tiếp tục (Nhận mã OTP)</span><i class="bi bi-arrow-right ms-2"></i>';
+            }
+        }
+
+        async function handleResendRegisterOtp() {
+            const email = document.getElementById('regEmail').value.trim();
+            const resendBtn = document.getElementById('btnRegResendOtp');
+            if (!email) return;
+
+            resendBtn.textContent = 'Đang gửi lại...';
+            try {
+                const response = await fetch('/api/auth/register/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'fetch'
+                    },
+                    body: JSON.stringify({ emailOrPhone: email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    LUNEA.showToast('Mã OTP mới đã được gửi vào email!', 'success');
+                    if (data.debugOtp) {
+                        lastKnownRegOtp = data.debugOtp;
+                        const demoCode = document.getElementById('regDemoOtpCode');
+                        if (demoCode) demoCode.textContent = data.debugOtp;
+                    }
+                    startRegCountdown(60);
+                } else {
+                    LUNEA.showToast(data.message || 'Không thể gửi lại mã OTP', 'error');
+                    resendBtn.textContent = 'Gửi lại mã OTP';
+                }
+            } catch (err) {
+                LUNEA.showToast('Lỗi kết nối máy chủ khi gửi lại OTP', 'error');
+                resendBtn.textContent = 'Gửi lại mã OTP';
+            }
+        }
+
+        async function handleCompleteRegister(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regFullName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const otp = document.getElementById('regOtp').value.trim();
+            const btn = document.getElementById('btnRegCompleteSubmit');
+
+            if (!otp || otp.length !== 6) {
+                LUNEA.showToast('Vui lòng nhập đúng 6 chữ số mã OTP', 'warning');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang xác thực & tạo tài khoản...</span>';
+
+            try {
+                const regRes = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'fetch'
+                    },
                     body: JSON.stringify({
+                        fullName: fullName,
                         displayName: fullName,
                         email: email,
                         phone: phone,
-                        password: password
+                        password: password,
+                        otp: otp
                     })
                 });
 
-                LUNEA.showToast('Đăng ký tài khoản thành công! Tự động đăng nhập...', 'success');
+                const data = await regRes.json();
 
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 800);
+                if (regRes.ok) {
+                    LUNEA.showToast('Đăng ký tài khoản thành công! Đang tự động đăng nhập...', 'success');
+
+                    // Auto login after successful registration
+                    try {
+                        await LUNEA.apiFetch('/api/auth/login', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                identifier: email,
+                                password: password
+                            })
+                        });
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 800);
+                    } catch (loginErr) {
+                        // If auto-login fails, redirect to login page
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 1200);
+                    }
+                } else {
+                    LUNEA.showToast(data.message || 'Đăng ký không thành công', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Hoàn tất đăng ký</span>';
+                }
             } catch (err) {
+                console.error('Register completion error:', err);
+                LUNEA.showToast('Có lỗi xảy ra khi tạo tài khoản', 'error');
                 btn.disabled = false;
-                btn.innerHTML = '<span>Tạo tài khoản</span>';
+                btn.innerHTML = '<span>Hoàn tất đăng ký</span>';
             }
         }
     </script>

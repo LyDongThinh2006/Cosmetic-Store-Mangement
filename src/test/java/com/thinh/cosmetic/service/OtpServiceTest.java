@@ -12,6 +12,7 @@ import com.thinh.cosmetic.exception.BusinessException;
 import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.repository.account.AccountRepository;
 import com.thinh.cosmetic.repository.account.PasswordResetOtpRepository;
+import com.thinh.cosmetic.repository.account.RegistrationOtpRepository;
 import com.thinh.cosmetic.service.account.impl.OtpServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +42,9 @@ class OtpServiceTest {
 
     @Mock
     private PasswordResetOtpRepository passwordResetOtpRepository;
+
+    @Mock
+    private RegistrationOtpRepository registrationOtpRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -249,5 +253,59 @@ class OtpServiceTest {
         assertEquals("te***r@lunea.test", otpService.maskIdentifier("testuser@lunea.test"));
         assertEquals("098****321", otpService.maskIdentifier("0987654321"));
         assertEquals("***", otpService.maskIdentifier(""));
+    }
+
+    @Test
+    @DisplayName("Gửi OTP đăng ký thành công khi email chưa tồn tại")
+    void testSendRegistrationOtpSuccess() {
+        when(accountRepository.existsByEmail("newuser@lunea.test")).thenReturn(false);
+        when(registrationOtpRepository.findTopByEmailIgnoreCaseOrderByCreatedAtDesc("newuser@lunea.test"))
+                .thenReturn(Optional.empty());
+        when(registrationOtpRepository.findByEmailIgnoreCaseAndUsedFalse("newuser@lunea.test"))
+                .thenReturn(Collections.emptyList());
+        when(registrationOtpRepository.save(any(com.thinh.cosmetic.domain.entity.account.RegistrationOtpEntity.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        SendOtpRequest request = SendOtpRequest.builder().emailOrPhone("newuser@lunea.test").build();
+        SendOtpResponse response = otpService.sendRegistrationOtp(request);
+
+        assertNotNull(response);
+        assertTrue(response.isSuccess());
+        assertEquals(300, response.getExpiresInSeconds());
+        assertNotNull(response.getDebugOtp());
+        verify(registrationOtpRepository).save(any());
+        verify(emailService).sendRegistrationOtpEmail(eq("newuser@lunea.test"), any(), eq(5));
+    }
+
+    @Test
+    @DisplayName("Gửi OTP đăng ký thất bại khi email đã tồn tại")
+    void testSendRegistrationOtpDuplicateEmail() {
+        when(accountRepository.existsByEmail("existing@lunea.test")).thenReturn(true);
+
+        SendOtpRequest request = SendOtpRequest.builder().emailOrPhone("existing@lunea.test").build();
+        BusinessException ex = assertThrows(BusinessException.class, () -> otpService.sendRegistrationOtp(request));
+        assertEquals(ErrorCode.DUPLICATE_EMAIL, ex.getErrorCode());
+        verify(emailService, never()).sendRegistrationOtpEmail(any(), any(), anyInt());
+    }
+
+    @Test
+    @DisplayName("Xác thực và hoàn tất OTP đăng ký thành công")
+    void testCompleteRegistrationOtpSuccess() {
+        com.thinh.cosmetic.domain.entity.account.RegistrationOtpEntity otpEntity =
+                com.thinh.cosmetic.domain.entity.account.RegistrationOtpEntity.builder()
+                        .id(1L)
+                        .email("newuser@lunea.test")
+                        .otpCode("888999")
+                        .expiryTime(LocalDateTime.now().plusMinutes(5))
+                        .used(false)
+                        .failedAttempts(0)
+                        .build();
+
+        when(registrationOtpRepository.findTopByEmailIgnoreCaseAndUsedFalseOrderByCreatedAtDesc("newuser@lunea.test"))
+                .thenReturn(Optional.of(otpEntity));
+
+        assertDoesNotThrow(() -> otpService.completeRegistrationOtp("newuser@lunea.test", "888999"));
+        assertTrue(otpEntity.isUsed());
+        verify(registrationOtpRepository).save(otpEntity);
     }
 }
