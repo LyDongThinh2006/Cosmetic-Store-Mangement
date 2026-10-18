@@ -27,7 +27,7 @@
                 th:text="${staffRoleTitle != null ? staffRoleTitle : (currentUser != null and currentUser.isAdmin() ? 'Quản Trị Viên (Admin)' : (currentUser != null and currentUser.hasAnyAuthority('ROLE_WAREHOUSE_STAFF', 'WAREHOUSE_STAFF') ? 'Quản Lý Kho / Thủ Kho' : (currentUser != null and currentUser.hasAnyAuthority('ROLE_ORDER_STAFF', 'ORDER_STAFF') ? 'Nhân Viên Đơn Hàng' : 'Nhân viên hệ thống')))}">Quản Trị Viên (Admin)</div>
             <div class="admin-staff-branch">
                 <i class="bi bi-geo-alt" style="color: var(--color-gold-primary); font-size: 0.75rem;"></i>
-                <span th:text="${primaryStoreName != null ? primaryStoreName : (isAllStoresAdmin ? 'Toàn hệ thống (Admin)' : 'Chưa gán chi nhánh')}">Toàn hệ thống LUNEA</span>
+                <span th:text="${primaryStoreName != null ? primaryStoreName : (isAllStoresAdmin == true ? 'Toàn hệ thống (Admin)' : 'Chưa gán chi nhánh')}">Toàn hệ thống LUNEA</span>
             </div>
         </div>
     </div>

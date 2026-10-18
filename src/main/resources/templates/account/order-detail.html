@@ -197,7 +197,10 @@
                                     <button type="button" 
                                             class="btn-product-outline" 
                                             style="padding: 4px 12px; font-size: 0.78rem; border-color: rgba(212, 175, 55, 0.4); color: var(--color-gold-primary); cursor: pointer;"
-                                            th:onclick="'openReviewModal(' + ${item.productId} + ', ' + ${order.id} + ', \'' + ${#strings.escapeJavaScript(item.productName)} + '\')'">
+                                            th:data-product-id="${item.productId}"
+                                            th:data-order-id="${order.id}"
+                                            th:data-product-name="${item.productName}"
+                                            onclick="openReviewModal(this.getAttribute('data-product-id'), this.getAttribute('data-order-id'), this.getAttribute('data-product-name'))">
                                         <i class="bi bi-star"></i> Đánh giá
                                     </button>
                                 </div>
