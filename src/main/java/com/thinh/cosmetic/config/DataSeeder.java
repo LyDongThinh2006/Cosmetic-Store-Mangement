@@ -8,13 +8,15 @@ import com.thinh.cosmetic.domain.entity.sales.VoucherEntity;
 import com.thinh.cosmetic.domain.enums.AccountType;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.domain.enums.Gender;
+import com.thinh.cosmetic.domain.enums.PurchaseOrderStatus;
+import com.thinh.cosmetic.domain.enums.TransferStatus;
 import com.thinh.cosmetic.domain.enums.VoucherType;
 import com.thinh.cosmetic.repository.account.*;
 import com.thinh.cosmetic.repository.cart.CartRepository;
 import com.thinh.cosmetic.repository.catalog.*;
 import com.thinh.cosmetic.repository.order.VoucherRepository;
-import com.thinh.cosmetic.repository.store.InventoryRepository;
-import com.thinh.cosmetic.repository.store.StoreRepository;
+import com.thinh.cosmetic.repository.purchase.*;
+import com.thinh.cosmetic.repository.store.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -55,6 +57,11 @@ public class DataSeeder implements CommandLineRunner {
     private final ProductAttributeValueRepository productAttributeValueRepository;
     private final InventoryRepository inventoryRepository;
     private final VoucherRepository voucherRepository;
+    private final SupplierRepository supplierRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final PurchaseOrderItemRepository purchaseOrderItemRepository;
+    private final StockTransferRepository stockTransferRepository;
+    private final StockTransferItemRepository stockTransferItemRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -80,6 +87,11 @@ public class DataSeeder implements CommandLineRunner {
             ProductAttributeValueRepository productAttributeValueRepository,
             InventoryRepository inventoryRepository,
             VoucherRepository voucherRepository,
+            SupplierRepository supplierRepository,
+            PurchaseOrderRepository purchaseOrderRepository,
+            PurchaseOrderItemRepository purchaseOrderItemRepository,
+            StockTransferRepository stockTransferRepository,
+            StockTransferItemRepository stockTransferItemRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.roleRepository = roleRepository;
@@ -102,6 +114,11 @@ public class DataSeeder implements CommandLineRunner {
         this.productAttributeValueRepository = productAttributeValueRepository;
         this.inventoryRepository = inventoryRepository;
         this.voucherRepository = voucherRepository;
+        this.supplierRepository = supplierRepository;
+        this.purchaseOrderRepository = purchaseOrderRepository;
+        this.purchaseOrderItemRepository = purchaseOrderItemRepository;
+        this.stockTransferRepository = stockTransferRepository;
+        this.stockTransferItemRepository = stockTransferItemRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -112,6 +129,7 @@ public class DataSeeder implements CommandLineRunner {
             log.info(">>> [DataSeeder] Dữ liệu đã tồn tại trong SQL Server. Bỏ qua nạp dữ liệu danh mục & tồn kho.");
             ensureDemoAccountsExist();
             seedVouchers();
+            seedSuppliersAndWarehouseData();
             return;
         }
 
@@ -142,6 +160,9 @@ public class DataSeeder implements CommandLineRunner {
 
         // 7. Voucher khuyến mãi
         seedVouchers();
+
+        // 8. Nhà cung cấp & Dữ liệu kho mẫu
+        seedSuppliersAndWarehouseData();
 
         log.info(">>> [DataSeeder] Hoàn thành nạp dữ liệu mẫu thành công vào Microsoft SQL Server!");
     }
@@ -771,7 +792,7 @@ public class DataSeeder implements CommandLineRunner {
         assignPermIfMissing(productRole, permMap.get("CATALOG_MANAGE"));
         assignPermIfMissing(productRole, permMap.get("INVENTORY_VIEW"));
 
-        // 3. Tìm chi nhánh HCM và HN
+        // 3. Tìm chi nhánh HCM, HN, ĐN
         List<StoreEntity> stores = storeRepository.findAll();
         StoreEntity storeHcm = stores.stream()
                 .filter(s -> s.getName() != null && (s.getName().contains("HCM") || s.getName().contains("Đồng Khởi") || s.getName().contains("Hồ Chí Minh")))
@@ -781,19 +802,33 @@ public class DataSeeder implements CommandLineRunner {
                 .filter(s -> s.getName() != null && (s.getName().contains("Hà Nội") || s.getName().contains("Cầu Giấy")))
                 .findFirst()
                 .orElse(stores.size() > 1 ? stores.get(1) : storeHcm);
+        StoreEntity storeDn = stores.stream()
+                .filter(s -> s.getName() != null && (s.getName().contains("Đà Nẵng") || s.getName().contains("Bạch Đằng")))
+                .findFirst()
+                .orElse(stores.size() > 2 ? stores.get(2) : storeHn);
 
-        // 4. Đồng bộ các tài khoản mẫu nghiệp vụ:
-        // Admin: admin / 123456
+        // 4. Đồng bộ FULL các tài khoản mẫu nghiệp vụ cho tất cả các Role & Chi nhánh:
+        // A. Nhóm Quản trị & Quản lý
         ensureEmployeeAccount("admin", "admin@lunea.test", "0900000001", "Nguyễn Quản Trị Hệ Thống", "123456", adminRole, storeHcm);
+        ensureEmployeeAccount("product_manager", "product.manager@lunea.test", "0900000005", "Hoàng Minh Long (Quản lý sản phẩm)", "123456", productRole, storeHcm);
 
-        // Thủ kho HCM: warehouse_hcm / 123456 (Vai trò WAREHOUSE_STAFF)
+        // B. Nhóm Thủ kho chi nhánh (WAREHOUSE_STAFF)
         ensureEmployeeAccount("warehouse_hcm", "warehouse.hcm@lunea.test", "0900000004", "Phạm Văn Kho (Thủ kho HCM)", "123456", warehouseRole, storeHcm);
+        ensureEmployeeAccount("warehouse_hn", "warehouse.hn@lunea.test", "0900000006", "Nguyễn Văn Tuấn (Thủ kho Hà Nội)", "123456", warehouseRole, storeHn);
+        ensureEmployeeAccount("warehouse_dn", "warehouse.dn@lunea.test", "0900000007", "Đặng Thành Nam (Thủ kho Đà Nẵng)", "123456", warehouseRole, storeDn);
 
-        // Nhân viên đơn hàng HCM: order_hcm / 123456 (Vai trò ORDER_STAFF)
+        // C. Nhóm Xử lý đơn hàng chi nhánh (ORDER_STAFF)
         ensureEmployeeAccount("order_hcm", "order.hcm@lunea.test", "0900000002", "Trần Minh Quân (Đơn hàng HCM)", "123456", orderRole, storeHcm);
-
-        // Nhân viên đơn hàng HN: order_hn / 123456 (Vai trò ORDER_STAFF)
         ensureEmployeeAccount("order_hn", "order.hn@lunea.test", "0900000003", "Lê Thu Hà (Đơn hàng Hà Nội)", "123456", orderRole, storeHn);
+        ensureEmployeeAccount("order_dn", "order.dn@lunea.test", "0900000008", "Bùi Phương Thảo (Đơn hàng Đà Nẵng)", "123456", orderRole, storeDn);
+
+        // D. Nhóm Khách hàng mua sắm (CUSTOMER)
+        ensureCustomerAccount("khach01", "khach01@lunea.test", "0901234567", "Lê Hoàng Yến", "123456", 120,
+                "Số 45 Đường Lê Duẩn", "Phường Bến Nghé", "Quận 1", "Hồ Chí Minh");
+        ensureCustomerAccount("khach02", "khach02@lunea.test", "0902345678", "Nguyễn Minh Trang", "123456", 85,
+                "Số 18 Đường Cầu Giấy", "Phường Quan Hoa", "Quận Cầu Giấy", "Hà Nội");
+        ensureCustomerAccount("khach03", "khach03@lunea.test", "0903456789", "Vũ Thanh Thảo", "123456", 350,
+                "Số 120 Đường Bạch Đằng", "Phường Hải Châu 1", "Quận Hải Châu", "Đà Nẵng");
     }
 
     private void assignPermIfMissing(RoleEntity role, PermissionEntity perm) {
@@ -867,6 +902,77 @@ public class DataSeeder implements CommandLineRunner {
         }
     }
 
+    private void ensureCustomerAccount(String username, String email, String phone, String fullName, String rawPassword,
+                                       int loyaltyPoints, String addressDetail, String ward, String district, String province) {
+        String defaultPasswordHash = passwordEncoder.encode(rawPassword);
+        AccountEntity account = accountRepository.findByUsername(username)
+                .or(() -> accountRepository.findByEmail(email))
+                .orElse(null);
+
+        if (account == null) {
+            account = accountRepository.save(AccountEntity.builder()
+                    .username(username)
+                    .email(email)
+                    .phone(phone)
+                    .passwordHash(defaultPasswordHash)
+                    .accountType(AccountType.CUSTOMER)
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+            log.info(">>> [DataSeeder] Đã tạo tài khoản khách hàng demo: {} / {}", username, rawPassword);
+        } else {
+            account.setUsername(username);
+            account.setEmail(email);
+            account.setPasswordHash(defaultPasswordHash);
+            account.setStatus(ActiveStatus.ACTIVE);
+            account.setAccountType(AccountType.CUSTOMER);
+            account = accountRepository.save(account);
+            log.info(">>> [DataSeeder] Đã đồng bộ tài khoản khách hàng demo: {} / {}", username, rawPassword);
+        }
+
+        CustomerEntity customer = customerRepository.findByAccountId(account.getId()).orElse(null);
+        if (customer == null) {
+            customer = customerRepository.save(CustomerEntity.builder()
+                    .account(account)
+                    .fullName(fullName)
+                    .dob(LocalDate.of(1998, 5, 15))
+                    .gender(Gender.FEMALE)
+                    .loyaltyPoints(loyaltyPoints)
+                    .joinDate(LocalDate.now().minusMonths(3))
+                    .build());
+        } else {
+            customer.setFullName(fullName);
+            if (customer.getLoyaltyPoints() == null || customer.getLoyaltyPoints() < loyaltyPoints) {
+                customer.setLoyaltyPoints(loyaltyPoints);
+            }
+            customer = customerRepository.save(customer);
+        }
+
+        final CustomerEntity finalCust = customer;
+        if (customerAddressRepository != null && addressDetail != null) {
+            List<CustomerAddressEntity> addresses = customerAddressRepository.findByCustomerEntityId(customer.getId());
+            if (addresses.isEmpty()) {
+                customerAddressRepository.save(CustomerAddressEntity.builder()
+                        .customerEntity(finalCust)
+                        .recipientName(fullName)
+                        .phone(phone)
+                        .addressDetail(addressDetail)
+                        .ward(ward)
+                        .district(district)
+                        .province(province)
+                        .isDefault(true)
+                        .build());
+            }
+        }
+
+        if (cartRepository != null) {
+            cartRepository.findByCustomerId(customer.getId()).orElseGet(() ->
+                    cartRepository.save(CartEntity.builder()
+                            .customer(finalCust)
+                            .updatedAt(LocalDateTime.now())
+                            .build()));
+        }
+    }
+
     private void seedVouchers() {
         if (voucherRepository.count() == 0) {
             log.info(">>> [DataSeeder] Khởi tạo danh sách Voucher & Khuyến mãi mẫu...");
@@ -929,6 +1035,137 @@ public class DataSeeder implements CommandLineRunner {
                             .build()
             ));
             log.info(">>> [DataSeeder] Đã nạp thành công 4 Voucher mẫu (LUNEA10, GIAM50K, FREESHIP, LUNEAVIP)");
+        }
+    }
+
+    private void seedSuppliersAndWarehouseData() {
+        if (supplierRepository.count() == 0) {
+            log.info(">>> [DataSeeder] Khởi tạo danh sách Nhà Cung Cấp mẫu...");
+            SupplierEntity sup1 = supplierRepository.save(SupplierEntity.builder()
+                    .name("Công ty TNHH L'Oréal Việt Nam")
+                    .contactPerson("Lê Thu Hương")
+                    .phone("02839101234")
+                    .email("contact@loreal.vn")
+                    .address("Tầng 10, Vincom Center, 72 Lê Thánh Tôn, Bến Nghé, Quận 1, TP.HCM")
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+
+            SupplierEntity sup2 = supplierRepository.save(SupplierEntity.builder()
+                    .name("Công ty TNHH Rohto-Mentholatum Việt Nam")
+                    .contactPerson("Trần Đình Trọng")
+                    .phone("02743743200")
+                    .email("info@rohto.com.vn")
+                    .address("Số 16 Đường số 5, KCN VSIP 1, Thuận An, Bình Dương")
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+
+            SupplierEntity sup3 = supplierRepository.save(SupplierEntity.builder()
+                    .name("Nhà phân phối độc quyền Cosrx Việt Nam")
+                    .contactPerson("Kim Min Joon")
+                    .phone("0909123456")
+                    .email("supply@cosrx.vn")
+                    .address("Số 45 Nguyễn Huệ, Bến Nghé, Quận 1, TP.HCM")
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+
+            SupplierEntity sup4 = supplierRepository.save(SupplierEntity.builder()
+                    .name("Công ty TNHH Shiseido Cosmetics Việt Nam")
+                    .contactPerson("Nguyễn Hoàng Anh")
+                    .phone("02839325555")
+                    .email("shiseido-vn@shiseido.com")
+                    .address("Tòa nhà Empress Tower, 138-142 Hai Bà Trưng, Quận 1, TP.HCM")
+                    .status(ActiveStatus.ACTIVE)
+                    .build());
+
+            log.info(">>> [DataSeeder] Đã nạp 4 Nhà Cung Cấp mỹ phẩm chính hãng!");
+
+            List<StoreEntity> stores = storeRepository.findAll();
+            List<ProductSkuEntity> skus = productSkuRepository.findAll();
+            EmployeeEntity adminEmp = employeeRepository.findAll().stream().findFirst().orElse(null);
+
+            if (!stores.isEmpty() && !skus.isEmpty() && adminEmp != null && purchaseOrderRepository.count() == 0) {
+                StoreEntity store1 = stores.get(0);
+                ProductSkuEntity sku1 = skus.get(0);
+                ProductSkuEntity sku2 = skus.size() > 1 ? skus.get(1) : sku1;
+
+                PurchaseOrderEntity po1 = purchaseOrderRepository.save(PurchaseOrderEntity.builder()
+                        .supplier(sup1)
+                        .receivingStore(store1)
+                        .status(PurchaseOrderStatus.CONFIRMED)
+                        .createdBy(adminEmp)
+                        .totalAmount(new BigDecimal("15000000.00"))
+                        .confirmedAt(LocalDateTime.now().minusDays(2))
+                        .build());
+
+                purchaseOrderItemRepository.save(PurchaseOrderItemEntity.builder()
+                        .purchaseOrder(po1)
+                        .sku(sku1)
+                        .quantity(50)
+                        .unitPrice(new BigDecimal("180000.00"))
+                        .subtotal(new BigDecimal("9000000.00"))
+                        .build());
+
+                purchaseOrderItemRepository.save(PurchaseOrderItemEntity.builder()
+                        .purchaseOrder(po1)
+                        .sku(sku2)
+                        .quantity(30)
+                        .unitPrice(new BigDecimal("200000.00"))
+                        .subtotal(new BigDecimal("6000000.00"))
+                        .build());
+
+                PurchaseOrderEntity po2 = purchaseOrderRepository.save(PurchaseOrderEntity.builder()
+                        .supplier(sup2)
+                        .receivingStore(store1)
+                        .status(PurchaseOrderStatus.DRAFT)
+                        .createdBy(adminEmp)
+                        .totalAmount(new BigDecimal("8500000.00"))
+                        .build());
+
+                purchaseOrderItemRepository.save(PurchaseOrderItemEntity.builder()
+                        .purchaseOrder(po2)
+                        .sku(sku1)
+                        .quantity(40)
+                        .unitPrice(new BigDecimal("212500.00"))
+                        .subtotal(new BigDecimal("8500000.00"))
+                        .build());
+
+                log.info(">>> [DataSeeder] Đã nạp 2 Phiếu Nhập Hàng mẫu (1 CONFIRMED, 1 DRAFT)!");
+            }
+
+            if (stores.size() >= 2 && !skus.isEmpty() && adminEmp != null && stockTransferRepository.count() == 0) {
+                StoreEntity storeFrom = stores.get(0);
+                StoreEntity storeTo = stores.get(1);
+                ProductSkuEntity skuTransfer = skus.get(0);
+
+                StockTransferEntity tf1 = stockTransferRepository.save(StockTransferEntity.builder()
+                        .sourceStore(storeFrom)
+                        .destinationStore(storeTo)
+                        .status(TransferStatus.IN_TRANSIT)
+                        .createdBy(adminEmp)
+                        .shippedAt(LocalDateTime.now().minusHours(5))
+                        .build());
+
+                stockTransferItemRepository.save(StockTransferItemEntity.builder()
+                        .stockTransfer(tf1)
+                        .sku(skuTransfer)
+                        .quantity(15)
+                        .build());
+
+                StockTransferEntity tf2 = stockTransferRepository.save(StockTransferEntity.builder()
+                        .sourceStore(storeFrom)
+                        .destinationStore(storeTo)
+                        .status(TransferStatus.PENDING)
+                        .createdBy(adminEmp)
+                        .build());
+
+                stockTransferItemRepository.save(StockTransferItemEntity.builder()
+                        .stockTransfer(tf2)
+                        .sku(skuTransfer)
+                        .quantity(20)
+                        .build());
+
+                log.info(">>> [DataSeeder] Đã nạp 2 Phiếu Điều Chuyển Kho mẫu (1 IN_TRANSIT, 1 PENDING)!");
+            }
         }
     }
 }

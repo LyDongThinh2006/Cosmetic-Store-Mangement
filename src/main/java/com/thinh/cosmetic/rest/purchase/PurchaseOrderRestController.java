@@ -19,11 +19,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/purchase-orders")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('PURCHASE_MANAGE')")
+@PreAuthorize("hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
 public class PurchaseOrderRestController {
     private final PurchaseOrderService purchaseOrderService;
 
-    @PreAuthorize("hasAuthority('PURCHASE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @PostMapping
     public ResponseEntity<PurchaseOrderResponse> create(
             @Valid @RequestBody PurchaseOrderRequest request,
@@ -39,19 +39,19 @@ public class PurchaseOrderRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderService.create(request, empId));
     }
 
-    @PreAuthorize("hasAuthority('PURCHASE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PurchaseOrderResponse> getById(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(purchaseOrderService.getById(id));
     }
 
-    @PreAuthorize("hasAuthority('PURCHASE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<PurchaseOrderResponse>> getAll() {
         return ResponseEntity.ok(purchaseOrderService.getAll());
     }
 
-    @PreAuthorize("hasAuthority('PURCHASE_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @PutMapping("/{id}/confirm")
     public ResponseEntity<PurchaseOrderResponse> confirm(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(purchaseOrderService.confirm(id));

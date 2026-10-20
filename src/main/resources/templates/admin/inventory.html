@@ -28,6 +28,10 @@
                 </div>
 
                 <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="exportInventoryCSV()" title="Tải file báo cáo tồn kho định dạng CSV / Excel">
+                        <i class="bi bi-file-earmark-spreadsheet" style="color: #34d399;"></i>
+                        <span>Xuất Báo Cáo CSV</span>
+                    </button>
                     <button type="button" class="admin-btn admin-btn-outline" onclick="loadInventory()">
                         <i class="bi bi-arrow-clockwise"></i>
                         <span>Làm mới</span>
@@ -113,63 +117,104 @@
 
     <!-- Adjustment Modal -->
     <div class="admin-modal-backdrop" id="adjustModal" role="dialog" aria-modal="true" aria-labelledby="adjustModalTitle" tabindex="-1">
-        <div class="admin-modal">
+        <div class="admin-modal admin-modal-lg">
             <div class="admin-modal-header">
-                <h3 class="admin-modal-title" id="adjustModalTitle">
-                    <i class="bi bi-pencil-square" style="color: var(--color-gold-primary); margin-right: 6px;"></i>
-                    Điều Chỉnh Tồn Kho
-                </h3>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="adjustModalTitle">Điều Chỉnh Tồn Kho Chi Nhánh</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Cập nhật số lượng tồn thực tế sau kiểm kê và ghi nhận lý do điều chỉnh
+                        </div>
+                    </div>
+                </div>
                 <button type="button" class="admin-modal-close" onclick="closeAdjustModal()" aria-label="Đóng hộp thoại điều chỉnh tồn kho">&times;</button>
             </div>
-            <div class="admin-modal-body">
-                <div style="background: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px; border: 1px solid var(--color-border-subtle);">
-                    <div style="font-size: 0.76rem; color: var(--color-gold-primary); text-transform: uppercase; font-weight: 700;">Sản phẩm điều chỉnh</div>
-                    <div style="font-weight: 700; font-size: 1rem; color: var(--color-text-primary); margin-top: 2px;" id="modalProductName">---</div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 4px; font-family: monospace;">Mã SKU: <span id="modalSkuCode">---</span></div>
-                    <div style="display: flex; gap: 20px; margin-top: 12px; font-size: 0.84rem; border-top: 1px dashed var(--color-border-subtle); padding-top: 10px;">
-                        <div>Tồn thực tế hiện tại: <strong id="modalCurrentActual" style="color: var(--color-text-primary);">0</strong></div>
-                        <div>Đang giữ cho khách: <strong id="modalCurrentHeld" style="color: var(--color-warning);">0</strong></div>
+
+            <form id="adjustForm" class="admin-modal-form" onsubmit="submitAdjustment(event)">
+                <input type="hidden" id="modalStoreId">
+                <input type="hidden" id="modalSkuId">
+                <input type="hidden" id="modalHeldQty">
+
+                <div class="admin-modal-body">
+                    <!-- Thông tin sản phẩm điều chỉnh -->
+                    <div class="form-section-card" style="margin-bottom: 14px;">
+                        <div class="form-section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-box-seam"></i>
+                                <span>Mặt Hàng Điều Chỉnh</span>
+                            </h4>
+                            <span class="section-hint">Tồn kho hiện tại</span>
+                        </div>
+                        <div style="font-weight: 700; font-size: 1.05rem; color: var(--color-text-primary);" id="modalProductName">---</div>
+                        <div style="font-size: 0.82rem; color: var(--color-gold-light); margin-top: 4px; font-family: monospace;">Mã SKU: <span id="modalSkuCode">---</span></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--color-border-subtle); font-size: 0.85rem;">
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-xs);">
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Tồn thực tế hiện tại:</span>
+                                <strong id="modalCurrentActual" style="color: var(--color-text-primary); font-size: 1.1rem;">0</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: var(--radius-xs);">
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Đang giữ cho khách:</span>
+                                <strong id="modalCurrentHeld" style="color: #fbbf24; font-size: 1.1rem;">0</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thiết lập số lượng mới -->
+                    <div class="form-section-card">
+                        <div class="form-section-header">
+                            <h4 class="section-title">
+                                <i class="bi bi-sliders"></i>
+                                <span>Số Lượng Mới & Lý Do</span>
+                            </h4>
+                            <span class="section-hint">Ghi nhận log audit</span>
+                        </div>
+
+                        <div style="margin-bottom: 14px;">
+                            <label class="form-field-label" for="modalNewQuantity">
+                                Số Lượng Tồn Thực Tế Mới (Actual Stock) <span class="required">*</span>:
+                            </label>
+                            <input type="number" id="modalNewQuantity" class="admin-input" style="font-size: 1.05rem; font-weight: 700;" min="0" required>
+                            <small class="form-field-hint" style="color: var(--color-text-muted);">
+                                * Lưu ý: Không được nhỏ hơn số lượng đang giữ cho khách (<span id="modalHeldWarn" style="color: var(--color-gold-light); font-weight: 700;">0</span> sản phẩm).
+                            </small>
+                        </div>
+
+                        <div>
+                            <label class="form-field-label" for="modalReasonPreset">
+                                Lý Do Điều Chỉnh (Bắt buộc ghi nhận log) <span class="required">*</span>:
+                            </label>
+                            <select id="modalReasonPreset" class="admin-select" style="margin-bottom: 8px;" onchange="onReasonPresetChange(this)">
+                                <option value="Kiểm kê định kỳ thực tế">Kiểm kê định kỳ thực tế</option>
+                                <option value="Nhập bổ sung từ kho tổng">Nhập bổ sung từ kho tổng</option>
+                                <option value="Hàng lỗi / hỏng bao bì cần hủy">Hàng lỗi / hỏng bao bì cần hủy</option>
+                                <option value="Điều chuyển nội bộ giữa các chi nhánh">Điều chuyển nội bộ giữa các chi nhánh</option>
+                                <option value="other">Lý do khác (tự nhập)...</option>
+                            </select>
+                            <input type="text" id="modalCustomReason" class="admin-input" style="display: none;" placeholder="Nhập lý do cụ thể...">
+                        </div>
                     </div>
                 </div>
 
-                <form id="adjustForm" onsubmit="submitAdjustment(event)">
-                    <input type="hidden" id="modalStoreId">
-                    <input type="hidden" id="modalSkuId">
-                    <input type="hidden" id="modalHeldQty">
-
-                    <div style="margin-bottom: 16px;">
-                        <label style="display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 6px; color: var(--color-text-primary);">
-                            Số lượng tồn thực tế mới (Actual Stock) <span style="color: var(--color-danger);">*</span>:
-                        </label>
-                        <input type="number" id="modalNewQuantity" class="admin-input" style="width: 100%; font-size: 1rem; font-weight: 700;" min="0" required>
-                        <small style="font-size: 0.76rem; color: var(--color-text-muted); display: block; margin-top: 4px;">
-                            * Lưu ý: Không được nhỏ hơn số lượng đang giữ cho khách (<span id="modalHeldWarn">0</span> sản phẩm).
-                        </small>
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Thao tác sẽ tự động ghi log điều chỉnh tồn kho</span>
                     </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 6px; color: var(--color-text-primary);">
-                            Lý do điều chỉnh (Bắt buộc ghi nhận log) <span style="color: var(--color-danger);">*</span>:
-                        </label>
-                        <select id="modalReasonPreset" class="admin-select" style="width: 100%; margin-bottom: 8px;" onchange="onReasonPresetChange(this)">
-                            <option value="Kiểm kê định kỳ thực tế">Kiểm kê định kỳ thực tế</option>
-                            <option value="Nhập bổ sung từ kho tổng">Nhập bổ sung từ kho tổng</option>
-                            <option value="Hàng lỗi / hỏng bao bì cần hủy">Hàng lỗi / hỏng bao bì cần hủy</option>
-                            <option value="Điều chuyển nội bộ giữa các chi nhánh">Điều chuyển nội bộ giữa các chi nhánh</option>
-                            <option value="other">Lý do khác (tự nhập)...</option>
-                        </select>
-                        <input type="text" id="modalCustomReason" class="admin-input" style="width: 100%; display: none;" placeholder="Nhập lý do cụ thể...">
-                    </div>
-
-                    <div class="admin-modal-footer" style="padding-left: 0; padding-right: 0; padding-bottom: 0;">
-                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeAdjustModal()">Hủy bỏ</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeAdjustModal()">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Bỏ</span>
+                        </button>
                         <button type="submit" class="admin-btn admin-btn-primary" id="btnSubmitAdjust">
                             <i class="bi bi-check-lg"></i>
                             <span>Lưu Điều Chỉnh</span>
                         </button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -311,6 +356,13 @@
             document.body.style.overflow = '';
         }
 
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('adjustModal');
+            if (e.target === modal) {
+                closeAdjustModal();
+            }
+        });
+
         function onReasonPresetChange(select) {
             const customInput = document.getElementById('modalCustomReason');
             if (select.value === 'other') {
@@ -368,6 +420,48 @@
             } finally {
                 btn.disabled = false;
             }
+        }
+
+        function exportInventoryCSV() {
+            if (!inventoryData || inventoryData.length === 0) {
+                LUNEA.toastError("Không có dữ liệu tồn kho để xuất báo cáo!");
+                return;
+            }
+
+            const storeSelect = document.getElementById('branchFilter');
+            const storeName = storeSelect.options[storeSelect.selectedIndex]?.text || "ChiNhanh";
+
+            // Header CSV (UTF-8 BOM để Excel hiển thị đúng dấu tiếng Việt)
+            let csvContent = "\uFEFF";
+            csvContent += "Mã SKU,Tên Sản Phẩm,Biến Thể,Tồn Thực Tế,Đang Giữ,Khả Dụng,Mức Tối Thiểu,Tình Trạng,Chi Nhánh\r\n";
+
+            inventoryData.forEach(item => {
+                const sku = `"${(item.skuCode || '').replace(/"/g, '""')}"`;
+                const name = `"${(item.productName || '').replace(/"/g, '""')}"`;
+                const variant = `"${(item.variantName || 'Mặc định').replace(/"/g, '""')}"`;
+                const actual = item.actualStock != null ? item.actualStock : 0;
+                const held = item.heldStock != null ? item.heldStock : 0;
+                const avail = item.availableStock != null ? item.availableStock : 0;
+                const minStock = item.minStockThreshold != null ? item.minStockThreshold : 10;
+                let status = "Đủ hàng";
+                if (actual === 0) status = "Hết hàng";
+                else if (avail <= minStock) status = "Sắp hết hàng";
+                const branch = `"${storeName.replace(/"/g, '""')}"`;
+
+                csvContent += `${sku},${name},${variant},${actual},${held},${avail},${minStock},"${status}",${branch}\r\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const dateStr = new Date().toISOString().slice(0, 10);
+            a.download = `Bao_Cao_Ton_Kho_${storeName.replace(/[^a-zA-Z0-9]/g, '_')}_${dateStr}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            LUNEA.toastSuccess(`Đã xuất báo cáo tồn kho ${storeName} thành công!`);
         }
 
         document.addEventListener('DOMContentLoaded', () => {

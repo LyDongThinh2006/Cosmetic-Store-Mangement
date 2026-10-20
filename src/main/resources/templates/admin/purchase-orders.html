@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('purchase-orders')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Quản Lý Nhập Hàng (PO)', 'Lập phiếu nhập kho, theo dõi nguồn hàng từ nhà cung cấp và xác nhận cập nhật tồn kho')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Action Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo mã PO, NCC, người lập..." oninput="filterOrders()" style="padding-left: 36px; min-width: 260px;">
+                    </div>
+
+                    <select id="branchFilter" class="admin-select" onchange="filterOrders()">
+                        <option value="ALL">Tất cả kho nhận</option>
+                        <option th:each="st : ${allStores}" th:value="${st.name}" th:text="${st.name}">LUNEA Quận 1</option>
+                    </select>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterOrders()">
+                        <option value="ALL">Tất cả trạng thái</option>
+                        <option value="DRAFT">Chờ xác nhận (DRAFT)</option>
+                        <option value="CONFIRMED">Đã nhập kho (CONFIRMED)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadPurchaseOrders()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="openCreateModal()">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Lập Phiếu Nhập Mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Phiếu Nhập</span>
+                        <div class="kpi-icon blue"><i class="bi bi-receipt"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalPOs">0</div>
+                    <div class="kpi-sub"><span>Tổng phiếu đã khởi tạo</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Chờ Xác Nhận Kho</span>
+                        <div class="kpi-icon amber"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiDraftPOs" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Phiếu nháp chưa cộng tồn</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đã Nhập Kho Thực Tế</span>
+                        <div class="kpi-icon green"><i class="bi bi-box-seam-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiConfirmedPOs" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Đã tự động cộng vào tồn kho</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Giá Trị Nhập Kho</span>
+                        <div class="kpi-icon gold"><i class="bi bi-cash-stack"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalAmount" style="color: var(--color-gold-light);">0 ₫</div>
+                    <div class="kpi-sub"><span>Quy mô vốn nhập hàng</span></div>
+                </div>
+            </div>
+
+            <!-- Purchase Orders Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-truck"></i>
+                        <span>Danh Sách Phiếu Nhập Kho (Purchase Orders)</span>
+                    </h3>
+                    <span id="poCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 phiếu</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Mã PO</th>
+                                <th>Nhà Cung Cấp</th>
+                                <th>Kho Nhận Hàng</th>
+                                <th>Người Lập</th>
+                                <th>Thời Gian Lập</th>
+                                <th>Ngày Nhập Kho</th>
+                                <th style="text-align: right;">Tổng Tiền</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right; width: 170px;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="poTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                                    <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu phiếu nhập hàng...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Lập Phiếu Nhập Hàng Mới -->
+    <div id="createPoModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-2xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i class="bi bi-file-earmark-plus"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title">Lập Phiếu Nhập Kho Mới (Purchase Order)</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Chọn nhà cung cấp phân phối, kho chi nhánh tiếp nhận và danh sách mặt hàng SKU cần nhập
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeCreatePoModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <form id="createPoForm" class="admin-modal-form" onsubmit="handleCreatePO(event)">
+                <div class="admin-modal-body">
+                    <!-- Thông tin đầu phiếu -->
+                    <div class="admin-modal-grid-2">
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-building"></i>
+                                    <span>Đối Tác & Địa Điểm Nhập</span>
+                                </h4>
+                                <span class="section-hint">Tuyến nhập hàng</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="poSupplierSelect">
+                                    Nhà Cung Cấp Phân Phối <span class="required">*</span>:
+                                </label>
+                                <select id="poSupplierSelect" class="admin-select" required>
+                                    <option value="">-- Chọn nhà cung cấp --</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="form-field-label" for="poStoreSelect">
+                                    Kho Chi Nhánh Tiếp Nhận <span class="required">*</span>:
+                                </label>
+                                <select id="poStoreSelect" class="admin-select" required>
+                                    <option th:each="st : ${allStores}" th:value="${st.id}" th:text="${st.name}">LUNEA Quận 1</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Ghi Chú & Quy Trình Duyệt</span>
+                                </h4>
+                                <span class="section-hint">Kiểm soát nội bộ</span>
+                            </div>
+
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label" for="poNote">
+                                    Ghi Chú Đơn Hàng / Số Hóa Đơn:
+                                </label>
+                                <input type="text" id="poNote" class="admin-input" placeholder="VD: Hóa đơn đỏ số HD120938 - Lô hàng tháng 10">
+                            </div>
+
+                            <div style="padding: 9px 12px; background: rgba(223, 190, 123, 0.06); border: 1px solid rgba(223, 190, 123, 0.2); border-radius: var(--radius-xs); font-size: 0.74rem; color: var(--color-gold-light); display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="bi bi-shield-check" style="margin-top: 1px; flex-shrink: 0;"></i>
+                                <span>Phiếu mới được lưu ở trạng thái <strong>Chờ xác nhận (DRAFT)</strong>. Tồn kho chi nhánh chỉ được cộng vào khi bấm <strong>Nhập kho</strong> sau khi đã kiểm đếm thực tế.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bảng chi tiết mặt hàng SKU -->
+                    <div class="form-section-card" style="margin-top: 16px;">
+                        <div class="form-section-header" style="margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <h4 class="section-title">
+                                    <i class="bi bi-boxes"></i>
+                                    <span>Danh Sách Sản Phẩm & Biến Thể SKU Nhập Kho</span>
+                                </h4>
+                            </div>
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 5px 12px; font-size: 0.8rem;" onclick="addPoItemRow()">
+                                <i class="bi bi-plus-lg"></i> Thêm Dòng Mặt Hàng
+                            </button>
+                        </div>
+
+                        <div class="admin-table-container" style="border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); max-height: 280px; overflow-y: auto;">
+                            <table class="admin-table" style="font-size: 0.85rem; min-width: 720px;">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 280px;">Sản Phẩm & Biến Thể SKU</th>
+                                        <th style="width: 120px; text-align: center;">Số Lượng</th>
+                                        <th style="width: 170px; text-align: right;">Đơn Giá Nhập (₫)</th>
+                                        <th style="width: 180px; text-align: right;">Thành Tiền (₫)</th>
+                                        <th style="width: 48px; text-align: center;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="poItemsTableBody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding: 12px 18px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle);">
+                            <div style="font-size: 0.82rem; color: var(--color-text-muted);">
+                                <i class="bi bi-check2-all" style="color: var(--color-gold-primary); margin-right: 4px;"></i>
+                                <span id="poItemsCountDisplay">1 mặt hàng được chọn</span>
+                            </div>
+                            <div style="text-align: right; display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 0.88rem; color: var(--color-text-secondary);">Tổng Giá Trị Phiếu Nhập:</span>
+                                <strong id="poTotalDisplay" style="font-size: 1.35rem; color: var(--color-gold-light); font-family: var(--font-serif);">0 ₫</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Thủ kho có thể chỉnh sửa hoặc hủy phiếu trước khi duyệt nhập</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeCreatePoModal()">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Bỏ</span>
+                        </button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="btnSubmitPO">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Lưu Phiếu Nhập (DRAFT)</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Xem Chi Tiết Phiếu Nhập -->
+    <div id="detailPoModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="detailPoTitle">Chi Tiết Phiếu Nhập Kho</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Thông tin nhà phân phối, chứng từ kế toán và danh mục mặt hàng nhập kho
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeDetailPoModal()" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="admin-modal-body" id="detailPoBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="admin-modal-footer" id="detailPoFooter">
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeDetailPoModal()">
+                    <i class="bi bi-x-circle"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let poData = [];
+        let suppliersList = [];
+        let catalogSkus = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await Promise.all([loadSuppliers(), loadCatalogSkus()]);
+            await loadPurchaseOrders();
+        });
+
+        async function loadSuppliers() {
+            try {
+                const list = await LUNEA.apiFetch('/api/suppliers');
+                suppliersList = Array.isArray(list) ? list.filter(s => s.status === 'ACTIVE') : [];
+                const sel = document.getElementById('poSupplierSelect');
+                sel.innerHTML = '<option value="">-- Chọn nhà cung cấp --</option>' +
+                    suppliersList.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+            } catch (err) {
+                console.error('Failed to load suppliers:', err);
+            }
+        }
+
+        async function loadCatalogSkus() {
+            try {
+                const prods = await LUNEA.apiFetch('/api/products?includeInactive=false');
+                catalogSkus = [];
+                if (Array.isArray(prods)) {
+                    prods.forEach(p => {
+                        if (p.skus && Array.isArray(p.skus)) {
+                            p.skus.forEach(s => {
+                                catalogSkus.push({
+                                    id: s.id,
+                                    productName: p.name,
+                                    skuCode: s.skuCode,
+                                    variantName: s.variantName || 'Mặc định',
+                                    price: s.price || 0
+                                });
+                            });
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load catalog skus:', err);
+            }
+        }
+
+        async function loadPurchaseOrders() {
+            try {
+                const list = await LUNEA.apiFetch('/api/purchase-orders');
+                poData = Array.isArray(list) ? list : [];
+                renderPOs(poData);
+                updateKPIs();
+            } catch (err) {
+                console.error('Failed to load POs:', err);
+                document.getElementById('poTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-danger);">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không thể tải danh sách phiếu nhập hàng. Vui lòng thử lại!
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateKPIs() {
+            const total = poData.length;
+            const draft = poData.filter(p => p.status === 'DRAFT').length;
+            const confirmed = poData.filter(p => p.status === 'CONFIRMED').length;
+            const totalAmount = poData.reduce((sum, p) => sum + (Number(p.totalAmount) || 0), 0);
+
+            document.getElementById('kpiTotalPOs').textContent = total;
+            document.getElementById('kpiDraftPOs').textContent = draft;
+            document.getElementById('kpiConfirmedPOs').textContent = confirmed;
+            document.getElementById('kpiTotalAmount').textContent = LUNEA.formatVND(totalAmount);
+            document.getElementById('poCountBadge').textContent = `${total} phiếu`;
+        }
+
+        function filterOrders() {
+            const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+            const branch = document.getElementById('branchFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = poData.filter(p => {
+                const matchBranch = (branch === 'ALL' || (p.receivingStoreName && p.receivingStoreName.includes(branch)));
+                const matchStatus = (status === 'ALL' || p.status === status);
+                const matchKw = !kw ||
+                    (p.id && String(p.id).includes(kw)) ||
+                    (p.supplierName && p.supplierName.toLowerCase().includes(kw)) ||
+                    (p.createdByName && p.createdByName.toLowerCase().includes(kw));
+                return matchBranch && matchStatus && matchKw;
+            });
+
+            renderPOs(filtered);
+        }
+
+        function renderPOs(list) {
+            const tbody = document.getElementById('poTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                            <i class="bi bi-inbox" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không tìm thấy phiếu nhập hàng nào.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(p => {
+                const isDraft = p.status === 'DRAFT';
+                const statusBadge = isDraft
+                    ? '<span class="status-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3);"><i class="bi bi-hourglass-split" style="margin-right: 4px;"></i>Chờ xác nhận</span>'
+                    : '<span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);"><i class="bi bi-check-circle-fill" style="margin-right: 4px;"></i>Đã nhập kho</span>';
+
+                const createdStr = p.createdAt ? formatDate(p.createdAt) : '-';
+                const confirmedStr = p.confirmedAt ? formatDate(p.confirmedAt) : '<span style="color: var(--color-text-muted);">Chưa nhập</span>';
+
+                return `
+                    <tr>
+                        <td><span style="font-family: monospace; font-weight: 700; color: var(--color-gold-light);">#PO-${p.id}</span></td>
+                        <td>
+                            <strong style="color: var(--color-text-primary); font-size: 0.95rem;">${escapeHtml(p.supplierName || 'N/A')}</strong>
+                        </td>
+                        <td>
+                            <i class="bi bi-geo-alt" style="color: var(--color-gold-primary); margin-right: 4px;"></i>
+                            ${escapeHtml(p.receivingStoreName || 'N/A')}
+                        </td>
+                        <td>${escapeHtml(p.createdByName || 'N/A')}</td>
+                        <td>${createdStr}</td>
+                        <td>${confirmedStr}</td>
+                        <td style="text-align: right; font-weight: 700; color: var(--color-gold-light); font-family: var(--font-serif);">
+                            ${LUNEA.formatVND(p.totalAmount || 0)}
+                        </td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 8px;">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="viewPoDetail(${p.id})">
+                                    <i class="bi bi-eye"></i> Chi tiết
+                                </button>
+                                ${isDraft ? `
+                                    <button type="button" class="admin-btn admin-btn-primary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="confirmPurchaseOrder(${p.id})" title="Xác nhận nhận hàng & cộng tồn kho">
+                                        <i class="bi bi-check-circle"></i> Nhập kho
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openCreateModal() {
+            document.getElementById('createPoForm').reset();
+            document.getElementById('poItemsTableBody').innerHTML = '';
+            document.getElementById('poTotalDisplay').textContent = '0 ₫';
+            addPoItemRow(); // Thêm sẵn 1 dòng
+
+            const modal = document.getElementById('createPoModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCreatePoModal() {
+            const modal = document.getElementById('createPoModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function addPoItemRow() {
+            const tbody = document.getElementById('poItemsTableBody');
+            const rowId = 'row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+            const options = catalogSkus.map(s => `
+                <option value="${s.id}" data-price="${s.price}">${escapeHtml(s.skuCode)} - ${escapeHtml(s.productName)} (${escapeHtml(s.variantName)})</option>
+            `).join('');
+
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.innerHTML = `
+                <td>
+                    <select class="admin-select po-item-sku" required style="width: 100%; font-size: 0.85rem;" onchange="onItemSkuChange('${rowId}')">
+                        <option value="">-- Chọn sản phẩm/SKU --</option>
+                        ${options}
+                    </select>
+                </td>
+                <td style="text-align: center;">
+                    <input type="number" class="admin-input po-item-qty" min="1" value="10" required style="text-align: center; width: 80px;" oninput="calcItemSubtotal('${rowId}')">
+                </td>
+                <td style="text-align: right;">
+                    <input type="number" class="admin-input po-item-price" min="0" step="1000" value="100000" required style="text-align: right; width: 130px;" oninput="calcItemSubtotal('${rowId}')">
+                </td>
+                <td style="text-align: right; font-weight: 700; color: var(--color-gold-light); font-family: var(--font-serif);" class="po-item-subtotal">
+                    1.000.000 ₫
+                </td>
+                <td style="text-align: center;">
+                    <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 6px; color: var(--color-danger); border: none;" onclick="removePoItemRow('${rowId}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            calcItemSubtotal(rowId);
+        }
+
+        function removePoItemRow(rowId) {
+            const tr = document.getElementById(rowId);
+            if (tr) tr.remove();
+            calcGrandTotal();
+        }
+
+        function onItemSkuChange(rowId) {
+            const row = document.getElementById(rowId);
+            if (!row) return;
+            const sel = row.querySelector('.po-item-sku');
+            const opt = sel.options[sel.selectedIndex];
+            if (opt && opt.dataset.price) {
+                // Đề xuất giá nhập = 70% giá bán
+                const retailPrice = Number(opt.dataset.price) || 0;
+                const estCost = Math.round(retailPrice * 0.7);
+                if (estCost > 0) {
+                    row.querySelector('.po-item-price').value = estCost;
+                }
+            }
+            calcItemSubtotal(rowId);
+        }
+
+        function calcItemSubtotal(rowId) {
+            const row = document.getElementById(rowId);
+            if (!row) return;
+            const qty = Number(row.querySelector('.po-item-qty').value) || 0;
+            const price = Number(row.querySelector('.po-item-price').value) || 0;
+            const subtotal = qty * price;
+            row.querySelector('.po-item-subtotal').textContent = LUNEA.formatVND(subtotal);
+            calcGrandTotal();
+        }
+
+        function calcGrandTotal() {
+            let total = 0;
+            const rows = document.querySelectorAll('#poItemsTableBody tr');
+            rows.forEach(row => {
+                const qty = Number(row.querySelector('.po-item-qty').value) || 0;
+                const price = Number(row.querySelector('.po-item-price').value) || 0;
+                total += (qty * price);
+            });
+            document.getElementById('poTotalDisplay').textContent = LUNEA.formatVND(total);
+            const countEl = document.getElementById('poItemsCountDisplay');
+            if (countEl) {
+                countEl.textContent = `${rows.length} mặt hàng SKU được chọn`;
+            }
+        }
+
+        async function handleCreatePO(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitPO');
+
+            const supplierId = document.getElementById('poSupplierSelect').value;
+            const receivingStoreId = document.getElementById('poStoreSelect').value;
+
+            const rows = document.querySelectorAll('#poItemsTableBody tr');
+            if (rows.length === 0) {
+                LUNEA.showToast('Vui lòng thêm ít nhất 1 mặt hàng vào phiếu nhập!', 'error');
+                return;
+            }
+
+            const items = [];
+            for (const r of rows) {
+                const skuId = r.querySelector('.po-item-sku').value;
+                const quantity = Number(r.querySelector('.po-item-qty').value);
+                const unitPrice = Number(r.querySelector('.po-item-price').value);
+
+                if (!skuId) {
+                    LUNEA.showToast('Vui lòng chọn SKU cho tất cả các dòng hàng!', 'error');
+                    return;
+                }
+                if (quantity <= 0) {
+                    LUNEA.showToast('Số lượng nhập phải lớn hơn 0!', 'error');
+                    return;
+                }
+                items.push({ skuId: Number(skuId), quantity, unitPrice });
+            }
+
+            const payload = {
+                supplierId: Number(supplierId),
+                receivingStoreId: Number(receivingStoreId),
+                items
+            };
+
+            btn.disabled = true;
+            try {
+                await LUNEA.apiFetch('/api/purchase-orders', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                LUNEA.showToast('Lập phiếu nhập kho thành công!', 'success');
+                closeCreatePoModal();
+                await loadPurchaseOrders();
+            } catch (err) {
+                console.error('Failed to create PO:', err);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function viewPoDetail(id) {
+            const p = poData.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('detailPoTitle').innerHTML = `
+                <i class="bi bi-receipt"></i>
+                <span>Chi Tiết Phiếu Nhập #PO-${p.id}</span>
+            `;
+
+            const isDraft = p.status === 'DRAFT';
+            const itemsHtml = (p.items && p.items.length > 0) ? p.items.map((i, idx) => `
+                <tr>
+                    <td style="text-align: center;">${idx + 1}</td>
+                    <td>
+                        <strong style="color: var(--color-text-primary);">${escapeHtml(i.productName || 'N/A')}</strong>
+                        <div style="font-size: 0.78rem; font-family: monospace; color: var(--color-gold-light);">${escapeHtml(i.skuCode || 'N/A')}</div>
+                    </td>
+                    <td style="text-align: center; font-weight: 600;">${i.quantity}</td>
+                    <td style="text-align: right;">${LUNEA.formatVND(i.unitPrice || 0)}</td>
+                    <td style="text-align: right; font-weight: 700; color: var(--color-gold-light);">${LUNEA.formatVND(i.subtotal || (i.quantity * i.unitPrice))}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" style="text-align: center; padding: 20px;">Không có dữ liệu mặt hàng</td></tr>';
+
+            document.getElementById('detailPoBody').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; padding: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm);">
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Nhà cung cấp:</span>
+                        <div style="font-weight: 600; color: var(--color-text-primary);">${escapeHtml(p.supplierName || 'N/A')}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Kho nhận hàng:</span>
+                        <div style="font-weight: 600; color: var(--color-gold-primary);">${escapeHtml(p.receivingStoreName || 'N/A')}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Người lập phiếu:</span>
+                        <div>${escapeHtml(p.createdByName || 'N/A')} (${p.createdAt ? formatDate(p.createdAt) : '-'})</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Trạng thái:</span>
+                        <div>${isDraft ? '<span style="color: #fbbf24; font-weight: 600;">Chờ xác nhận (DRAFT)</span>' : '<span style="color: #34d399; font-weight: 600;">Đã nhập kho (CONFIRMED)</span>'}</div>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">STT</th>
+                                <th>Sản Phẩm / Mã SKU</th>
+                                <th style="text-align: center; width: 100px;">Số Lượng</th>
+                                <th style="text-align: right; width: 140px;">Đơn Giá Nhập</th>
+                                <th style="text-align: right; width: 150px;">Thành Tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemsHtml}</tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" style="text-align: right; font-weight: 700; font-size: 1rem;">Tổng Cộng Tiền Nhập:</td>
+                                <td style="text-align: right; font-weight: 700; font-size: 1.15rem; color: var(--color-gold-light); font-family: var(--font-serif);">${LUNEA.formatVND(p.totalAmount || 0)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+
+            const footer = document.getElementById('detailPoFooter');
+            footer.innerHTML = `
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeDetailPoModal()">
+                    <i class="bi bi-x-circle"></i> Đóng
+                </button>
+                <button type="button" class="admin-btn admin-btn-outline" onclick="window.print()" style="margin-left: auto;">
+                    <i class="bi bi-printer"></i> In Phiếu
+                </button>
+                ${isDraft ? `
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="confirmPurchaseOrder(${p.id})">
+                        <i class="bi bi-check-circle"></i> Xác Nhận Nhập Kho Ngay
+                    </button>
+                ` : ''}
+            `;
+
+            const modal = document.getElementById('detailPoModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetailPoModal() {
+            const modal = document.getElementById('detailPoModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', (e) => {
+            const createModal = document.getElementById('createPoModal');
+            if (e.target === createModal) {
+                closeCreatePoModal();
+            }
+            const detailModal = document.getElementById('detailPoModal');
+            if (e.target === detailModal) {
+                closeDetailPoModal();
+            }
+        });
+
+        async function confirmPurchaseOrder(id) {
+            if (!confirm(`Xác nhận nhập kho phiếu #PO-${id}?\nHệ thống sẽ tự động cộng số lượng thực tế vào tồn kho chi nhánh nhận hàng!`)) {
+                return;
+            }
+
+            try {
+                await LUNEA.apiFetch(`/api/purchase-orders/${id}/confirm`, {
+                    method: 'PUT'
+                });
+                LUNEA.showToast(`Xác nhận nhập kho #PO-${id} thành công! Đã tự động cập nhật tồn kho.`, 'success', 4500);
+                closeDetailPoModal();
+                await loadPurchaseOrders();
+            } catch (err) {
+                console.error('Failed to confirm PO:', err);
+            }
+        }
+
+        function formatDate(dtStr) {
+            if (!dtStr) return '-';
+            const d = new Date(dtStr);
+            if (isNaN(d.getTime())) return dtStr;
+            return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, m => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[m]);
+        }
+    </script>
+</body>
+</html>

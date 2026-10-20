@@ -121,84 +121,150 @@
     </main>
 
     <!-- Modal Tạo / Sửa Voucher -->
-    <div id="voucherModal" role="dialog" aria-modal="true" aria-labelledby="voucherModalTitle" tabindex="-1"
-         style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div style="background: var(--color-bg-card); border: 1px solid var(--color-border-gold); border-radius: 12px; max-width: 640px; width: 92%; max-height: 90vh; overflow-y: auto; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 14px;">
-                <div>
-                    <h3 id="voucherModalTitle" style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--color-text-primary); margin: 0 0 4px 0;">
-                        Tạo Mã Ưu Đãi Mới
-                    </h3>
-                    <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0;">Thiết lập quy định chiết khấu, hạn mức và thời gian áp dụng</p>
+    <div id="voucherModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i id="voucherModalIcon" class="bi bi-ticket-perforated-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="voucherModalTitle">Tạo Mã Ưu Đãi Mới</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Thiết lập quy định chiết khấu, giá trị đơn tối thiểu, hạn mức sử dụng và thời hạn áp dụng
+                        </div>
+                    </div>
                 </div>
-                <button type="button" onclick="closeVoucherModal()" aria-label="Đóng" style="background: none; border: none; font-size: 1.5rem; color: var(--color-text-muted); cursor: pointer; line-height: 1;">&times;</button>
+                <button type="button" class="admin-modal-close" onclick="closeVoucherModal()" aria-label="Đóng">&times;</button>
             </div>
 
-            <form id="voucherForm" onsubmit="submitVoucherForm(event)">
+            <form id="voucherForm" class="admin-modal-form" onsubmit="submitVoucherForm(event)">
                 <input type="hidden" id="editVoucherId" value="">
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                    <div>
-                        <label class="form-label" for="vCode">Mã Voucher (Code) *</label>
-                        <input type="text" id="vCode" class="admin-input" required placeholder="VD: LUNEA20, CHAOMUNG" style="text-transform: uppercase;">
-                    </div>
-                    <div>
-                        <label class="form-label" for="vName">Tên Chương Trình *</label>
-                        <input type="text" id="vName" class="admin-input" required placeholder="VD: Giảm 20% đơn từ 500k">
+                <div class="admin-modal-body">
+                    <div class="admin-modal-grid-2">
+                        <!-- Cột 1: Thông tin mã & Thể lệ -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-tag-fill"></i>
+                                    <span>Thông Tin Nhận Diện Voucher</span>
+                                </h4>
+                                <span class="section-hint">Định danh khuyến mãi</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="vCode">
+                                    Mã Voucher (Code) <span class="required">*</span>:
+                                </label>
+                                <input type="text" id="vCode" class="admin-input" required placeholder="VD: LUNEA20, CHAOMUNG, VIPSPRING" style="text-transform: uppercase; font-family: monospace; font-weight: 700; letter-spacing: 0.05em;">
+                                <small class="form-field-hint">Mã viết liền không dấu, khách hàng nhập khi thanh toán.</small>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="vName">
+                                    Tên Chương Trình Ưu Đãi <span class="required">*</span>:
+                                </label>
+                                <input type="text" id="vName" class="admin-input" required placeholder="VD: Giảm 20% đơn từ 500k chào hè">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="vDescription">
+                                    Mô Tả & Thể Lệ Áp Dụng:
+                                </label>
+                                <textarea id="vDescription" class="admin-input" rows="4" placeholder="Ghi chú chi tiết điều kiện áp dụng, ví dụ: Áp dụng cho đơn hàng mỹ phẩm chăm sóc da..." style="resize: vertical; min-height: 90px;"></textarea>
+                            </div>
+
+                            <div style="padding: 10px 12px; background: rgba(223, 190, 123, 0.06); border: 1px solid rgba(223, 190, 123, 0.2); border-radius: var(--radius-xs); font-size: 0.75rem; color: var(--color-gold-light); display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="bi bi-gift-fill" style="margin-top: 1px; flex-shrink: 0;"></i>
+                                <span>Mã ưu đãi đang hoạt động sẽ được tự động hiển thị trong danh sách Voucher gợi ý tại giỏ hàng và màn hình thanh toán.</span>
+                            </div>
+                        </div>
+
+                        <!-- Cột 2: Quy định giảm giá & Thời hạn -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-sliders"></i>
+                                    <span>Quy Định Chiết Khấu & Hạn Dùng</span>
+                                </h4>
+                                <span class="section-hint">Hạn mức & thời gian</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <label class="form-field-label" for="vType">
+                                        Hình Thức Giảm <span class="required">*</span>:
+                                    </label>
+                                    <select id="vType" class="admin-select" onchange="onVoucherTypeChange()" required>
+                                        <option value="PERCENT">Phần trăm (%)</option>
+                                        <option value="FIXED">Số tiền cố định (₫)</option>
+                                        <option value="FREESHIP">Miễn phí ship (₫)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-field-label" for="vValue" id="vValueLabel">
+                                        Mức Giảm Giá <span class="required">*</span>:
+                                    </label>
+                                    <input type="number" id="vValue" class="admin-input" required min="0" step="any" placeholder="VD: 10">
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <label class="form-field-label" for="vMaxDiscount">
+                                        Giảm Tối Đa (₫):
+                                    </label>
+                                    <input type="number" id="vMaxDiscount" class="admin-input" min="0" step="any" placeholder="Trống = không giới hạn">
+                                </div>
+                                <div>
+                                    <label class="form-field-label" for="vMinOrder">
+                                        Đơn Tối Thiểu (₫) <span class="required">*</span>:
+                                    </label>
+                                    <input type="number" id="vMinOrder" class="admin-input" required min="0" value="0" placeholder="0">
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="vUsageLimit">
+                                    Giới Hạn Tổng Lượt Dùng Toàn Hệ Thống <span class="required">*</span>:
+                                </label>
+                                <input type="number" id="vUsageLimit" class="admin-input" required min="1" value="1000" placeholder="1000">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div>
+                                    <label class="form-field-label" for="vValidFrom">
+                                        Hiệu Lực Từ Ngày <span class="required">*</span>:
+                                    </label>
+                                    <input type="datetime-local" id="vValidFrom" class="admin-input" required>
+                                </div>
+                                <div>
+                                    <label class="form-field-label" for="vValidTo">
+                                        Đến Hết Ngày <span class="required">*</span>:
+                                    </label>
+                                    <input type="datetime-local" id="vValidTo" class="admin-input" required>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 16px;">
-                    <label class="form-label" for="vDescription">Mô tả / Thể lệ chương trình</label>
-                    <textarea id="vDescription" class="admin-input" rows="2" placeholder="Ghi chú chi tiết điều kiện hoặc thể lệ ưu đãi..."></textarea>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-                    <div>
-                        <label class="form-label" for="vType">Loại giảm *</label>
-                        <select id="vType" class="admin-select" onchange="onVoucherTypeChange()" required>
-                            <option value="PERCENT">Phần trăm (%)</option>
-                            <option value="FIXED">Số tiền cố định (₫)</option>
-                            <option value="FREESHIP">Miễn phí ship</option>
-                        </select>
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Voucher sẽ có hiệu lực ngay sau khi lưu</span>
                     </div>
-                    <div>
-                        <label class="form-label" for="vValue" id="vValueLabel">Giá trị giảm *</label>
-                        <input type="number" id="vValue" class="admin-input" required min="0" step="any" placeholder="VD: 10 hoặc 50000">
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" onclick="closeVoucherModal()" class="admin-btn admin-btn-outline">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Bỏ</span>
+                        </button>
+                        <button type="submit" id="btnSaveVoucher" class="admin-btn admin-btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            <span id="btnSaveVoucherText">Lưu Voucher</span>
+                        </button>
                     </div>
-                    <div>
-                        <label class="form-label" for="vMaxDiscount">Giảm tối đa (₫)</label>
-                        <input type="number" id="vMaxDiscount" class="admin-input" min="0" step="any" placeholder="Để trống nếu không giới hạn">
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                    <div>
-                        <label class="form-label" for="vMinOrder">Giá trị đơn tối thiểu (₫) *</label>
-                        <input type="number" id="vMinOrder" class="admin-input" required min="0" value="0" placeholder="0">
-                    </div>
-                    <div>
-                        <label class="form-label" for="vUsageLimit">Giới hạn tổng lượt dùng *</label>
-                        <input type="number" id="vUsageLimit" class="admin-input" required min="1" value="1000" placeholder="1000">
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                    <div>
-                        <label class="form-label" for="vValidFrom">Ngày bắt đầu hiệu lực *</label>
-                        <input type="datetime-local" id="vValidFrom" class="admin-input" required>
-                    </div>
-                    <div>
-                        <label class="form-label" for="vValidTo">Ngày kết thúc hiệu lực *</label>
-                        <input type="datetime-local" id="vValidTo" class="admin-input" required>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--color-border-subtle); padding-top: 18px;">
-                    <button type="button" onclick="closeVoucherModal()" class="admin-btn admin-btn-outline" style="padding: 9px 20px;">Hủy</button>
-                    <button type="submit" id="btnSaveVoucher" class="admin-btn admin-btn-primary" style="padding: 9px 24px;">
-                        <span>Lưu Voucher</span>
-                    </button>
                 </div>
             </form>
         </div>
@@ -384,6 +450,8 @@
 
         function openCreateModal() {
             document.getElementById('voucherModalTitle').textContent = 'Tạo Mã Ưu Đãi Mới';
+            document.getElementById('voucherModalIcon').className = 'bi bi-ticket-perforated-fill';
+            document.getElementById('btnSaveVoucherText').textContent = 'Lưu Voucher';
             document.getElementById('editVoucherId').value = '';
             document.getElementById('vCode').value = '';
             document.getElementById('vCode').disabled = false;
@@ -402,7 +470,9 @@
             document.getElementById('vValidTo').value = nextYear.toISOString().slice(0, 16);
 
             onVoucherTypeChange();
-            document.getElementById('voucherModal').style.display = 'flex';
+            const modal = document.getElementById('voucherModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
         function openEditModal(id) {
@@ -410,6 +480,8 @@
             if (!v) return;
 
             document.getElementById('voucherModalTitle').textContent = 'Chỉnh Sửa Mã ' + v.code;
+            document.getElementById('voucherModalIcon').className = 'bi bi-pencil-square';
+            document.getElementById('btnSaveVoucherText').textContent = 'Cập Nhật Voucher';
             document.getElementById('editVoucherId').value = v.id;
             document.getElementById('vCode').value = v.code;
             document.getElementById('vCode').disabled = true;
@@ -425,12 +497,23 @@
             if (v.validTo) document.getElementById('vValidTo').value = v.validTo.slice(0, 16);
 
             onVoucherTypeChange();
-            document.getElementById('voucherModal').style.display = 'flex';
+            const modal = document.getElementById('voucherModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeVoucherModal() {
-            document.getElementById('voucherModal').style.display = 'none';
+            const modal = document.getElementById('voucherModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
         }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('voucherModal');
+            if (e.target === modal) {
+                closeVoucherModal();
+            }
+        });
 
         async function submitVoucherForm(e) {
             e.preventDefault();

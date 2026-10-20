@@ -94,7 +94,7 @@ public class AdminPageController {
         return "admin/dashboard";
     }
 
-    @PreAuthorize("hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/orders")
     public String orders(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Đơn Hàng Chi Nhánh | LUNEA Back-office");
@@ -103,7 +103,7 @@ public class AdminPageController {
         return "admin/orders";
     }
 
-    @PreAuthorize("hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/orders/{id}")
     public String orderDetail(
             @PathVariable("id") Long id,
@@ -117,7 +117,7 @@ public class AdminPageController {
         return "admin/order-detail";
     }
 
-    @PreAuthorize("hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/inventory")
     public String inventory(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Tồn Kho Chi Nhánh | LUNEA Back-office");
@@ -126,7 +126,7 @@ public class AdminPageController {
         return "admin/inventory";
     }
 
-    @PreAuthorize("hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/products")
     public String products(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Sản Phẩm Chuỗi | LUNEA Back-office");
@@ -135,7 +135,7 @@ public class AdminPageController {
         return "admin/products";
     }
 
-    @PreAuthorize("hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/employees")
     public String employees(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Nhân Sự & Phân Quyền | LUNEA Back-office");
@@ -144,12 +144,39 @@ public class AdminPageController {
         return "admin/employees";
     }
 
-    @PreAuthorize("hasAnyAuthority('VOUCHER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('VOUCHER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/vouchers")
     public String vouchers(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
         model.addAttribute("pageTitle", "Quản Lý Mã Ưu Đãi & Khuyến Mãi | LUNEA Back-office");
         model.addAttribute("activeMenu", "vouchers");
         populateCommonAdminAttributes(principal, model);
         return "admin/vouchers";
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/suppliers")
+    public String suppliers(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Quản Lý Nhà Cung Cấp | LUNEA Back-office");
+        model.addAttribute("activeMenu", "suppliers");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/suppliers";
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/purchase-orders")
+    public String purchaseOrders(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Quản Lý Nhập Hàng (PO) | LUNEA Back-office");
+        model.addAttribute("activeMenu", "purchase-orders");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/purchase-orders";
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/stock-transfers")
+    public String stockTransfers(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Điều Chuyển Kho Liên Chi Nhánh | LUNEA Back-office");
+        model.addAttribute("activeMenu", "stock-transfers");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/stock-transfers";
     }
 }

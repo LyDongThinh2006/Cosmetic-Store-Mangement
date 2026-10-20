@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('stock-transfers')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Điều Chuyển Kho Liên Chi Nhánh', 'Quản lý quy trình luân chuyển hàng hóa giữa các showroom, giám sát xuất kho và nhập hàng')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Action Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo mã TF, kho, người tạo..." oninput="filterTransfers()" style="padding-left: 36px; min-width: 240px;">
+                    </div>
+
+                    <select id="sourceFilter" class="admin-select" onchange="filterTransfers()">
+                        <option value="ALL">Tất cả kho xuất</option>
+                        <option th:each="st : ${allStores}" th:value="${st.name}" th:text="'Kho xuất: ' + ${st.name}">LUNEA Quận 1</option>
+                    </select>
+
+                    <select id="destFilter" class="admin-select" onchange="filterTransfers()">
+                        <option value="ALL">Tất cả kho nhận</option>
+                        <option th:each="st : ${allStores}" th:value="${st.name}" th:text="'Kho nhận: ' + ${st.name}">LUNEA Cầu Giấy</option>
+                    </select>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterTransfers()">
+                        <option value="ALL">Tất cả trạng thái</option>
+                        <option value="PENDING">Chờ xuất kho (PENDING)</option>
+                        <option value="IN_TRANSIT">Đang vận chuyển (IN_TRANSIT)</option>
+                        <option value="RECEIVED">Đã nhận hàng (RECEIVED)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadTransfers()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="openCreateModal()">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Tạo Phiếu Chuyển Kho</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Phiếu Điều Chuyển</span>
+                        <div class="kpi-icon blue"><i class="bi bi-arrow-left-right"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalTransfers">0</div>
+                    <div class="kpi-sub"><span>Tổng lệnh chuyển kho liên chi nhánh</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Chờ Xuất Kho</span>
+                        <div class="kpi-icon amber"><i class="bi bi-hourglass-top"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiPendingTransfers" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Đang chờ thủ kho đóng gói và xuất</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Vận Chuyển</span>
+                        <div class="kpi-icon blue"><i class="bi bi-truck"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiInTransitTransfers" style="color: #60a5fa;">0</div>
+                    <div class="kpi-sub"><span>Hàng đang trên đường chuyển giao</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đã Nhận Hàng</span>
+                        <div class="kpi-icon green"><i class="bi bi-check2-all"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiReceivedTransfers" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Đã nhập kho nhận thành công</span></div>
+                </div>
+            </div>
+
+            <!-- Stock Transfers Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-arrow-left-right"></i>
+                        <span>Danh Sách Phiếu Điều Chuyển Hàng Hóa</span>
+                    </h3>
+                    <span id="transferCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 phiếu</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Mã Phiếu</th>
+                                <th>Kho Xuất Hàng</th>
+                                <th>Kho Nhận Hàng</th>
+                                <th>Người Tạo</th>
+                                <th>Ngày Tạo</th>
+                                <th>Ngày Xuất</th>
+                                <th>Ngày Nhận</th>
+                                <th style="text-align: center; width: 90px;">Mặt Hàng</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right; width: 180px;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transferTableBody">
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                                    <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu điều chuyển kho...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Tạo Phiếu Điều Chuyển -->
+    <div id="createTransferModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-2xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title">Tạo Phiếu Điều Chuyển Kho Liên Chi Nhánh</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Điều phối số lượng tồn khả dụng từ kho xuất sang kho tiếp nhận trong chuỗi cửa hàng
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeCreateModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <form id="createTransferForm" class="admin-modal-form" onsubmit="handleCreateTransfer(event)">
+                <div class="admin-modal-body">
+                    <!-- Tuyến vận chuyển -->
+                    <div class="admin-modal-grid-2">
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-diagram-3-fill"></i>
+                                    <span>Tuyến Điều Chuyển Hàng</span>
+                                </h4>
+                                <span class="section-hint">Chi nhánh hai đầu</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="fromStoreSelect">
+                                    Kho Xuất Hàng (Đi) <span class="required">*</span>:
+                                </label>
+                                <select id="fromStoreSelect" class="admin-select" required>
+                                    <option value="">-- Chọn kho xuất hàng --</option>
+                                    <option th:each="st : ${allStores}" th:value="${st.id}" th:text="${st.name}">LUNEA Quận 1</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="form-field-label" for="toStoreSelect">
+                                    Kho Nhận Hàng (Đến) <span class="required">*</span>:
+                                </label>
+                                <select id="toStoreSelect" class="admin-select" required>
+                                    <option value="">-- Chọn kho nhận hàng --</option>
+                                    <option th:each="st : ${allStores}" th:value="${st.id}" th:text="${st.name}">LUNEA Cầu Giấy</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-truck"></i>
+                                    <span>Vận Chuyển & Quy Trình</span>
+                                </h4>
+                                <span class="section-hint">Hành trình vận đơn</span>
+                            </div>
+
+                            <div style="margin-bottom: 10px;">
+                                <label class="form-field-label" for="tfCarrierNote">
+                                    Đơn Vị Vận Chuyển / Mã Vận Đơn:
+                                </label>
+                                <input type="text" id="tfCarrierNote" class="admin-input" placeholder="VD: GHTK - Mã VD: 1029384756 (hoặc xe tải nội bộ)">
+                            </div>
+
+                            <div style="padding: 9px 12px; background: rgba(223, 190, 123, 0.06); border: 1px solid rgba(223, 190, 123, 0.2); border-radius: var(--radius-xs); font-size: 0.74rem; color: var(--color-gold-light); display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="bi bi-info-circle-fill" style="margin-top: 1px; flex-shrink: 0;"></i>
+                                <span>Quy trình chuẩn: Tạo phiếu (PENDING) &rarr; Kho xuất bấm <strong>Xuất kho</strong> (IN_TRANSIT, trừ kho xuất) &rarr; Kho nhận bấm <strong>Nhận hàng</strong> (RECEIVED, cộng kho nhận).</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách mặt hàng chuyển -->
+                    <div class="form-section-card" style="margin-top: 16px;">
+                        <div class="form-section-header" style="margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <h4 class="section-title">
+                                    <i class="bi bi-boxes"></i>
+                                    <span>Danh Sách Mặt Hàng SKU Điều Chuyển</span>
+                                </h4>
+                            </div>
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 5px 12px; font-size: 0.8rem;" onclick="addTransferItemRow()">
+                                <i class="bi bi-plus-lg"></i> Thêm Dòng Mặt Hàng
+                            </button>
+                        </div>
+
+                        <div class="admin-table-container" style="border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); max-height: 280px; overflow-y: auto;">
+                            <table class="admin-table" style="font-size: 0.85rem; min-width: 680px;">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 320px;">Sản Phẩm & Biến Thể SKU</th>
+                                        <th style="width: 150px; text-align: center;">Số Lượng Chuyển</th>
+                                        <th style="width: 50px; text-align: center;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transferItemsTableBody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding: 12px 18px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle);">
+                            <div style="font-size: 0.82rem; color: var(--color-text-muted);">
+                                <i class="bi bi-check2-all" style="color: var(--color-gold-primary); margin-right: 4px;"></i>
+                                <span id="transferItemCountDisplay">1 mặt hàng được chọn</span>
+                            </div>
+                            <div style="text-align: right; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 0.88rem; color: var(--color-text-secondary);">Tổng Số Lượng Chuyển:</span>
+                                <strong id="transferTotalQtyDisplay" style="font-size: 1.25rem; color: var(--color-gold-light);">5 đơn vị</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Thủ kho hai đầu đều có thể theo dõi tiến độ vận chuyển</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeCreateModal()">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Bỏ</span>
+                        </button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="btnSubmitTransfer">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Khởi Tạo Phiếu Chuyển (PENDING)</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Chi Tiết Phiếu Chuyển -->
+    <div id="detailTransferModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="detailTransferTitle">Chi Tiết Phiếu Điều Chuyển Kho</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Lộ trình điều chuyển hàng giữa các chi nhánh và trạng thái xác nhận giao nhận
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeDetailModal()" aria-label="Đóng">&times;</button>
+            </div>
+            <div class="admin-modal-body" id="detailTransferBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="admin-modal-footer" id="detailTransferFooter">
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeDetailModal()">
+                    <i class="bi bi-x-circle"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let transfersData = [];
+        let catalogSkus = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCatalogSkus();
+            await loadTransfers();
+        });
+
+        async function loadCatalogSkus() {
+            try {
+                const prods = await LUNEA.apiFetch('/api/products?includeInactive=false');
+                catalogSkus = [];
+                if (Array.isArray(prods)) {
+                    prods.forEach(p => {
+                        if (p.skus && Array.isArray(p.skus)) {
+                            p.skus.forEach(s => {
+                                catalogSkus.push({
+                                    id: s.id,
+                                    productName: p.name,
+                                    skuCode: s.skuCode,
+                                    variantName: s.variantName || 'Mặc định'
+                                });
+                            });
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load catalog skus:', err);
+            }
+        }
+
+        async function loadTransfers() {
+            try {
+                const list = await LUNEA.apiFetch('/api/stock-transfers');
+                transfersData = Array.isArray(list) ? list : [];
+                renderTransfers(transfersData);
+                updateKPIs();
+            } catch (err) {
+                console.error('Failed to load transfers:', err);
+                document.getElementById('transferTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 40px; color: var(--color-danger);">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không thể tải danh sách điều chuyển kho. Vui lòng thử lại!
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateKPIs() {
+            const total = transfersData.length;
+            const pending = transfersData.filter(t => t.status === 'PENDING').length;
+            const inTransit = transfersData.filter(t => t.status === 'IN_TRANSIT').length;
+            const received = transfersData.filter(t => t.status === 'RECEIVED').length;
+
+            document.getElementById('kpiTotalTransfers').textContent = total;
+            document.getElementById('kpiPendingTransfers').textContent = pending;
+            document.getElementById('kpiInTransitTransfers').textContent = inTransit;
+            document.getElementById('kpiReceivedTransfers').textContent = received;
+            document.getElementById('transferCountBadge').textContent = `${total} phiếu`;
+        }
+
+        function filterTransfers() {
+            const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+            const src = document.getElementById('sourceFilter').value;
+            const dst = document.getElementById('destFilter').value;
+            const st = document.getElementById('statusFilter').value;
+
+            const filtered = transfersData.filter(t => {
+                const matchSrc = (src === 'ALL' || (t.sourceStoreName && t.sourceStoreName.includes(src)));
+                const matchDst = (dst === 'ALL' || (t.destinationStoreName && t.destinationStoreName.includes(dst)));
+                const matchSt = (st === 'ALL' || t.status === st);
+                const matchKw = !kw ||
+                    (t.id && String(t.id).includes(kw)) ||
+                    (t.sourceStoreName && t.sourceStoreName.toLowerCase().includes(kw)) ||
+                    (t.destinationStoreName && t.destinationStoreName.toLowerCase().includes(kw)) ||
+                    (t.createdByName && t.createdByName.toLowerCase().includes(kw));
+                return matchSrc && matchDst && matchSt && matchKw;
+            });
+
+            renderTransfers(filtered);
+        }
+
+        function renderTransfers(list) {
+            const tbody = document.getElementById('transferTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                            <i class="bi bi-inbox" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không tìm thấy phiếu điều chuyển nào.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(t => {
+                let statusBadge = '';
+                if (t.status === 'PENDING') {
+                    statusBadge = '<span class="status-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3);"><i class="bi bi-hourglass-top" style="margin-right: 4px;"></i>Chờ xuất kho</span>';
+                } else if (t.status === 'IN_TRANSIT') {
+                    statusBadge = '<span class="status-badge" style="background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3);"><i class="bi bi-truck" style="margin-right: 4px;"></i>Đang vận chuyển</span>';
+                } else if (t.status === 'RECEIVED') {
+                    statusBadge = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);"><i class="bi bi-check2-all" style="margin-right: 4px;"></i>Đã nhận hàng</span>';
+                }
+
+                const createdStr = t.createdAt ? formatDate(t.createdAt) : '-';
+                const shippedStr = t.shippedAt ? formatDate(t.shippedAt) : '<span style="color: var(--color-text-muted);">-</span>';
+                const receivedStr = t.receivedAt ? formatDate(t.receivedAt) : '<span style="color: var(--color-text-muted);">-</span>';
+                const itemCount = (t.items && t.items.length) ? t.items.length : 0;
+
+                return `
+                    <tr>
+                        <td><span style="font-family: monospace; font-weight: 700; color: var(--color-gold-light);">#TF-${t.id}</span></td>
+                        <td>
+                            <strong style="color: var(--color-text-primary); font-size: 0.9rem;">${escapeHtml(t.sourceStoreName || 'N/A')}</strong>
+                        </td>
+                        <td>
+                            <strong style="color: var(--color-gold-primary); font-size: 0.9rem;">${escapeHtml(t.destinationStoreName || 'N/A')}</strong>
+                        </td>
+                        <td>${escapeHtml(t.createdByName || 'N/A')}</td>
+                        <td>${createdStr}</td>
+                        <td>${shippedStr}</td>
+                        <td>${receivedStr}</td>
+                        <td style="text-align: center; font-weight: 600;">${itemCount} SKU</td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 8px;">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="viewTransferDetail(${t.id})">
+                                    <i class="bi bi-eye"></i> Chi tiết
+                                </button>
+                                ${t.status === 'PENDING' ? `
+                                    <button type="button" class="admin-btn admin-btn-primary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="shipTransfer(${t.id})" title="Xác nhận xuất kho (trừ tồn kho xuất)">
+                                        <i class="bi bi-box-arrow-up-right"></i> Xuất kho
+                                    </button>
+                                ` : ''}
+                                ${t.status === 'IN_TRANSIT' ? `
+                                    <button type="button" class="admin-btn admin-btn-primary" style="padding: 4px 10px; font-size: 0.8rem; background: #059669; border-color: #059669;" onclick="receiveTransfer(${t.id})" title="Xác nhận nhận hàng (cộng tồn kho nhận)">
+                                        <i class="bi bi-check2-circle"></i> Nhận hàng
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openCreateModal() {
+            document.getElementById('createTransferForm').reset();
+            document.getElementById('transferItemsTableBody').innerHTML = '';
+            addTransferItemRow();
+            calcTransferSummary();
+
+            const modal = document.getElementById('createTransferModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCreateModal() {
+            const modal = document.getElementById('createTransferModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function addTransferItemRow() {
+            const tbody = document.getElementById('transferItemsTableBody');
+            const rowId = 'tf_row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+            const options = catalogSkus.map(s => `
+                <option value="${s.id}">${escapeHtml(s.skuCode)} - ${escapeHtml(s.productName)} (${escapeHtml(s.variantName)})</option>
+            `).join('');
+
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.innerHTML = `
+                <td>
+                    <select class="admin-select tf-item-sku" required style="width: 100%; font-size: 0.85rem;" onchange="calcTransferSummary()">
+                        <option value="">-- Chọn sản phẩm/SKU điều chuyển --</option>
+                        ${options}
+                    </select>
+                </td>
+                <td style="text-align: center;">
+                    <input type="number" class="admin-input tf-item-qty" min="1" value="5" required style="text-align: center; width: 100px;" oninput="calcTransferSummary()">
+                </td>
+                <td style="text-align: center;">
+                    <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 6px; color: var(--color-danger); border: none;" onclick="removeTransferRow('${rowId}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            calcTransferSummary();
+        }
+
+        function removeTransferRow(rowId) {
+            const el = document.getElementById(rowId);
+            if (el) el.remove();
+            calcTransferSummary();
+        }
+
+        function calcTransferSummary() {
+            const rows = document.querySelectorAll('#transferItemsTableBody tr');
+            let totalQty = 0;
+            rows.forEach(r => {
+                const q = Number(r.querySelector('.tf-item-qty')?.value) || 0;
+                totalQty += q;
+            });
+
+            const countEl = document.getElementById('transferItemCountDisplay');
+            if (countEl) countEl.textContent = `${rows.length} mặt hàng SKU được chọn`;
+            const qtyEl = document.getElementById('transferTotalQtyDisplay');
+            if (qtyEl) qtyEl.textContent = `${totalQty} đơn vị sản phẩm`;
+        }
+
+        async function handleCreateTransfer(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitTransfer');
+            const sourceStoreId = document.getElementById('fromStoreSelect').value;
+            const destinationStoreId = document.getElementById('toStoreSelect').value;
+
+            if (sourceStoreId === destinationStoreId) {
+                LUNEA.showToast('Kho xuất hàng và kho nhận hàng không được trùng nhau!', 'error');
+                return;
+            }
+
+            const rows = document.querySelectorAll('#transferItemsTableBody tr');
+            if (rows.length === 0) {
+                LUNEA.showToast('Vui lòng thêm ít nhất 1 mặt hàng điều chuyển!', 'error');
+                return;
+            }
+
+            const items = [];
+            for (const r of rows) {
+                const skuId = r.querySelector('.tf-item-sku').value;
+                const quantity = Number(r.querySelector('.tf-item-qty').value);
+
+                if (!skuId) {
+                    LUNEA.showToast('Vui lòng chọn SKU cho tất cả các dòng!', 'error');
+                    return;
+                }
+                if (quantity <= 0) {
+                    LUNEA.showToast('Số lượng chuyển phải lớn hơn 0!', 'error');
+                    return;
+                }
+                items.push({ skuId: Number(skuId), quantity });
+            }
+
+            btn.disabled = true;
+            try {
+                await LUNEA.apiFetch('/api/stock-transfers', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        sourceStoreId: Number(sourceStoreId),
+                        destinationStoreId: Number(destinationStoreId),
+                        items
+                    })
+                });
+                LUNEA.showToast('Tạo phiếu điều chuyển kho thành công!', 'success');
+                closeCreateModal();
+                await loadTransfers();
+            } catch (err) {
+                console.error('Failed to create transfer:', err);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function viewTransferDetail(id) {
+            const t = transfersData.find(item => item.id === id);
+            if (!t) return;
+
+            document.getElementById('detailTransferTitle').innerHTML = `
+                <i class="bi bi-arrow-left-right"></i>
+                <span>Chi Tiết Phiếu Điều Chuyển #TF-${t.id}</span>
+            `;
+
+            const itemsHtml = (t.items && t.items.length > 0) ? t.items.map((i, idx) => `
+                <tr>
+                    <td style="text-align: center;">${idx + 1}</td>
+                    <td>
+                        <strong style="color: var(--color-text-primary);">${escapeHtml(i.productName || 'N/A')}</strong>
+                        <div style="font-size: 0.78rem; font-family: monospace; color: var(--color-gold-light);">${escapeHtml(i.skuCode || 'N/A')}</div>
+                    </td>
+                    <td style="text-align: center; font-weight: 700; font-size: 1rem; color: var(--color-gold-light);">${i.quantity}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="3" style="text-align: center; padding: 20px;">Không có dữ liệu mặt hàng</td></tr>';
+
+            document.getElementById('detailTransferBody').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm);">
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Kho xuất hàng:</span>
+                        <div style="font-weight: 600; color: var(--color-danger);">${escapeHtml(t.sourceStoreName || 'N/A')}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Kho nhận hàng:</span>
+                        <div style="font-weight: 600; color: var(--color-success);">${escapeHtml(t.destinationStoreName || 'N/A')}</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Người tạo phiếu:</span>
+                        <div>${escapeHtml(t.createdByName || 'N/A')} (${t.createdAt ? formatDate(t.createdAt) : '-'})</div>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: var(--color-text-muted);">Trạng thái hiện tại:</span>
+                        <div><strong>${t.status}</strong></div>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">STT</th>
+                                <th>Sản Phẩm / Mã SKU</th>
+                                <th style="text-align: center; width: 140px;">Số Lượng Điều Chuyển</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemsHtml}</tbody>
+                    </table>
+                </div>
+            `;
+
+            const footer = document.getElementById('detailTransferFooter');
+            footer.innerHTML = `
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeDetailModal()">
+                    <i class="bi bi-x-circle"></i> Đóng
+                </button>
+                <button type="button" class="admin-btn admin-btn-outline" onclick="window.print()" style="margin-left: auto;">
+                    <i class="bi bi-printer"></i> In Phiếu Chuyển
+                </button>
+                ${t.status === 'PENDING' ? `
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="shipTransfer(${t.id})">
+                        <i class="bi bi-box-arrow-up-right"></i> Xuất Kho Ngay
+                    </button>
+                ` : ''}
+                ${t.status === 'IN_TRANSIT' ? `
+                    <button type="button" class="admin-btn admin-btn-primary" style="background: #059669; border-color: #059669;" onclick="receiveTransfer(${t.id})">
+                        <i class="bi bi-check2-circle"></i> Xác Nhận Đã Nhận Hàng
+                    </button>
+                ` : ''}
+            `;
+
+            const modal = document.getElementById('detailTransferModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detailTransferModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', (e) => {
+            const createModal = document.getElementById('createTransferModal');
+            if (e.target === createModal) {
+                closeCreateModal();
+            }
+            const detailModal = document.getElementById('detailTransferModal');
+            if (e.target === detailModal) {
+                closeDetailModal();
+            }
+        });
+
+        async function shipTransfer(id) {
+            if (!confirm(`Xác nhận xuất kho cho phiếu #TF-${id}?\nHệ thống sẽ tự động trừ số lượng thực tế tại kho xuất!`)) {
+                return;
+            }
+
+            try {
+                await LUNEA.apiFetch(`/api/stock-transfers/${id}/ship`, { method: 'PUT' });
+                LUNEA.showToast(`Đã xuất kho phiếu #TF-${id}! Hàng đang trên đường vận chuyển.`, 'success', 4500);
+                closeDetailModal();
+                await loadTransfers();
+            } catch (err) {
+                console.error('Failed to ship transfer:', err);
+            }
+        }
+
+        async function receiveTransfer(id) {
+            if (!confirm(`Xác nhận đã nhận hàng cho phiếu #TF-${id}?\nHệ thống sẽ tự động cộng số lượng thực tế vào kho nhận!`)) {
+                return;
+            }
+
+            try {
+                await LUNEA.apiFetch(`/api/stock-transfers/${id}/receive`, { method: 'PUT' });
+                LUNEA.showToast(`Xác nhận nhận hàng #TF-${id} thành công! Đã tự động cập nhật tồn kho nhận.`, 'success', 4500);
+                closeDetailModal();
+                await loadTransfers();
+            } catch (err) {
+                console.error('Failed to receive transfer:', err);
+            }
+        }
+
+        function formatDate(dtStr) {
+            if (!dtStr) return '-';
+            const d = new Date(dtStr);
+            if (isNaN(d.getTime())) return dtStr;
+            return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, m => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[m]);
+        }
+    </script>
+</body>
+</html>

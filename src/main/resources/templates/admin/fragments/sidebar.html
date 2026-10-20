@@ -55,6 +55,24 @@
             <span sec:authorize="!hasAnyAuthority('ROLE_WAREHOUSE_STAFF', 'INVENTORY_ADJUST', 'ROLE_ADMIN', 'ADMIN') and hasAuthority('INVENTORY_VIEW')">Tra Cứu Tồn Kho</span>
         </a>
 
+        <!-- Stock Transfers (Điều chuyển kho) -->
+        <a sec:authorize="hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')" href="/admin/stock-transfers" class="admin-nav-link" th:classappend="${activeMenu == 'stock-transfers' ? 'active' : ''}">
+            <i class="bi bi-arrow-left-right"></i>
+            <span>Điều Chuyển Kho</span>
+        </a>
+
+        <!-- Purchase Orders (Nhập hàng PO) -->
+        <a sec:authorize="hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')" href="/admin/purchase-orders" class="admin-nav-link" th:classappend="${activeMenu == 'purchase-orders' ? 'active' : ''}">
+            <i class="bi bi-truck"></i>
+            <span>Nhập Hàng (PO)</span>
+        </a>
+
+        <!-- Suppliers (Nhà cung cấp) -->
+        <a sec:authorize="hasAnyAuthority('PURCHASE_MANAGE', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')" href="/admin/suppliers" class="admin-nav-link" th:classappend="${activeMenu == 'suppliers' ? 'active' : ''}">
+            <i class="bi bi-building"></i>
+            <span>Nhà Cung Cấp</span>
+        </a>
+
         <!-- Products (Chỉ Admin hoặc CATALOG_MANAGE) -->
         <a sec:authorize="hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')" href="/admin/products" class="admin-nav-link" th:classappend="${activeMenu == 'products' ? 'active' : ''}">
             <i class="bi bi-tags"></i>

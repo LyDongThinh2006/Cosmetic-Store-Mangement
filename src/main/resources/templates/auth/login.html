@@ -89,29 +89,93 @@
                         style="color: var(--color-gold-light); font-weight: 600; margin-left: 6px;">Đăng ký</a>
                 </div>
 
-                <!-- Quick Demo Fill Pills -->
-                <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-border-subtle);">
-                    <div
-                        style="font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; text-align: center;">
-                        <i class="bi bi-key" style="margin-right: 4px;"></i> Điền nhanh tài khoản demo (Mật khẩu:
-                        123456)
+                <!-- Quick Demo Fill Pills (Đầy đủ tất cả Vai Trò & Chi Nhánh) -->
+                <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--color-border-subtle);">
+                    <div style="font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <i class="bi bi-key-fill text-gold"></i>
+                        <span>Điền nhanh tài khoản kiểm thử (Pass: <strong style="color: var(--color-gold-light);">123456</strong>)</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button type="button" onclick="fillDemo('khach01@lunea.test', '123456')" class="variant-pill"
-                            style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
-                            <i class="bi bi-person" style="margin-right: 6px; color: var(--color-gold-light);"></i>
-                            <strong>Khách hàng:</strong> khach01@lunea.test
-                        </button>
-                        <button type="button" onclick="fillDemo('order_hcm', '123456')" class="variant-pill"
-                            style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
-                            <i class="bi bi-building" style="margin-right: 6px; color: var(--color-gold-light);"></i>
-                            <strong>Nhân viên HCM:</strong> order_hcm
-                        </button>
-                        <button type="button" onclick="fillDemo('admin', '123456')" class="variant-pill"
-                            style="text-align: left; padding: 6px 12px; font-size: 0.78rem;">
-                            <i class="bi bi-shield-lock" style="margin-right: 6px; color: var(--color-gold-light);"></i>
-                            <strong>Quản trị viên:</strong> admin
-                        </button>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Nhóm Quản trị & Sản phẩm -->
+                        <div>
+                            <div style="font-size: 0.68rem; color: var(--color-gold-light); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="bi bi-shield-check"></i> Quản Trị Hệ Thống & Quản Lý
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                                <button type="button" onclick="fillDemo('admin', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 8px; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Quản trị viên toàn hệ thống (Toàn quyền)">
+                                    <i class="bi bi-person-badge text-gold me-1"></i><strong>admin</strong> (Toàn quyền)
+                                </button>
+                                <button type="button" onclick="fillDemo('product_manager', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 8px; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Quản lý danh mục & sản phẩm">
+                                    <i class="bi bi-box-seam text-gold me-1"></i><strong>product_manager</strong>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Nhóm Thủ Kho Chi Nhánh -->
+                        <div>
+                            <div style="font-size: 0.68rem; color: var(--color-gold-light); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="bi bi-boxes"></i> Thủ Kho Chi Nhánh (Nhập / Xuất kho)
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                                <button type="button" onclick="fillDemo('warehouse_hcm', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Thủ kho TP.HCM">
+                                    <i class="bi bi-geo-alt text-gold"></i> <strong>Kho HCM</strong>
+                                </button>
+                                <button type="button" onclick="fillDemo('warehouse_hn', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Thủ kho Hà Nội">
+                                    <i class="bi bi-geo-alt text-gold"></i> <strong>Kho HN</strong>
+                                </button>
+                                <button type="button" onclick="fillDemo('warehouse_dn', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Thủ kho Đà Nẵng">
+                                    <i class="bi bi-geo-alt text-gold"></i> <strong>Kho ĐN</strong>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Nhóm Nhân Viên Đơn Hàng -->
+                        <div>
+                            <div style="font-size: 0.68rem; color: var(--color-gold-light); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="bi bi-receipt"></i> Xử Lý Đơn Hàng Chi Nhánh
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                                <button type="button" onclick="fillDemo('order_hcm', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Nhân viên đơn hàng TP.HCM">
+                                    <i class="bi bi-bag-check text-gold"></i> <strong>Đơn HCM</strong>
+                                </button>
+                                <button type="button" onclick="fillDemo('order_hn', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Nhân viên đơn hàng Hà Nội">
+                                    <i class="bi bi-bag-check text-gold"></i> <strong>Đơn HN</strong>
+                                </button>
+                                <button type="button" onclick="fillDemo('order_dn', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Nhân viên đơn hàng Đà Nẵng">
+                                    <i class="bi bi-bag-check text-gold"></i> <strong>Đơn ĐN</strong>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Nhóm Khách Hàng Mua Sắm -->
+                        <div>
+                            <div style="font-size: 0.68rem; color: var(--color-gold-light); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <i class="bi bi-people"></i> Khách Hàng Mua Sắm
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                                <button type="button" onclick="fillDemo('khach01', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Khách hàng TP.HCM (Lê Hoàng Yến - 120 điểm)">
+                                    <i class="bi bi-person-heart text-gold"></i> <strong>khach01 (HCM)</strong>
+                                </button>
+                                <button type="button" onclick="fillDemo('khach02', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Khách hàng Hà Nội (Nguyễn Minh Trang - 85 điểm)">
+                                    <i class="bi bi-person-heart text-gold"></i> <strong>khach02 (HN)</strong>
+                                </button>
+                                <button type="button" onclick="fillDemo('khach03', '123456')" class="variant-pill"
+                                    style="text-align: left; padding: 6px 6px; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Khách hàng Đà Nẵng (Vũ Thanh Thảo - 350 điểm)">
+                                    <i class="bi bi-person-heart text-gold"></i> <strong>khach03 (ĐN)</strong>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -279,6 +343,9 @@
         function fillDemo(username, password) {
             document.getElementById('loginIdentifier').value = username;
             document.getElementById('loginPassword').value = password;
+            if (window.LUNEA && LUNEA.showToast) {
+                LUNEA.showToast('Đã chọn tài khoản: ' + username, 'info');
+            }
         }
 
         function openForgotPasswordModal() {
