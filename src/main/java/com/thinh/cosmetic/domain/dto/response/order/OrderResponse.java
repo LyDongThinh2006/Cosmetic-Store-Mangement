@@ -31,6 +31,8 @@ public class OrderResponse {
     private String province;
     private DeliveryMethod deliveryMethod;
     private BigDecimal subtotal;
+    private Long voucherId;
+    private String voucherCode;
     private BigDecimal discountAmount;
     private BigDecimal shippingFee;
     private BigDecimal totalAmount;

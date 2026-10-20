@@ -143,4 +143,13 @@ public class AdminPageController {
         populateCommonAdminAttributes(principal, model);
         return "admin/employees";
     }
+
+    @PreAuthorize("hasAnyAuthority('VOUCHER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/vouchers")
+    public String vouchers(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Quản Lý Mã Ưu Đãi & Khuyến Mãi | LUNEA Back-office");
+        model.addAttribute("activeMenu", "vouchers");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/vouchers";
+    }
 }

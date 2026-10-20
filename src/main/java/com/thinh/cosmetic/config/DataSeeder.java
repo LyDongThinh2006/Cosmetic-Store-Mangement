@@ -4,12 +4,15 @@ import com.thinh.cosmetic.domain.entity.account.*;
 import com.thinh.cosmetic.domain.entity.catalog.*;
 import com.thinh.cosmetic.domain.entity.inventory.*;
 import com.thinh.cosmetic.domain.entity.sales.CartEntity;
+import com.thinh.cosmetic.domain.entity.sales.VoucherEntity;
 import com.thinh.cosmetic.domain.enums.AccountType;
 import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.domain.enums.Gender;
+import com.thinh.cosmetic.domain.enums.VoucherType;
 import com.thinh.cosmetic.repository.account.*;
 import com.thinh.cosmetic.repository.cart.CartRepository;
 import com.thinh.cosmetic.repository.catalog.*;
+import com.thinh.cosmetic.repository.order.VoucherRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +54,7 @@ public class DataSeeder implements CommandLineRunner {
     private final AttributeRepository attributeRepository;
     private final ProductAttributeValueRepository productAttributeValueRepository;
     private final InventoryRepository inventoryRepository;
+    private final VoucherRepository voucherRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -75,6 +79,7 @@ public class DataSeeder implements CommandLineRunner {
             AttributeRepository attributeRepository,
             ProductAttributeValueRepository productAttributeValueRepository,
             InventoryRepository inventoryRepository,
+            VoucherRepository voucherRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.roleRepository = roleRepository;
@@ -96,6 +101,7 @@ public class DataSeeder implements CommandLineRunner {
         this.attributeRepository = attributeRepository;
         this.productAttributeValueRepository = productAttributeValueRepository;
         this.inventoryRepository = inventoryRepository;
+        this.voucherRepository = voucherRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -105,6 +111,7 @@ public class DataSeeder implements CommandLineRunner {
         if (roleRepository.count() > 0 && accountRepository.count() > 0 && storeRepository.count() > 0) {
             log.info(">>> [DataSeeder] Dữ liệu đã tồn tại trong SQL Server. Bỏ qua nạp dữ liệu danh mục & tồn kho.");
             ensureDemoAccountsExist();
+            seedVouchers();
             return;
         }
 
@@ -132,6 +139,9 @@ public class DataSeeder implements CommandLineRunner {
 
         // 6. Sản phẩm, Biến thể SKU, Thuộc tính, Ảnh & Tồn kho đa chi nhánh
         seedCatalogAndInventory(brands, categories, attributes, stores);
+
+        // 7. Voucher khuyến mãi
+        seedVouchers();
 
         log.info(">>> [DataSeeder] Hoàn thành nạp dữ liệu mẫu thành công vào Microsoft SQL Server!");
     }
@@ -854,6 +864,71 @@ public class DataSeeder implements CommandLineRunner {
             if (!hasStore) {
                 employeeStoreRepository.save(EmployeeStoreEntity.builder().employee(finalEmp).store(store).isPrimary(true).build());
             }
+        }
+    }
+
+    private void seedVouchers() {
+        if (voucherRepository.count() == 0) {
+            log.info(">>> [DataSeeder] Khởi tạo danh sách Voucher & Khuyến mãi mẫu...");
+            voucherRepository.saveAll(List.of(
+                    VoucherEntity.builder()
+                            .code("LUNEA10")
+                            .name("Ưu đãi thành viên LUNEA 10%")
+                            .description("Giảm 10% tối đa 100.000 ₫ cho mọi đơn hàng từ 300.000 ₫")
+                            .discountType(VoucherType.PERCENT)
+                            .discountValue(new BigDecimal("10.00"))
+                            .maxDiscountAmount(new BigDecimal("100000.00"))
+                            .minOrderAmount(new BigDecimal("300000.00"))
+                            .validFrom(LocalDateTime.now().minusDays(30))
+                            .validTo(LocalDateTime.now().plusYears(1))
+                            .usageLimit(500)
+                            .usedCount(0)
+                            .status(ActiveStatus.ACTIVE)
+                            .build(),
+                    VoucherEntity.builder()
+                            .code("GIAM50K")
+                            .name("Giảm trực tiếp 50.000 ₫")
+                            .description("Giảm ngay 50.000 ₫ tiền mặt cho đơn hàng từ 400.000 ₫")
+                            .discountType(VoucherType.FIXED)
+                            .discountValue(new BigDecimal("50000.00"))
+                            .maxDiscountAmount(new BigDecimal("50000.00"))
+                            .minOrderAmount(new BigDecimal("400000.00"))
+                            .validFrom(LocalDateTime.now().minusDays(30))
+                            .validTo(LocalDateTime.now().plusYears(1))
+                            .usageLimit(500)
+                            .usedCount(0)
+                            .status(ActiveStatus.ACTIVE)
+                            .build(),
+                    VoucherEntity.builder()
+                            .code("FREESHIP")
+                            .name("Miễn phí vận chuyển toàn quốc")
+                            .description("Miễn phí 100% phí giao hàng tiêu chuẩn cho đơn hàng LUNEA")
+                            .discountType(VoucherType.FREESHIP)
+                            .discountValue(new BigDecimal("30000.00"))
+                            .maxDiscountAmount(new BigDecimal("30000.00"))
+                            .minOrderAmount(BigDecimal.ZERO)
+                            .validFrom(LocalDateTime.now().minusDays(30))
+                            .validTo(LocalDateTime.now().plusYears(1))
+                            .usageLimit(1000)
+                            .usedCount(0)
+                            .status(ActiveStatus.ACTIVE)
+                            .build(),
+                    VoucherEntity.builder()
+                            .code("LUNEAVIP")
+                            .name("Đặc quyền VIP LUNEA 20%")
+                            .description("Giảm 20% tối đa 300.000 ₫ cho hóa đơn từ 1.000.000 ₫")
+                            .discountType(VoucherType.PERCENT)
+                            .discountValue(new BigDecimal("20.00"))
+                            .maxDiscountAmount(new BigDecimal("300000.00"))
+                            .minOrderAmount(new BigDecimal("1000000.00"))
+                            .validFrom(LocalDateTime.now().minusDays(10))
+                            .validTo(LocalDateTime.now().plusYears(1))
+                            .usageLimit(100)
+                            .usedCount(0)
+                            .status(ActiveStatus.ACTIVE)
+                            .build()
+            ));
+            log.info(">>> [DataSeeder] Đã nạp thành công 4 Voucher mẫu (LUNEA10, GIAM50K, FREESHIP, LUNEAVIP)");
         }
     }
 }

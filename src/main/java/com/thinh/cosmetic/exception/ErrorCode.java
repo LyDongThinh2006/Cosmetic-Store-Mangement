@@ -33,6 +33,12 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category not found"),
     ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer address not found"),
     CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "Cart item not found"),
+    VOUCHER_NOT_FOUND(HttpStatus.NOT_FOUND, "Không tìm thấy mã ưu đãi hợp lệ"),
+    VOUCHER_INVALID(HttpStatus.BAD_REQUEST, "Mã ưu đãi không hợp lệ hoặc đã ngừng áp dụng"),
+    VOUCHER_EXPIRED(HttpStatus.BAD_REQUEST, "Mã ưu đãi đã hết hạn hoặc chưa đến ngày áp dụng"),
+    VOUCHER_LIMIT_REACHED(HttpStatus.BAD_REQUEST, "Mã ưu đãi đã hết lượt sử dụng"),
+    VOUCHER_MIN_ORDER_NOT_MET(HttpStatus.BAD_REQUEST, "Đơn hàng chưa đạt giá trị tối thiểu để áp dụng mã này"),
+    DUPLICATE_VOUCHER_CODE(HttpStatus.CONFLICT, "Mã voucher đã tồn tại trên hệ thống"),
 
     // 409 Conflict
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "Email already exists"),

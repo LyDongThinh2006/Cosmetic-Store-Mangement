@@ -66,6 +66,12 @@
             <i class="bi bi-person-badge"></i>
             <span>Nhân Sự & Phân Quyền</span>
         </a>
+
+        <!-- Vouchers & Khuyến mãi (Admin hoặc VOUCHER_MANAGE) -->
+        <a sec:authorize="hasAnyAuthority('VOUCHER_MANAGE', 'ROLE_ADMIN', 'ADMIN')" href="/admin/vouchers" class="admin-nav-link" th:classappend="${activeMenu == 'vouchers' ? 'active' : ''}">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Mã Ưu Đãi & Khuyến Mãi</span>
+        </a>
     </nav>
 
     <!-- Sidebar Footer -->

@@ -172,7 +172,9 @@ const LUNEA = (function () {
 
             if (!response.ok) {
                 const errorMessage = (data && data.message) ? data.message : 'Đã có lỗi xảy ra. Vui lòng thử lại!';
-                showToast(errorMessage, 'error', 4000);
+                if (!skipAuthToast && !options.skipToast) {
+                    showToast(errorMessage, 'error', 4000);
+                }
                 const error = new Error(errorMessage);
                 error.data = data;
                 error.status = response.status;
@@ -181,7 +183,7 @@ const LUNEA = (function () {
 
             return data;
         } catch (err) {
-            if (err.message !== 'UNAUTHENTICATED' && err.message !== 'ACCESS_DENIED' && !err.status && !skipAuthToast) {
+            if (err.message !== 'UNAUTHENTICATED' && err.message !== 'ACCESS_DENIED' && !err.status && !skipAuthToast && !options.skipToast) {
                 showToast(err.message || 'Lỗi kết nối máy chủ', 'error', 3500);
             }
             throw err;
@@ -198,7 +200,8 @@ const LUNEA = (function () {
             const cart = await apiFetch('/api/cart', {
                 method: 'GET',
                 skipAuthRedirect: true,
-                skipAuthToast: true
+                skipAuthToast: true,
+                skipToast: true
             });
             const badges = document.querySelectorAll('.cart-badge-count');
             badges.forEach(b => {
@@ -249,7 +252,8 @@ const LUNEA = (function () {
             const wishlist = await apiFetch('/api/wishlist', {
                 method: 'GET',
                 skipAuthRedirect: true,
-                skipAuthToast: true
+                skipAuthToast: true,
+                skipToast: true
             });
             const itemCount = wishlist && wishlist.items ? wishlist.items.length : 0;
             const badges = document.querySelectorAll('.wishlist-badge-count');
@@ -277,7 +281,8 @@ const LUNEA = (function () {
             const productIds = await apiFetch('/api/wishlist/product-ids', {
                 method: 'GET',
                 skipAuthRedirect: true,
-                skipAuthToast: true
+                skipAuthToast: true,
+                skipToast: true
             });
 
             if (Array.isArray(productIds)) {
@@ -719,6 +724,20 @@ const LUNEA = (function () {
         window.location.href = '/logout';
     }
 
+    async function showMyVouchers() {
+        try {
+            const list = await apiFetch('/api/vouchers/active');
+            if (!list || list.length === 0) {
+                showToast('Hiện tại chưa có mã ưu đãi nào đang mở.', 'info');
+                return;
+            }
+            const codes = list.map(v => `${v.code} (${v.discountType === 'PERCENT' ? 'Giảm ' + v.discountValue + '%' : (v.discountType === 'FIXED' ? 'Giảm ' + formatVND(v.discountValue) : 'FreeShip')})`).join(' · ');
+            showToast('Mã ưu đãi LUNEA có thể dùng: ' + codes, 'info', 6000);
+        } catch (e) {
+            showToast('Bạn đang có các mã ưu đãi: LUNEA10, GIAM50K, FREESHIP', 'info');
+        }
+    }
+
     return {
         formatVND,
         showToast,
@@ -732,6 +751,7 @@ const LUNEA = (function () {
         clearWishlist,
         moveAllWishlistToCart,
         logout,
+        showMyVouchers,
         toggleWishlist,
         initScrollMotion,
         getTheme,

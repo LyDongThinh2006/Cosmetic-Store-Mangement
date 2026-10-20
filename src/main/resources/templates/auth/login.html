@@ -569,10 +569,13 @@
                 LUNEA.showToast('Đăng nhập thành công! Đang chuyển hướng...', 'success');
 
                 setTimeout(() => {
-                    if (res && res.isEmployee) {
-                        window.location.href = '/admin';
+                    const isEmployee = Boolean(res && (res.isEmployee || res.accountType === 'EMPLOYEE'));
+                    if (isEmployee) {
+                        window.location.href = (res && res.redirectUrl) ? res.redirectUrl : '/admin';
                     } else if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('/login')) {
                         window.location.href = redirectUrl;
+                    } else if (res && res.redirectUrl) {
+                        window.location.href = res.redirectUrl;
                     } else {
                         window.location.href = '/';
                     }

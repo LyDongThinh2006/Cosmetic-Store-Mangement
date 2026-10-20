@@ -219,11 +219,12 @@
                     <div>
                         <div style="font-size: 0.82rem; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px;">Mã ưu đãi</div>
                         <div style="display: flex; gap: 8px;">
-                            <input type="text" id="voucherInput" placeholder="Nhập mã ưu đãi" class="form-control-lunea" style="padding: 10px 14px; font-size: 0.85rem;">
+                            <input type="text" id="voucherInput" placeholder="Nhập mã ưu đãi" class="form-control-lunea" style="padding: 10px 14px; font-size: 0.85rem; text-transform: uppercase;">
                             <button type="button" onclick="applyVoucher()" class="btn-product-outline" style="width: auto; padding: 10px 18px; white-space: nowrap;">
                                 Áp dụng
                             </button>
                         </div>
+                        <div id="activeVouchersQuickList" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;"></div>
                     </div>
                 </aside>
             </form>
@@ -240,6 +241,7 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             await loadLocations();
+            loadActiveVouchers();
             updateTotalCalculations();
         });
 
@@ -309,25 +311,29 @@
                 updateTotalCalculations();
                 LUNEA.showToast(`Áp dụng mã ưu đãi ${code} thành công!`, 'success');
             } catch (err) {
-                // Fallback client logic
-                if (code === 'LUNEA10') {
-                    appliedVoucherCode = code;
-                    discountAmount = Math.min(Math.round(cartSubtotal * 0.1), 100000);
-                    LUNEA.showToast('Áp dụng mã ưu đãi LUNEA10 giảm 10% thành công!', 'success');
-                } else if (code === 'GIAM50K') {
-                    appliedVoucherCode = code;
-                    discountAmount = 50000;
-                    LUNEA.showToast('Áp dụng mã ưu đãi GIAM50K giảm 50.000 ₫ thành công!', 'success');
-                } else if (code === 'FREESHIP') {
-                    appliedVoucherCode = code;
-                    shippingFee = 0;
-                    LUNEA.showToast('Áp dụng mã ưu đãi FREESHIP miễn phí vận chuyển!', 'success');
-                } else {
-                    LUNEA.showToast('Mã ưu đãi không hợp lệ hoặc đã hết hạn!', 'error');
-                    return;
-                }
+                appliedVoucherCode = '';
+                discountAmount = 0;
                 updateTotalCalculations();
+                LUNEA.showToast(err.message || 'Mã ưu đãi không hợp lệ hoặc đã hết hạn!', 'error');
             }
+        }
+
+        async function loadActiveVouchers() {
+            const container = document.getElementById('activeVouchersQuickList');
+            if (!container) return;
+            try {
+                const list = await LUNEA.apiFetch('/api/vouchers/active');
+                if (list && list.length > 0) {
+                    container.innerHTML = '<span style="font-size: 0.72rem; color: var(--color-text-muted); width: 100%; display: block; margin-bottom: 2px;">Gợi ý mã có sẵn:</span>' + 
+                        list.map(v => `
+                            <button type="button" class="variant-pill" style="font-size: 0.72rem; padding: 2px 8px; border-style: dashed; cursor: pointer;" 
+                                    onclick="document.getElementById('voucherInput').value='${v.code}'; applyVoucher();"
+                                    title="${v.name || v.description || ''}">
+                                <i class="bi bi-tag-fill" style="margin-right: 3px; font-size: 0.68rem; color: var(--color-gold-primary);"></i>${v.code}
+                            </button>
+                        `).join('');
+                }
+            } catch (ignored) {}
         }
 
         async function handlePlaceOrder(e) {
