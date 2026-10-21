@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('reviews')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Kiểm Duyệt Đánh Giá', 'Kiểm duyệt nhận xét của khách hàng, hiển thị công khai lên website hoặc ẩn vi phạm theo quy định QLSP-QĐ7')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Search Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên sản phẩm, khách hàng, nội dung..." oninput="filterReviews()" style="padding-left: 36px; min-width: 280px;">
+                    </div>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterReviews()" style="min-width: 170px;">
+                        <option value="">Tất cả Trạng thái</option>
+                        <option value="PENDING">Chờ kiểm duyệt (PENDING)</option>
+                        <option value="VISIBLE">Đã duyệt công khai (VISIBLE)</option>
+                        <option value="HIDDEN">Đã ẩn / Từ chối (HIDDEN)</option>
+                    </select>
+
+                    <select id="ratingFilter" class="admin-select" onchange="filterReviews()" style="min-width: 150px;">
+                        <option value="">Tất cả Số sao</option>
+                        <option value="5">5 Sao (Rất tốt)</option>
+                        <option value="4">4 Sao (Tốt)</option>
+                        <option value="3">3 Sao (Bình thường)</option>
+                        <option value="2">2 Sao (Kém)</option>
+                        <option value="1">1 Sao (Rất kém)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadReviews()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards for Reviews -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Đánh Giá</span>
+                        <div class="kpi-icon gold"><i class="bi bi-chat-square-quote-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalReviews">0</div>
+                    <div class="kpi-sub"><span>Toàn bộ nhận xét từ khách</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Chờ Kiểm Duyệt</span>
+                        <div class="kpi-icon amber"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiPendingReviews" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Cần nhân viên thẩm định</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đã Duyệt Công Khai</span>
+                        <div class="kpi-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiVisibleReviews" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Đang hiển thị trên Storefront</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đã Ẩn / Vi Phạm</span>
+                        <div class="kpi-icon red"><i class="bi bi-eye-slash-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiHiddenReviews" style="color: #f87171;">0</div>
+                    <div class="kpi-sub"><span>Lưu vết lịch sử (QLSP-QĐ7)</span></div>
+                </div>
+            </div>
+
+            <!-- Reviews Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-star-fill" style="color: var(--color-gold-primary);"></i>
+                        <span>Danh Sách Đánh Giá & Nhận Xét Của Khách Hàng</span>
+                    </h3>
+                    <span id="reviewsCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 đánh giá</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Mã</th>
+                                <th style="min-width: 200px;">Sản Phẩm Mỹ Phẩm</th>
+                                <th style="min-width: 170px;">Khách Hàng & Đơn Hàng</th>
+                                <th style="width: 130px; text-align: center;">Số Sao</th>
+                                <th style="min-width: 250px;">Nội Dung Nhận Xét</th>
+                                <th style="width: 140px;">Ngày Gửi</th>
+                                <th style="width: 130px; text-align: center;">Trạng Thái</th>
+                                <th style="min-width: 180px; text-align: right;">Thao Tác Duyệt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviewsTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                                    <i class="bi bi-hourglass" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu đánh giá...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Xem Chi Tiết Đánh Giá -->
+    <div id="reviewDetailModal" class="admin-modal-backdrop">
+        <div class="admin-modal" style="max-width: 620px;">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon" style="background: rgba(212, 175, 55, 0.15); color: var(--color-gold-light);">
+                        <i class="bi bi-chat-square-quote-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title">Chi Tiết Đánh Giá Khách Hàng</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Mã đánh giá: <span id="modalReviewId" style="color: var(--color-gold-light); font-weight: 600;"></span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeReviewDetailModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <div class="admin-modal-body" style="padding: 20px 24px;">
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.05em; margin-bottom: 4px;">Sản phẩm đánh giá</div>
+                    <div id="modalReviewProduct" style="font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 12px;"></div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.84rem;">
+                        <div>
+                            <span style="color: var(--color-text-muted);">Khách hàng: </span>
+                            <strong id="modalReviewCustomer" style="color: var(--color-text-primary);"></strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--color-text-muted);">Đơn hàng: </span>
+                            <span id="modalReviewOrder" style="color: var(--color-gold-light); font-family: monospace; font-weight: 600;"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 0.82rem; color: var(--color-text-muted);">Mức độ hài lòng:</span>
+                        <div id="modalReviewStars" style="font-size: 1.1rem; color: var(--color-gold-primary);"></div>
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 6px;">Nội dung nhận xét từ khách:</div>
+                    <div id="modalReviewComment" style="padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--color-border-subtle); border-radius: 8px; color: var(--color-text-primary); font-size: 0.9rem; line-height: 1.6; min-height: 80px; white-space: pre-wrap;"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: rgba(255,255,255,0.02); border-radius: 6px; font-size: 0.8rem;">
+                    <div>
+                        <span style="color: var(--color-text-muted);">Thời gian gửi: </span>
+                        <span id="modalReviewDate" style="color: var(--color-text-secondary);"></span>
+                    </div>
+                    <div>
+                        <span style="color: var(--color-text-muted);">Trạng thái hiện tại: </span>
+                        <span id="modalReviewStatusBadge"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-modal-footer">
+                <div style="font-size: 0.74rem; color: var(--color-text-muted);">
+                    <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                    Quy định QLSP-QĐ7: Ẩn đánh giá nhưng luôn lưu lịch sử dữ liệu
+                </div>
+                <div style="display: flex; gap: 8px;" id="modalActionButtons">
+                    <!-- Dynamic buttons injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Component -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let allReviews = [];
+
+        async function loadReviews() {
+            try {
+                const reviews = await LUNEA.apiFetch('/api/reviews');
+                allReviews = reviews || [];
+                updateReviewsKPI(allReviews);
+                filterReviews();
+            } catch (err) {
+                console.error("Error loading reviews:", err);
+                document.getElementById('reviewsTableBody').innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-danger); padding: 32px;">Lỗi tải dữ liệu đánh giá: ${err.message || ''}</td></tr>
+                `;
+            }
+        }
+
+        function updateReviewsKPI(reviews) {
+            let pendingCount = 0;
+            let visibleCount = 0;
+            let hiddenCount = 0;
+
+            reviews.forEach(r => {
+                if (r.moderationStatus === 'PENDING') pendingCount++;
+                else if (r.moderationStatus === 'VISIBLE') visibleCount++;
+                else if (r.moderationStatus === 'HIDDEN') hiddenCount++;
+            });
+
+            document.getElementById('kpiTotalReviews').textContent = reviews.length;
+            document.getElementById('kpiPendingReviews').textContent = pendingCount;
+            document.getElementById('kpiVisibleReviews').textContent = visibleCount;
+            document.getElementById('kpiHiddenReviews').textContent = hiddenCount;
+            document.getElementById('reviewsCountBadge').textContent = `${reviews.length} đánh giá`;
+        }
+
+        function filterReviews() {
+            const term = document.getElementById('searchInput').value.trim().toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const rating = document.getElementById('ratingFilter').value;
+
+            let filtered = allReviews;
+
+            if (status) {
+                filtered = filtered.filter(r => r.moderationStatus === status);
+            }
+            if (rating) {
+                filtered = filtered.filter(r => r.rating === Number(rating));
+            }
+            if (term) {
+                filtered = filtered.filter(r => {
+                    const prodName = (r.productName || '').toLowerCase();
+                    const custName = (r.customerName || '').toLowerCase();
+                    const comment = (r.comment || '').toLowerCase();
+                    const orderCode = (r.orderCode || '').toLowerCase();
+                    return prodName.includes(term) || custName.includes(term) || comment.includes(term) || orderCode.includes(term);
+                });
+            }
+
+            renderReviewsTable(filtered);
+        }
+
+        function renderReviewsTable(reviews) {
+            const tbody = document.getElementById('reviewsTableBody');
+            if (!reviews || reviews.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 40px;">
+                        Không tìm thấy đánh giá nào phù hợp với bộ lọc
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = reviews.map(r => {
+                const statusPill = getStatusPill(r.moderationStatus);
+                const starIcons = renderStarIcons(r.rating);
+                const formattedDate = formatDate(r.createdAt);
+                const shortComment = r.comment && r.comment.length > 90 ? r.comment.substring(0, 90) + '...' : (r.comment || 'Không có nhận xét chi tiết');
+
+                return `
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.8rem; color: var(--color-text-muted);">#${r.id}</td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--color-text-primary); font-size: 0.88rem;">
+                                ${r.productName || 'Sản phẩm #' + r.productId}
+                            </div>
+                            <div style="margin-top: 3px;">
+                                <a href="/products/${r.productId}" target="_blank" rel="noopener noreferrer" style="font-size: 0.74rem; color: var(--color-gold-light); text-decoration: underline;">
+                                    Xem storefront <i class="bi bi-box-arrow-up-right" style="font-size: 0.68rem;"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.85rem;">
+                                <i class="bi bi-person" style="color: var(--color-gold-primary); margin-right: 2px;"></i>
+                                ${r.customerName || 'Khách hàng #' + (r.customerId || 'N/A')}
+                            </div>
+                            <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                                Đơn: <span style="font-family: monospace; color: var(--color-gold-light);">${r.orderCode || 'N/A'}</span>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="color: var(--color-gold-primary); font-size: 0.88rem; white-space: nowrap;">
+                                ${starIcons}
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 2px;">${r.rating}/5 sao</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.84rem; color: var(--color-text-secondary); line-height: 1.5;">
+                                "${shortComment}"
+                            </div>
+                            ${r.comment && r.comment.length > 90 ? `
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 1px 6px; font-size: 0.68rem; margin-top: 4px;" onclick='openReviewDetailModal(${JSON.stringify(r)})'>
+                                    Xem đầy đủ
+                                </button>
+                            ` : ''}
+                        </td>
+                        <td style="font-size: 0.78rem; color: var(--color-text-muted);">${formattedDate}</td>
+                        <td style="text-align: center;">${statusPill}</td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            ${renderActionButtons(r)}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusPill(status) {
+            switch (status) {
+                case 'VISIBLE':
+                    return '<span class="status-pill completed" style="font-size: 0.72rem;"><i class="bi bi-check-circle" style="margin-right: 3px;"></i>Công khai</span>';
+                case 'HIDDEN':
+                    return '<span class="status-pill cancelled" style="font-size: 0.72rem;"><i class="bi bi-eye-slash" style="margin-right: 3px;"></i>Đã ẩn</span>';
+                case 'PENDING':
+                default:
+                    return '<span class="status-pill confirmed" style="font-size: 0.72rem; background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);"><i class="bi bi-clock" style="margin-right: 3px;"></i>Chờ duyệt</span>';
+            }
+        }
+
+        function renderStarIcons(rating) {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    html += '<i class="bi bi-star-fill"></i>';
+                } else {
+                    html += '<i class="bi bi-star" style="color: var(--color-border-subtle);"></i>';
+                }
+            }
+            return html;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const d = new Date(dateStr);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                const hours = String(d.getHours()).padStart(2, '0');
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        function renderActionButtons(r) {
+            let html = `
+                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.74rem; margin-right: 4px;" onclick='openReviewDetailModal(${JSON.stringify(r)})' title="Xem chi tiết">
+                    <i class="bi bi-eye"></i>
+                </button>
+            `;
+
+            if (r.moderationStatus === 'PENDING') {
+                html += `
+                    <button type="button" class="admin-btn admin-btn-primary" style="padding: 4px 10px; font-size: 0.74rem; margin-right: 4px;" onclick="moderateReview(${r.id}, 'VISIBLE')" title="Duyệt công khai lên storefront">
+                        <i class="bi bi-check-lg"></i> Duyệt công khai
+                    </button>
+                    <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.74rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4);" onclick="moderateReview(${r.id}, 'HIDDEN')" title="Ẩn vi phạm (QLSP-QĐ7)">
+                        <i class="bi bi-eye-slash"></i> Ẩn / Từ chối
+                    </button>
+                `;
+            } else if (r.moderationStatus === 'VISIBLE') {
+                html += `
+                    <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.74rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4);" onclick="moderateReview(${r.id}, 'HIDDEN')" title="Ẩn đánh giá này khỏi storefront">
+                        <i class="bi bi-eye-slash"></i> Ẩn vi phạm
+                    </button>
+                `;
+            } else if (r.moderationStatus === 'HIDDEN') {
+                html += `
+                    <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.74rem; color: #34d399; border-color: rgba(52, 211, 153, 0.4);" onclick="moderateReview(${r.id}, 'VISIBLE')" title="Khôi phục hiển thị công khai">
+                        <i class="bi bi-arrow-counterclockwise"></i> Công khai lại
+                    </button>
+                `;
+            }
+
+            return html;
+        }
+
+        async function moderateReview(id, status) {
+            const actionLabel = (status === 'VISIBLE') ? 'duyệt công khai' : 'ẩn / từ chối (theo QLSP-QĐ7)';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionLabel} đánh giá #${id}?`)) return;
+
+            try {
+                await LUNEA.apiFetch(`/api/reviews/${id}/status?status=${status}`, {
+                    method: 'PUT'
+                });
+                LUNEA.toastSuccess(`Đã ${actionLabel} đánh giá #${id} thành công!`);
+                closeReviewDetailModal();
+                await loadReviews();
+            } catch (err) {
+                console.error("Moderate review error:", err);
+                LUNEA.toastError(err.message || `Không thể ${actionLabel} đánh giá #${id}`);
+            }
+        }
+
+        /* ─── Detail Modal ─── */
+        function openReviewDetailModal(r) {
+            document.getElementById('modalReviewId').textContent = '#' + r.id;
+            document.getElementById('modalReviewProduct').textContent = r.productName || 'Sản phẩm #' + r.productId;
+            document.getElementById('modalReviewCustomer').textContent = r.customerName || 'Khách hàng #' + (r.customerId || 'N/A');
+            document.getElementById('modalReviewOrder').textContent = r.orderCode || 'N/A';
+            document.getElementById('modalReviewStars').innerHTML = renderStarIcons(r.rating) + ` <span style="font-size: 0.85rem; color: var(--color-text-muted); margin-left: 6px;">(${r.rating}/5 sao)</span>`;
+            document.getElementById('modalReviewComment').textContent = r.comment || 'Khách hàng không để lại nhận xét chi tiết.';
+            document.getElementById('modalReviewDate').textContent = formatDate(r.createdAt);
+            document.getElementById('modalReviewStatusBadge').innerHTML = getStatusPill(r.moderationStatus);
+
+            // Modal actions
+            const actionContainer = document.getElementById('modalActionButtons');
+            let actionHtml = '<button type="button" class="admin-btn admin-btn-outline" onclick="closeReviewDetailModal()">Đóng</button>';
+
+            if (r.moderationStatus === 'PENDING') {
+                actionHtml += `
+                    <button type="button" class="admin-btn admin-btn-outline" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);" onclick="moderateReview(${r.id}, 'HIDDEN')">
+                        <i class="bi bi-eye-slash"></i> Ẩn / Từ chối (QLSP-QĐ7)
+                    </button>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="moderateReview(${r.id}, 'VISIBLE')">
+                        <i class="bi bi-check-lg"></i> Duyệt Công Khai
+                    </button>
+                `;
+            } else if (r.moderationStatus === 'VISIBLE') {
+                actionHtml += `
+                    <button type="button" class="admin-btn admin-btn-outline" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);" onclick="moderateReview(${r.id}, 'HIDDEN')">
+                        <i class="bi bi-eye-slash"></i> Ẩn Đánh Giá (QLSP-QĐ7)
+                    </button>
+                `;
+            } else if (r.moderationStatus === 'HIDDEN') {
+                actionHtml += `
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="moderateReview(${r.id}, 'VISIBLE')">
+                        <i class="bi bi-arrow-counterclockwise"></i> Công Khai Lại
+                    </button>
+                `;
+            }
+
+            actionContainer.innerHTML = actionHtml;
+
+            const modal = document.getElementById('reviewDetailModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReviewDetailModal() {
+            const modal = document.getElementById('reviewDetailModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'reviewDetailModal') {
+                closeReviewDetailModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadReviews();
+        });
+    </script>
+</body>
+</html>

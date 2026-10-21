@@ -91,6 +91,12 @@
             <span>Sản Phẩm & SKU</span>
         </a>
 
+        <!-- Reviews (Admin hoặc CATALOG_MANAGE) -->
+        <a sec:authorize="hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')" href="/admin/reviews" class="admin-nav-link" th:classappend="${activeMenu == 'reviews' ? 'active' : ''}">
+            <i class="bi bi-star"></i>
+            <span>Duyệt Đánh Giá</span>
+        </a>
+
         <!-- Employees & Roles (Chỉ Admin hoặc EMPLOYEE_MANAGE) -->
         <a sec:authorize="hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN', 'ADMIN')" href="/admin/employees" class="admin-nav-link" th:classappend="${activeMenu == 'employees' ? 'active' : ''}">
             <i class="bi bi-person-badge"></i>

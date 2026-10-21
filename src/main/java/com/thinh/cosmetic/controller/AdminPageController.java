@@ -137,6 +137,15 @@ public class AdminPageController {
         return "admin/products";
     }
 
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/reviews")
+    public String reviews(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Kiểm Duyệt Đánh Giá Sản Phẩm | LUNEA Back-office");
+        model.addAttribute("activeMenu", "reviews");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/reviews";
+    }
+
     @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/admin/employees")
     public String employees(@AuthenticationPrincipal AuthPrincipal principal, Model model) {

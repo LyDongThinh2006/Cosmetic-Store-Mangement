@@ -81,6 +81,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))
+                )
                 .addFilterBefore(xRequestedWithFilter, BearerTokenAuthenticationFilter.class)
                 .authorizeHttpRequests(a -> a
                         // ─── Trang web tĩnh & public ───
@@ -89,7 +95,8 @@ public class SecurityConfig {
                                 "/brands", "/stores", "/login", "/register",
                                 "/reset-password", "/error", "/error/**",
                                 "/css/**", "/js/**", "/images/**", "/fonts/**",
-                                "/favicon.ico", "/webjars/**").permitAll()
+                                "/favicon.ico", "/robots.txt", "/sitemap.xml", "/site.webmanifest",
+                                "/webjars/**").permitAll()
 
                         // ─── API công khai (không cần đăng nhập) ───
                         .requestMatchers("/api/auth/**").permitAll()
@@ -117,8 +124,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/purchase-orders/**", "/api/suppliers/**").hasAnyAuthority("PURCHASE_MANAGE", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN", "ADMIN")
                         .requestMatchers("/api/stock-transfers/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN", "ADMIN")
 
-                        // ─── Module Quản lý Sản phẩm, Danh mục & Chi nhánh ───
-                        .requestMatchers("/admin/products", "/admin/products/**").access(new WebExpressionAuthorizationManager("authentication.name == 'admin' or hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')"))
+                        // ─── Module Quản lý Sản phẩm, Danh mục, Đánh giá & Chi nhánh ───
+                        .requestMatchers("/admin/products", "/admin/products/**",
+                                "/admin/reviews", "/admin/reviews/**").access(new WebExpressionAuthorizationManager("authentication.name == 'admin' or hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')"))
                         .requestMatchers(HttpMethod.POST, "/api/products", "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
