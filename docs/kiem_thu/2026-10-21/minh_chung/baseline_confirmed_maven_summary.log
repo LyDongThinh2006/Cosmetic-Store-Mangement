@@ -1,0 +1,26 @@
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 26.03 s -- in com.thinh.cosmetic.CosmeticStoreChainManagementApplicationTests
+[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 5.206 s <<< FAILURE! -- in com.thinh.cosmetic.controller.OrderEndpointsTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.679 s -- in com.thinh.cosmetic.controller.Phase1RestEndpointsTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.366 s -- in com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest
+[ERROR] Tests run: 11, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 2.039 s <<< FAILURE! -- in com.thinh.cosmetic.controller.WebPageControllersTest
+[INFO] Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.805 s -- in com.thinh.cosmetic.controller.SecurityAuthorizationTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.916 s -- in com.thinh.cosmetic.service.WishListServiceTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.289 s -- in Ch?nh s?ch x?a Danh m?c
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.189 s -- in Ch?nh s?ch x?a Th??ng hi?u
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.957 s -- in Ch?nh s?ch x?a S?n ph?m
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.452 s -- in 4. Ch?nh s?ch x?a an to?n Th??ng hi?u, Danh m?c v? S?n ph?m
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.298 s -- in 3. X?c nh?n quy?n s? h?u ??a ch? v? gi? h?ng
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.332 s -- in 2. Ng?ng ho?t ??ng C?a h?ng & Lu?ng ch?n chi nh?nh
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.680 s -- in 1. ??ng b? tr?ng th?i Nh?n vi?n & T?i kho?n
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.775 s -- in ?u ti?n 4: ??ng b? tr?ng th?i v? d? li?u qu?n tr? Tests
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.730 s -- in com.thinh.cosmetic.service.OrderServiceTest
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.557 s -- in com.thinh.cosmetic.service.OtpServiceTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.738 s -- in com.thinh.cosmetic.service.AccountServiceTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.251 s -- in com.thinh.cosmetic.service.InventoryServiceTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.525 s -- in com.thinh.cosmetic.service.ReturnServiceTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.089 s -- in com.thinh.cosmetic.service.ReviewServiceTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 47.76 s -- in com.thinh.cosmetic.BrandTests
+[ERROR] Tests run: 134, Failures: 2, Errors: 0, Skipped: 0
+[INFO] BUILD FAILURE
+[INFO] Total time:  01:42 min
+[INFO] Finished at: 2026-10-21T01:53:24+07:00

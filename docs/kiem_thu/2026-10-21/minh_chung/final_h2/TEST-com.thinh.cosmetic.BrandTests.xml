@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.thinh.cosmetic.BrandTests" time="25.282" tests="7" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="testThatReturn200WhenPutBrand" classname="com.thinh.cosmetic.BrandTests" time="0.15">
+    <system-out />
+  </testcase>
+  <testcase name="testThatReturn200WhenGetBrand" classname="com.thinh.cosmetic.BrandTests" time="0.104">
+    <system-out />
+  </testcase>
+  <testcase name="testThatReturnBrandWhenPostBrand" classname="com.thinh.cosmetic.BrandTests" time="0.11">
+    <system-out />
+  </testcase>
+  <testcase name="testThatReturnBrandWhenPutBrand" classname="com.thinh.cosmetic.BrandTests" time="0.063">
+    <system-out />
+  </testcase>
+  <testcase name="testThatReturnBrandWhenGetBrand" classname="com.thinh.cosmetic.BrandTests" time="0.092">
+    <system-out />
+  </testcase>
+  <testcase name="testThatReturn204WhenDeleteBrand" classname="com.thinh.cosmetic.BrandTests" time="0.063">
+    <system-out />
+  </testcase>
+  <testcase name="testThatReturn201WhenPostBrand" classname="com.thinh.cosmetic.BrandTests" time="0.045">
+    <system-out />
+  </testcase>
+</testsuite>

@@ -53,7 +53,7 @@ public class ReviewEntity {
     private Integer rating;
 
     @Lob
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @NotNull(message = "Moderation status cannot be null")

@@ -1,0 +1,135 @@
+﻿run,class,method,seconds,status,failure,evidence
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturn200WhenPutBrand,0.522,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturn200WhenGetBrand,0.119,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturnBrandWhenPostBrand,0.179,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturnBrandWhenPutBrand,0.11,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturnBrandWhenGetBrand,0.087,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturn204WhenDeleteBrand,0.094,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.BrandTests,testThatReturn201WhenPostBrand,0.053,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml
+baseline_confirmed,com.thinh.cosmetic.CosmeticStoreChainManagementApplicationTests,contextLoads,0.973,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.CosmeticStoreChainManagementApplicationTests.xml
+baseline_confirmed,com.thinh.cosmetic.controller.OrderEndpointsTest,testCheckoutPageAccess,1.026,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.OrderEndpointsTest,testEmployeeCanAccessAdminOrdersApi,0.113,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.OrderEndpointsTest,testUnauthenticatedCannotAccessOrderPreview,0.17,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.OrderEndpointsTest,testAdminOrdersPageAccess,0.024,FAIL,Status expected:<200> but was:<403>,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.OrderEndpointsTest,testCustomerCannotAccessAdminOrdersApi,0.026,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.OrderEndpointsTest,testCustomerCanAccessMyOrdersApi,0.045,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testWishlistRemoveProductEndpoint,0.121,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testGetReturnRequestsByOrderEndpoint,0.019,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testWishlistClearEndpoint,0.021,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testWishlistAddProductEndpoint,0.051,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testSendOtpEndpoint,0.191,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testSendRegisterOtpEndpoint,0.03,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testSendRegisterOtpValidation,0.041,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testSendOtpValidation,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testWishlistProductIdsEndpoint,0.021,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testGetStoreStockBySkuEndpoint,0.054,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testWishlistEndpoint,0.02,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.Phase1RestEndpointsTest,testResetPasswordValidation,0.028,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,orderStaff_canAccessOrdersAndInventory,0.148,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,admin_canAccessAllPages,0.162,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,warehouseStaff_redirectsToInventory,0.016,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,warehouseStaff_employeesAccessDenied,0.012,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,warehouseStaff_accessInventorySuccess,0.034,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,warehouseStaff_ordersAccessDenied,0.008,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,orderStaff_redirectsToOrders,0.01,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest,admin_createHanoiWarehouseManager_andLoginSuccess,0.943,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,employeeWithoutCatalogManage_cannotCreateProduct,0.015,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotAccessEmployees,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,employeeWithCustomerManage_canViewAllCustomers,0.035,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,anonymous_cannotAccessStockTransfers,0.015,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,anonymous_cannotAccessPurchaseOrders,0.012,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,anonymous_cannotAccessCustomers,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,public_canAccessBrands,0.017,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotModerateReview,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,public_canAccessStores,0.031,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,anonymous_cannotAccessStoreInventory,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotViewOtherCustomerProfile,0.019,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,employeeWithoutCatalogManage_cannotDeleteProduct,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,anonymous_cannotAccessEmployees,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotViewInventory,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_canViewOwnProfile,0.024,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,employeeWithCatalogManage_canCreateProduct,0.077,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotCreateProduct,0.014,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,public_canAccessProducts,0.27,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotViewAllReturns,0.012,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,public_canAccessCategories,0.023,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_cannotViewOtherCustomerReturns,0.019,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,anonymous_cannotCreateProduct,0.012,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.SecurityAuthorizationTest,customer_canViewOwnReturns,0.045,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testStoresAndBrandsPages,0.072,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testCartAndCheckoutForCustomer,0.096,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testCartUnauthenticatedRedirects,0.007,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testHomePage,0.57,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testAdminPagesForEmployee,0.033,FAIL,Status expected:<200> but was:<403>,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testErrorPages,0.137,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testAccountPagesForCustomer,0.205,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testAdminUnauthenticatedRedirects,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testProductPages,0.777,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testAuthPages,0.065,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.controller.WebPageControllersTest,testAdminForbiddenForCustomer,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.AccountServiceTest,testRegisterWithOtpSuccess,0.682,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.AccountServiceTest,testSendRegistrationOtp,0.016,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.AccountServiceTest,testResetPasswordSuccess,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.AccountServiceTest,testSendResetPasswordOtp,0.008,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.AccountServiceTest,testVerifyResetPasswordOtp,0.01,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.InventoryServiceTest,testGetAvailableStock,0.215,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.InventoryServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.InventoryServiceTest,testAdjustStock,0.02,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.InventoryServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.InventoryServiceTest,testGetStoreStockBySku,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.InventoryServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testUpdateStatusShippingDeductsStock,0.481,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testPlaceOrderMissingInventoryRecordFails,0.031,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testInvalidStatusTransitions,0.021,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testPlaceOrderRequestedStoreInsufficientStockFails,0.016,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testPlaceOrderWithVoucher,0.023,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testPlaceOrderSuccess,0.031,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testCancelPendingOrderSuccess,0.026,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testCancelOrderNotPendingFails,0.015,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testStoreScopeOrdersFiltering,0.027,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testPlaceOrderNoStoreCanFulfillFails,0.017,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OrderServiceTest,testValidStatusTransitionsFullWorkflow,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testCompleteRegistrationOtpSuccess,0.436,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testSendOtpCooldownActive,0.008,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testSendRegistrationOtpDuplicateEmail,0.01,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testVerifyOtpMaxAttempts,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testSendOtpSuccess,0.01,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testCompletePasswordResetSuccess,0.008,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testSendOtpUserNotFound,0.006,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testVerifyOtpSuccess,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testMaskIdentifier,0.005,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testVerifyOtpWrongCode,0.008,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testVerifyOtpExpired,0.005,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testSendRegistrationOtpSuccess,0.01,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.OtpServiceTest,testSendOtpInactiveAccount,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml
+baseline_confirmed,Chính sách xóa Danh mục,deleteCategory_withDependencies_shouldSoftDelete,0.285,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,Chính sách xóa Thương hiệu,deleteBrand_withoutProducts_shouldHardDelete,0.176,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,Chính sách xóa Thương hiệu,deleteBrand_withReferencedProducts_shouldSoftDelete,0.006,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,Chính sách xóa Sản phẩm,deleteProduct_withOrders_shouldSoftDelete,0.954,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng,deleteAddress_foreignCustomer_shouldThrowAccessDenied,0.123,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng,updateAddress_foreignCustomer_shouldThrowAccessDenied,0.008,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng,updateCartItem_foreignCart_shouldThrowAccessDenied,0.147,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng,addCartItem_inactiveProduct_shouldThrowProductNotAvailable,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,2. Ngừng hoạt động Cửa hàng & Luồng chọn chi nhánh,deactivateStore_shouldUpdateStatusToInactive,0.324,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,2. Ngừng hoạt động Cửa hàng & Luồng chọn chi nhánh,getActiveStores_shouldOnlyQueryActiveStores,0.005,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,1. Đồng bộ trạng thái Nhân viên & Tài khoản,deactivateEmployee_shouldSyncAccountStatusToInactive,0.58,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,1. Đồng bộ trạng thái Nhân viên & Tài khoản,userDetailsService_shouldRejectInactiveEmployee,0.09,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,1. Đồng bộ trạng thái Nhân viên & Tài khoản,activateEmployee_shouldSyncAccountStatusToActive,0.006,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testUpdateStatus_Completed_RestocksInventory,0.408,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testCreateReturnRequest_OrderNotCompleted,0.016,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testCreateReturnRequest,0.025,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testCreateReturnRequest_OtherCustomerOrder,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testUpdateStatus_Approved,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testCreateReturnRequest_ExceedsQuantity,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testGetByOrder,0.009,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReturnServiceTest,testUpdateStatus_InvalidTransition,0.011,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testGetByProduct_OnlyReturnsVisible,0.014,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testCreateReview_OrderNotCompleted,0.017,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testCreateReview_CustomerDoesNotOwnOrder,0.006,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testCreateReview_Success_PendingModeration,0.014,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testUpdateModerationStatus,0.012,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testCreateReview_DuplicateReviewPrevented,0.012,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.ReviewServiceTest,testCreateReview_OrderDoesNotContainProduct,0.005,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.WishListServiceTest,testRemoveProduct,2.805,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.WishListServiceTest,testMoveAllToCart,0.02,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.WishListServiceTest,testClearWishList,0.013,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.WishListServiceTest,testGetWishListProductIds,0.016,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.WishListServiceTest,testGetWishList,0.026,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml
+baseline_confirmed,com.thinh.cosmetic.service.WishListServiceTest,testAddProduct,0.018,PASS,,minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml

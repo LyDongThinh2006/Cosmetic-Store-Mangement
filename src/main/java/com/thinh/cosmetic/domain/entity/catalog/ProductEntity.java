@@ -40,7 +40,7 @@ public class ProductEntity {
     private String name;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Size(max = 100, message = "Origin must not exceed 100 characters")
@@ -48,11 +48,11 @@ public class ProductEntity {
     private String origin;
 
     @Lob
-    @Column(name = "main_ingredients")
+    @Column(name = "main_ingredients", columnDefinition = "TEXT")
     private String mainIngredients;
 
     @Lob
-    @Column(name = "benefits")
+    @Column(name = "benefits", columnDefinition = "TEXT")
     private String uses;
 
     @NotNull(message = "IsFeatured flag cannot be null")

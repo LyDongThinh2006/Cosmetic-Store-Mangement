@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.961" tests="12" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="testWishlistRemoveProductEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.071">
+    <system-out />
+  </testcase>
+  <testcase name="testGetReturnRequestsByOrderEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.021">
+    <system-out />
+  </testcase>
+  <testcase name="testWishlistClearEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.017">
+    <system-out />
+  </testcase>
+  <testcase name="testWishlistAddProductEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.063">
+    <system-out />
+  </testcase>
+  <testcase name="testSendOtpEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.359">
+    <system-out />
+  </testcase>
+  <testcase name="testSendRegisterOtpEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.127">
+    <system-out />
+  </testcase>
+  <testcase name="testSendRegisterOtpValidation" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.056">
+    <system-out />
+  </testcase>
+  <testcase name="testSendOtpValidation" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.051">
+    <system-out />
+  </testcase>
+  <testcase name="testWishlistProductIdsEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.023">
+    <system-out />
+  </testcase>
+  <testcase name="testGetStoreStockBySkuEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.07">
+    <system-out />
+  </testcase>
+  <testcase name="testWishlistEndpoint" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.023">
+    <system-out />
+  </testcase>
+  <testcase name="testResetPasswordValidation" classname="com.thinh.cosmetic.controller.Phase1RestEndpointsTest" time="0.028">
+    <system-out />
+  </testcase>
+</testsuite>

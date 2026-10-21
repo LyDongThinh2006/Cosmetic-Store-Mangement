@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.thinh.cosmetic.service.ReturnServiceTest" time="0.525" tests="8" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="testUpdateStatus_Completed_RestocksInventory" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.408" />
+  <testcase name="testCreateReturnRequest_OrderNotCompleted" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.016" />
+  <testcase name="testCreateReturnRequest" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.025" />
+  <testcase name="testCreateReturnRequest_OtherCustomerOrder" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.009" />
+  <testcase name="testUpdateStatus_Approved" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.013" />
+  <testcase name="testCreateReturnRequest_ExceedsQuantity" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.011" />
+  <testcase name="testGetByOrder" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.009" />
+  <testcase name="testUpdateStatus_InvalidTransition" classname="com.thinh.cosmetic.service.ReturnServiceTest" time="0.011" />
+</testsuite>

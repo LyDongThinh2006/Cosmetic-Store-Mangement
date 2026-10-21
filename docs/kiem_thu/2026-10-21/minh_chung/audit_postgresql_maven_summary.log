@@ -1,0 +1,20 @@
+QA_FIXTURE tag=qa-audit-1 customerA=2 customerB=3 storeHCM=4 storeHN=5 sku=17
+QA_FIXTURE tag=qa-audit-2 customerA=4 customerB=5 storeHCM=6 storeHN=7 sku=19
+QA_FIXTURE tag=qa-audit-3 customerA=6 customerB=7 storeHCM=8 storeHN=9 sku=21
+QA_FIXTURE tag=qa-audit-4 customerA=8 customerB=9 storeHCM=10 storeHN=11 sku=23
+QA_FIXTURE tag=qa-audit-5 customerA=10 customerB=11 storeHCM=12 storeHN=13 sku=25
+QA_FIXTURE tag=qa-audit-6 customerA=12 customerB=13 storeHCM=14 storeHN=15 sku=27
+QA_FIXTURE tag=qa-audit-7 customerA=14 customerB=15 storeHCM=16 storeHN=17 sku=29
+QA_FIXTURE tag=qa-audit-8 customerA=16 customerB=17 storeHCM=18 storeHN=19 sku=31
+QA_FIXTURE tag=qa-audit-9 customerA=18 customerB=19 storeHCM=20 storeHN=21 sku=33
+QA_FIXTURE tag=qa-audit-10 customerA=20 customerB=21 storeHCM=22 storeHN=23 sku=35
+QA_FIXTURE tag=qa-audit-11 customerA=22 customerB=23 storeHCM=24 storeHN=25 sku=37
+QA_FIXTURE tag=qa-audit-12 customerA=24 customerB=25 storeHCM=26 storeHN=27 sku=39
+QA_FIXTURE tag=qa-audit-13 customerA=26 customerB=27 storeHCM=28 storeHN=29 sku=41
+QA_FIXTURE tag=qa-audit-14 customerA=28 customerB=29 storeHCM=30 storeHN=31 sku=43
+QA_FIXTURE tag=qa-audit-15 customerA=30 customerB=31 storeHCM=32 storeHN=33 sku=45
+[ERROR] Tests run: 15, Failures: 10, Errors: 0, Skipped: 0, Time elapsed: 45.60 s <<< FAILURE! -- in com.thinh.cosmetic.audit.AuditBusinessIntegrationTest
+[ERROR] Tests run: 15, Failures: 10, Errors: 0, Skipped: 0
+[INFO] BUILD FAILURE
+[INFO] Total time:  55.550 s
+[INFO] Finished at: 2026-10-21T02:18:55+07:00

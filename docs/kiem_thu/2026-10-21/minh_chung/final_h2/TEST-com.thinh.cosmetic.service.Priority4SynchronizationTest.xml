@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.thinh.cosmetic.service.Priority4SynchronizationTest" time="5.778" tests="13" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="deleteCategory_withDependencies_shouldSoftDelete" classname="Chính sách xóa Danh mục" time="0.371" />
+  <testcase name="deleteBrand_withoutProducts_shouldHardDelete" classname="Chính sách xóa Thương hiệu" time="0.302" />
+  <testcase name="deleteBrand_withReferencedProducts_shouldSoftDelete" classname="Chính sách xóa Thương hiệu" time="0.004" />
+  <testcase name="deleteProduct_withOrders_shouldSoftDelete" classname="Chính sách xóa Sản phẩm" time="1.385" />
+  <testcase name="deleteAddress_foreignCustomer_shouldThrowAccessDenied" classname="3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng" time="0.16" />
+  <testcase name="updateAddress_foreignCustomer_shouldThrowAccessDenied" classname="3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng" time="0.004" />
+  <testcase name="updateCartItem_foreignCart_shouldThrowAccessDenied" classname="3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng" time="0.154" />
+  <testcase name="addCartItem_inactiveProduct_shouldThrowProductNotAvailable" classname="3. Xác nhận quyền sở hữu địa chỉ và giỏ hàng" time="0.005" />
+  <testcase name="deactivateStore_shouldUpdateStatusToInactive" classname="2. Ngừng hoạt động Cửa hàng &amp; Luồng chọn chi nhánh" time="0.459" />
+  <testcase name="getActiveStores_shouldOnlyQueryActiveStores" classname="2. Ngừng hoạt động Cửa hàng &amp; Luồng chọn chi nhánh" time="0.004" />
+  <testcase name="deactivateEmployee_shouldSyncAccountStatusToInactive" classname="1. Đồng bộ trạng thái Nhân viên &amp; Tài khoản" time="2.346" />
+  <testcase name="userDetailsService_shouldRejectInactiveEmployee" classname="1. Đồng bộ trạng thái Nhân viên &amp; Tài khoản" time="0.502" />
+  <testcase name="activateEmployee_shouldSyncAccountStatusToActive" classname="1. Đồng bộ trạng thái Nhân viên &amp; Tài khoản" time="0.03" />
+</testsuite>

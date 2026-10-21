@@ -1,0 +1,130 @@
+[
+  {
+    "file": "minh_chung/audit_postgresql/TEST-com.thinh.cosmetic.audit.AuditBusinessIntegrationTest.xml",
+    "sha256": "41f3d8e4729bf3e5d98137610dac30f93accd014a54a269ef8ba5027278a219c"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.BrandTests.xml",
+    "sha256": "04bffa8e93a58a24eeddcfcbf3c820a7ef67df95dbcff90160caf2f6951fa52d"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.CosmeticStoreChainManagementApplicationTests.xml",
+    "sha256": "fe9cc96d83508c1e1c40f3a8cb47e771665cfc4e582ecfb72a5d727967cd5a26"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml",
+    "sha256": "54f1776c0860af37ccfffc55519054f9526ae9c6659d080f049b094bea14d043"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml",
+    "sha256": "666b9b83f81ae672aba109c7a24441b05db5d9e267e735abe27f1ca90ed48e37"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml",
+    "sha256": "7896b8f7181404aef606a143a1e88a7b364763412a4fbbe9ec54d4ca461834e1"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml",
+    "sha256": "0025a679aba2c76953220c2202097905cf3b955fee282457ea24be416cc13e53"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml",
+    "sha256": "e25f9a583fe94e98015a107bdce638d3e4f6c853e3960a58a40d2e5188d6a508"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml",
+    "sha256": "fc91f1af2170ec0d29c25ce7b2f2150ada4234058a56316401b2e28df84828e1"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.InventoryServiceTest.xml",
+    "sha256": "a34bba6dd95c3c1576c047c0ac7d460073bd1709627278105a6dc9e21e3ec3b6"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml",
+    "sha256": "b7b2a1f41dbfa4a1a588243312a30308763d25734ed160d8295069fce3939e85"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml",
+    "sha256": "496eebf2d102a245ee8e791f78e38f7966b7e74bb4fe333d8984f46c2a36bcda"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml",
+    "sha256": "2a0d82b37659abd86ba4daf25bd86ebaacd9489b6a2f35b0af25e0eac6208eab"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml",
+    "sha256": "788c43dfb997007380be6df43e7045b369637e44569bcf018d378e92451cb17f"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml",
+    "sha256": "7dd5bc6920f414871baf7dbfeda892f804fd0b348425ed33654a3ea66881801e"
+  },
+  {
+    "file": "minh_chung/baseline_confirmed/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml",
+    "sha256": "48bed76525c90fe03ccbd72333784af1e2c0af822d54a11448612bf40d1023a7"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.BrandTests.xml",
+    "sha256": "51077dae73705a2c5930df1b23a33f23d9e2f31af276c8c5523dd29dad2fe68d"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.CosmeticStoreChainManagementApplicationTests.xml",
+    "sha256": "8207754c1267ff410967fd801770bb62c9621ba548219e4d798622e393873066"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.audit.AuditBusinessIntegrationTest.xml",
+    "sha256": "1ec49cd758a13461ae3249c93f4138e01e530ebb87c9e2b3fb5401d42d70569b"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.controller.OrderEndpointsTest.xml",
+    "sha256": "c03f42d4fb25b8ad101b6eb8f207ef13c4f059d4005655961315696b5dfc85bb"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.controller.Phase1RestEndpointsTest.xml",
+    "sha256": "5da843bcba7ec145f3e9cc3468bf52ceda881db18777e3b4f42eeed77b91ff76"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.controller.RoleSidebarAndVerificationTest.xml",
+    "sha256": "937298a1604c563ad2a330d58591523f4f083ad5b2751813667a6ff93dcf3fc2"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.controller.SecurityAuthorizationTest.xml",
+    "sha256": "99928b50a94f152921a7fbcd343b6620c6f416acc359c18633a1fae9eae612c3"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.controller.WebPageControllersTest.xml",
+    "sha256": "e7e800948efb490ed1b0635d487a8c8446f0c9bee19d4c07a6f814c5775d405e"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.AccountServiceTest.xml",
+    "sha256": "b591c2683fb3c846029c17cef4c9d1d2abaed1e2e19a8f55687f066723e30484"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.InventoryServiceTest.xml",
+    "sha256": "db213628f86e53d1ce7c6f45e1bed2237bdac1c6a5bee92b1f42da60249abd58"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.OrderServiceTest.xml",
+    "sha256": "df4b63a356bd875c14871ea1af94181124370928e49f733b08713e698f0179e3"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.OtpServiceTest.xml",
+    "sha256": "62452d089aad068b69aabd0fb4e12accccd5a8be49774ceb846fc8c13482a803"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.Priority4SynchronizationTest.xml",
+    "sha256": "2e400c8af6e90f3940f4d24ca53bfcefdb6a5861156d9c52be248caf629d1b80"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.ReturnServiceTest.xml",
+    "sha256": "756e7f358a236461031e29f2574c006deac8f2fb524c81dd23cc8c0adf2b7ad2"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.ReviewServiceTest.xml",
+    "sha256": "c97ef26ea54fc2bbdddb876e42004eeeb5655371ec185d10369c94eb30aa17bb"
+  },
+  {
+    "file": "minh_chung/final_h2/TEST-com.thinh.cosmetic.service.WishListServiceTest.xml",
+    "sha256": "100c277af17980523c8d1de14e260ce72a3927b9f9f1694c17c0d9f17d408489"
+  }
+]

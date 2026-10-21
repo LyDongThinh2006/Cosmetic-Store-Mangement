@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.805" tests="23" errors="0" skipped="0" failures="0" flakes="0">
+  <testcase name="employeeWithoutCatalogManage_cannotCreateProduct" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.015">
+    <system-out />
+  </testcase>
+  <testcase name="customer_cannotAccessEmployees" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.013" />
+  <testcase name="employeeWithCustomerManage_canViewAllCustomers" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.035">
+    <system-out />
+  </testcase>
+  <testcase name="anonymous_cannotAccessStockTransfers" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.015" />
+  <testcase name="anonymous_cannotAccessPurchaseOrders" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.012" />
+  <testcase name="anonymous_cannotAccessCustomers" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.013" />
+  <testcase name="public_canAccessBrands" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.017">
+    <system-out />
+  </testcase>
+  <testcase name="customer_cannotModerateReview" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.013" />
+  <testcase name="public_canAccessStores" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.031">
+    <system-out />
+  </testcase>
+  <testcase name="anonymous_cannotAccessStoreInventory" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.011" />
+  <testcase name="customer_cannotViewOtherCustomerProfile" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.019">
+    <system-out />
+  </testcase>
+  <testcase name="employeeWithoutCatalogManage_cannotDeleteProduct" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.013" />
+  <testcase name="anonymous_cannotAccessEmployees" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.011" />
+  <testcase name="customer_cannotViewInventory" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.011" />
+  <testcase name="customer_canViewOwnProfile" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.024">
+    <system-out />
+  </testcase>
+  <testcase name="employeeWithCatalogManage_canCreateProduct" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.077">
+    <system-out />
+  </testcase>
+  <testcase name="customer_cannotCreateProduct" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.014" />
+  <testcase name="public_canAccessProducts" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.27">
+    <system-out />
+  </testcase>
+  <testcase name="customer_cannotViewAllReturns" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.012" />
+  <testcase name="public_canAccessCategories" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.023">
+    <system-out />
+  </testcase>
+  <testcase name="customer_cannotViewOtherCustomerReturns" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.019">
+    <system-out />
+  </testcase>
+  <testcase name="anonymous_cannotCreateProduct" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.012" />
+  <testcase name="customer_canViewOwnReturns" classname="com.thinh.cosmetic.controller.SecurityAuthorizationTest" time="0.045">
+    <system-out />
+  </testcase>
+</testsuite>

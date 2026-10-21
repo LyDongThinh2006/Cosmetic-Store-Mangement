@@ -45,7 +45,7 @@ public class ReturnRequestEntity {
     private String reason;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "refund_amount", precision = 18, scale = 2)

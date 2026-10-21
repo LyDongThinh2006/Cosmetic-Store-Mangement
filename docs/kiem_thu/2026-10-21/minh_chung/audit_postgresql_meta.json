@@ -1,0 +1,18 @@
+{
+  "name": "audit_postgresql",
+  "command": [
+    "./mvnw",
+    "-o",
+    "-Dtest=AuditBusinessIntegrationTest",
+    "-DargLine=-javaagent:/Users/thinh/.m2/repository/org/mockito/mockito-core/5.23.0/mockito-core-5.23.0.jar",
+    "-Dqa.db.url=jdbc:postgresql://127.0.0.1:61651/lunea_qa",
+    "-Dqa.db.user=qa_lunea",
+    "-Dqa.db.password=[EPHEMERAL_SECRET_REDACTED]",
+    "test"
+  ],
+  "started": "2026-10-21T02:17:54.444036+07:00",
+  "java_home": "/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home",
+  "finished": "2026-10-21T02:18:55.683714+07:00",
+  "duration_seconds": 61.24,
+  "exit_code": 1
+}
