@@ -18,6 +18,24 @@ html {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* ==========================================================================
+   KEYBOARD NAVIGATION & FOCUS INDICATORS (WCAG 2.4.7, 2.4.11 & Front-End Checklist)
+   ========================================================================== */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--color-gold-primary, #dfbe7b);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs, 4px);
+}
+
 /* Skip Navigation Link for Keyboard Accessibility (WCAG 2.4.1) */
 .skip-nav-link {
     position: absolute;
