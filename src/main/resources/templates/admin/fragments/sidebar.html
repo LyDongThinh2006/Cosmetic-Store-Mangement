@@ -48,6 +48,18 @@
             <span>Xử Lý Đơn Hàng</span>
         </a>
 
+        <!-- Returns (Admin hoặc ORDER_STAFF hoặc CUSTOMER_MANAGE) -->
+        <a sec:authorize="hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'CUSTOMER_MANAGE', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN', 'ADMIN')" href="/admin/returns" class="admin-nav-link" th:classappend="${activeMenu == 'returns' ? 'active' : ''}">
+            <i class="bi bi-arrow-return-left"></i>
+            <span>Xử Lý Đổi Trả</span>
+        </a>
+
+        <!-- Customers (Admin hoặc CUSTOMER_MANAGE) -->
+        <a sec:authorize="hasAnyAuthority('CUSTOMER_MANAGE', 'ROLE_ADMIN', 'ADMIN')" href="/admin/customers" class="admin-nav-link" th:classappend="${activeMenu == 'customers' ? 'active' : ''}">
+            <i class="bi bi-people"></i>
+            <span>Quản Lý Khách Hàng</span>
+        </a>
+
         <!-- Inventory (Admin hoặc WAREHOUSE_STAFF hoặc INVENTORY_VIEW của ORDER_STAFF) -->
         <a sec:authorize="hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')" href="/admin/inventory" class="admin-nav-link" th:classappend="${activeMenu == 'inventory' ? 'active' : ''}">
             <i class="bi bi-boxes"></i>

@@ -574,6 +574,8 @@ const LUNEA = (function () {
                 window.closeAddressModal();
             } else if (modal.id === 'returnModal' && typeof window.closeReturnModal === 'function') {
                 window.closeReturnModal();
+            } else if (modal.id === 'customerDetailModal' && typeof window.closeCustomerModal === 'function') {
+                window.closeCustomerModal();
             } else if (modal.id === 'adjustModal' && typeof window.closeAdjustModal === 'function') {
                 window.closeAdjustModal();
             } else {

@@ -14,7 +14,9 @@ import com.thinh.cosmetic.domain.enums.OrderStatus;
 import com.thinh.cosmetic.domain.enums.ReturnStatus;
 import com.thinh.cosmetic.exception.BusinessException;
 import com.thinh.cosmetic.exception.ErrorCode;
+import com.thinh.cosmetic.domain.entity.catalog.ProductImageEntity;
 import com.thinh.cosmetic.repository.account.EmployeeRepository;
+import com.thinh.cosmetic.repository.catalog.ProductImageRepository;
 import com.thinh.cosmetic.repository.order.OrderItemRepository;
 import com.thinh.cosmetic.repository.order.OrderRepository;
 import com.thinh.cosmetic.repository.returns.ReturnItemRepository;
@@ -22,6 +24,7 @@ import com.thinh.cosmetic.repository.returns.ReturnRequestRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.service.returns.ReturnService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +42,9 @@ public class ReturnServiceImpl implements ReturnService {
     private final OrderItemRepository orderItemRepository;
     private final EmployeeRepository employeeRepository;
     private final InventoryRepository inventoryRepository;
+
+    @Autowired(required = false)
+    private ProductImageRepository productImageRepository;
 
     @Override
     public ReturnRequestResponse create(Long customerId, ReturnRequestDto request) throws Exception {
@@ -186,7 +192,7 @@ public class ReturnServiceImpl implements ReturnService {
     }
 
     @Override
-    public ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId) throws Exception {
+    public ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId, String note, Boolean restock) throws Exception {
         ReturnRequestEntity ret = returnRequestRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy yêu cầu trả hàng #" + id));
 
@@ -203,33 +209,50 @@ public class ReturnServiceImpl implements ReturnService {
                     String.format("Không thể chuyển trạng thái yêu cầu trả hàng từ %s sang %s", currentStatus, status));
         }
 
+        boolean doRestock = (restock == null || restock);
+
         // Cập nhật tồn kho theo chính sách khi hoàn tất nhận hàng trả (COMPLETED)
         if (status == ReturnStatus.COMPLETED) {
-            List<ReturnItemEntity> items = (ret.getItems() != null && !ret.getItems().isEmpty())
-                    ? ret.getItems()
-                    : returnItemRepository.findByReturnRequestId(ret.getId());
+            if (doRestock) {
+                List<ReturnItemEntity> items = (ret.getItems() != null && !ret.getItems().isEmpty())
+                        ? ret.getItems()
+                        : returnItemRepository.findByReturnRequestId(ret.getId());
 
-            OrderEntity order = ret.getOrder();
-            StoreEntity assignedStore = order != null ? order.getAssignedStore() : null;
+                OrderEntity order = ret.getOrder();
+                StoreEntity assignedStore = order != null ? order.getAssignedStore() : null;
 
-            if (assignedStore != null && items != null) {
-                for (ReturnItemEntity item : items) {
-                    if (item.getOrderItem() != null && item.getOrderItem().getSku() != null) {
-                        ProductSkuEntity sku = item.getOrderItem().getSku();
-                        InventoryEntity inv = inventoryRepository.findByStoreIdAndSkuId(assignedStore.getId(), sku.getId())
-                                .orElseGet(() -> inventoryRepository.save(InventoryEntity.builder()
-                                        .store(assignedStore)
-                                        .sku(sku)
-                                        .actualStock(0)
-                                        .heldQuantity(0)
-                                        .build()));
+                if (assignedStore != null && items != null) {
+                    for (ReturnItemEntity item : items) {
+                        if (item.getOrderItem() != null && item.getOrderItem().getSku() != null) {
+                            ProductSkuEntity sku = item.getOrderItem().getSku();
+                            InventoryEntity inv = inventoryRepository.findByStoreIdAndSkuId(assignedStore.getId(), sku.getId())
+                                    .orElseGet(() -> inventoryRepository.save(InventoryEntity.builder()
+                                            .store(assignedStore)
+                                            .sku(sku)
+                                            .actualStock(0)
+                                            .heldQuantity(0)
+                                            .build()));
 
-                        inv.setActualStock(inv.getActualStock() + item.getQuantity());
-                        inv.setUpdatedAt(LocalDateTime.now());
-                        inventoryRepository.save(inv);
+                            inv.setActualStock(inv.getActualStock() + item.getQuantity());
+                            inv.setUpdatedAt(LocalDateTime.now());
+                            inventoryRepository.save(inv);
+                        }
                     }
                 }
             }
+        }
+
+        // Ghi lại lịch sử thao tác của nhân viên vào description
+        if (note != null && !note.isBlank()) {
+            String currentDesc = ret.getDescription() != null ? ret.getDescription() : "";
+            String actionDesc = (status == ReturnStatus.COMPLETED && !doRestock)
+                    ? "[QLDH-QĐ7: Hàng hỏng/lỗi không nhập kho] "
+                    : (status == ReturnStatus.COMPLETED ? "[Nhập lại kho chi nhánh] " : "");
+            String noteEntry = "\n[" + status + " bởi " + employee.getFullName() + "]: " + actionDesc + note.trim();
+            ret.setDescription(currentDesc + noteEntry);
+        } else if (status == ReturnStatus.COMPLETED && !doRestock) {
+            String currentDesc = ret.getDescription() != null ? ret.getDescription() : "";
+            ret.setDescription(currentDesc + "\n[COMPLETED bởi " + employee.getFullName() + "]: [QLDH-QĐ7] Hàng hỏng/lỗi không nhập kho.");
         }
 
         ret.setStatus(status);
@@ -238,9 +261,27 @@ public class ReturnServiceImpl implements ReturnService {
         return toResponse(returnRequestRepository.save(ret));
     }
 
+    @Override
+    public ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId) throws Exception {
+        return updateStatus(id, status, employeeId, null, true);
+    }
+
     private ReturnRequestResponse toResponse(ReturnRequestEntity r) {
         List<ReturnItemEntity> items = r.getItems() != null ? r.getItems() :
                 returnItemRepository.findByReturnRequestId(r.getId());
+
+        String custPhone = null;
+        String custEmail = null;
+        if (r.getCustomer() != null && r.getCustomer().getAccount() != null) {
+            custPhone = r.getCustomer().getAccount().getPhone();
+            custEmail = r.getCustomer().getAccount().getEmail();
+        } else if (r.getOrder() != null && r.getOrder().getCustomer() != null && r.getOrder().getCustomer().getAccount() != null) {
+            custPhone = r.getOrder().getCustomer().getAccount().getPhone();
+            custEmail = r.getOrder().getCustomer().getAccount().getEmail();
+        }
+
+        Long storeId = (r.getOrder() != null && r.getOrder().getAssignedStore() != null) ? r.getOrder().getAssignedStore().getId() : null;
+        String storeName = (r.getOrder() != null && r.getOrder().getAssignedStore() != null) ? r.getOrder().getAssignedStore().getName() : null;
 
         List<ReturnRequestResponse.ReturnItemResponse> itemResponses = items.stream()
                 .map(i -> {
@@ -250,12 +291,22 @@ public class ReturnServiceImpl implements ReturnService {
                             ? i.getRefundAmount()
                             : unitPrice.multiply(BigDecimal.valueOf(i.getQuantity()));
 
+                    String imgUrl = null;
+                    if (productImageRepository != null && oi != null && oi.getSku() != null && oi.getSku().getProduct() != null) {
+                        try {
+                            imgUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(oi.getSku().getProduct().getId())
+                                    .map(ProductImageEntity::getImageUrl)
+                                    .orElse(null);
+                        } catch (Exception ignored) {}
+                    }
+
                     return ReturnRequestResponse.ReturnItemResponse.builder()
                             .id(i.getId())
                             .orderItemId(oi != null ? oi.getId() : null)
                             .skuId((oi != null && oi.getSku() != null) ? oi.getSku().getId() : null)
                             .productName(oi != null ? oi.getSnapshotProductName() : "Sản phẩm")
                             .variantName(oi != null ? oi.getSnapshotVariantName() : null)
+                            .imageUrl(imgUrl)
                             .unitPrice(unitPrice)
                             .quantity(i.getQuantity())
                             .refundAmount(itemRefund)
@@ -277,6 +328,10 @@ public class ReturnServiceImpl implements ReturnService {
                 .orderCode(r.getOrder() != null ? r.getOrder().getOrderCode() : null)
                 .customerId(r.getCustomer() != null ? r.getCustomer().getId() : (r.getOrder() != null && r.getOrder().getCustomer() != null ? r.getOrder().getCustomer().getId() : null))
                 .customerName(r.getCustomer() != null ? r.getCustomer().getFullName() : (r.getOrder() != null && r.getOrder().getCustomer() != null ? r.getOrder().getCustomer().getFullName() : null))
+                .customerPhone(custPhone)
+                .customerEmail(custEmail)
+                .storeId(storeId)
+                .storeName(storeName)
                 .reason(r.getReason())
                 .description(r.getDescription())
                 .status(r.getStatus())

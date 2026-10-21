@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('customers')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Quản Lý Khách Hàng & Tài Khoản', 'Tra cứu hồ sơ khách hàng, lịch sử mua sắm, điểm tích lũy và kiểm soát trạng thái tài khoản')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Action Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên, email, SĐT, mã KH..." oninput="filterCustomers()" style="padding-left: 36px; min-width: 280px;">
+                    </div>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterCustomers()" style="min-width: 170px;">
+                        <option value="ALL">Tất cả trạng thái</option>
+                        <option value="ACTIVE">Đang hoạt động</option>
+                        <option value="LOCKED">Đã khóa tài khoản</option>
+                    </select>
+
+                    <select id="loyaltyFilter" class="admin-select" onchange="filterCustomers()" style="min-width: 180px;">
+                        <option value="ALL">Tất cả hạng điểm</option>
+                        <option value="VIP">Thành viên VIP (> 1.000 điểm)</option>
+                        <option value="LOYAL">Khách hàng thân thiết (100 - 1.000)</option>
+                        <option value="NEW">Mới tham gia (< 100 điểm)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadCustomers()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Khách Hàng</span>
+                        <div class="kpi-icon blue"><i class="bi bi-people-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalCustomers">0</div>
+                    <div class="kpi-sub"><span>Hồ sơ khách hàng trong hệ thống</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Hoạt Động</span>
+                        <div class="kpi-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiActiveCustomers" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Tài khoản sẵn sàng đăng nhập & đặt hàng</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tài Khoản Đã Khóa</span>
+                        <div class="kpi-icon amber"><i class="bi bi-lock-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiLockedCustomers" style="color: #f87171;">0</div>
+                    <div class="kpi-sub"><span>Tạm khóa theo quy định QLKH-QĐ2</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Khách Hàng VIP / Thân Thiết</span>
+                        <div class="kpi-icon gold"><i class="bi bi-stars"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiVipCustomers" style="color: var(--color-gold-light);">0</div>
+                    <div class="kpi-sub"><span>Tích lũy từ 500 điểm thành viên</span></div>
+                </div>
+            </div>
+
+            <!-- Customers Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Danh Sách Khách Hàng & Tài Khoản Thành Viên</span>
+                    </h3>
+                    <span id="customerCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 khách hàng</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Mã KH</th>
+                                <th>Họ & Tên</th>
+                                <th>Email</th>
+                                <th>Số Điện Thoại</th>
+                                <th style="text-align: center;">Điểm Tích Lũy</th>
+                                <th style="text-align: right;">Tổng Chi Tiêu</th>
+                                <th>Ngày Tham Gia</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right; width: 170px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                                    <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu khách hàng...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Chi Tiết Hồ Sơ Khách Hàng -->
+    <div id="customerDetailModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl" style="max-width: 960px; max-height: 90vh; overflow-y: auto;">
+            <div class="admin-modal-header" style="position: sticky; top: 0; background: var(--color-bg-surface); z-index: 10;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div class="admin-modal-header-icon" style="background: rgba(212, 175, 55, 0.15); color: var(--color-gold-light);">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="modalCustomerName">Hồ Sơ Khách Hàng</h3>
+                        <div style="font-size: 0.76rem; color: var(--color-text-muted); margin-top: 2px;" id="modalCustomerSub">
+                            Mã định danh & lịch sử giao dịch toàn hệ thống
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeCustomerModal()">&times;</button>
+            </div>
+
+            <div class="admin-modal-body" style="padding: 24px;">
+                <!-- Profile Header Card -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div style="background: var(--color-bg-elevated); padding: 16px; border-radius: 10px; border: 1px solid var(--color-border-subtle);">
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); text-transform: uppercase;">Thông tin liên hệ</div>
+                        <div style="margin-top: 8px; font-size: 0.88rem; display: flex; flex-direction: column; gap: 6px;">
+                            <div><i class="bi bi-envelope" style="color: var(--color-gold-primary); margin-right: 6px;"></i><span id="modalEmail">-</span></div>
+                            <div><i class="bi bi-telephone" style="color: var(--color-gold-primary); margin-right: 6px;"></i><span id="modalPhone">-</span></div>
+                            <div><i class="bi bi-calendar3" style="color: var(--color-gold-primary); margin-right: 6px;"></i>Sinh nhật: <span id="modalDob">-</span></div>
+                            <div><i class="bi bi-gender-ambiguous" style="color: var(--color-gold-primary); margin-right: 6px;"></i>Giới tính: <span id="modalGender">-</span></div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-bg-elevated); padding: 16px; border-radius: 10px; border: 1px solid var(--color-border-subtle);">
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); text-transform: uppercase;">Tích lũy & Thành viên</div>
+                        <div style="margin-top: 10px;">
+                            <div style="font-size: 1.6rem; font-weight: 700; color: var(--color-gold-light);" id="modalPoints">0</div>
+                            <div style="font-size: 0.76rem; color: var(--color-text-muted);">Điểm thưởng khả dụng</div>
+                            <div style="margin-top: 8px; font-size: 0.8rem; color: var(--color-text-secondary);">
+                                Ngày tham gia: <strong id="modalJoinDate" style="color: var(--color-text-primary);">-</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-bg-elevated); padding: 16px; border-radius: 10px; border: 1px solid var(--color-border-subtle);">
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); text-transform: uppercase;">Thống kê mua sắm</div>
+                        <div style="margin-top: 10px;">
+                            <div style="font-size: 1.6rem; font-weight: 700; color: #34d399;" id="modalTotalSpent">0 ₫</div>
+                            <div style="font-size: 0.76rem; color: var(--color-text-muted);" id="modalOrdersCount">Tổng 0 đơn hàng đã đặt</div>
+                            <div style="margin-top: 10px;" id="modalStatusBadge"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Beauty Profile & Skin Concerns Section -->
+                <div class="admin-card" style="margin-bottom: 24px; border-color: rgba(212, 175, 55, 0.2);">
+                    <div class="admin-card-header" style="padding: 12px 18px;">
+                        <h4 style="margin: 0; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; color: var(--color-gold-light);">
+                            <i class="bi bi-heart-pulse"></i>
+                            <span>Hồ Sơ Làm Đẹp & Thói Quen Chăm Sóc Da (Beauty Profile)</span>
+                        </h4>
+                    </div>
+                    <div class="admin-card-body" style="padding: 16px 18px;" id="modalBeautyProfileBody">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 0.86rem;">
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Loại da (Skin Type):</span>
+                                <strong id="bpSkinType" style="color: var(--color-text-primary);">-</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Mối quan tâm về da:</span>
+                                <strong id="bpConcerns" style="color: var(--color-text-primary);">-</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Nhu cầu chăm sóc:</span>
+                                <strong id="bpNeeds" style="color: var(--color-text-primary);">-</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Khoảng giá quan tâm:</span>
+                                <strong id="bpPriceRange" style="color: var(--color-text-primary);">-</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Addresses Section -->
+                <div class="admin-card" style="margin-bottom: 24px;">
+                    <div class="admin-card-header" style="padding: 12px 18px;">
+                        <h4 style="margin: 0; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>Sổ Địa Chỉ Giao Hàng</span>
+                        </h4>
+                    </div>
+                    <div class="admin-card-body" style="padding: 12px 18px;" id="modalAddressesBody">
+                        <div style="color: var(--color-text-muted); font-size: 0.86rem;">Chưa có địa chỉ nào được lưu.</div>
+                    </div>
+                </div>
+
+                <!-- Order History Table -->
+                <div class="admin-card">
+                    <div class="admin-card-header" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="bi bi-bag-check"></i>
+                            <span>Lịch Sử Mua Hàng & Đơn Đặt Toàn Chuỗi</span>
+                        </h4>
+                        <span id="modalOrderCountSub" style="font-size: 0.78rem; color: var(--color-text-muted);">0 đơn</span>
+                    </div>
+                    <div class="admin-table-container">
+                        <table class="admin-table" style="font-size: 0.84rem;">
+                            <thead>
+                                <tr>
+                                    <th>Mã Đơn</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Chi Nhánh Xử Lý</th>
+                                    <th>Phương Thức</th>
+                                    <th style="text-align: right;">Tổng Tiền</th>
+                                    <th style="text-align: center;">Trạng Thái</th>
+                                    <th style="text-align: right;">Chi Tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalOrderTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 24px; color: var(--color-text-muted);">
+                                        Đang tải lịch sử đơn hàng...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-modal-footer" style="position: sticky; bottom: 0; background: var(--color-bg-surface); z-index: 10; display: flex; justify-content: space-between; align-items: center;">
+                <div id="modalLockActionButton">
+                    <!-- Action Toggle Button dynamically inserted -->
+                </div>
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeCustomerModal()">Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Specific Script -->
+    <script th:inline="javascript">
+        let allCustomers = [];
+        let currentModalCustomerId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCustomers();
+        });
+
+        async function loadCustomers() {
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                        <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                        Đang tải danh sách khách hàng...
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const res = await LUNEA.apiFetch('/api/customers');
+                allCustomers = res || [];
+                renderKPIs(allCustomers);
+                filterCustomers();
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 30px; color: #f87171;">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không thể tải danh sách khách hàng. Vui lòng kiểm tra quyền hạn (CUSTOMER_MANAGE).
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderKPIs(list) {
+            const total = list.length;
+            const active = list.filter(c => c.status === 'ACTIVE').length;
+            const locked = list.filter(c => c.status === 'LOCKED' || c.status === 'INACTIVE').length;
+            const vip = list.filter(c => (c.loyaltyPoints || 0) >= 500).length;
+
+            document.getElementById('kpiTotalCustomers').textContent = total;
+            document.getElementById('kpiActiveCustomers').textContent = active;
+            document.getElementById('kpiLockedCustomers').textContent = locked;
+            document.getElementById('kpiVipCustomers').textContent = vip;
+            document.getElementById('customerCountBadge').textContent = `${total} khách hàng`;
+        }
+
+        function filterCustomers() {
+            const keyword = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const statusVal = document.getElementById('statusFilter').value;
+            const loyaltyVal = document.getElementById('loyaltyFilter').value;
+
+            const filtered = allCustomers.filter(c => {
+                const matchKeyword = !keyword ||
+                    (c.id && c.id.toString().includes(keyword)) ||
+                    (c.fullName && c.fullName.toLowerCase().includes(keyword)) ||
+                    (c.email && c.email.toLowerCase().includes(keyword)) ||
+                    (c.phone && c.phone.toLowerCase().includes(keyword));
+
+                let matchStatus = true;
+                if (statusVal === 'ACTIVE') {
+                    matchStatus = (c.status === 'ACTIVE');
+                } else if (statusVal === 'LOCKED') {
+                    matchStatus = (c.status === 'LOCKED' || c.status === 'INACTIVE');
+                }
+
+                let matchLoyalty = true;
+                const pts = c.loyaltyPoints || 0;
+                if (loyaltyVal === 'VIP') {
+                    matchLoyalty = (pts > 1000);
+                } else if (loyaltyVal === 'LOYAL') {
+                    matchLoyalty = (pts >= 100 && pts <= 1000);
+                } else if (loyaltyVal === 'NEW') {
+                    matchLoyalty = (pts < 100);
+                }
+
+                return matchKeyword && matchStatus && matchLoyalty;
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(list) {
+            const tbody = document.getElementById('customerTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                            <i class="bi bi-inbox" style="font-size: 1.8rem; display: block; margin-bottom: 8px;"></i>
+                            Không tìm thấy khách hàng nào phù hợp với bộ lọc.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(c => {
+                const isLocked = (c.status === 'LOCKED' || c.status === 'INACTIVE');
+                const initial = (c.fullName || 'K').charAt(0).toUpperCase();
+                const totalSpentFormatted = c.totalSpent != null ? Number(c.totalSpent).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+                const ordersCount = c.totalOrders != null ? c.totalOrders : 0;
+                const pts = c.loyaltyPoints || 0;
+
+                const statusBadge = isLocked
+                    ? `<span class="admin-badge badge-danger" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                         <i class="bi bi-lock-fill" style="margin-right: 4px;"></i>Đã khóa
+                       </span>`
+                    : `<span class="admin-badge badge-success" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+                         <i class="bi bi-check-circle-fill" style="margin-right: 4px;"></i>Hoạt động
+                       </span>`;
+
+                const lockBtn = isLocked
+                    ? `<button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.78rem; color: #34d399; border-color: rgba(52, 211, 153, 0.4);" onclick="toggleCustomerLock(${c.id}, 'ACTIVE', '${escapeHtml(c.fullName)}')">
+                         <i class="bi bi-unlock-fill"></i> Mở khóa
+                       </button>`
+                    : `<button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.78rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4);" onclick="toggleCustomerLock(${c.id}, 'LOCKED', '${escapeHtml(c.fullName)}')">
+                         <i class="bi bi-lock-fill"></i> Khóa
+                       </button>`;
+
+                return `
+                    <tr>
+                        <td><strong style="color: var(--color-gold-light);">#KH${c.id}</strong></td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #aa8010); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: #000; flex-shrink: 0;">
+                                    ${initial}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--color-text-primary);">${escapeHtml(c.fullName || 'Khách hàng')}</div>
+                                    <div style="font-size: 0.74rem; color: var(--color-text-muted);">${c.gender ? (c.gender === 'MALE' ? 'Nam' : (c.gender === 'FEMALE' ? 'Nữ' : 'Khác')) : 'Chưa cập nhật'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color: var(--color-text-secondary);">${escapeHtml(c.email || '-')}</td>
+                        <td><strong style="font-family: monospace; color: var(--color-gold-primary);">${escapeHtml(c.phone || '-')}</strong></td>
+                        <td style="text-align: center;">
+                            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; background: rgba(212, 175, 55, 0.15); color: var(--color-gold-light); font-weight: 600; font-size: 0.82rem;">
+                                <i class="bi bi-star-fill" style="font-size: 0.72rem; color: #fbbf24;"></i> ${pts}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="font-weight: 600; color: #34d399;">${totalSpentFormatted}</div>
+                            <div style="font-size: 0.72rem; color: var(--color-text-muted);">${ordersCount} đơn hàng</div>
+                        </td>
+                        <td style="color: var(--color-text-muted); font-size: 0.8rem;">${formatDate(c.joinDate)}</td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 6px; align-items: center;">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.78rem;" onclick="viewCustomerDetail(${c.id})">
+                                    <i class="bi bi-eye"></i> Hồ sơ
+                                </button>
+                                ${lockBtn}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function toggleCustomerLock(customerId, targetStatus, customerName) {
+            const isLocking = (targetStatus === 'LOCKED');
+            const confirmMsg = isLocking
+                ? `Bạn có chắc chắn muốn KHÓA tài khoản của khách hàng "${customerName}" (#KH${customerId})?\nKhách hàng sẽ không thể đăng nhập hoặc đặt hàng theo quy định QLKH-QĐ2.`
+                : `Bạn có chắc chắn muốn MỞ KHÓA tài khoản cho khách hàng "${customerName}" (#KH${customerId})?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                await LUNEA.apiFetch(`/api/customers/${customerId}/status?status=${targetStatus}`, {
+                    method: 'PUT'
+                });
+                LUNEA.showToast(isLocking ? 'Đã khóa tài khoản khách hàng thành công!' : 'Đã mở khóa tài khoản thành công!', 'success');
+                
+                // Cập nhật trạng thái trong bộ nhớ và vẽ lại
+                const cust = allCustomers.find(c => c.id === customerId);
+                if (cust) {
+                    cust.status = targetStatus;
+                }
+                renderKPIs(allCustomers);
+                filterCustomers();
+
+                // Nếu đang mở modal thì làm mới nút trong modal
+                if (currentModalCustomerId === customerId) {
+                    viewCustomerDetail(customerId);
+                }
+            } catch (err) {
+                // Handled by apiFetch toast
+            }
+        }
+
+        function populateCustomerBaseData(customer) {
+            if (!customer) return;
+            const nameEl = document.getElementById('modalCustomerName');
+            if (nameEl) nameEl.textContent = customer.fullName || ('Khách hàng #' + customer.id);
+            const subEl = document.getElementById('modalCustomerSub');
+            if (subEl) subEl.textContent = `Mã KH: #KH${customer.id} | Mã TK: #TK${customer.accountId || '-'}`;
+            const emailEl = document.getElementById('modalEmail');
+            if (emailEl) emailEl.textContent = customer.email || '-';
+            const phoneEl = document.getElementById('modalPhone');
+            if (phoneEl) phoneEl.textContent = customer.phone || '-';
+            const dobEl = document.getElementById('modalDob');
+            if (dobEl) dobEl.textContent = formatDate(customer.dob);
+            const genderEl = document.getElementById('modalGender');
+            if (genderEl) genderEl.textContent = customer.gender ? (customer.gender === 'MALE' ? 'Nam' : (customer.gender === 'FEMALE' ? 'Nữ' : 'Khác')) : 'Chưa cập nhật';
+            const pointsEl = document.getElementById('modalPoints');
+            if (pointsEl) pointsEl.textContent = (customer.loyaltyPoints || 0).toLocaleString('vi-VN');
+            const joinEl = document.getElementById('modalJoinDate');
+            if (joinEl) joinEl.textContent = formatDate(customer.joinDate);
+            const spentEl = document.getElementById('modalTotalSpent');
+            if (spentEl && customer.totalSpent != null) {
+                spentEl.textContent = Number(customer.totalSpent).toLocaleString('vi-VN') + ' ₫';
+            }
+            const countEl = document.getElementById('modalOrdersCount');
+            if (countEl && customer.totalOrders != null) {
+                countEl.textContent = `Tổng ${customer.totalOrders} đơn hàng đã đặt`;
+            }
+
+            const isLocked = (customer.status === 'LOCKED' || customer.status === 'INACTIVE');
+            const badgeEl = document.getElementById('modalStatusBadge');
+            if (badgeEl) {
+                badgeEl.innerHTML = isLocked
+                    ? `<span class="admin-badge badge-danger" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                         <i class="bi bi-lock-fill"></i> Tài khoản Đang Bị Khóa
+                       </span>`
+                    : `<span class="admin-badge badge-success" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+                         <i class="bi bi-check-circle-fill"></i> Tài khoản Đang Hoạt Động
+                       </span>`;
+            }
+
+            // Lock / Unlock button in modal footer
+            const actionContainer = document.getElementById('modalLockActionButton');
+            if (actionContainer) {
+                if (isLocked) {
+                    actionContainer.innerHTML = `
+                        <button type="button" class="admin-btn admin-btn-primary" style="background: #059669; border-color: #059669;" onclick="toggleCustomerLock(${customer.id}, 'ACTIVE', '${escapeHtml(customer.fullName || '')}')">
+                            <i class="bi bi-unlock-fill"></i> Mở Khóa Tài Khoản
+                        </button>
+                    `;
+                } else {
+                    actionContainer.innerHTML = `
+                        <button type="button" class="admin-btn admin-btn-danger" style="background: #dc2626; border-color: #dc2626; color: #fff;" onclick="toggleCustomerLock(${customer.id}, 'LOCKED', '${escapeHtml(customer.fullName || '')}')">
+                            <i class="bi bi-lock-fill"></i> Khóa Tài Khoản Này
+                        </button>
+                    `;
+                }
+            }
+        }
+
+        async function viewCustomerDetail(customerId) {
+            currentModalCustomerId = customerId;
+            const modal = document.getElementById('customerDetailModal');
+            if (!modal) return;
+
+            // 1. Hiển thị modal ngay lập tức và gắn class 'show' để CSS transition hoạt động
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                modal.classList.add('show');
+            });
+            document.body.style.overflow = 'hidden';
+
+            // Reset giao diện phụ sang trạng thái tải
+            const addrsEl = document.getElementById('modalAddressesBody');
+            if (addrsEl) addrsEl.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.84rem;"><i class="bi bi-arrow-repeat spin"></i> Đang tải sổ địa chỉ...</div>';
+            const ordersTbody = document.getElementById('modalOrderTableBody');
+            if (ordersTbody) {
+                ordersTbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 24px; color: var(--color-text-muted);">
+                            <i class="bi bi-arrow-repeat spin"></i> Đang tải đơn hàng...
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // 2. Điền thông tin cơ bản từ danh sách bộ nhớ nếu có để UI phản hồi tức thì
+            let customer = allCustomers.find(c => c.id == customerId);
+            if (customer) {
+                populateCustomerBaseData(customer);
+            }
+
+            // 3. Tải chi tiết khách hàng từ server
+            try {
+                const fetched = await LUNEA.apiFetch(`/api/customers/${customerId}`);
+                if (fetched) {
+                    customer = fetched;
+                    populateCustomerBaseData(customer);
+                }
+            } catch (e) {
+                console.warn('Lỗi tải dữ liệu khách hàng từ API:', e);
+            }
+
+            // 4. Tải song song hồ sơ da, sổ địa chỉ và lịch sử đơn hàng
+            loadCustomerBeautyProfile(customerId);
+            loadCustomerAddresses(customerId);
+            loadCustomerOrders(customerId);
+        }
+
+        async function loadCustomerBeautyProfile(customerId) {
+            const body = document.getElementById('modalBeautyProfileBody');
+            if (!body) return;
+            body.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.84rem;"><i class="bi bi-arrow-repeat spin"></i> Đang tải thông tin làm đẹp...</div>';
+            try {
+                const bp = await LUNEA.apiFetch(`/api/customers/${customerId}/beauty-profile`);
+                if (bp && (bp.skinType || bp.skinConcerns || bp.careNeeds || bp.priceRangeInterest)) {
+                    body.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 0.86rem;">
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Loại da (Skin Type):</span>
+                                <strong style="color: var(--color-gold-light);">${escapeHtml(bp.skinType || 'Chưa cung cấp')}</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Mối quan tâm về da:</span>
+                                <strong style="color: var(--color-text-primary);">${escapeHtml(bp.skinConcerns || 'Không có')}</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Nhu cầu chăm sóc:</span>
+                                <strong style="color: var(--color-text-primary);">${escapeHtml(bp.careNeeds || 'Chăm sóc cơ bản')}</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--color-text-muted); font-size: 0.76rem; display: block;">Khoảng giá quan tâm:</span>
+                                <strong style="color: var(--color-text-primary);">${escapeHtml(bp.priceRangeInterest || 'Mọi phân khúc')}</strong>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    body.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.86rem;"><i class="bi bi-info-circle" style="margin-right: 6px;"></i>Khách hàng chưa thiết lập hồ sơ da & làm đẹp.</div>';
+                }
+            } catch (e) {
+                body.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.86rem;"><i class="bi bi-info-circle" style="margin-right: 6px;"></i>Chưa có dữ liệu hồ sơ làm đẹp.</div>';
+            }
+        }
+
+        async function loadCustomerAddresses(customerId) {
+            const container = document.getElementById('modalAddressesBody');
+            if (!container) return;
+            try {
+                const addrs = await LUNEA.apiFetch(`/api/customers/${customerId}/addresses`);
+                if (!addrs || addrs.length === 0) {
+                    container.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.86rem;"><i class="bi bi-info-circle" style="margin-right: 6px;"></i>Khách hàng chưa lưu địa chỉ giao hàng nào.</div>';
+                    return;
+                }
+
+                container.innerHTML = addrs.map(a => `
+                    <div style="background: var(--color-bg-elevated); padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600; color: var(--color-text-primary); font-size: 0.86rem;">
+                                ${escapeHtml(a.recipientName || '-')} <span style="font-weight: 400; color: var(--color-gold-primary); margin-left: 8px;">(${escapeHtml(a.phone || '-')})</span>
+                                ${a.isDefault ? '<span class="admin-badge badge-primary" style="margin-left: 6px; font-size: 0.68rem;">Mặc định</span>' : ''}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 4px;">
+                                <i class="bi bi-geo-alt" style="color: var(--color-text-muted);"></i> ${escapeHtml(a.addressDetail || '')}, ${escapeHtml(a.ward || '')}, ${escapeHtml(a.district || '')}, ${escapeHtml(a.province || '')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.86rem;">Không thể tải danh sách địa chỉ.</div>';
+            }
+        }
+
+        async function loadCustomerOrders(customerId) {
+            const tbody = document.getElementById('modalOrderTableBody');
+            if (!tbody) return;
+
+            try {
+                // Call /api/customers/{id}/orders
+                const orders = await LUNEA.apiFetch(`/api/customers/${customerId}/orders`);
+                const list = orders || [];
+                
+                const countSubEl = document.getElementById('modalOrderCountSub');
+                if (countSubEl) countSubEl.textContent = `${list.length} đơn hàng`;
+                const ordersCountEl = document.getElementById('modalOrdersCount');
+                if (ordersCountEl) ordersCountEl.textContent = `Tổng ${list.length} đơn hàng đã đặt`;
+
+                // Calculate total spent excluding CANCELLED
+                let totalSpent = 0;
+                list.forEach(o => {
+                    if (o.status !== 'CANCELLED' && o.totalAmount) {
+                        totalSpent += Number(o.totalAmount);
+                    }
+                });
+                const totalSpentEl = document.getElementById('modalTotalSpent');
+                if (totalSpentEl) totalSpentEl.textContent = totalSpent.toLocaleString('vi-VN') + ' ₫';
+
+                if (list.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 24px; color: var(--color-text-muted);">
+                                Khách hàng chưa phát sinh đơn đặt hàng nào trong hệ thống.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = list.map(o => {
+                    const statusClass = getOrderStatusClass(o.status);
+                    const statusText = getOrderStatusText(o.status);
+                    const totalFormatted = o.totalAmount != null ? Number(o.totalAmount).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+                    const storeName = o.fulfillmentStoreName || 'Chưa gán chi nhánh';
+
+                    return `
+                        <tr>
+                            <td><strong style="color: var(--color-gold-light); font-family: monospace;">#${escapeHtml(o.orderCode || o.id)}</strong></td>
+                            <td style="color: var(--color-text-muted);">${formatDateTime(o.createdAt)}</td>
+                            <td><i class="bi bi-shop" style="color: var(--color-gold-primary); margin-right: 4px;"></i>${escapeHtml(storeName)}</td>
+                            <td style="color: var(--color-text-secondary); font-size: 0.78rem;">${o.paymentMethod || 'COD'}</td>
+                            <td style="text-align: right; font-weight: 600; color: #34d399;">${totalFormatted}</td>
+                            <td style="text-align: center;">
+                                <span class="admin-badge ${statusClass}">${statusText}</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a href="/admin/orders/${o.id}" target="_blank" class="admin-btn admin-btn-outline" style="padding: 2px 8px; font-size: 0.75rem;">
+                                    <i class="bi bi-box-arrow-up-right"></i> Xem
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #f87171;">
+                            Không thể tải lịch sử đơn hàng của khách hàng.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function closeCustomerModal() {
+            const modal = document.getElementById('customerDetailModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 200);
+            }
+            document.body.style.overflow = '';
+            currentModalCustomerId = null;
+        }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('customerDetailModal');
+            if (e.target === modal) {
+                closeCustomerModal();
+            }
+        });
+
+        function getOrderStatusClass(status) {
+            switch (status) {
+                case 'COMPLETED': return 'badge-success';
+                case 'DELIVERING': case 'CONFIRMED': return 'badge-primary';
+                case 'PENDING': return 'badge-warning';
+                case 'CANCELLED': return 'badge-danger';
+                default: return 'badge-secondary';
+            }
+        }
+
+        function getOrderStatusText(status) {
+            switch (status) {
+                case 'PENDING': return 'Chờ duyệt';
+                case 'CONFIRMED': return 'Đã xác nhận';
+                case 'PROCESSING': return 'Đang xử lý';
+                case 'DELIVERING': return 'Đang giao hàng';
+                case 'COMPLETED': return 'Hoàn thành';
+                case 'CANCELLED': return 'Đã hủy';
+                default: return status || '-';
+            }
+        }
+
+        function formatDate(val) {
+            if (!val) return '-';
+            try {
+                const parts = val.toString().split('-');
+                if (parts.length === 3) {
+                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                const d = new Date(val);
+                return d.toLocaleDateString('vi-VN');
+            } catch (e) {
+                return val;
+            }
+        }
+
+        function formatDateTime(val) {
+            if (!val) return '-';
+            try {
+                const d = new Date(val);
+                return d.toLocaleString('vi-VN', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            } catch (e) {
+                return val;
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>

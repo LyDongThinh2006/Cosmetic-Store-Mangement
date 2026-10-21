@@ -6,23 +6,33 @@ import com.thinh.cosmetic.domain.dto.request.account.CustomerProfileRequest;
 import com.thinh.cosmetic.domain.dto.response.account.BeautyProfileResponse;
 import com.thinh.cosmetic.domain.dto.response.account.CustomerAddressResponse;
 import com.thinh.cosmetic.domain.dto.response.account.CustomerResponse;
+import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
+import com.thinh.cosmetic.domain.entity.account.AccountEntity;
 import com.thinh.cosmetic.domain.entity.account.BeautyProfileEntity;
 import com.thinh.cosmetic.domain.entity.account.CustomerAddressEntity;
 import com.thinh.cosmetic.domain.entity.account.CustomerEntity;
+import com.thinh.cosmetic.domain.entity.sales.OrderEntity;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
+import com.thinh.cosmetic.domain.enums.OrderStatus;
 import com.thinh.cosmetic.mapper.account.CustomerAddressMapper;
 import com.thinh.cosmetic.mapper.account.CustomerMapper;
+import com.thinh.cosmetic.repository.account.AccountRepository;
 import com.thinh.cosmetic.repository.account.BeautyProfileRepository;
 import com.thinh.cosmetic.repository.account.CustomerAddressRepository;
 import com.thinh.cosmetic.repository.account.CustomerRepository;
+import com.thinh.cosmetic.repository.order.OrderRepository;
 import com.thinh.cosmetic.exception.BusinessException;
 import com.thinh.cosmetic.exception.ErrorCode;
 import com.thinh.cosmetic.service.account.CustomerService;
+import com.thinh.cosmetic.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -33,6 +43,9 @@ public class CustomerServiceImpl implements CustomerService {
     private final BeautyProfileRepository beautyProfileRepository;
     private final CustomerMapper customerMapper;
     private final CustomerAddressMapper addressMapper;
+    private final AccountRepository accountRepository;
+    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     @Override
     @Transactional(readOnly = true)
@@ -127,17 +140,73 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional(readOnly = true)
     public List<CustomerResponse> getAllCustomers() {
-        return customerRepository.findAll().stream().map(customerMapper::toResponse).toList();
+        return customerRepository.findAll().stream().map(c -> {
+            CustomerResponse res = customerMapper.toResponse(c);
+            enrichCustomerStats(res, c.getId());
+            return res;
+        }).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public CustomerResponse getCustomerById(Long id) throws Exception {
-        return customerMapper.toResponse(findCustomer(id));
+        CustomerEntity customer = findCustomer(id);
+        CustomerResponse res = customerMapper.toResponse(customer);
+        enrichCustomerStats(res, id);
+        return res;
+    }
+
+    @Override
+    public CustomerResponse updateStatus(Long customerId, ActiveStatus status) throws Exception {
+        CustomerEntity customer = findCustomer(customerId);
+        AccountEntity account = customer.getAccount();
+        if (account == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy tài khoản liên kết với khách hàng #" + customerId);
+        }
+        account.setStatus(status);
+        accountRepository.save(account);
+        CustomerResponse res = customerMapper.toResponse(customer);
+        enrichCustomerStats(res, customerId);
+        return res;
+    }
+
+    @Override
+    public void lockCustomer(Long customerId) throws Exception {
+        updateStatus(customerId, ActiveStatus.LOCKED);
+    }
+
+    @Override
+    public void unlockCustomer(Long customerId) throws Exception {
+        updateStatus(customerId, ActiveStatus.ACTIVE);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getCustomerOrders(Long customerId) {
+        if (orderService != null) {
+            return orderService.getByCustomer(customerId);
+        }
+        return List.of();
+    }
+
+    private void enrichCustomerStats(CustomerResponse res, Long customerId) {
+        if (res == null || customerId == null || orderRepository == null) return;
+        try {
+            List<OrderEntity> orders = orderRepository.findByCustomerIdOrderByCreatedAtDesc(customerId);
+            res.setTotalOrders((long) orders.size());
+            BigDecimal total = orders.stream()
+                    .filter(o -> o.getStatus() != OrderStatus.CANCELLED)
+                    .map(OrderEntity::getTotalAmount)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            res.setTotalSpent(total);
+        } catch (Exception e) {
+            // Ignore stats computation error to preserve profile response
+        }
     }
 
     private CustomerEntity findCustomer(Long id) throws Exception {
         return customerRepository.findById(id)
-                .orElseThrow(() -> new Exception("Customer not found: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy khách hàng #" + id));
     }
 }

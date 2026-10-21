@@ -40,6 +40,8 @@ public class AdminPageController {
                 staffRoleTitle = "Nhân Viên Đơn Hàng";
             } else if (principal.hasAnyAuthority("ROLE_PRODUCT_MANAGER", "PRODUCT_MANAGER")) {
                 staffRoleTitle = "Quản Lý Sản Phẩm";
+            } else if (principal.hasAnyAuthority("CUSTOMER_MANAGE", "ROLE_CUSTOMER_SERVICE")) {
+                staffRoleTitle = "Chăm Sóc Khách Hàng (CSKH)";
             }
             model.addAttribute("staffRoleTitle", staffRoleTitle);
 
@@ -178,5 +180,23 @@ public class AdminPageController {
         model.addAttribute("activeMenu", "stock-transfers");
         populateCommonAdminAttributes(principal, model);
         return "admin/stock-transfers";
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CUSTOMER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/customers")
+    public String customers(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Quản Lý Khách Hàng & Tài Khoản | LUNEA Back-office");
+        model.addAttribute("activeMenu", "customers");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/customers";
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'CUSTOMER_MANAGE', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN', 'ADMIN')")
+    @GetMapping("/admin/returns")
+    public String returns(@AuthenticationPrincipal AuthPrincipal principal, Model model) {
+        model.addAttribute("pageTitle", "Tiếp Nhận & Thẩm Định Đổi Trả Hàng | LUNEA Back-office");
+        model.addAttribute("activeMenu", "returns");
+        populateCommonAdminAttributes(principal, model);
+        return "admin/returns";
     }
 }

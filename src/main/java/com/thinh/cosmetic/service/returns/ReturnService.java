@@ -15,6 +15,9 @@ public interface ReturnService {
     List<ReturnRequestResponse> getAll();
     List<ReturnRequestResponse> getByCustomer(Long customerId);
     List<ReturnRequestResponse> getByOrder(Long orderId);
-    ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId) throws Exception;
+    ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId, String note, Boolean restock) throws Exception;
+    default ReturnRequestResponse updateStatus(Long id, ReturnStatus status, Long employeeId) throws Exception {
+        return updateStatus(id, status, employeeId, null, true);
+    }
 }
 

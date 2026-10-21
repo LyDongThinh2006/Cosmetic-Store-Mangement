@@ -10,5 +10,7 @@ import org.mapstruct.ReportingPolicy;
 public interface CustomerMapper {
     @Mapping(source = "account.id", target = "accountId")
     @Mapping(source = "account.email", target = "email")
+    @Mapping(source = "account.phone", target = "phone")
+    @Mapping(source = "account.status", target = "status")
     CustomerResponse toResponse(CustomerEntity entity);
 }
