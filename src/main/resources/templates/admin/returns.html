@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('returns')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Tiếp Nhận & Thẩm Định Đổi Trả Hàng', 'Xử lý yêu cầu trả hàng, thẩm định điều kiện đổi trả và điều chỉnh nhập kho chi nhánh theo quy định QLDH-QĐ7')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Action Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo mã YC, mã đơn, khách hàng, SĐT..." oninput="filterReturns()" style="padding-left: 36px; min-width: 280px;">
+                    </div>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterReturns()" style="min-width: 180px;">
+                        <option value="ALL">Tất cả trạng thái</option>
+                        <option value="REQUESTED">Chờ thẩm định</option>
+                        <option value="APPROVED">Đã phê duyệt</option>
+                        <option value="PROCESSING">Đang xử lý / Nhận hàng</option>
+                        <option value="COMPLETED">Đã hoàn tất / Nhập kho</option>
+                        <option value="REJECTED">Đã từ chối</option>
+                    </select>
+
+                    <select id="storeFilter" class="admin-select" onchange="filterReturns()" style="min-width: 190px;">
+                        <option value="ALL">Tất cả chi nhánh</option>
+                        <option th:each="st : ${allStores}" th:value="${st.name}" th:text="${st.name}">Chi nhánh</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadReturns()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Chờ Thẩm Định</span>
+                        <div class="kpi-icon amber"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiRequested" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Yêu cầu mới cần phản hồi khách hàng</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đã Duyệt / Chờ Hàng Về</span>
+                        <div class="kpi-icon blue"><i class="bi bi-box-seam"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiApproved" style="color: #60a5fa;">0</div>
+                    <div class="kpi-sub"><span>Chờ khách gửi bưu phẩm về chi nhánh</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Hoàn Tất Tiếp Nhận</span>
+                        <div class="kpi-icon green"><i class="bi bi-check2-circle"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiCompleted" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Đã xử lý nhập kho hoặc ghi nhận hỏng</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Từ Chối Đổi Trả</span>
+                        <div class="kpi-icon red"><i class="bi bi-x-circle"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiRejected" style="color: #f87171;">0</div>
+                    <div class="kpi-sub"><span>Không đủ điều kiện đổi trả theo chính sách</span></div>
+                </div>
+            </div>
+
+            <!-- Returns Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-arrow-return-left"></i>
+                        <span>Danh Sách Tiếp Nhận & Thẩm Định Yêu Cầu Đổi Trả Hàng</span>
+                    </h3>
+                    <span id="returnCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 yêu cầu</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Mã YC</th>
+                                <th>Đơn Hàng Gốc</th>
+                                <th>Khách Hàng</th>
+                                <th>Chi Nhánh Xử Lý</th>
+                                <th>Sản Phẩm Yêu Cầu Trả</th>
+                                <th>Lý Do Trả Hàng</th>
+                                <th style="text-align: right;">Hoàn Trả Dự Tính</th>
+                                <th>Ngày Gửi</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right; width: 130px;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returnTableBody">
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                                    <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải dữ liệu yêu cầu đổi trả...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Thẩm Định & Xử Lý Đổi Trả Hàng -->
+    <div id="returnModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl" style="max-width: 980px; max-height: 90vh; overflow-y: auto;">
+            <div class="admin-modal-header" style="position: sticky; top: 0; background: var(--color-bg-surface); z-index: 10;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div class="admin-modal-header-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="modalReturnTitle">Thẩm Định Yêu Cầu Đổi Trả #...</h3>
+                        <div style="font-size: 0.76rem; color: var(--color-text-muted); margin-top: 2px;" id="modalReturnSub">
+                            Đơn hàng gốc & điều kiện hoàn trả theo quy trình QLDH-QĐ7
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeReturnModal()">&times;</button>
+            </div>
+
+            <div class="admin-modal-body" style="padding: 24px;">
+                <!-- Status Banner -->
+                <div id="modalStatusBanner" style="padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.88rem; display: flex; align-items: center; gap: 10px;">
+                    <!-- Dynamically populated based on status -->
+                </div>
+
+                <!-- Info Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div style="background: var(--color-bg-elevated); padding: 14px; border-radius: 8px; border: 1px solid var(--color-border-subtle); font-size: 0.86rem;">
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); text-transform: uppercase;">Thông tin đơn hàng</div>
+                        <div style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+                            <div>Đơn hàng: <strong id="modalOrderCode" style="color: var(--color-gold-light); font-family: monospace;">-</strong></div>
+                            <div>Chi nhánh: <span id="modalStoreName" style="color: var(--color-text-primary);">-</span></div>
+                            <div>Ngày gửi yêu cầu: <span id="modalRequestedAt" style="color: var(--color-text-secondary);">-</span></div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-bg-elevated); padding: 14px; border-radius: 8px; border: 1px solid var(--color-border-subtle); font-size: 0.86rem;">
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); text-transform: uppercase;">Thông tin khách hàng</div>
+                        <div style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+                            <div>Khách hàng: <strong id="modalCustomerName" style="color: var(--color-text-primary);">-</strong></div>
+                            <div>SĐT: <span id="modalCustomerPhone" style="color: var(--color-gold-primary); font-family: monospace;">-</span></div>
+                            <div>Email: <span id="modalCustomerEmail" style="color: var(--color-text-secondary);">-</span></div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--color-bg-elevated); padding: 14px; border-radius: 8px; border: 1px solid var(--color-border-subtle); font-size: 0.86rem;">
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); text-transform: uppercase;">Giá trị hoàn trả dự tính</div>
+                        <div style="margin-top: 6px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #34d399;" id="modalRefundAmount">0 ₫</div>
+                            <div style="font-size: 0.74rem; color: var(--color-text-muted);">Tính theo đơn giá sản phẩm khi mua</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="admin-card" style="margin-bottom: 20px;">
+                    <div class="admin-card-header" style="padding: 12px 18px;">
+                        <h4 style="margin: 0; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Chi Tiết Sản Phẩm Khách Hàng Yêu Cầu Đổi Trả</span>
+                        </h4>
+                    </div>
+                    <div class="admin-table-container">
+                        <table class="admin-table" style="font-size: 0.85rem;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Ảnh</th>
+                                    <th>Tên Sản Phẩm & Phân Loại</th>
+                                    <th style="text-align: right;">Đơn Giá Lúc Mua</th>
+                                    <th style="text-align: center; width: 90px;">Số Lượng Trả</th>
+                                    <th style="text-align: right;">Thành Tiền Hoàn</th>
+                                    <th>Lý Do Chi Tiết Mặt Hàng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalItemsTableBody">
+                                <!-- Items rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reason & Customer Notes -->
+                <div style="background: var(--color-bg-elevated); padding: 16px; border-radius: 8px; border: 1px solid var(--color-border-subtle); margin-bottom: 20px;">
+                    <div style="font-size: 0.76rem; color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 6px;">
+                        Lý do chính & Mô tả tình trạng từ khách hàng:
+                    </div>
+                    <div style="font-weight: 600; color: #fbbf24; margin-bottom: 6px;" id="modalReasonText">-</div>
+                    <div style="font-size: 0.86rem; color: var(--color-text-secondary); background: rgba(0,0,0,0.2); padding: 10px 14px; border-radius: 6px; white-space: pre-wrap;" id="modalDescriptionText">
+                        Không có mô tả chi tiết từ khách hàng.
+                    </div>
+                </div>
+
+                <!-- Action Section based on current status -->
+                <div id="modalActionSection">
+                    <!-- Populated dynamically: Decision Box for REQUESTED, Restock Inspection for APPROVED, or Summary for COMPLETED/REJECTED -->
+                </div>
+            </div>
+
+            <div class="admin-modal-footer" style="position: sticky; bottom: 0; background: var(--color-bg-surface); z-index: 10; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeReturnModal()">Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Specific Script -->
+    <script th:inline="javascript">
+        let allReturns = [];
+        let currentReturn = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadReturns();
+        });
+
+        async function loadReturns() {
+            const tbody = document.getElementById('returnTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                        <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                        Đang tải danh sách yêu cầu đổi trả...
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const res = await LUNEA.apiFetch('/api/returns');
+                allReturns = res || [];
+                // Sắp xếp yêu cầu mới nhất lên đầu
+                allReturns.sort((a, b) => new Date(b.requestedAt || 0) - new Date(a.requestedAt || 0));
+                renderKPIs(allReturns);
+                filterReturns();
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 30px; color: #f87171;">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không thể tải danh sách đổi trả. Vui lòng kiểm tra quyền hạn nhân sự.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderKPIs(list) {
+            const requested = list.filter(r => r.status === 'REQUESTED').length;
+            const approved = list.filter(r => r.status === 'APPROVED' || r.status === 'PROCESSING').length;
+            const completed = list.filter(r => r.status === 'COMPLETED').length;
+            const rejected = list.filter(r => r.status === 'REJECTED').length;
+
+            document.getElementById('kpiRequested').textContent = requested;
+            document.getElementById('kpiApproved').textContent = approved;
+            document.getElementById('kpiCompleted').textContent = completed;
+            document.getElementById('kpiRejected').textContent = rejected;
+            document.getElementById('returnCountBadge').textContent = `${list.length} yêu cầu`;
+        }
+
+        function filterReturns() {
+            const keyword = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const statusVal = document.getElementById('statusFilter').value;
+            const storeVal = document.getElementById('storeFilter').value;
+
+            const filtered = allReturns.filter(r => {
+                const matchKeyword = !keyword ||
+                    (r.id && r.id.toString().includes(keyword)) ||
+                    (r.orderCode && r.orderCode.toLowerCase().includes(keyword)) ||
+                    (r.orderId && r.orderId.toString().includes(keyword)) ||
+                    (r.customerName && r.customerName.toLowerCase().includes(keyword)) ||
+                    (r.customerPhone && r.customerPhone.toLowerCase().includes(keyword)) ||
+                    (r.reason && r.reason.toLowerCase().includes(keyword));
+
+                const matchStatus = (statusVal === 'ALL') || (r.status === statusVal);
+                const matchStore = (storeVal === 'ALL') || (r.storeName && r.storeName.includes(storeVal));
+
+                return matchKeyword && matchStatus && matchStore;
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(list) {
+            const tbody = document.getElementById('returnTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                            <i class="bi bi-inbox" style="font-size: 1.8rem; display: block; margin-bottom: 8px;"></i>
+                            Không có yêu cầu đổi trả nào phù hợp với bộ lọc.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(r => {
+                const refundFormatted = r.refundAmount != null ? Number(r.refundAmount).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+                const statusBadge = getReturnStatusBadge(r.status);
+                const storeName = r.storeName || 'Toàn hệ thống';
+
+                // Trích dẫn sản phẩm
+                let itemsSummary = '';
+                if (r.items && r.items.length > 0) {
+                    const firstItem = r.items[0];
+                    const imgThumb = firstItem.imageUrl 
+                        ? `<img src="${firstItem.imageUrl}" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover; flex-shrink: 0;" alt="thumb">`
+                        : `<div style="width: 32px; height: 32px; border-radius: 4px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-box" style="font-size: 0.8rem; color: var(--color-text-muted);"></i></div>`;
+                    
+                    const extraCount = r.items.length > 1 ? ` <span style="color: var(--color-gold-primary); font-size: 0.72rem;">(+${r.items.length - 1} món khác)</span>` : '';
+                    itemsSummary = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${imgThumb}
+                            <div>
+                                <div style="font-weight: 500; color: var(--color-text-primary); font-size: 0.84rem; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    ${escapeHtml(firstItem.productName || 'Sản phẩm')}
+                                </div>
+                                <div style="font-size: 0.72rem; color: var(--color-text-muted);">
+                                    SL: ${firstItem.quantity || 1} ${extraCount}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    itemsSummary = '<span style="color: var(--color-text-muted); font-size: 0.8rem;">Toàn bộ đơn</span>';
+                }
+
+                return `
+                    <tr>
+                        <td><strong style="color: var(--color-gold-light);">#YC${r.id}</strong></td>
+                        <td>
+                            <a href="/admin/orders/${r.orderId}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600; font-family: monospace;" title="Xem đơn hàng #${r.orderId}">
+                                #${escapeHtml(r.orderCode || r.orderId)} <i class="bi bi-box-arrow-up-right" style="font-size: 0.72rem;"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600; color: var(--color-text-primary);">${escapeHtml(r.customerName || 'Khách hàng')}</div>
+                            <div style="font-size: 0.74rem; color: var(--color-gold-primary); font-family: monospace;">${escapeHtml(r.customerPhone || '-')}</div>
+                        </td>
+                        <td style="font-size: 0.82rem; color: var(--color-text-secondary);">
+                            <i class="bi bi-shop" style="color: var(--color-gold-primary); margin-right: 4px;"></i>${escapeHtml(storeName)}
+                        </td>
+                        <td>${itemsSummary}</td>
+                        <td>
+                            <div style="font-weight: 500; color: #fbbf24; font-size: 0.82rem; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(r.reason)}">
+                                ${escapeHtml(r.reason || '-')}
+                            </div>
+                            <div style="font-size: 0.74rem; color: var(--color-text-muted); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${escapeHtml(r.description || '')}
+                            </div>
+                        </td>
+                        <td style="text-align: right; font-weight: 600; color: #34d399;">${refundFormatted}</td>
+                        <td style="color: var(--color-text-muted); font-size: 0.8rem;">${formatDateTime(r.requestedAt)}</td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <button type="button" class="admin-btn admin-btn-primary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="openReturnModal(${r.id})">
+                                <i class="bi bi-pencil-square"></i> Thẩm định
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function openReturnModal(returnId) {
+            currentReturn = allReturns.find(r => r.id === returnId);
+            try {
+                const fetched = await LUNEA.apiFetch(`/api/returns/${returnId}`);
+                if (fetched) currentReturn = fetched;
+            } catch (e) {
+                // fallback to local
+            }
+
+            if (!currentReturn) return;
+
+            const modal = document.getElementById('returnModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => {
+                modal.classList.add('show');
+            });
+            document.body.style.overflow = 'hidden';
+
+            document.getElementById('modalReturnTitle').textContent = `Thẩm Định Yêu Cầu Đổi Trả #YC${currentReturn.id}`;
+            document.getElementById('modalOrderCode').textContent = `#${currentReturn.orderCode || currentReturn.orderId}`;
+            document.getElementById('modalStoreName').textContent = currentReturn.storeName || 'Chưa gán chi nhánh';
+            document.getElementById('modalRequestedAt').textContent = formatDateTime(currentReturn.requestedAt);
+            document.getElementById('modalCustomerName').textContent = currentReturn.customerName || 'Khách hàng';
+            document.getElementById('modalCustomerPhone').textContent = currentReturn.customerPhone || '-';
+            document.getElementById('modalCustomerEmail').textContent = currentReturn.customerEmail || '-';
+            document.getElementById('modalRefundAmount').textContent = currentReturn.refundAmount != null ? Number(currentReturn.refundAmount).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+            document.getElementById('modalReasonText').textContent = currentReturn.reason || '-';
+            document.getElementById('modalDescriptionText').textContent = currentReturn.description || 'Không có mô tả chi tiết từ khách hàng.';
+
+            // Banner trạng thái
+            renderStatusBanner(currentReturn);
+
+            // Bảng sản phẩm
+            renderItemsTable(currentReturn.items || []);
+
+            // Render action section based on status
+            renderActionSection(currentReturn);
+        }
+
+        function renderStatusBanner(ret) {
+            const banner = document.getElementById('modalStatusBanner');
+            switch (ret.status) {
+                case 'REQUESTED':
+                    banner.style.background = 'rgba(245, 158, 11, 0.15)';
+                    banner.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+                    banner.style.color = '#fbbf24';
+                    banner.innerHTML = `
+                        <i class="bi bi-exclamation-circle-fill" style="font-size: 1.2rem;"></i>
+                        <div><strong>Yêu cầu mới gửi:</strong> Đang chờ nhân viên CSKH thẩm định lý do và hồ sơ đổi trả trước khi phê duyệt hoặc từ chối.</div>
+                    `;
+                    break;
+                case 'APPROVED':
+                case 'PROCESSING':
+                    banner.style.background = 'rgba(96, 165, 250, 0.15)';
+                    banner.style.border = '1px solid rgba(96, 165, 250, 0.3)';
+                    banner.style.color = '#93c5fd';
+                    banner.innerHTML = `
+                        <i class="bi bi-box-arrow-in-down" style="font-size: 1.2rem;"></i>
+                        <div><strong>Đã phê duyệt:</strong> Khi nhận được kiện hàng gửi về, tiến hành kiểm tra ngoại quan và thực hiện <em>"Nhập lại kho"</em> hoặc <em>"Hàng hỏng không nhập kho"</em> theo quy định QLDH-QĐ7.</div>
+                    `;
+                    break;
+                case 'COMPLETED':
+                    banner.style.background = 'rgba(52, 211, 153, 0.15)';
+                    banner.style.border = '1px solid rgba(52, 211, 153, 0.3)';
+                    banner.style.color = '#34d399';
+                    banner.innerHTML = `
+                        <i class="bi bi-check-circle-fill" style="font-size: 1.2rem;"></i>
+                        <div><strong>Đã hoàn tất tiếp nhận:</strong> Đã xử lý bưu phẩm thành công bởi <strong>${escapeHtml(ret.processedByName || 'Nhân viên')}</strong> vào lúc ${formatDateTime(ret.processedAt)}.</div>
+                    `;
+                    break;
+                case 'REJECTED':
+                    banner.style.background = 'rgba(239, 68, 68, 0.15)';
+                    banner.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    banner.style.color = '#f87171';
+                    banner.innerHTML = `
+                        <i class="bi bi-x-circle-fill" style="font-size: 1.2rem;"></i>
+                        <div><strong>Đã từ chối yêu cầu:</strong> Xử lý bởi <strong>${escapeHtml(ret.processedByName || 'Nhân viên')}</strong> vào lúc ${formatDateTime(ret.processedAt)}.</div>
+                    `;
+                    break;
+            }
+        }
+
+        function renderItemsTable(items) {
+            const tbody = document.getElementById('modalItemsTableBody');
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 20px; color: var(--color-text-muted);">
+                            Không có danh sách mặt hàng chi tiết.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map(it => {
+                const imgThumb = it.imageUrl 
+                    ? `<img src="${it.imageUrl}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;" alt="thumb">`
+                    : `<div style="width: 44px; height: 44px; border-radius: 6px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center;"><i class="bi bi-box" style="font-size: 1.1rem; color: var(--color-text-muted);"></i></div>`;
+
+                const unitPrice = it.unitPrice != null ? Number(it.unitPrice).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+                const refund = it.refundAmount != null ? Number(it.refundAmount).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+
+                return `
+                    <tr>
+                        <td>${imgThumb}</td>
+                        <td>
+                            <div style="font-weight: 600; color: var(--color-text-primary);">${escapeHtml(it.productName || 'Sản phẩm')}</div>
+                            <div style="font-size: 0.74rem; color: var(--color-gold-primary);">${escapeHtml(it.variantName || 'Mặc định')} (SKU #${it.skuId || '-'})</div>
+                        </td>
+                        <td style="text-align: right; color: var(--color-text-secondary);">${unitPrice}</td>
+                        <td style="text-align: center;"><strong style="color: var(--color-gold-light); font-size: 0.95rem;">${it.quantity || 1}</strong></td>
+                        <td style="text-align: right; font-weight: 600; color: #34d399;">${refund}</td>
+                        <td style="color: var(--color-text-secondary); font-size: 0.82rem;">${escapeHtml(it.detailReason || 'Theo lý do chung')}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderActionSection(ret) {
+            const container = document.getElementById('modalActionSection');
+
+            if (ret.status === 'REQUESTED') {
+                container.innerHTML = `
+                    <div style="background: var(--color-bg-elevated); padding: 18px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                        <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; color: var(--color-gold-light); display: flex; align-items: center; gap: 8px;">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Quyết Định Thẩm Định Ban Đầu (CSKH)</span>
+                        </h4>
+                        <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 12px;">
+                            Nhân viên CSKH kiểm tra tính hợp lệ của đơn hàng, thời hạn đổi trả (trong 7 ngày kể từ khi giao hàng) và lý do của khách.
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label class="form-label" for="decisionNote" style="font-size: 0.84rem;">Ghi chú thẩm định / Lý do phê duyệt hoặc từ chối:</label>
+                            <textarea id="decisionNote" class="admin-input" rows="2" style="width: 100%; border-radius: 6px;" placeholder="Ví dụ: Đã kiểm tra ảnh sản phẩm, đồng ý cho khách gửi hàng về chi nhánh..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                            <button type="button" class="admin-btn admin-btn-danger" style="background: #dc2626; border-color: #dc2626;" onclick="submitDecision(${ret.id}, 'REJECTED')">
+                                <i class="bi bi-x-circle"></i> Từ Chối Yêu Cầu (REJECTED)
+                            </button>
+                            <button type="button" class="admin-btn admin-btn-primary" onclick="submitDecision(${ret.id}, 'APPROVED')">
+                                <i class="bi bi-check-circle"></i> Phê Duyệt Yêu Cầu (APPROVED)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (ret.status === 'APPROVED' || ret.status === 'PROCESSING') {
+                container.innerHTML = `
+                    <div style="background: var(--color-bg-elevated); padding: 18px; border-radius: 8px; border: 1px solid rgba(52, 211, 153, 0.3);">
+                        <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #34d399; display: flex; align-items: center; gap: 8px;">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Kiểm Tra Hàng Thực Tế & Lựa Chọn Xử Lý Tồn Kho (QLDH-QĐ7)</span>
+                        </h4>
+                        <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 14px;">
+                            Tuân thủ sơ đồ Sequence Page 258: Khi kiện hàng trả về đến chi nhánh, nhân viên thực hiện kiểm tra tình trạng hàng thực tế và chỉ định phương thức nhập kho:
+                        </div>
+
+                        <!-- Restock Options Radio Box -->
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                            <label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 8px; background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.25); cursor: pointer;">
+                                <input type="radio" name="restockOption" id="radioRestockTrue" value="true" checked style="margin-top: 3px; accent-color: #34d399;">
+                                <div>
+                                    <strong style="color: #34d399; font-size: 0.88rem;">Nhập lại kho chi nhánh (Restock = true)</strong>
+                                    <div style="font-size: 0.78rem; color: var(--color-text-secondary); margin-top: 2px;">
+                                        Sản phẩm còn nguyên bao bì, chưa qua sử dụng, đủ điều kiện tái bán: Tự động cộng số lượng vào tồn kho khả dụng của chi nhánh.
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); cursor: pointer;">
+                                <input type="radio" name="restockOption" id="radioRestockFalse" value="false" style="margin-top: 3px; accent-color: #f87171;">
+                                <div>
+                                    <strong style="color: #f87171; font-size: 0.88rem;">Hàng hỏng / lỗi không nhập kho (Restock = false - QLDH-QĐ7)</strong>
+                                    <div style="font-size: 0.78rem; color: var(--color-text-secondary); margin-top: 2px;">
+                                        Sản phẩm bị lỗi sản xuất, móp vỡ, hư hỏng không thể bán lại: Ghi nhận xuất hủy theo quy định QLDH-QĐ7, <strong>KHÔNG cộng vào tồn kho chi nhánh</strong>.
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label class="form-label" for="receiptNote" style="font-size: 0.84rem;">Ghi chú tình trạng kiểm tra hàng thực tế:</label>
+                            <textarea id="receiptNote" class="admin-input" rows="2" style="width: 100%; border-radius: 6px;" placeholder="Ví dụ: Đã nhận kiện hàng từ bưu tá, sản phẩm nguyên seal niêm phong, đủ điều kiện nhập kho..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                            <button type="button" class="admin-btn admin-btn-danger" style="background: transparent; border-color: #ef4444; color: #ef4444;" onclick="submitRejectAfterReceipt(${ret.id})">
+                                <i class="bi bi-x-circle"></i> Từ Chối Nhận Hàng (REJECTED)
+                            </button>
+                            <button type="button" class="admin-btn admin-btn-primary" style="background: linear-gradient(135deg, #059669, #10b981); border: none;" onclick="submitCompleteReceipt(${ret.id})">
+                                <i class="bi bi-check2-all"></i> Xác Nhận Nhận Hàng & Hoàn Tất (COMPLETED)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div style="background: var(--color-bg-elevated); padding: 14px 18px; border-radius: 8px; border: 1px solid var(--color-border-subtle); font-size: 0.84rem;">
+                        <div style="font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px;">
+                            Nhật ký xử lý hoàn tất:
+                        </div>
+                        <div style="color: var(--color-text-secondary);">
+                            Yêu cầu đã được nhân viên <strong>${escapeHtml(ret.processedByName || 'Nhân viên')}</strong> đóng lại vào ngày ${formatDateTime(ret.processedAt)}.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        async function submitDecision(returnId, nextStatus) {
+            const noteInput = document.getElementById('decisionNote');
+            const note = noteInput ? (noteInput.value || '').trim() : '';
+
+            if (nextStatus === 'REJECTED' && !note) {
+                LUNEA.showToast('Vui lòng nhập lý do từ chối yêu cầu đổi trả!', 'warning');
+                if (noteInput) noteInput.focus();
+                return;
+            }
+
+            const actionName = (nextStatus === 'APPROVED') ? 'PHÊ DUYỆT' : 'TỪ CHỐI';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionName} yêu cầu đổi trả #YC${returnId} này không?`)) return;
+
+            try {
+                const params = new URLSearchParams({
+                    status: nextStatus,
+                    note: note
+                });
+
+                await LUNEA.apiFetch(`/api/returns/${returnId}/status?${params.toString()}`, {
+                    method: 'PUT'
+                });
+
+                LUNEA.showToast(`Đã ${actionName.toLowerCase()} yêu cầu đổi trả thành công!`, 'success');
+                closeReturnModal();
+                loadReturns();
+            } catch (err) {
+                // apiFetch handles toast
+            }
+        }
+
+        async function submitCompleteReceipt(returnId) {
+            const isRestock = document.getElementById('radioRestockTrue').checked;
+            const noteInput = document.getElementById('receiptNote');
+            const note = noteInput ? (noteInput.value || '').trim() : '';
+
+            const confirmMsg = isRestock
+                ? `Xác nhận nhận hàng và NHẬP LẠI KHO chi nhánh?\n(Tồn kho của chi nhánh sẽ tự động được cộng thêm số lượng trả).`
+                : `Xác nhận nhận hàng và ghi nhận HÀNG HỎNG/LỖI KHÔNG NHẬP KHO theo quy định QLDH-QĐ7?\n(Tồn kho chi nhánh sẽ KHÔNG tăng).`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const params = new URLSearchParams({
+                    status: 'COMPLETED',
+                    restock: isRestock ? 'true' : 'false',
+                    note: note
+                });
+
+                await LUNEA.apiFetch(`/api/returns/${returnId}/status?${params.toString()}`, {
+                    method: 'PUT'
+                });
+
+                LUNEA.showToast('Hoàn tất nhận hàng và cập nhật tồn kho thành công!', 'success');
+                closeReturnModal();
+                loadReturns();
+            } catch (err) {
+                // apiFetch handles toast
+            }
+        }
+
+        async function submitRejectAfterReceipt(returnId) {
+            const noteInput = document.getElementById('receiptNote');
+            const note = noteInput ? (noteInput.value || '').trim() : '';
+
+            if (!note) {
+                LUNEA.showToast('Vui lòng nhập lý do từ chối nhận hàng thực tế!', 'warning');
+                if (noteInput) noteInput.focus();
+                return;
+            }
+
+            if (!confirm(`Bạn có chắc chắn muốn TỪ CHỐI yêu cầu sau khi kiểm tra hàng hóa thực tế không?`)) return;
+
+            try {
+                const params = new URLSearchParams({
+                    status: 'REJECTED',
+                    note: note
+                });
+
+                await LUNEA.apiFetch(`/api/returns/${returnId}/status?${params.toString()}`, {
+                    method: 'PUT'
+                });
+
+                LUNEA.showToast('Đã từ chối nhận hàng thành công!', 'info');
+                closeReturnModal();
+                loadReturns();
+            } catch (err) {
+                // apiFetch handles toast
+            }
+        }
+
+        function closeReturnModal() {
+            const modal = document.getElementById('returnModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 200);
+            }
+            document.body.style.overflow = '';
+            currentReturn = null;
+        }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('returnModal');
+            if (e.target === modal) {
+                closeReturnModal();
+            }
+        });
+
+        function getReturnStatusBadge(status) {
+            switch (status) {
+                case 'REQUESTED':
+                    return `<span class="admin-badge badge-warning" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+                              <i class="bi bi-hourglass-split"></i> Chờ thẩm định
+                            </span>`;
+                case 'APPROVED':
+                    return `<span class="admin-badge badge-primary" style="background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3);">
+                              <i class="bi bi-check-circle"></i> Đã phê duyệt
+                            </span>`;
+                case 'PROCESSING':
+                    return `<span class="admin-badge badge-info" style="background: rgba(167, 139, 250, 0.15); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.3);">
+                              <i class="bi bi-arrow-repeat"></i> Đang xử lý
+                            </span>`;
+                case 'COMPLETED':
+                    return `<span class="admin-badge badge-success" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+                              <i class="bi bi-check2-all"></i> Hoàn tất
+                            </span>`;
+                case 'REJECTED':
+                    return `<span class="admin-badge badge-danger" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                              <i class="bi bi-x-circle"></i> Từ chối
+                            </span>`;
+                default:
+                    return `<span class="admin-badge badge-secondary">${status || '-'}</span>`;
+            }
+        }
+
+        function formatDateTime(val) {
+            if (!val) return '-';
+            try {
+                const d = new Date(val);
+                return d.toLocaleString('vi-VN', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            } catch (e) {
+                return val;
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>

@@ -20,5 +20,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     boolean existsByCustomerIdAndOrderIdAndProductId(@Param("customerId") Long customerId, @Param("orderId") Long orderId, @Param("productId") Long productId);
 
     boolean existsByProductId(Long productId);
+
+    List<ReviewEntity> findAllByOrderByCreatedAtDesc();
 }
 

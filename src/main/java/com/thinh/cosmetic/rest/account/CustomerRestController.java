@@ -18,6 +18,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import com.thinh.cosmetic.domain.dto.response.order.OrderResponse;
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
+
 import java.util.List;
 
 @RestController
@@ -26,10 +29,51 @@ import java.util.List;
 public class CustomerRestController {
     private final CustomerService customerService;
 
-    @PreAuthorize("hasAuthority('CUSTOMER_MANAGE')")
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CUSTOMER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<CustomerResponse>> getAll() {
         return ResponseEntity.ok(customerService.getAllCustomers());
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CUSTOMER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
+    @PutMapping("/{id}/status")
+    public ResponseEntity<CustomerResponse> updateStatus(
+            @PathVariable Long id,
+            @RequestParam(required = false) String status
+    ) throws Exception {
+        ActiveStatus targetStatus = ActiveStatus.ACTIVE;
+        if (status != null) {
+            String s = status.trim().toUpperCase();
+            if ("LOCKED".equals(s) || "INACTIVE".equals(s)) {
+                targetStatus = ActiveStatus.LOCKED;
+            } else if ("ACTIVE".equals(s)) {
+                targetStatus = ActiveStatus.ACTIVE;
+            }
+        }
+        return ResponseEntity.ok(customerService.updateStatus(id, targetStatus));
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CUSTOMER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
+    @PutMapping("/{id}/lock")
+    public ResponseEntity<CustomerResponse> lockCustomer(@PathVariable Long id) throws Exception {
+        customerService.lockCustomer(id);
+        return ResponseEntity.ok(customerService.getCustomerById(id));
+    }
+
+    @PreAuthorize("authentication.name == 'admin' or hasAnyAuthority('CUSTOMER_MANAGE', 'ROLE_ADMIN', 'ADMIN')")
+    @PutMapping("/{id}/unlock")
+    public ResponseEntity<CustomerResponse> unlockCustomer(@PathVariable Long id) throws Exception {
+        customerService.unlockCustomer(id);
+        return ResponseEntity.ok(customerService.getCustomerById(id));
+    }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<List<OrderResponse>> getCustomerOrders(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthPrincipal principal
+    ) {
+        enforceCustomerOwnership(principal, id);
+        return ResponseEntity.ok(customerService.getCustomerOrders(id));
     }
 
     @GetMapping("/{id}")
@@ -115,9 +159,9 @@ public class CustomerRestController {
         if (principal == null) {
             throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Vui lòng đăng nhập");
         }
-        if (principal.isEmployee()) {
-            boolean hasCustomerManage = principal.getAuthorities() != null &&
-                    principal.getAuthorities().stream().anyMatch(a -> "CUSTOMER_MANAGE".equals(a.getAuthority()) || "ROLE_ADMIN".equals(a.getAuthority()));
+        if (principal.isAdmin() || principal.isEmployee() || "admin".equalsIgnoreCase(principal.getUsername())) {
+            boolean hasCustomerManage = principal.isAdmin() || "admin".equalsIgnoreCase(principal.getUsername()) || (principal.getAuthorities() != null &&
+                    principal.getAuthorities().stream().anyMatch(a -> "CUSTOMER_MANAGE".equals(a.getAuthority()) || "ROLE_ADMIN".equals(a.getAuthority()) || "ADMIN".equals(a.getAuthority())));
             if (!hasCustomerManage) {
                 throw new BusinessException(ErrorCode.ACCESS_DENIED,
                         "Nhân viên không có quyền quản lý khách hàng");

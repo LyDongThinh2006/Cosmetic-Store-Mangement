@@ -175,6 +175,12 @@ public class WebPageControllersTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/products"))
                 .andExpect(model().attribute("activeMenu", "products"));
+
+        mockMvc.perform(get("/admin/reviews")
+                        .with(user("admin").authorities(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/reviews"))
+                .andExpect(model().attribute("activeMenu", "reviews"));
     }
 
     @Test

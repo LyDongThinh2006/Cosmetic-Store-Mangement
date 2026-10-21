@@ -8,4 +8,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     boolean existsByParentId(Long parentId);
     List<CategoryEntity> findByStatus(com.thinh.cosmetic.domain.enums.ActiveStatus status);
+    java.util.Optional<CategoryEntity> findFirstByName(String name);
+    boolean existsByName(String name);
 }

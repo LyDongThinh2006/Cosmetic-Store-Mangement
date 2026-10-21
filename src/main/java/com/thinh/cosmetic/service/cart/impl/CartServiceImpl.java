@@ -151,7 +151,7 @@ public class CartServiceImpl implements CartService {
             subtotal = subtotal.add(lineTotal);
             totalItems += item.getQuantity();
 
-            String imageUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(sku.getProduct().getId())
+            String imageUrl = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(sku.getProduct().getId())
                     .map(ProductImageEntity::getImageUrl).orElse(null);
 
             itemResponses.add(CartItemResponse.builder()

@@ -67,12 +67,12 @@
                             <!-- Quantity Stepper -->
                             <div style="display: flex; justify-content: center;">
                                 <div class="qty-stepper">
-                                    <button type="button" class="qty-btn" aria-label="Giảm số lượng" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} - 1) + ')'">−</button>
+                                    <button type="button" class="qty-btn" aria-label="Giảm số lượng" th:onclick="'changeQty(' + ${item.id} + ', -1)'">−</button>
                                     <input type="number" class="qty-input" th:id="'input-qty-' + ${item.id}" 
                                            th:value="${item.quantity}" 
                                            aria-label="Số lượng sản phẩm"
                                            th:onchange="'updateQty(' + ${item.id} + ', this.value)'" min="1" max="99">
-                                    <button type="button" class="qty-btn" aria-label="Tăng số lượng" th:onclick="'updateQty(' + ${item.id} + ', ' + (${item.quantity} + 1) + ')'">+</button>
+                                    <button type="button" class="qty-btn" aria-label="Tăng số lượng" th:onclick="'changeQty(' + ${item.id} + ', 1)'">+</button>
                                 </div>
                             </div>
 
@@ -166,11 +166,25 @@
 
     <!-- Client-side Cart Update Script -->
     <script th:inline="javascript">
+        function changeQty(itemId, delta) {
+            const inputEl = document.getElementById(`input-qty-${itemId}`);
+            const currentVal = parseInt(inputEl ? inputEl.value : 1) || 1;
+            const newQty = currentVal + delta;
+            if (newQty < 1) {
+                removeItem(itemId);
+                return;
+            }
+            updateQty(itemId, newQty);
+        }
+
         async function updateQty(itemId, newQty) {
             newQty = parseInt(newQty);
             if (isNaN(newQty) || newQty < 1) {
                 removeItem(itemId);
                 return;
+            }
+            if (newQty > 99) {
+                newQty = 99;
             }
 
             try {
@@ -179,17 +193,28 @@
                     body: JSON.stringify({ quantity: newQty })
                 });
 
+                const updatedItem = (res && res.items) ? res.items.find(i => i.id == itemId) : null;
                 const subtotalEl = document.getElementById(`subtotal-${itemId}`);
-                if (subtotalEl && res.itemSubtotal) {
-                    subtotalEl.textContent = LUNEA.formatVND(res.itemSubtotal);
+                if (subtotalEl && updatedItem && updatedItem.subtotal !== undefined) {
+                    subtotalEl.textContent = LUNEA.formatVND(updatedItem.subtotal);
                 }
 
                 const inputEl = document.getElementById(`input-qty-${itemId}`);
-                if (inputEl) inputEl.value = newQty;
+                if (inputEl) inputEl.value = updatedItem ? updatedItem.quantity : newQty;
 
-                if (res.cartSubtotal) {
-                    document.getElementById('cartSubtotalText').textContent = LUNEA.formatVND(res.cartSubtotal);
-                    document.getElementById('cartTotalText').textContent = LUNEA.formatVND(res.cartSubtotal);
+                if (res && res.subtotal !== undefined) {
+                    const formattedSubtotal = LUNEA.formatVND(res.subtotal);
+                    const subtotalTextEl = document.getElementById('cartSubtotalText');
+                    if (subtotalTextEl) subtotalTextEl.textContent = formattedSubtotal;
+                    const totalTextEl = document.getElementById('cartTotalText');
+                    if (totalTextEl) totalTextEl.textContent = formattedSubtotal;
+                }
+
+                if (res && res.totalItems !== undefined) {
+                    const countHeaderEl = document.getElementById('cartCountHeader');
+                    if (countHeaderEl) countHeaderEl.textContent = res.totalItems;
+                    const summaryCountEl = document.getElementById('summaryItemCount');
+                    if (summaryCountEl) summaryCountEl.textContent = res.totalItems;
                 }
 
                 await LUNEA.updateCartBadge();

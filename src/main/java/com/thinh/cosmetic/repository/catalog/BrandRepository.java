@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BrandRepository extends JpaRepository<BrandEntity, Long> {
     List<BrandEntity> findByStatus(com.thinh.cosmetic.domain.enums.ActiveStatus status);
+    java.util.Optional<BrandEntity> findByName(String name);
+    boolean existsByName(String name);
 }

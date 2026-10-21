@@ -118,7 +118,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(readOnly = true)
     public List<ReviewResponse> getAll() {
-        return reviewRepository.findAll().stream().map(this::toResponse).toList();
+        return reviewRepository.findAllByOrderByCreatedAtDesc().stream().map(this::toResponse).toList();
     }
 
     @Override

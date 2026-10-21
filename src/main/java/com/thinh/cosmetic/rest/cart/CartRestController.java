@@ -1,6 +1,7 @@
 package com.thinh.cosmetic.rest.cart;
 
 import com.thinh.cosmetic.domain.dto.request.cart.CartItemRequest;
+import com.thinh.cosmetic.domain.dto.request.cart.UpdateCartItemRequest;
 import com.thinh.cosmetic.domain.dto.response.cart.CartResponse;
 import com.thinh.cosmetic.service.cart.CartService;
 import jakarta.validation.Valid;
@@ -74,14 +75,27 @@ public class CartRestController {
         return ResponseEntity.ok(cartService.addItem(resolveCustomerId(principal, customerId), request));
     }
 
-    @PutMapping("/items/{cartItemId}")
+    @RequestMapping(value = "/items/{cartItemId}", method = {RequestMethod.PUT, RequestMethod.PATCH})
     public ResponseEntity<CartResponse> updateItemQuantity(
             @AuthenticationPrincipal AuthPrincipal principal,
             @RequestParam(required = false) Long customerId,
             @PathVariable Long cartItemId,
-            @RequestParam Integer quantity
+            @RequestBody(required = false) @Valid UpdateCartItemRequest request,
+            @RequestParam(required = false) Integer quantity
     ) throws Exception {
-        return ResponseEntity.ok(cartService.updateItemQuantity(resolveCustomerId(principal, customerId), cartItemId, quantity));
+        Integer resolvedQuantity = (request != null && request.getQuantity() != null)
+                ? request.getQuantity()
+                : quantity;
+        if (resolvedQuantity == null) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Số lượng không được để trống");
+        }
+        if (resolvedQuantity < 1) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Số lượng phải lớn hơn hoặc bằng 1");
+        }
+        if (resolvedQuantity > 99) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Số lượng không được vượt quá 99");
+        }
+        return ResponseEntity.ok(cartService.updateItemQuantity(resolveCustomerId(principal, customerId), cartItemId, resolvedQuantity));
     }
 
     @DeleteMapping("/items/{cartItemId}")

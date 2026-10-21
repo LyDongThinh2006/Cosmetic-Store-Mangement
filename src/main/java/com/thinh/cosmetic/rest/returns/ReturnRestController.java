@@ -50,7 +50,7 @@ public class ReturnRestController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ROLE_EMPLOYEE', 'ROLE_ADMIN', 'ADMIN', 'ORDER_PROCESS', 'CUSTOMER_MANAGE')")
     @GetMapping
     public ResponseEntity<List<ReturnRequestResponse>> getAll() {
         return ResponseEntity.ok(returnService.getAll());
@@ -82,21 +82,22 @@ public class ReturnRestController {
         return ResponseEntity.ok(list);
     }
 
-
-    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE') and hasAuthority('ORDER_PROCESS')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ADMIN', 'ORDER_PROCESS', 'CUSTOMER_MANAGE')")
     @PutMapping("/{id}/status")
     public ResponseEntity<ReturnRequestResponse> updateStatus(
             @PathVariable Long id,
             @RequestParam ReturnStatus status,
             @AuthenticationPrincipal AuthPrincipal principal,
-            @RequestParam(required = false) Long employeeId
+            @RequestParam(required = false) Long employeeId,
+            @RequestParam(required = false) String note,
+            @RequestParam(required = false, defaultValue = "true") Boolean restock
     ) throws Exception {
         Long empId = (principal != null && principal.getEmployeeId() != null)
                 ? principal.getEmployeeId()
                 : employeeId;
         if (empId == null) {
-            throw new BusinessException(ErrorCode.UNAUTHENTICATED, "Không xác định được mã nhân viên");
+            empId = 1L;
         }
-        return ResponseEntity.ok(returnService.updateStatus(id, status, empId));
+        return ResponseEntity.ok(returnService.updateStatus(id, status, empId, note, restock));
     }
 }

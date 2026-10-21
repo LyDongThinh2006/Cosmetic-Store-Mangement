@@ -17,6 +17,10 @@ public class ReturnRequestResponse {
     private String orderCode;
     private Long customerId;
     private String customerName;
+    private String customerPhone;
+    private String customerEmail;
+    private Long storeId;
+    private String storeName;
     private String reason;
     private String description;
     private ReturnStatus status;
@@ -33,6 +37,7 @@ public class ReturnRequestResponse {
         private Long skuId;
         private String productName;
         private String variantName;
+        private String imageUrl;
         private BigDecimal unitPrice;
         private Integer quantity;
         private BigDecimal refundAmount;

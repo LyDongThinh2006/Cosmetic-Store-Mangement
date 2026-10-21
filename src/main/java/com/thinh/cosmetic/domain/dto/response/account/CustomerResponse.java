@@ -1,11 +1,13 @@
 package com.thinh.cosmetic.domain.dto.response.account;
 
+import com.thinh.cosmetic.domain.enums.ActiveStatus;
 import com.thinh.cosmetic.domain.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -22,4 +24,7 @@ public class CustomerResponse {
     private Gender gender;
     private Integer loyaltyPoints;
     private LocalDate joinDate;
+    private ActiveStatus status;
+    private Long totalOrders;
+    private BigDecimal totalSpent;
 }

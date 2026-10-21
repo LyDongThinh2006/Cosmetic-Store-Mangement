@@ -52,13 +52,13 @@ public class ReviewRestController {
     }
 
 
-    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_EMPLOYEE', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<ReviewResponse>> getAll() {
         return ResponseEntity.ok(reviewService.getAll());
     }
 
-    @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_EMPLOYEE', 'ROLE_ADMIN', 'ADMIN')")
     @PutMapping("/{id}/status")
     public ResponseEntity<ReviewResponse> updateModerationStatus(
             @PathVariable Long id,

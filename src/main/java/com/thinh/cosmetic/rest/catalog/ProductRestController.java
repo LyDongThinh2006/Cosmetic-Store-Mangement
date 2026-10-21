@@ -106,4 +106,41 @@ public class ProductRestController {
     public ResponseEntity<List<StoreStockResponse>> getSkuStoreStock(@PathVariable Long skuId) {
         return ResponseEntity.ok(inventoryService.getStoreStockBySku(skuId));
     }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PostMapping(path = "/{id}/skus")
+    public ResponseEntity<com.thinh.cosmetic.domain.dto.response.catalog.ProductSkuResponse> createSku(
+            @PathVariable Long id,
+            @Valid @RequestBody com.thinh.cosmetic.domain.dto.request.catalog.ProductSkuRequest request
+    ) throws Exception {
+        request.setProductId(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createSku(id, request));
+    }
+
+    @GetMapping(path = "/{id}/skus")
+    public ResponseEntity<List<com.thinh.cosmetic.domain.dto.response.catalog.ProductSkuResponse>> getSkus(
+            @PathVariable Long id
+    ) throws Exception {
+        return ResponseEntity.ok(productService.getSkusByProductId(id));
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @PutMapping(path = "/{id}/skus/{skuId}")
+    public ResponseEntity<com.thinh.cosmetic.domain.dto.response.catalog.ProductSkuResponse> updateSku(
+            @PathVariable Long id,
+            @PathVariable Long skuId,
+            @Valid @RequestBody com.thinh.cosmetic.domain.dto.request.catalog.ProductSkuRequest request
+    ) throws Exception {
+        return ResponseEntity.ok(productService.updateSku(id, skuId, request));
+    }
+
+    @PreAuthorize("hasAuthority('CATALOG_MANAGE')")
+    @DeleteMapping(path = "/{id}/skus/{skuId}")
+    public ResponseEntity<Void> deleteSku(
+            @PathVariable Long id,
+            @PathVariable Long skuId
+    ) throws Exception {
+        productService.deleteSku(id, skuId);
+        return ResponseEntity.noContent().build();
+    }
 }
