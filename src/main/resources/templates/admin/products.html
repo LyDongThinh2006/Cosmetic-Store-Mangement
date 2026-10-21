@@ -7,7 +7,7 @@
 
     <!-- Main Content -->
     <main class="admin-main">
-        <header th:replace="~{admin/fragments/topbar :: topbar('Danh Mục & Sản Phẩm', 'Quản lý thông tin mỹ phẩm, thương hiệu và biến thể SKU toàn chuỗi')}"></header>
+        <header th:replace="~{admin/fragments/topbar :: topbar('Danh Mục & Sản Phẩm', 'Quản lý thông tin mỹ phẩm, thương hiệu phân phối và biến thể SKU toàn chuỗi')}"></header>
 
         <div class="admin-container">
             <!-- Filter & Search Bar -->
@@ -15,18 +15,18 @@
                 <div class="filter-group">
                     <div style="position: relative;">
                         <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
-                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên sản phẩm, thương hiệu..." oninput="filterProducts()" style="padding-left: 36px; min-width: 280px;">
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên sản phẩm, thương hiệu..." oninput="filterProducts()" style="padding-left: 36px; min-width: 260px;">
                     </div>
 
-                    <select id="brandFilter" class="admin-select" onchange="filterProducts()" style="min-width: 170px;">
+                    <select id="brandFilter" class="admin-select" onchange="filterProducts()" style="min-width: 160px;">
                         <option value="">Tất cả Thương hiệu</option>
                     </select>
 
-                    <select id="categoryFilter" class="admin-select" onchange="filterProducts()" style="min-width: 170px;">
+                    <select id="categoryFilter" class="admin-select" onchange="filterProducts()" style="min-width: 160px;">
                         <option value="">Tất cả Danh mục</option>
                     </select>
 
-                    <select id="statusFilter" class="admin-select" onchange="filterProducts()" style="min-width: 150px;">
+                    <select id="statusFilter" class="admin-select" onchange="filterProducts()" style="min-width: 140px;">
                         <option value="">Tất cả Trạng thái</option>
                         <option value="ACTIVE">Đang kinh doanh</option>
                         <option value="INACTIVE">Ngừng kinh doanh</option>
@@ -34,6 +34,10 @@
                 </div>
 
                 <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="openCatBrandModal()" style="border-color: rgba(212,175,55,0.4); color: var(--color-gold-light);">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span>Danh Mục & Thương Hiệu</span>
+                    </button>
                     <button type="button" class="admin-btn admin-btn-outline" onclick="loadProducts()">
                         <i class="bi bi-arrow-clockwise"></i>
                         <span>Làm mới</span>
@@ -104,7 +108,7 @@
                                 <th>Biến Thể SKU & Khoảng Giá</th>
                                 <th style="text-align: center;">Tồn Khả Dụng</th>
                                 <th style="text-align: center;">Trạng Thái</th>
-                                <th style="text-align: right;">Storefront</th>
+                                <th style="text-align: right;">Thao Tác</th>
                             </tr>
                         </thead>
                         <tbody id="productsTableBody">
@@ -212,21 +216,47 @@
                             </div>
                         </div>
 
-                        <!-- Cột 2: Mô tả, thành phần & công dụng -->
+                        <!-- Cột 2: Ảnh đại diện, mô tả, thành phần & công dụng -->
                         <div class="form-section-card">
                             <div class="form-section-header">
                                 <h4 class="section-title">
-                                    <i class="bi bi-file-earmark-text-fill"></i>
-                                    <span>Chi Tiết & Công Dụng</span>
+                                    <i class="bi bi-image"></i>
+                                    <span>Ảnh Đại Diện & Chi Tiết</span>
                                 </h4>
-                                <span class="section-hint">Nội dung sản phẩm</span>
+                                <span class="section-hint">Hình ảnh & Công dụng</span>
+                            </div>
+
+                            <!-- Ảnh Đại Diện: Hỗ trợ Tải lên Cloudinary từ máy tính hoặc Nhập URL trực tiếp -->
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label">
+                                    Ảnh Đại Diện Chính (Cloudinary / URL):
+                                </label>
+                                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <input type="file" id="prodImageFile" accept="image/png, image/jpeg, image/webp" style="display: none;" onchange="handleCloudinaryUpload(this)">
+                                    <button type="button" class="admin-btn admin-btn-gold" style="padding: 7px 12px; font-size: 0.76rem; white-space: nowrap;" onclick="document.getElementById('prodImageFile').click()">
+                                        <i class="bi bi-cloud-arrow-up-fill"></i> Tải ảnh từ máy tính lên Cloudinary
+                                    </button>
+                                    <button type="button" class="admin-btn admin-btn-outline" style="padding: 7px 12px; font-size: 0.76rem; white-space: nowrap;" onclick="pasteDemoImage()">
+                                        <i class="bi bi-image"></i> Ảnh mẫu
+                                    </button>
+                                </div>
+                                <div id="cloudinaryUploadProgress" style="display: none; margin-bottom: 8px; font-size: 0.75rem; color: var(--color-gold-light);">
+                                    <i class="bi bi-arrow-repeat spin"></i> Đang tải ảnh lên Cloudinary, vui lòng chờ...
+                                </div>
+                                <input type="url" id="prodImageUrl" class="admin-input" placeholder="https://res.cloudinary.com/... hoặc link ảnh bất kỳ" oninput="previewProductImage(this.value)">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+                                    <img id="prodImagePreview" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&auto=format&fit=crop&q=80" alt="Preview" style="width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-border-subtle); background: rgba(255,255,255,0.02);">
+                                    <span style="font-size: 0.74rem; color: var(--color-text-muted);">
+                                        Bạn có thể bấm <strong>"Tải ảnh từ máy tính"</strong> để tải lên Cloudinary hoặc dán link ảnh trực tiếp vào ô trên.
+                                    </span>
+                                </div>
                             </div>
 
                             <div style="margin-bottom: 12px;">
                                 <label class="form-field-label" for="prodDescription">
                                     Mô Tả Giới Thiệu Sản Phẩm:
                                 </label>
-                                <textarea id="prodDescription" class="admin-input" rows="3" placeholder="Mô tả công thức, hiệu quả dưỡng da, cách sử dụng..." style="resize: vertical;"></textarea>
+                                <textarea id="prodDescription" class="admin-input" rows="2" placeholder="Mô tả công thức, hiệu quả dưỡng da, cách sử dụng..." style="resize: vertical;"></textarea>
                             </div>
 
                             <div style="margin-bottom: 12px;">
@@ -266,6 +296,264 @@
         </div>
     </div>
 
+    <!-- Modal Thêm / Chỉnh Sửa Biến Thể SKU Mới (QLSP-QĐ5) -->
+    <div id="skuModal" class="admin-modal-backdrop">
+        <div class="admin-modal" style="max-width: 580px;">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">
+                        <i class="bi bi-layers-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="skuModalTitle">+ Thêm Biến Thể SKU Mới</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Sản phẩm: <span id="skuModalProductName" style="color: var(--color-gold-light); font-weight: 600;"></span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeSkuModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <form id="skuForm" class="admin-modal-form" onsubmit="handleSaveSku(event)">
+                <input type="hidden" id="skuProductId" value="">
+                <input type="hidden" id="editSkuId" value="">
+
+                <div class="admin-modal-body">
+                    <div style="margin-bottom: 12px;">
+                        <label class="form-field-label" for="skuVariantName">
+                            Tên Biến Thể / Quy Cách <span class="required">*</span>:
+                        </label>
+                        <input type="text" id="skuVariantName" class="admin-input" required placeholder="VD: 30ml, 50ml, 100ml, Tone 01 Sáng, v.v.">
+                        <span style="font-size: 0.7rem; color: var(--color-text-muted);">Mô tả quy cách đóng gói hoặc màu sắc hiển thị cho khách</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label class="form-field-label" for="skuCode">
+                                Mã SKU (SKU Code) <span class="required">*</span>:
+                            </label>
+                            <input type="text" id="skuCode" class="admin-input" required placeholder="VD: SKU-CCN-BD-30ML" style="font-family: monospace;">
+                            <span style="font-size: 0.7rem; color: var(--color-text-muted);">Mã duy nhất toàn chuỗi (QLSP-QĐ5)</span>
+                        </div>
+                        <div>
+                            <label class="form-field-label" for="skuBarcode">
+                                Mã Vạch (Barcode):
+                            </label>
+                            <input type="text" id="skuBarcode" class="admin-input" placeholder="VD: 893851500011" style="font-family: monospace;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label class="form-field-label" for="skuPrice">
+                                Giá Bán Hiện Tại (VNĐ) <span class="required">*</span>:
+                            </label>
+                            <input type="number" id="skuPrice" class="admin-input" required min="0" step="1000" placeholder="VD: 265000">
+                        </div>
+                        <div>
+                            <label class="form-field-label" for="skuListPrice">
+                                Giá Niêm Yết / Gốc (VNĐ):
+                            </label>
+                            <input type="number" id="skuListPrice" class="admin-input" min="0" step="1000" placeholder="VD: 295000">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 6px;">
+                        <label class="form-field-label" for="skuStatus">
+                            Trạng Thái Biến Thể:
+                        </label>
+                        <select id="skuStatus" class="admin-select">
+                            <option value="ACTIVE">Đang kinh doanh (ACTIVE)</option>
+                            <option value="INACTIVE">Ngừng kinh doanh (INACTIVE)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="closeSkuModal()">Hủy Bỏ</button>
+                    <button type="submit" class="admin-btn admin-btn-primary" id="btnSaveSku">
+                        <i class="bi bi-check-lg"></i>
+                        <span id="btnSaveSkuText">Lưu Biến Thể SKU</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Quản Lý Danh Sách Biến Thể SKUs -->
+    <div id="manageSkusModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-2xl" style="max-width: 880px;">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon" style="background: rgba(212, 175, 55, 0.15); color: var(--color-gold-light);">
+                        <i class="bi bi-boxes"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title">Danh Sách Biến Thể SKU</h3>
+                        <div style="font-size: 0.76rem; color: var(--color-text-muted);">
+                            Sản phẩm: <span id="manageSkusProdName" style="color: var(--color-gold-light); font-weight: 600;"></span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeManageSkusModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <div class="admin-modal-body" style="padding: 16px 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <span style="font-size: 0.8rem; color: var(--color-text-muted);">
+                        Mỗi biến thể SKU đại diện cho một phiên bản dung tích/màu sắc có giá bán riêng và tồn kho độc lập tại từng chi nhánh (QLSP-QĐ5)
+                    </span>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="openCreateSkuFromManage()" style="font-size: 0.78rem; padding: 6px 12px;">
+                        <i class="bi bi-plus-lg"></i> + Thêm SKU Mới
+                    </button>
+                </div>
+
+                <div class="admin-table-container" style="max-height: 380px; overflow-y: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Mã SKU</th>
+                                <th>Tên Biến Thể</th>
+                                <th>Giá Bán</th>
+                                <th>Giá Niêm Yết</th>
+                                <th>Mã Vạch</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manageSkusTableBody">
+                            <tr><td colspan="7" style="text-align: center; color: var(--color-text-muted); padding: 24px;">Đang tải danh sách SKU...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-modal-footer">
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeManageSkusModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Quản Lý Danh Mục & Thương Hiệu -->
+    <div id="catBrandModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-2xl" style="max-width: 900px;">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+                        <i class="bi bi-diagram-3-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title">Quản Lý Danh Mục & Thương Hiệu</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Bổ sung danh mục phân loại mỹ phẩm và thương hiệu phân phối trong chuỗi cửa hàng
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeCatBrandModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div style="display: flex; border-bottom: 1px solid var(--color-border-subtle); padding: 0 24px; gap: 8px;">
+                <button type="button" id="tabBtnCategories" class="admin-btn admin-btn-outline" style="border: none; border-bottom: 2px solid var(--color-gold-primary); border-radius: 0; padding: 12px 18px; color: var(--color-gold-light); font-weight: 600;" onclick="switchCatBrandTab('categories')">
+                    <i class="bi bi-folder2-open"></i> Danh Mục Mỹ Phẩm
+                </button>
+                <button type="button" id="tabBtnBrands" class="admin-btn admin-btn-outline" style="border: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 12px 18px; color: var(--color-text-muted);" onclick="switchCatBrandTab('brands')">
+                    <i class="bi bi-award"></i> Thương Hiệu Phân Phối
+                </button>
+            </div>
+
+            <div class="admin-modal-body" style="padding: 20px 24px;">
+                <!-- TAB 1: CATEGORIES -->
+                <div id="tabContentCategories">
+                    <form id="createCategoryForm" onsubmit="handleCreateCategory(event)" style="background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            <i class="bi bi-plus-circle" style="color: var(--color-gold-primary);"></i> Thêm Danh Mục Mới
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 12px; align-items: end;">
+                            <div>
+                                <label class="form-field-label" for="newCatName">Tên Danh Mục <span class="required">*</span>:</label>
+                                <input type="text" id="newCatName" class="admin-input" required placeholder="VD: Kem Chống Nắng">
+                            </div>
+                            <div>
+                                <label class="form-field-label" for="newCatDesc">Mô Tả Danh Mục:</label>
+                                <input type="text" id="newCatDesc" class="admin-input" placeholder="VD: Bảo vệ da khỏi tia UVA/UVB, ngăn ngừa lão hóa...">
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn-primary" style="height: 40px; white-space: nowrap;" id="btnSubmitCat">
+                                <i class="bi bi-plus-lg"></i> Thêm Danh Mục
+                            </button>
+                        </div>
+                    </form>
+
+                    <h4 style="font-size: 0.86rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 10px;">
+                        Danh Sách Danh Mục Hiện Có (<span id="catCountSpan">0</span>)
+                    </h4>
+                    <div class="admin-table-container" style="max-height: 280px; overflow-y: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ID</th>
+                                    <th>Tên Danh Mục</th>
+                                    <th>Mô Tả</th>
+                                    <th style="text-align: center;">Trạng Thái</th>
+                                    <th style="text-align: right;">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                <tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 20px;">Đang tải danh mục...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: BRANDS -->
+                <div id="tabContentBrands" style="display: none;">
+                    <form id="createBrandForm" onsubmit="handleCreateBrand(event)" style="background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <h4 style="font-size: 0.88rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            <i class="bi bi-plus-circle" style="color: var(--color-gold-primary);"></i> Thêm Thương Hiệu Mới
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 12px; align-items: end;">
+                            <div>
+                                <label class="form-field-label" for="newBrandName">Tên Thương Hiệu <span class="required">*</span>:</label>
+                                <input type="text" id="newBrandName" class="admin-input" required placeholder="VD: CeraVe, Klairs, Some By Mi">
+                            </div>
+                            <div>
+                                <label class="form-field-label" for="newBrandDesc">Mô Tả / Xuất Xứ:</label>
+                                <input type="text" id="newBrandDesc" class="admin-input" placeholder="VD: Thương hiệu dược mỹ phẩm hàng đầu từ Mỹ...">
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn-primary" style="height: 40px; white-space: nowrap;" id="btnSubmitBrand">
+                                <i class="bi bi-plus-lg"></i> Thêm Thương Hiệu
+                            </button>
+                        </div>
+                    </form>
+
+                    <h4 style="font-size: 0.86rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 10px;">
+                        Danh Sách Thương Hiệu Hiện Có (<span id="brandCountSpan">0</span>)
+                    </h4>
+                    <div class="admin-table-container" style="max-height: 280px; overflow-y: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ID</th>
+                                    <th>Tên Thương Hiệu</th>
+                                    <th>Mô Tả / Xuất Xứ</th>
+                                    <th style="text-align: center;">Trạng Thái</th>
+                                    <th style="text-align: right;">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="brandsTableBody">
+                                <tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 20px;">Đang tải thương hiệu...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-modal-footer">
+                <button type="button" class="admin-btn admin-btn-outline" onclick="closeCatBrandModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Global Toast Component -->
     <div th:replace="~{fragments/toast :: toast}"></div>
 
@@ -273,14 +561,15 @@
         let allProducts = [];
         let allBrands = [];
         let allCategories = [];
+        let currentSelectedProductForSku = null;
 
         async function loadProducts() {
             try {
                 // Parallel fetch products, brands, categories (includeInactive=true for back-office admin)
                 const [products, brands, categories] = await Promise.all([
                     LUNEA.apiFetch('/api/products?includeInactive=true'),
-                    LUNEA.apiFetch('/api/brands?includeInactive=true').catch(() => []),
-                    LUNEA.apiFetch('/api/categories?includeInactive=true').catch(() => [])
+                    LUNEA.apiFetch('/api/brands').catch(() => []),
+                    LUNEA.apiFetch('/api/categories').catch(() => [])
                 ]);
 
                 allProducts = products || [];
@@ -302,26 +591,34 @@
 
         function populateBrandOptions(brands) {
             const select = document.getElementById('brandFilter');
+            const curVal = select.value;
             select.innerHTML = '<option value="">Tất cả Thương hiệu</option>' + 
                 (brands || []).map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+            select.value = curVal;
         }
 
         function populateCategoryOptions(categories) {
             const select = document.getElementById('categoryFilter');
+            const curVal = select.value;
             select.innerHTML = '<option value="">Tất cả Danh mục</option>' + 
                 (categories || []).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            select.value = curVal;
         }
 
         function populateModalSelects(brands, categories) {
             const brandSel = document.getElementById('prodBrand');
             if (brandSel) {
+                const cur = brandSel.value;
                 brandSel.innerHTML = '<option value="">-- Chọn thương hiệu --</option>' +
                     (brands || []).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                if (cur) brandSel.value = cur;
             }
             const catSel = document.getElementById('prodCategory');
             if (catSel) {
+                const cur = catSel.value;
                 catSel.innerHTML = '<option value="">-- Chọn danh mục --</option>' +
                     (categories || []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                if (cur) catSel.value = cur;
             }
         }
 
@@ -395,10 +692,12 @@
                     ? `<span class="status-pill completed">${p.totalAvailableStock} sp</span>`
                     : `<span class="status-pill cancelled">Hết hàng</span>`;
 
+                const escapedName = escapeProductParam(p.name);
+
                 return `
                     <tr>
                         <td>
-                            <img src="${img}" alt="${p.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-border-subtle);">
+                            <img src="${img}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&auto=format&fit=crop&q=80'" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-border-subtle);">
                         </td>
                         <td>
                             <div style="font-weight: 700; color: var(--color-text-primary); font-size: 0.9rem;">
@@ -413,8 +712,16 @@
                         <td><span style="font-size: 0.82rem; color: var(--color-text-secondary);">${p.category ? p.category.name : 'N/A'}</span></td>
                         <td>
                             <div style="font-weight: 700; color: var(--color-text-primary);">${priceRange}</div>
-                            <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
-                                ${skus.length} SKUs (${skuNames})
+                            <div style="font-size: 0.74rem; color: var(--color-text-muted); margin: 3px 0 6px 0;">
+                                ${skus.length} SKUs (${skuNames || 'Chưa có SKU'})
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 2px 7px; font-size: 0.7rem; color: var(--color-gold-light); border-color: rgba(212,175,55,0.4);" onclick="openCreateSkuModal(${p.id}, '${escapedName}')" title="Thêm biến thể SKU mới">
+                                    <i class="bi bi-plus-circle"></i> + SKU
+                                </button>
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 2px 7px; font-size: 0.7rem;" onclick="openManageSkusModal(${p.id}, '${escapedName}')" title="Xem danh sách biến thể SKU">
+                                    <i class="bi bi-layers"></i> Quản lý SKU (${skus.length})
+                                </button>
                             </div>
                         </td>
                         <td style="text-align: center;">${inStockBadge}</td>
@@ -424,20 +731,20 @@
                             </span>
                         </td>
                         <td style="text-align: right; white-space: nowrap;">
-                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; margin-right: 6px;" onclick="openEditProductModal(${p.id})">
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; margin-right: 4px;" onclick="openEditProductModal(${p.id})" title="Chỉnh sửa sản phẩm">
                                 <i class="bi bi-pencil-square"></i> Sửa
                             </button>
                             ${p.status === 'ACTIVE' ? `
-                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4); margin-right: 6px;" onclick="toggleProductStatus(${p.id}, 'ACTIVE', '${escapeProductParam(p.name)}')" title="Tạm ngừng kinh doanh sản phẩm">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4); margin-right: 4px;" onclick="toggleProductStatus(${p.id}, 'ACTIVE', '${escapedName}')" title="Tạm ngừng kinh doanh sản phẩm">
                                     <i class="bi bi-pause-circle"></i> Ngừng bán
                                 </button>
                             ` : `
-                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #34d399; border-color: rgba(52, 211, 153, 0.4); margin-right: 6px;" onclick="toggleProductStatus(${p.id}, 'INACTIVE', '${escapeProductParam(p.name)}')" title="Kích hoạt kinh doanh sản phẩm">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #34d399; border-color: rgba(52, 211, 153, 0.4); margin-right: 4px;" onclick="toggleProductStatus(${p.id}, 'INACTIVE', '${escapedName}')" title="Kích hoạt kinh doanh sản phẩm">
                                     <i class="bi bi-play-circle"></i> Kích hoạt
                                 </button>
                             `}
-                            <a href="/products/${p.id}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem;">
-                                Xem web <i class="bi bi-box-arrow-up-right"></i>
+                            <a href="/products/${p.id}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem;" title="Xem sản phẩm trên web khách hàng">
+                                Web <i class="bi bi-box-arrow-up-right"></i>
                             </a>
                         </td>
                     </tr>
@@ -449,6 +756,70 @@
             return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
         }
 
+        /* ─── Image Preview & Demo Helpers ─── */
+        async function handleCloudinaryUpload(fileInput) {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Dung lượng ảnh vượt quá 5MB. Vui lòng chọn ảnh có kích thước nhỏ hơn.');
+                fileInput.value = '';
+                return;
+            }
+
+            const progressEl = document.getElementById('cloudinaryUploadProgress');
+            if (progressEl) progressEl.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'lunea/products');
+
+            try {
+                const res = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || data.error || 'Lỗi khi upload ảnh');
+                }
+                if (data.url) {
+                    const input = document.getElementById('prodImageUrl');
+                    input.value = data.url;
+                    previewProductImage(data.url);
+                }
+            } catch (err) {
+                console.error('Cloudinary upload error:', err);
+                alert('Không thể tải ảnh lên Cloudinary: ' + err.message);
+            } finally {
+                if (progressEl) progressEl.style.display = 'none';
+                fileInput.value = '';
+            }
+        }
+
+        function previewProductImage(url) {
+            const preview = document.getElementById('prodImagePreview');
+            if (url && url.trim().length > 0) {
+                preview.src = url.trim();
+            } else {
+                preview.src = 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&auto=format&fit=crop&q=80';
+            }
+        }
+
+        function pasteDemoImage() {
+            const demoUrls = [
+                'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&auto=format&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1608248597359-467268846175?w=600&auto=format&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&auto=format&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&auto=format&fit=crop&q=80'
+            ];
+            const random = demoUrls[Math.floor(Math.random() * demoUrls.length)];
+            const input = document.getElementById('prodImageUrl');
+            input.value = random;
+            previewProductImage(random);
+        }
+
+        /* ─── Product Modal ─── */
         function openCreateProductModal() {
             document.getElementById('editProductId').value = '';
             document.getElementById('prodName').value = '';
@@ -457,6 +828,8 @@
             document.getElementById('prodOrigin').value = 'Việt Nam';
             document.getElementById('prodStatus').value = 'ACTIVE';
             document.getElementById('prodIsFeatured').checked = false;
+            document.getElementById('prodImageUrl').value = '';
+            previewProductImage('');
             document.getElementById('prodDescription').value = '';
             document.getElementById('prodIngredients').value = '';
             document.getElementById('prodUses').value = '';
@@ -481,6 +854,11 @@
             document.getElementById('prodOrigin').value = p.origin || '';
             document.getElementById('prodStatus').value = p.status || 'ACTIVE';
             document.getElementById('prodIsFeatured').checked = Boolean(p.isFeatured);
+            
+            const imgUrl = p.imageUrl || (p.imageUrls && p.imageUrls.length ? p.imageUrls[0] : '');
+            document.getElementById('prodImageUrl').value = imgUrl;
+            previewProductImage(imgUrl);
+
             document.getElementById('prodDescription').value = p.description || '';
             document.getElementById('prodIngredients').value = p.mainIngredients || '';
             document.getElementById('prodUses').value = p.uses || '';
@@ -500,13 +878,6 @@
             document.body.style.overflow = '';
         }
 
-        document.addEventListener('click', (e) => {
-            const modal = document.getElementById('productModal');
-            if (e.target === modal) {
-                closeProductModal();
-            }
-        });
-
         async function handleSaveProduct(e) {
             e.preventDefault();
             const id = document.getElementById('editProductId').value;
@@ -520,6 +891,7 @@
                 origin: document.getElementById('prodOrigin').value.trim() || null,
                 status: document.getElementById('prodStatus').value,
                 isFeatured: document.getElementById('prodIsFeatured').checked,
+                imageUrl: document.getElementById('prodImageUrl').value.trim() || null,
                 description: document.getElementById('prodDescription').value.trim() || null,
                 mainIngredients: document.getElementById('prodIngredients').value.trim() || null,
                 uses: document.getElementById('prodUses').value.trim() || null
@@ -564,6 +936,392 @@
                 LUNEA.toastError(err.message || `Không thể ${actionText} sản phẩm "${name}"`);
             }
         }
+
+        /* ─── SKU Modals & Management (QLSP-QĐ5) ─── */
+        function openCreateSkuModal(productId, productName) {
+            currentSelectedProductForSku = { id: productId, name: productName };
+            document.getElementById('skuProductId').value = productId;
+            document.getElementById('editSkuId').value = '';
+            document.getElementById('skuModalProductName').textContent = productName;
+            document.getElementById('skuModalTitle').textContent = '+ Thêm Biến Thể SKU Mới';
+            document.getElementById('btnSaveSkuText').textContent = 'Lưu Biến Thể SKU';
+
+            document.getElementById('skuVariantName').value = '';
+            document.getElementById('skuCode').value = '';
+            document.getElementById('skuBarcode').value = '';
+            document.getElementById('skuPrice').value = '';
+            document.getElementById('skuListPrice').value = '';
+            document.getElementById('skuStatus').value = 'ACTIVE';
+
+            const modal = document.getElementById('skuModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openEditSkuModal(sku) {
+            document.getElementById('skuProductId').value = sku.productId;
+            document.getElementById('editSkuId').value = sku.id;
+            document.getElementById('skuModalProductName').textContent = sku.productName || 'Sản phẩm #' + sku.productId;
+            document.getElementById('skuModalTitle').textContent = 'Chỉnh Sửa Biến Thể SKU #' + sku.id;
+            document.getElementById('btnSaveSkuText').textContent = 'Cập Nhật SKU';
+
+            document.getElementById('skuVariantName').value = sku.variantName || '';
+            document.getElementById('skuCode').value = sku.skuCode || '';
+            document.getElementById('skuBarcode').value = sku.barcode || '';
+            document.getElementById('skuPrice').value = sku.price || '';
+            document.getElementById('skuListPrice').value = sku.listPrice || '';
+            document.getElementById('skuStatus').value = sku.status || 'ACTIVE';
+
+            const modal = document.getElementById('skuModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSkuModal() {
+            const modal = document.getElementById('skuModal');
+            modal.classList.remove('show');
+            // If manageSkusModal is also open, keep body overflow hidden
+            const manageModal = document.getElementById('manageSkusModal');
+            if (!manageModal || !manageModal.classList.contains('show')) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        async function handleSaveSku(e) {
+            e.preventDefault();
+            const productId = document.getElementById('skuProductId').value;
+            const skuId = document.getElementById('editSkuId').value;
+            const btn = document.getElementById('btnSaveSku');
+            btn.disabled = true;
+
+            const payload = {
+                productId: Number(productId),
+                variantName: document.getElementById('skuVariantName').value.trim(),
+                skuCode: document.getElementById('skuCode').value.trim(),
+                barcode: document.getElementById('skuBarcode').value.trim() || null,
+                price: Number(document.getElementById('skuPrice').value),
+                listPrice: document.getElementById('skuListPrice').value ? Number(document.getElementById('skuListPrice').value) : null,
+                status: document.getElementById('skuStatus').value
+            };
+
+            try {
+                if (skuId) {
+                    await LUNEA.apiFetch(`/api/products/${productId}/skus/${skuId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.toastSuccess("Cập nhật biến thể SKU thành công!");
+                } else {
+                    await LUNEA.apiFetch(`/api/products/${productId}/skus`, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.toastSuccess("Thêm mới biến thể SKU thành công! Tồn kho các chi nhánh đã sẵn sàng.");
+                }
+                closeSkuModal();
+                await loadProducts();
+                // If manage modal is open, refresh it too
+                const manageModal = document.getElementById('manageSkusModal');
+                if (manageModal && manageModal.classList.contains('show')) {
+                    await openManageSkusModal(productId, currentSelectedProductForSku ? currentSelectedProductForSku.name : '');
+                }
+            } catch (err) {
+                console.error("Save SKU error:", err);
+                LUNEA.toastError(err.message || "Không thể lưu biến thể SKU");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function openManageSkusModal(productId, productName) {
+            currentSelectedProductForSku = { id: productId, name: productName };
+            document.getElementById('manageSkusProdName').textContent = productName;
+            const tbody = document.getElementById('manageSkusTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--color-text-muted); padding: 24px;">Đang tải danh sách SKU...</td></tr>';
+
+            const modal = document.getElementById('manageSkusModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            try {
+                const skus = await LUNEA.apiFetch(`/api/products/${productId}/skus`);
+                if (!skus || skus.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--color-text-muted); padding: 24px;">Chưa có biến thể SKU nào cho sản phẩm này</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = skus.map(s => `
+                    <tr>
+                        <td style="font-family: monospace; font-weight: 700; color: var(--color-text-primary); font-size: 0.85rem;">${s.skuCode}</td>
+                        <td style="font-weight: 600; color: var(--color-gold-light);">${s.variantName || 'Mặc định'}</td>
+                        <td style="font-weight: 700; color: var(--color-text-primary);">${LUNEA.formatVND(s.price)}</td>
+                        <td style="color: var(--color-text-muted);">${s.listPrice ? LUNEA.formatVND(s.listPrice) : '-'}</td>
+                        <td style="font-family: monospace; font-size: 0.8rem; color: var(--color-text-muted);">${s.barcode || '-'}</td>
+                        <td style="text-align: center;">
+                            <span class="status-pill ${s.status === 'ACTIVE' ? 'confirmed' : 'cancelled'}" style="font-size: 0.72rem;">
+                                ${s.status === 'ACTIVE' ? 'Đang bán' : 'Ngừng bán'}
+                            </span>
+                        </td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 3px 8px; font-size: 0.72rem; margin-right: 4px;" onclick='openEditSkuModal(${JSON.stringify(s)})'>
+                                <i class="bi bi-pencil"></i> Sửa
+                            </button>
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 3px 8px; font-size: 0.72rem; color: ${s.status === 'ACTIVE' ? '#f87171' : '#34d399'}; border-color: ${s.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(52, 211, 153, 0.4)'};" onclick="toggleSkuStatus(${productId}, ${s.id}, '${s.status}', '${s.skuCode}')">
+                                ${s.status === 'ACTIVE' ? 'Ngừng bán' : 'Kích hoạt'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error("Load SKUs error:", err);
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-danger); padding: 24px;">Lỗi tải biến thể SKU: ${err.message || ''}</td></tr>`;
+            }
+        }
+
+        function closeManageSkusModal() {
+            const modal = document.getElementById('manageSkusModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function openCreateSkuFromManage() {
+            if (currentSelectedProductForSku) {
+                openCreateSkuModal(currentSelectedProductForSku.id, currentSelectedProductForSku.name);
+            }
+        }
+
+        async function toggleSkuStatus(productId, skuId, currentStatus, skuCode) {
+            const isActivating = currentStatus !== 'ACTIVE';
+            const actionText = isActivating ? 'kích hoạt kinh doanh' : 'ngừng kinh doanh / soft-delete';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionText} biến thể SKU "${skuCode}"?`)) return;
+
+            try {
+                if (isActivating) {
+                    await LUNEA.apiFetch(`/api/products/${productId}/skus/${skuId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ status: 'ACTIVE' })
+                    });
+                } else {
+                    // Soft-delete per QLSP-QĐ3 & RB_DOM_11
+                    await LUNEA.apiFetch(`/api/products/${productId}/skus/${skuId}`, {
+                        method: 'DELETE'
+                    });
+                }
+                LUNEA.toastSuccess(`Đã cập nhật trạng thái biến thể SKU "${skuCode}" thành công!`);
+                await loadProducts();
+                if (currentSelectedProductForSku) {
+                    await openManageSkusModal(currentSelectedProductForSku.id, currentSelectedProductForSku.name);
+                }
+            } catch (err) {
+                console.error("Toggle SKU status error:", err);
+                LUNEA.toastError(err.message || `Không thể đổi trạng thái biến thể SKU "${skuCode}"`);
+            }
+        }
+
+        /* ─── Category & Brand Management Modal ─── */
+        function openCatBrandModal() {
+            const modal = document.getElementById('catBrandModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            switchCatBrandTab('categories');
+            renderCategoriesTable();
+            renderBrandsTable();
+        }
+
+        function closeCatBrandModal() {
+            const modal = document.getElementById('catBrandModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function switchCatBrandTab(tab) {
+            const tabCats = document.getElementById('tabContentCategories');
+            const tabBrands = document.getElementById('tabContentBrands');
+            const btnCats = document.getElementById('tabBtnCategories');
+            const btnBrands = document.getElementById('tabBtnBrands');
+
+            if (tab === 'categories') {
+                tabCats.style.display = 'block';
+                tabBrands.style.display = 'none';
+                btnCats.style.borderBottom = '2px solid var(--color-gold-primary)';
+                btnCats.style.color = 'var(--color-gold-light)';
+                btnCats.style.fontWeight = '600';
+                btnBrands.style.borderBottom = '2px solid transparent';
+                btnBrands.style.color = 'var(--color-text-muted)';
+                btnBrands.style.fontWeight = 'normal';
+            } else {
+                tabCats.style.display = 'none';
+                tabBrands.style.display = 'block';
+                btnBrands.style.borderBottom = '2px solid var(--color-gold-primary)';
+                btnBrands.style.color = 'var(--color-gold-light)';
+                btnBrands.style.fontWeight = '600';
+                btnCats.style.borderBottom = '2px solid transparent';
+                btnCats.style.color = 'var(--color-text-muted)';
+                btnCats.style.fontWeight = 'normal';
+            }
+        }
+
+        function renderCategoriesTable() {
+            const tbody = document.getElementById('categoriesTableBody');
+            document.getElementById('catCountSpan').textContent = allCategories.length;
+            if (!allCategories || allCategories.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 20px;">Chưa có danh mục nào</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = allCategories.map(c => `
+                <tr>
+                    <td style="font-family: monospace; color: var(--color-text-muted);">${c.id}</td>
+                    <td style="font-weight: 700; color: var(--color-text-primary);">${c.name}</td>
+                    <td style="font-size: 0.8rem; color: var(--color-text-muted);">${c.description || '-'}</td>
+                    <td style="text-align: center;">
+                        <span class="status-pill ${c.status === 'ACTIVE' ? 'confirmed' : 'cancelled'}" style="font-size: 0.72rem;">
+                            ${c.status === 'ACTIVE' ? 'Đang dùng' : 'Tạm khóa'}
+                        </span>
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button type="button" class="admin-btn admin-btn-outline" style="padding: 3px 8px; font-size: 0.72rem; color: ${c.status === 'ACTIVE' ? '#f87171' : '#34d399'}; border-color: ${c.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(52, 211, 153, 0.4)'};" onclick="toggleCategoryStatus(${c.id}, '${c.status}', '${escapeProductParam(c.name)}')">
+                            ${c.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderBrandsTable() {
+            const tbody = document.getElementById('brandsTableBody');
+            document.getElementById('brandCountSpan').textContent = allBrands.length;
+            if (!allBrands || allBrands.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 20px;">Chưa có thương hiệu nào</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = allBrands.map(b => `
+                <tr>
+                    <td style="font-family: monospace; color: var(--color-text-muted);">${b.id}</td>
+                    <td style="font-weight: 700; color: var(--color-gold-light);">${b.name}</td>
+                    <td style="font-size: 0.8rem; color: var(--color-text-muted);">${b.description || '-'}</td>
+                    <td style="text-align: center;">
+                        <span class="status-pill ${b.status === 'ACTIVE' ? 'confirmed' : 'cancelled'}" style="font-size: 0.72rem;">
+                            ${b.status === 'ACTIVE' ? 'Đang dùng' : 'Tạm khóa'}
+                        </span>
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button type="button" class="admin-btn admin-btn-outline" style="padding: 3px 8px; font-size: 0.72rem; color: ${b.status === 'ACTIVE' ? '#f87171' : '#34d399'}; border-color: ${b.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(52, 211, 153, 0.4)'};" onclick="toggleBrandStatus(${b.id}, '${b.status}', '${escapeProductParam(b.name)}')">
+                            ${b.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function handleCreateCategory(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitCat');
+            btn.disabled = true;
+
+            const name = document.getElementById('newCatName').value.trim();
+            const description = document.getElementById('newCatDesc').value.trim() || null;
+
+            try {
+                await LUNEA.apiFetch('/api/categories', {
+                    method: 'POST',
+                    body: JSON.stringify({ name, description, status: 'ACTIVE' })
+                });
+                LUNEA.toastSuccess(`Đã thêm danh mục mỹ phẩm "${name}" thành công!`);
+                document.getElementById('newCatName').value = '';
+                document.getElementById('newCatDesc').value = '';
+                
+                // Refresh categories list and dropdowns
+                allCategories = await LUNEA.apiFetch('/api/categories');
+                populateCategoryOptions(allCategories);
+                populateModalSelects(allBrands, allCategories);
+                renderCategoriesTable();
+            } catch (err) {
+                console.error("Create category error:", err);
+                LUNEA.toastError(err.message || "Không thể tạo danh mục mới");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function handleCreateBrand(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitBrand');
+            btn.disabled = true;
+
+            const name = document.getElementById('newBrandName').value.trim();
+            const description = document.getElementById('newBrandDesc').value.trim() || null;
+
+            try {
+                await LUNEA.apiFetch('/api/brands', {
+                    method: 'POST',
+                    body: JSON.stringify({ name, description, status: 'ACTIVE' })
+                });
+                LUNEA.toastSuccess(`Đã thêm thương hiệu mỹ phẩm "${name}" thành công!`);
+                document.getElementById('newBrandName').value = '';
+                document.getElementById('newBrandDesc').value = '';
+
+                // Refresh brands list and dropdowns
+                allBrands = await LUNEA.apiFetch('/api/brands');
+                populateBrandOptions(allBrands);
+                populateModalSelects(allBrands, allCategories);
+                renderBrandsTable();
+            } catch (err) {
+                console.error("Create brand error:", err);
+                LUNEA.toastError(err.message || "Không thể tạo thương hiệu mới");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function toggleCategoryStatus(id, currentStatus, name) {
+            const isActivating = currentStatus !== 'ACTIVE';
+            const actionText = isActivating ? 'mở khóa danh mục' : 'tạm khóa danh mục';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionText} "${name}"?`)) return;
+
+            try {
+                const endpoint = isActivating ? `/api/categories/${id}/activate` : `/api/categories/${id}/deactivate`;
+                await LUNEA.apiFetch(endpoint, { method: 'PUT' });
+                LUNEA.toastSuccess(`Đã ${actionText} "${name}" thành công!`);
+                allCategories = await LUNEA.apiFetch('/api/categories');
+                populateCategoryOptions(allCategories);
+                populateModalSelects(allBrands, allCategories);
+                renderCategoriesTable();
+            } catch (err) {
+                console.error("Toggle category status error:", err);
+                LUNEA.toastError(err.message || `Không thể ${actionText}`);
+            }
+        }
+
+        async function toggleBrandStatus(id, currentStatus, name) {
+            const isActivating = currentStatus !== 'ACTIVE';
+            const actionText = isActivating ? 'mở khóa thương hiệu' : 'tạm khóa thương hiệu';
+            if (!confirm(`Bạn có chắc chắn muốn ${actionText} "${name}"?`)) return;
+
+            try {
+                const endpoint = isActivating ? `/api/brands/${id}/activate` : `/api/brands/${id}/deactivate`;
+                await LUNEA.apiFetch(endpoint, { method: 'PUT' });
+                LUNEA.toastSuccess(`Đã ${actionText} "${name}" thành công!`);
+                allBrands = await LUNEA.apiFetch('/api/brands');
+                populateBrandOptions(allBrands);
+                populateModalSelects(allBrands, allCategories);
+                renderBrandsTable();
+            } catch (err) {
+                console.error("Toggle brand status error:", err);
+                LUNEA.toastError(err.message || `Không thể ${actionText}`);
+            }
+        }
+
+        /* ─── Backdrop click handler ─── */
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('admin-modal-backdrop')) {
+                if (e.target.id === 'productModal') closeProductModal();
+                if (e.target.id === 'skuModal') closeSkuModal();
+                if (e.target.id === 'manageSkusModal') closeManageSkusModal();
+                if (e.target.id === 'catBrandModal') closeCatBrandModal();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             loadProducts();
