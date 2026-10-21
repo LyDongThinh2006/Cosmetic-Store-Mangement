@@ -294,7 +294,7 @@ public class ReturnServiceImpl implements ReturnService {
                     String imgUrl = null;
                     if (productImageRepository != null && oi != null && oi.getSku() != null && oi.getSku().getProduct() != null) {
                         try {
-                            imgUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(oi.getSku().getProduct().getId())
+                            imgUrl = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(oi.getSku().getProduct().getId())
                                     .map(ProductImageEntity::getImageUrl)
                                     .orElse(null);
                         } catch (Exception ignored) {}

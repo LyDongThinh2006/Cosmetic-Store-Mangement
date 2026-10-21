@@ -142,7 +142,7 @@ public class WishListServiceImpl implements WishListService {
             ProductEntity product = item.getProduct();
             if (product == null) continue;
 
-            String imageUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(product.getId())
+            String imageUrl = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(product.getId())
                     .map(ProductImageEntity::getImageUrl).orElse(null);
 
             List<ProductSkuEntity> skus = productSkuRepository.findByProductId(product.getId());

@@ -32,8 +32,13 @@ import com.thinh.cosmetic.repository.review.ReviewRepository;
 import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StockTransferItemRepository;
 
+import com.thinh.cosmetic.domain.dto.request.catalog.ProductSkuRequest;
+import com.thinh.cosmetic.domain.entity.inventory.StoreEntity;
+import com.thinh.cosmetic.repository.store.StoreRepository;
+
 import java.math.BigDecimal;
 import java.text.Normalizer;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -57,6 +62,7 @@ public class ProductServiceImpl implements ProductService {
     private final StockTransferItemRepository stockTransferItemRepository;
     private final ReviewRepository reviewRepository;
     private final CartItemRepository cartItemRepository;
+    private final StoreRepository storeRepository;
 
     @Override
     public ProductResponse create(ProductRequest request) throws Exception {
@@ -81,6 +87,18 @@ public class ProductServiceImpl implements ProductService {
         }
 
         ProductEntity savedProduct = productRepository.save(product);
+
+        String imgUrl = request.getImageUrl() != null && !request.getImageUrl().isBlank()
+                ? request.getImageUrl().trim()
+                : "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80";
+
+        ProductImageEntity imageEntity = ProductImageEntity.builder()
+                .product(savedProduct)
+                .imageUrl(imgUrl)
+                .isPrimary(true)
+                .sortOrder(0)
+                .build();
+        productImageRepository.save(imageEntity);
 
         return enrich(savedProduct, productMapper.toResponse(savedProduct));
     }
@@ -243,7 +261,7 @@ public class ProductServiceImpl implements ProductService {
         res.setSkus(skus);
 
         // 2. Images
-        Optional<ProductImageEntity> primaryImg = productImageRepository.findByProductIdAndIsPrimaryTrue(product.getId());
+        Optional<ProductImageEntity> primaryImg = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(product.getId());
         List<ProductImageEntity> allImgs = productImageRepository.findByProductIdOrderBySortOrderAsc(product.getId());
         String defaultFallbackImg = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80";
         String primaryUrl = primaryImg.map(ProductImageEntity::getImageUrl)
@@ -315,6 +333,23 @@ public class ProductServiceImpl implements ProductService {
 
         ProductEntity savedProduct = productRepository.save(product);
 
+        if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
+            Optional<ProductImageEntity> primaryImgOpt = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(savedProduct.getId());
+            if (primaryImgOpt.isPresent()) {
+                ProductImageEntity primaryImg = primaryImgOpt.get();
+                primaryImg.setImageUrl(request.getImageUrl().trim());
+                productImageRepository.save(primaryImg);
+            } else {
+                ProductImageEntity imageEntity = ProductImageEntity.builder()
+                        .product(savedProduct)
+                        .imageUrl(request.getImageUrl().trim())
+                        .isPrimary(true)
+                        .sortOrder(0)
+                        .build();
+                productImageRepository.save(imageEntity);
+            }
+        }
+
         return enrich(savedProduct, productMapper.toResponse(savedProduct));
     }
 
@@ -376,5 +411,167 @@ public class ProductServiceImpl implements ProductService {
             productSkuRepository.save(sku);
         }
         productRepository.save(product);
+    }
+
+    private ProductSkuResponse toSkuResponse(ProductSkuEntity s) {
+        return ProductSkuResponse.builder()
+                .id(s.getId())
+                .productId(s.getProduct().getId())
+                .productName(s.getProduct().getName())
+                .skuCode(s.getSkuCode())
+                .variantName(s.getVariantName())
+                .price(s.getPrice())
+                .listPrice(s.getListPrice())
+                .barcode(s.getBarcode())
+                .status(s.getStatus())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ProductSkuResponse createSku(Long productId, ProductSkuRequest request) throws Exception {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "Không tìm thấy sản phẩm #" + productId));
+
+        String skuCode = request.getSkuCode() != null ? request.getSkuCode().trim() : null;
+        if (skuCode == null || skuCode.isBlank()) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Mã SKU không được để trống");
+        }
+
+        // QLSP-QĐ5: Mã SKU unique toàn hệ thống
+        if (productSkuRepository.existsBySkuCode(skuCode)) {
+            throw new BusinessException(ErrorCode.DUPLICATE_SKU_CODE, "Mã SKU '" + skuCode + "' đã tồn tại trong hệ thống");
+        }
+
+        String barcode = request.getBarcode() != null && !request.getBarcode().isBlank() ? request.getBarcode().trim() : null;
+        if (barcode != null && productSkuRepository.existsByBarcode(barcode)) {
+            throw new BusinessException(ErrorCode.DATA_CONFLICT, "Mã vạch (Barcode) '" + barcode + "' đã tồn tại trong hệ thống");
+        }
+
+        BigDecimal price = request.getPrice();
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Giá bán SKU phải lớn hơn hoặc bằng 0");
+        }
+
+        BigDecimal listPrice = request.getListPrice();
+        if (listPrice == null || listPrice.compareTo(BigDecimal.ZERO) < 0) {
+            listPrice = price;
+        }
+
+        ProductSkuEntity sku = ProductSkuEntity.builder()
+                .product(product)
+                .skuCode(skuCode)
+                .variantName(request.getVariantName() != null && !request.getVariantName().isBlank() ? request.getVariantName().trim() : "Mặc định")
+                .price(price)
+                .listPrice(listPrice)
+                .barcode(barcode)
+                .status(request.getStatus() != null ? request.getStatus() : ActiveStatus.ACTIVE)
+                .build();
+
+        ProductSkuEntity savedSku = productSkuRepository.save(sku);
+
+        // Khởi tạo bản ghi tồn kho cho tất cả các chi nhánh
+        List<StoreEntity> stores = storeRepository.findAll();
+        for (StoreEntity store : stores) {
+            if (inventoryRepository.findByStoreIdAndSkuId(store.getId(), savedSku.getId()).isEmpty()) {
+                inventoryRepository.save(InventoryEntity.builder()
+                        .store(store)
+                        .sku(savedSku)
+                        .actualStock(0)
+                        .heldQuantity(0)
+                        .minimumStock(5)
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+            }
+        }
+
+        return toSkuResponse(savedSku);
+    }
+
+    @Override
+    @Transactional
+    public ProductSkuResponse updateSku(Long productId, Long skuId, ProductSkuRequest request) throws Exception {
+        ProductSkuEntity sku = productSkuRepository.findById(skuId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy biến thể SKU #" + skuId));
+
+        if (!sku.getProduct().getId().equals(productId)) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Biến thể SKU không thuộc sản phẩm #" + productId);
+        }
+
+        if (request.getSkuCode() != null && !request.getSkuCode().isBlank()) {
+            String newCode = request.getSkuCode().trim();
+            if (productSkuRepository.existsBySkuCodeAndIdNot(newCode, skuId)) {
+                throw new BusinessException(ErrorCode.DUPLICATE_SKU_CODE, "Mã SKU '" + newCode + "' đã tồn tại");
+            }
+            sku.setSkuCode(newCode);
+        }
+
+        if (request.getBarcode() != null && !request.getBarcode().isBlank()) {
+            String newBarcode = request.getBarcode().trim();
+            if (productSkuRepository.existsByBarcodeAndIdNot(newBarcode, skuId)) {
+                throw new BusinessException(ErrorCode.DATA_CONFLICT, "Mã vạch '" + newBarcode + "' đã tồn tại");
+            }
+            sku.setBarcode(newBarcode);
+        }
+
+        if (request.getVariantName() != null && !request.getVariantName().isBlank()) {
+            sku.setVariantName(request.getVariantName().trim());
+        }
+
+        if (request.getPrice() != null) {
+            if (request.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+                throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Giá bán SKU phải lớn hơn hoặc bằng 0");
+            }
+            sku.setPrice(request.getPrice());
+        }
+
+        if (request.getListPrice() != null) {
+            if (request.getListPrice().compareTo(BigDecimal.ZERO) < 0) {
+                throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Giá niêm yết SKU phải lớn hơn hoặc bằng 0");
+            }
+            sku.setListPrice(request.getListPrice());
+        }
+
+        if (request.getStatus() != null) {
+            sku.setStatus(request.getStatus());
+        }
+
+        ProductSkuEntity savedSku = productSkuRepository.save(sku);
+        return toSkuResponse(savedSku);
+    }
+
+    @Override
+    @Transactional
+    public void deleteSku(Long productId, Long skuId) throws Exception {
+        ProductSkuEntity sku = productSkuRepository.findById(skuId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Không tìm thấy biến thể SKU #" + skuId));
+
+        if (!sku.getProduct().getId().equals(productId)) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, "Biến thể SKU không thuộc sản phẩm #" + productId);
+        }
+
+        boolean hasOrderItems = orderItemRepository.existsBySkuIdIn(List.of(skuId));
+        boolean hasPurchaseOrders = purchaseOrderItemRepository.existsBySkuIdIn(List.of(skuId));
+        boolean hasStockTransfers = stockTransferItemRepository.existsBySkuIdIn(List.of(skuId));
+
+        List<InventoryEntity> inventories = inventoryRepository.findBySkuId(skuId);
+        boolean hasInventoryStock = inventories.stream().anyMatch(inv -> (inv.getActualStock() != null && inv.getActualStock() > 0) || (inv.getHeldQuantity() != null && inv.getHeldQuantity() > 0));
+
+        // QLSP-QĐ3, BR-11: Nếu đã phát sinh giao dịch hoặc còn tồn kho, chỉ chuyển INACTIVE (soft-delete)
+        if (hasOrderItems || hasPurchaseOrders || hasStockTransfers || hasInventoryStock) {
+            sku.setStatus(ActiveStatus.INACTIVE);
+            productSkuRepository.save(sku);
+        } else {
+            cartItemRepository.deleteBySkuIdIn(List.of(skuId));
+            inventoryRepository.deleteAll(inventories);
+            productSkuRepository.delete(sku);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductSkuResponse> getSkusByProductId(Long productId) throws Exception {
+        return productSkuRepository.findByProductId(productId)
+                .stream().map(this::toSkuResponse).toList();
     }
 }

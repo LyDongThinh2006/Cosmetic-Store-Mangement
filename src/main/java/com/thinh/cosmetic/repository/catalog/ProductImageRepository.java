@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductImageRepository extends JpaRepository<ProductImageEntity, Long> {
-    Optional<ProductImageEntity> findByProductIdAndIsPrimaryTrue(Long productId);
+    Optional<ProductImageEntity> findFirstByProductIdAndIsPrimaryTrue(Long productId);
     List<ProductImageEntity> findByProductIdOrderBySortOrderAsc(Long productId);
+    boolean existsByProductIdAndImageUrl(Long productId, String imageUrl);
     void deleteByProductId(Long productId);
 }

@@ -36,4 +36,7 @@ public class ProductRequest {
     private Boolean isFeatured;
 
     private ActiveStatus status;
+
+    @Size(max = 500, message = "Image URL must not exceed 500 characters")
+    private String imageUrl;
 }

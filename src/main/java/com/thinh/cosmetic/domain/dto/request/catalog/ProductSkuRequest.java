@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ProductSkuRequest {
-    @NotNull(message = "Product ID cannot be null")
     private Long productId;
 
     @NotBlank(message = "SKU code cannot be blank")

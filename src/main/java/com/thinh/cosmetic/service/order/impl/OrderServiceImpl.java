@@ -346,7 +346,7 @@ public class OrderServiceImpl implements OrderService {
 
             String imgUrl = null;
             if (productImageRepository != null && sku.getProduct() != null) {
-                imgUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(sku.getProduct().getId())
+                imgUrl = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(sku.getProduct().getId())
                         .map(ProductImageEntity::getImageUrl)
                         .orElse(null);
             }
@@ -586,7 +586,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(i -> {
                     String imgUrl = null;
                     if (productImageRepository != null && i.getSku() != null && i.getSku().getProduct() != null) {
-                        imgUrl = productImageRepository.findByProductIdAndIsPrimaryTrue(i.getSku().getProduct().getId())
+                        imgUrl = productImageRepository.findFirstByProductIdAndIsPrimaryTrue(i.getSku().getProduct().getId())
                                 .map(ProductImageEntity::getImageUrl)
                                 .orElse(null);
                     }
