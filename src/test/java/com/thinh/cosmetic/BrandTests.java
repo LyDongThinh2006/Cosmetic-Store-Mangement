@@ -107,6 +107,7 @@ public class BrandTests {
 
     @Test
     public void testThatReturnBrandWhenGetBrand() throws Exception {
+        int initialSize = brandService.getAll().size();
         brandService.create(
                 BrandRequest.builder()
                         .name("Perfume")
@@ -128,7 +129,7 @@ public class BrandTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$").isArray()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.length()").value(7)
+                MockMvcResultMatchers.jsonPath("$.length()").value(initialSize + 2)
         );
     }
 
