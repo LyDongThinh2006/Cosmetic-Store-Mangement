@@ -55,6 +55,13 @@ public class CartRestController {
             @AuthenticationPrincipal AuthPrincipal principal,
             @RequestParam(required = false) Long customerId
     ) throws Exception {
+        if (principal != null && principal.isEmployee() && customerId == null) {
+            return ResponseEntity.ok(CartResponse.builder()
+                    .items(java.util.Collections.emptyList())
+                    .totalItems(0)
+                    .subtotal(java.math.BigDecimal.ZERO)
+                    .build());
+        }
         return ResponseEntity.ok(cartService.getCart(resolveCustomerId(principal, customerId)));
     }
 

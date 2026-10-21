@@ -84,6 +84,10 @@ public class OrderEntity {
     @Column(name = "subtotal", nullable = false, precision = 18, scale = 2)
     private BigDecimal subtotal;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_id")
+    private VoucherEntity voucher;
+
     @NotNull(message = "Discount amount cannot be null")
     @DecimalMin(value = "0.0", message = "Discount amount must be greater than or equal to 0")
     @Column(name = "discount_amount", nullable = false, precision = 18, scale = 2)

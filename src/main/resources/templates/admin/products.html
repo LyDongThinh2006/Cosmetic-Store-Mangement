@@ -38,6 +38,10 @@
                         <i class="bi bi-arrow-clockwise"></i>
                         <span>Làm mới</span>
                     </button>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="openCreateProductModal()">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>+ Thêm Sản Phẩm Mới</span>
+                    </button>
                 </div>
             </div>
 
@@ -117,11 +121,158 @@
         </div>
     </main>
 
+    <!-- Modal Thêm / Chỉnh Sửa Sản Phẩm -->
+    <div id="productModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-2xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i id="productModalIcon" class="bi bi-tag-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="productModalTitle">Thêm Sản Phẩm Mới</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Thiết lập thông tin mỹ phẩm, thương hiệu phân phối, danh mục và đặc tính sản phẩm
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeProductModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <form id="productForm" class="admin-modal-form" onsubmit="handleSaveProduct(event)">
+                <input type="hidden" id="editProductId" value="">
+
+                <div class="admin-modal-body">
+                    <div class="admin-modal-grid-2">
+                        <!-- Cột 1: Thông tin cơ bản & Phân loại -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    <span>Thông Tin Chung Sản Phẩm</span>
+                                </h4>
+                                <span class="section-hint">Định danh sản phẩm</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="prodName">
+                                    Tên Sản Phẩm Mỹ Phẩm <span class="required">*</span>:
+                                </label>
+                                <input type="text" id="prodName" class="admin-input" required placeholder="VD: Nước Thần Dưỡng Trắng Tinh Chất Hoa Hồng">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <label class="form-field-label" for="prodBrand">
+                                        Thương Hiệu <span class="required">*</span>:
+                                    </label>
+                                    <select id="prodBrand" class="admin-select" required>
+                                        <option value="">-- Chọn thương hiệu --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-field-label" for="prodCategory">
+                                        Danh Mục Mỹ Phẩm <span class="required">*</span>:
+                                    </label>
+                                    <select id="prodCategory" class="admin-select" required>
+                                        <option value="">-- Chọn danh mục --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <label class="form-field-label" for="prodOrigin">
+                                        Xuất Xứ (Quốc Gia):
+                                    </label>
+                                    <input type="text" id="prodOrigin" class="admin-input" placeholder="VD: Pháp, Hàn Quốc, Nhật Bản">
+                                </div>
+                                <div>
+                                    <label class="form-field-label" for="prodStatus">
+                                        Trạng Thái Kinh Doanh:
+                                    </label>
+                                    <select id="prodStatus" class="admin-select">
+                                        <option value="ACTIVE">Đang kinh doanh (ACTIVE)</option>
+                                        <option value="INACTIVE">Ngừng kinh doanh (INACTIVE)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 14px; padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-xs);">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none;">
+                                    <input type="checkbox" id="prodIsFeatured" style="width: 16px; height: 16px; accent-color: var(--color-gold-primary);">
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 0.85rem; color: var(--color-text-primary);">
+                                            <i class="bi bi-star-fill" style="color: var(--color-gold-primary); margin-right: 4px;"></i>
+                                            Đánh dấu Sản Phẩm Nổi Bật (Featured)
+                                        </div>
+                                        <div style="font-size: 0.74rem; color: var(--color-text-muted);">Ưu tiên hiển thị tại trang chủ và banner nổi bật</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Cột 2: Mô tả, thành phần & công dụng -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-file-earmark-text-fill"></i>
+                                    <span>Chi Tiết & Công Dụng</span>
+                                </h4>
+                                <span class="section-hint">Nội dung sản phẩm</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="prodDescription">
+                                    Mô Tả Giới Thiệu Sản Phẩm:
+                                </label>
+                                <textarea id="prodDescription" class="admin-input" rows="3" placeholder="Mô tả công thức, hiệu quả dưỡng da, cách sử dụng..." style="resize: vertical;"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="prodIngredients">
+                                    Thành Phần Chính (Ingredients):
+                                </label>
+                                <textarea id="prodIngredients" class="admin-input" rows="2" placeholder="VD: Niacinamide 10%, Hyaluronic Acid, Chiết xuất hoa cúc..." style="resize: vertical;"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="form-field-label" for="prodUses">
+                                    Công Dụng Nổi Bật (Uses):
+                                </label>
+                                <textarea id="prodUses" class="admin-input" rows="2" placeholder="VD: Cấp ẩm tầng sâu, làm dịu da nhạy cảm, mờ thâm nám..." style="resize: vertical;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Sản phẩm sau khi lưu sẽ đồng bộ ngay lập tức lên website storefront</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeProductModal()">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Bỏ</span>
+                        </button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="btnSaveProduct">
+                            <i class="bi bi-check-lg"></i>
+                            <span id="btnSaveProductText">Lưu Sản Phẩm</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Global Toast Component -->
     <div th:replace="~{fragments/toast :: toast}"></div>
 
     <script>
         let allProducts = [];
+        let allBrands = [];
+        let allCategories = [];
 
         async function loadProducts() {
             try {
@@ -133,8 +284,12 @@
                 ]);
 
                 allProducts = products || [];
-                populateBrandOptions(brands);
-                populateCategoryOptions(categories);
+                allBrands = brands || [];
+                allCategories = categories || [];
+
+                populateBrandOptions(allBrands);
+                populateCategoryOptions(allCategories);
+                populateModalSelects(allBrands, allCategories);
                 updateProductsKPI(allProducts);
                 filterProducts();
             } catch (err) {
@@ -155,6 +310,19 @@
             const select = document.getElementById('categoryFilter');
             select.innerHTML = '<option value="">Tất cả Danh mục</option>' + 
                 (categories || []).map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        function populateModalSelects(brands, categories) {
+            const brandSel = document.getElementById('prodBrand');
+            if (brandSel) {
+                brandSel.innerHTML = '<option value="">-- Chọn thương hiệu --</option>' +
+                    (brands || []).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+            }
+            const catSel = document.getElementById('prodCategory');
+            if (catSel) {
+                catSel.innerHTML = '<option value="">-- Chọn danh mục --</option>' +
+                    (categories || []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            }
         }
 
         function updateProductsKPI(products) {
@@ -256,6 +424,9 @@
                             </span>
                         </td>
                         <td style="text-align: right; white-space: nowrap;">
+                            <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; margin-right: 6px;" onclick="openEditProductModal(${p.id})">
+                                <i class="bi bi-pencil-square"></i> Sửa
+                            </button>
                             ${p.status === 'ACTIVE' ? `
                                 <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 10px; font-size: 0.76rem; color: #f87171; border-color: rgba(239, 68, 68, 0.4); margin-right: 6px;" onclick="toggleProductStatus(${p.id}, 'ACTIVE', '${escapeProductParam(p.name)}')" title="Tạm ngừng kinh doanh sản phẩm">
                                     <i class="bi bi-pause-circle"></i> Ngừng bán
@@ -276,6 +447,106 @@
 
         function escapeProductParam(str) {
             return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        function openCreateProductModal() {
+            document.getElementById('editProductId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodBrand').value = '';
+            document.getElementById('prodCategory').value = '';
+            document.getElementById('prodOrigin').value = 'Việt Nam';
+            document.getElementById('prodStatus').value = 'ACTIVE';
+            document.getElementById('prodIsFeatured').checked = false;
+            document.getElementById('prodDescription').value = '';
+            document.getElementById('prodIngredients').value = '';
+            document.getElementById('prodUses').value = '';
+
+            document.getElementById('productModalTitle').textContent = 'Thêm Sản Phẩm Mỹ Phẩm Mới';
+            document.getElementById('productModalIcon').className = 'bi bi-tag-fill';
+            document.getElementById('btnSaveProductText').textContent = 'Lưu Sản Phẩm';
+
+            const modal = document.getElementById('productModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openEditProductModal(id) {
+            const p = allProducts.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('prodName').value = p.name || '';
+            document.getElementById('prodBrand').value = p.brand ? p.brand.id : '';
+            document.getElementById('prodCategory').value = p.category ? p.category.id : '';
+            document.getElementById('prodOrigin').value = p.origin || '';
+            document.getElementById('prodStatus').value = p.status || 'ACTIVE';
+            document.getElementById('prodIsFeatured').checked = Boolean(p.isFeatured);
+            document.getElementById('prodDescription').value = p.description || '';
+            document.getElementById('prodIngredients').value = p.mainIngredients || '';
+            document.getElementById('prodUses').value = p.uses || '';
+
+            document.getElementById('productModalTitle').textContent = 'Chỉnh Sửa Thông Tin Sản Phẩm';
+            document.getElementById('productModalIcon').className = 'bi bi-pencil-square';
+            document.getElementById('btnSaveProductText').textContent = 'Cập Nhật Sản Phẩm';
+
+            const modal = document.getElementById('productModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('productModal');
+            if (e.target === modal) {
+                closeProductModal();
+            }
+        });
+
+        async function handleSaveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('editProductId').value;
+            const btn = document.getElementById('btnSaveProduct');
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('prodName').value.trim(),
+                brandId: Number(document.getElementById('prodBrand').value),
+                categoryId: Number(document.getElementById('prodCategory').value),
+                origin: document.getElementById('prodOrigin').value.trim() || null,
+                status: document.getElementById('prodStatus').value,
+                isFeatured: document.getElementById('prodIsFeatured').checked,
+                description: document.getElementById('prodDescription').value.trim() || null,
+                mainIngredients: document.getElementById('prodIngredients').value.trim() || null,
+                uses: document.getElementById('prodUses').value.trim() || null
+            };
+
+            try {
+                if (id) {
+                    await LUNEA.apiFetch(`/api/products/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.toastSuccess("Cập nhật thông tin sản phẩm thành công!");
+                } else {
+                    await LUNEA.apiFetch('/api/products', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.toastSuccess("Thêm mới sản phẩm mỹ phẩm thành công!");
+                }
+                closeProductModal();
+                await loadProducts();
+            } catch (err) {
+                console.error("Save product error:", err);
+                LUNEA.toastError(err.message || "Không thể lưu sản phẩm");
+            } finally {
+                btn.disabled = false;
+            }
         }
 
         async function toggleProductStatus(id, currentStatus, name) {

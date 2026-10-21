@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/fragments/head :: adminHead(${pageTitle})}"></head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside th:replace="~{admin/fragments/sidebar :: sidebar('suppliers')}"></aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header th:replace="~{admin/fragments/topbar :: topbar('Quản Lý Nhà Cung Cấp', 'Quản lý thông tin các đơn vị phân phối và đối tác mỹ phẩm chính hãng')}"></header>
+
+        <div class="admin-container">
+            <!-- Filter & Action Bar -->
+            <div class="admin-filter-bar">
+                <div class="filter-group">
+                    <div style="position: relative;">
+                        <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted);"></i>
+                        <input type="text" id="searchInput" class="admin-input" placeholder="Tìm theo tên NCC, SĐT, Email..." oninput="filterSuppliers()" style="padding-left: 36px; min-width: 280px;">
+                    </div>
+
+                    <select id="statusFilter" class="admin-select" onchange="filterSuppliers()">
+                        <option value="ALL">Tất cả trạng thái</option>
+                        <option value="ACTIVE">Đang hợp tác</option>
+                        <option value="INACTIVE">Tạm ngưng</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="admin-btn admin-btn-outline" onclick="loadSuppliers()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        <span>Làm mới</span>
+                    </button>
+                    <button type="button" class="admin-btn admin-btn-primary" onclick="openCreateModal()">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Thêm Nhà Cung Cấp</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tổng Nhà Cung Cấp</span>
+                        <div class="kpi-icon blue"><i class="bi bi-building"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiTotalSuppliers">0</div>
+                    <div class="kpi-sub"><span>Đối tác cung ứng mỹ phẩm</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Đang Hợp Tác</span>
+                        <div class="kpi-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiActiveSuppliers" style="color: #34d399;">0</div>
+                    <div class="kpi-sub"><span>Đang tiếp nhận đơn nhập hàng</span></div>
+                </div>
+
+                <div class="admin-kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Tạm Ngưng Hợp Tác</span>
+                        <div class="kpi-icon amber"><i class="bi bi-pause-circle-fill"></i></div>
+                    </div>
+                    <div class="kpi-value" id="kpiInactiveSuppliers" style="color: #fbbf24;">0</div>
+                    <div class="kpi-sub"><span>Đã dừng nhập hàng tạm thời</span></div>
+                </div>
+            </div>
+
+            <!-- Suppliers Table Card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-building"></i>
+                        <span>Danh Sách Nhà Cung Cấp Mỹ Phẩm</span>
+                    </h3>
+                    <span id="supplierCountBadge" style="font-size: 0.8rem; color: var(--color-text-muted);">0 đối tác</span>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Mã NCC</th>
+                                <th>Tên Nhà Cung Cấp</th>
+                                <th>Người Liên Hệ</th>
+                                <th>Số Điện Thoại</th>
+                                <th>Email</th>
+                                <th>Địa Chỉ</th>
+                                <th style="text-align: center;">Trạng Thái</th>
+                                <th style="text-align: right; width: 140px;">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplierTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                                    <i class="bi bi-arrow-repeat spin" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                                    Đang tải danh sách nhà cung cấp...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Thêm / Chỉnh Sửa Nhà Cung Cấp -->
+    <div id="supplierModal" class="admin-modal-backdrop">
+        <div class="admin-modal admin-modal-xl">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="admin-modal-header-icon">
+                        <i id="modalHeaderIcon" class="bi bi-building-add"></i>
+                    </div>
+                    <div>
+                        <h3 class="admin-modal-title" id="modalTitle">Thêm Nhà Cung Cấp Mới</h3>
+                        <div style="font-size: 0.74rem; color: var(--color-text-muted); margin-top: 2px;">
+                            Quản lý hồ sơ đối tác cung ứng mỹ phẩm, thông tin đại diện phân phối và điều khoản hợp tác
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="admin-modal-close" onclick="closeSupplierModal()" aria-label="Đóng">&times;</button>
+            </div>
+
+            <form id="supplierForm" class="admin-modal-form" onsubmit="handleSaveSupplier(event)">
+                <input type="hidden" id="supplierId">
+
+                <div class="admin-modal-body">
+                    <div class="admin-modal-grid-2">
+                        <!-- Cột 1: Thông tin pháp nhân & Liên hệ -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-building"></i>
+                                    <span>Thông Tin Doanh Nghiệp</span>
+                                </h4>
+                                <span class="section-hint">Pháp nhân đối tác</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="supplierName">
+                                    Tên Nhà Cung Cấp <span class="required">*</span>:
+                                </label>
+                                <input type="text" id="supplierName" class="admin-input" required placeholder="VD: Công ty TNHH L'Oréal Việt Nam">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="contactPerson">
+                                    Người Đại Diện / Phụ Trách:
+                                </label>
+                                <input type="text" id="contactPerson" class="admin-input" placeholder="VD: Lê Thu Hương (Giám đốc kinh doanh)">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="supplierPhone">
+                                    Số Điện Thoại Hotline <span class="required">*</span>:
+                                </label>
+                                <input type="text" id="supplierPhone" class="admin-input" required placeholder="VD: 02839101234 hoặc 0909123456">
+                            </div>
+
+                            <div>
+                                <label class="form-field-label" for="supplierEmail">
+                                    Email Giao Dịch Đặt Hàng:
+                                </label>
+                                <input type="email" id="supplierEmail" class="admin-input" placeholder="VD: orders@loreal.vn">
+                            </div>
+                        </div>
+
+                        <!-- Cột 2: Địa chỉ kho vận & Trạng thái -->
+                        <div class="form-section-card">
+                            <div class="form-section-header">
+                                <h4 class="section-title">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <span>Kho Vận & Hợp Tác</span>
+                                </h4>
+                                <span class="section-hint">Địa điểm giao nhận</span>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="supplierAddress">
+                                    Địa Chỉ Trụ Sở / Kho Hàng:
+                                </label>
+                                <textarea id="supplierAddress" class="admin-input" rows="4" placeholder="VD: Tầng 10, Vincom Center, 72 Lê Thánh Tôn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh" style="resize: vertical; min-height: 85px;"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label class="form-field-label" for="supplierStatus">
+                                    Trạng Thái Hợp Tác:
+                                </label>
+                                <select id="supplierStatus" class="admin-select">
+                                    <option value="ACTIVE">Đang hợp tác (Sẵn sàng tiếp nhận đơn PO)</option>
+                                    <option value="INACTIVE">Tạm ngưng (Tạm dừng tạo đơn nhập mới)</option>
+                                </select>
+                            </div>
+
+                            <div style="padding: 10px 12px; background: rgba(223, 190, 123, 0.06); border: 1px solid rgba(223, 190, 123, 0.2); border-radius: var(--radius-xs); font-size: 0.75rem; color: var(--color-gold-light); display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="bi bi-info-circle-fill" style="margin-top: 2px; flex-shrink: 0;"></i>
+                                <span>Nhà cung cấp được lưu sẽ hiển thị ngay trong danh mục chọn khi Thủ kho hoặc Quản trị viên lập Phiếu Nhập Hàng mới.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <div style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-shield-check" style="color: var(--color-gold-primary);"></i>
+                        <span>Dữ liệu nhà cung cấp được dùng làm nguồn tạo phiếu nhập hàng PO</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="admin-btn admin-btn-outline" onclick="closeSupplierModal()">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy Bỏ</span>
+                        </button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="btnSaveSupplier">
+                            <i class="bi bi-check-lg"></i>
+                            <span id="btnSaveSupplierText">Lưu Thông Tin</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Fragment -->
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script>
+        let suppliersData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSuppliers();
+        });
+
+        async function loadSuppliers() {
+            try {
+                const list = await LUNEA.apiFetch('/api/suppliers');
+                suppliersData = Array.isArray(list) ? list : [];
+                renderSuppliers(suppliersData);
+                updateKPIs();
+            } catch (err) {
+                console.error('Failed to load suppliers:', err);
+                document.getElementById('supplierTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--color-danger);">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không thể tải danh sách nhà cung cấp. Vui lòng thử lại!
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateKPIs() {
+            const total = suppliersData.length;
+            const active = suppliersData.filter(s => s.status === 'ACTIVE').length;
+            const inactive = total - active;
+
+            document.getElementById('kpiTotalSuppliers').textContent = total;
+            document.getElementById('kpiActiveSuppliers').textContent = active;
+            document.getElementById('kpiInactiveSuppliers').textContent = inactive;
+            document.getElementById('supplierCountBadge').textContent = `${total} đối tác`;
+        }
+
+        function filterSuppliers() {
+            const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+            const st = document.getElementById('statusFilter').value;
+
+            const filtered = suppliersData.filter(s => {
+                const matchStatus = (st === 'ALL' || s.status === st);
+                const matchKw = !kw ||
+                    (s.name && s.name.toLowerCase().includes(kw)) ||
+                    (s.contactPerson && s.contactPerson.toLowerCase().includes(kw)) ||
+                    (s.phone && s.phone.toLowerCase().includes(kw)) ||
+                    (s.email && s.email.toLowerCase().includes(kw));
+                return matchStatus && matchKw;
+            });
+
+            renderSuppliers(filtered);
+        }
+
+        function renderSuppliers(list) {
+            const tbody = document.getElementById('supplierTableBody');
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                            <i class="bi bi-inbox" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+                            Không tìm thấy nhà cung cấp nào phù hợp.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(s => {
+                const isActive = s.status === 'ACTIVE';
+                const statusBadge = isActive
+                    ? '<span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);"><i class="bi bi-check-circle-fill" style="margin-right: 4px;"></i>Đang hợp tác</span>'
+                    : '<span class="status-badge" style="background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3);"><i class="bi bi-pause-circle-fill" style="margin-right: 4px;"></i>Tạm ngưng</span>';
+
+                return `
+                    <tr>
+                        <td><span style="font-family: monospace; font-weight: 600; color: var(--color-gold-light);">#NCC-${s.id}</span></td>
+                        <td>
+                            <strong style="color: var(--color-text-primary); font-size: 0.95rem;">${escapeHtml(s.name)}</strong>
+                        </td>
+                        <td>${s.contactPerson ? escapeHtml(s.contactPerson) : '<span style="color: var(--color-text-muted);">-</span>'}</td>
+                        <td>
+                            ${s.phone ? `<a href="tel:${escapeHtml(s.phone)}" style="color: var(--color-gold-primary); text-decoration: none;"><i class="bi bi-telephone" style="margin-right: 4px;"></i>${escapeHtml(s.phone)}</a>` : '<span style="color: var(--color-text-muted);">-</span>'}
+                        </td>
+                        <td>
+                            ${s.email ? `<a href="mailto:${escapeHtml(s.email)}" style="color: var(--color-text-secondary); text-decoration: none;"><i class="bi bi-envelope" style="margin-right: 4px;"></i>${escapeHtml(s.email)}</a>` : '<span style="color: var(--color-text-muted);">-</span>'}
+                        </td>
+                        <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(s.address || '')}">
+                            ${s.address ? escapeHtml(s.address) : '<span style="color: var(--color-text-muted);">-</span>'}
+                        </td>
+                        <td style="text-align: center;">${statusBadge}</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 8px;">
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.8rem;" onclick="openEditModal(${s.id})" title="Chỉnh sửa thông tin">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="admin-btn admin-btn-outline" style="padding: 4px 8px; font-size: 0.8rem; color: ${isActive ? 'var(--color-danger)' : '#34d399'};" onclick="toggleSupplierStatus(${s.id})" title="${isActive ? 'Tạm ngưng hợp tác' : 'Kích hoạt lại'}">
+                                    <i class="bi ${isActive ? 'bi-slash-circle' : 'bi-check-circle'}"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openCreateModal() {
+            document.getElementById('supplierId').value = '';
+            document.getElementById('supplierName').value = '';
+            document.getElementById('contactPerson').value = '';
+            document.getElementById('supplierPhone').value = '';
+            document.getElementById('supplierEmail').value = '';
+            document.getElementById('supplierAddress').value = '';
+            document.getElementById('supplierStatus').value = 'ACTIVE';
+
+            document.getElementById('modalTitle').textContent = 'Thêm Nhà Cung Cấp Mới';
+            document.getElementById('modalHeaderIcon').className = 'bi bi-building-add';
+            document.getElementById('btnSaveSupplierText').textContent = 'Lưu Thông Tin';
+
+            const modal = document.getElementById('supplierModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openEditModal(id) {
+            const s = suppliersData.find(item => item.id === id);
+            if (!s) return;
+
+            document.getElementById('supplierId').value = s.id;
+            document.getElementById('supplierName').value = s.name || '';
+            document.getElementById('contactPerson').value = s.contactPerson || '';
+            document.getElementById('supplierPhone').value = s.phone || '';
+            document.getElementById('supplierEmail').value = s.email || '';
+            document.getElementById('supplierAddress').value = s.address || '';
+            document.getElementById('supplierStatus').value = s.status || 'ACTIVE';
+
+            document.getElementById('modalTitle').textContent = 'Chỉnh Sửa Thông Tin Nhà Cung Cấp';
+            document.getElementById('modalHeaderIcon').className = 'bi bi-pencil-square';
+            document.getElementById('btnSaveSupplierText').textContent = 'Cập Nhật Nhà Cung Cấp';
+
+            const modal = document.getElementById('supplierModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSupplierModal() {
+            const modal = document.getElementById('supplierModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('supplierModal');
+            if (e.target === modal) {
+                closeSupplierModal();
+            }
+        });
+
+        async function handleSaveSupplier(e) {
+            e.preventDefault();
+            const id = document.getElementById('supplierId').value;
+            const btn = document.getElementById('btnSaveSupplier');
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('supplierName').value.trim(),
+                contactPerson: document.getElementById('contactPerson').value.trim(),
+                phone: document.getElementById('supplierPhone').value.trim(),
+                email: document.getElementById('supplierEmail').value.trim() || null,
+                address: document.getElementById('supplierAddress').value.trim() || null,
+                status: document.getElementById('supplierStatus').value
+            };
+
+            try {
+                if (id) {
+                    await LUNEA.apiFetch(`/api/suppliers/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.showToast('Cập nhật thông tin nhà cung cấp thành công!', 'success');
+                } else {
+                    await LUNEA.apiFetch('/api/suppliers', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+                    LUNEA.showToast('Thêm mới nhà cung cấp thành công!', 'success');
+                }
+                closeSupplierModal();
+                await loadSuppliers();
+            } catch (err) {
+                console.error('Error saving supplier:', err);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function toggleSupplierStatus(id) {
+            const s = suppliersData.find(item => item.id === id);
+            if (!s) return;
+
+            const isCurrentlyActive = s.status === 'ACTIVE';
+            const confirmMsg = isCurrentlyActive
+                ? `Bạn có chắc muốn tạm ngưng hợp tác với "${s.name}"?`
+                : `Bạn muốn kích hoạt lại hợp tác với "${s.name}"?`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                if (isCurrentlyActive) {
+                    await LUNEA.apiFetch(`/api/suppliers/${id}`, { method: 'DELETE' });
+                    LUNEA.showToast(`Đã tạm ngưng hợp tác với ${s.name}`, 'info');
+                } else {
+                    await LUNEA.apiFetch(`/api/suppliers/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            name: s.name,
+                            contactPerson: s.contactPerson,
+                            phone: s.phone,
+                            email: s.email,
+                            address: s.address,
+                            status: 'ACTIVE'
+                        })
+                    });
+                    LUNEA.showToast(`Đã kích hoạt lại nhà cung cấp ${s.name}`, 'success');
+                }
+                await loadSuppliers();
+            } catch (err) {
+                console.error('Failed to toggle supplier status:', err);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, m => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[m]);
+        }
+    </script>
+</body>
+</html>

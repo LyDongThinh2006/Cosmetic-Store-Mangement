@@ -1,5 +1,6 @@
 package com.thinh.cosmetic.domain.dto.response.account;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thinh.cosmetic.domain.enums.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +18,9 @@ public class LoginResponse {
     private String displayName;
     private String redirectUrl;
     private Instant expiresAt;
+
+    @JsonProperty("isEmployee")
+    public boolean isEmployee() {
+        return accountType == AccountType.EMPLOYEE;
+    }
 }

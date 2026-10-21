@@ -33,6 +33,9 @@ import com.thinh.cosmetic.repository.store.InventoryRepository;
 import com.thinh.cosmetic.repository.store.StoreRepository;
 import com.thinh.cosmetic.service.order.OrderService;
 
+import com.thinh.cosmetic.domain.entity.sales.VoucherEntity;
+import com.thinh.cosmetic.repository.order.VoucherRepository;
+import com.thinh.cosmetic.service.order.VoucherService;
 import com.thinh.cosmetic.security.AuthPrincipal;
 import com.thinh.cosmetic.security.StoreScope;
 
@@ -63,6 +66,8 @@ public class OrderServiceImpl implements OrderService {
     private final InventoryRepository inventoryRepository;
     private final ProductImageRepository productImageRepository;
     private final StoreScope storeScope;
+    private final VoucherService voucherService;
+    private final VoucherRepository voucherRepository;
 
 
     @Override
@@ -140,18 +145,20 @@ public class OrderServiceImpl implements OrderService {
             } catch (Exception ignored) {}
         }
 
-        // Resolve voucher and discounts
-        String voucher = request.getVoucherCode() != null ? request.getVoucherCode().trim().toUpperCase() : "";
+        // Resolve dynamic voucher and discounts
+        String voucherCode = request.getVoucherCode() != null ? request.getVoucherCode().trim().toUpperCase() : "";
+        VoucherEntity appliedVoucher = null;
         BigDecimal discountAmount = BigDecimal.ZERO;
         BigDecimal freeShippingThreshold = new BigDecimal("500000");
         BigDecimal shippingFee = subtotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : new BigDecimal("30000");
 
-        if ("LUNEA10".equals(voucher)) {
-            discountAmount = subtotal.multiply(new BigDecimal("0.10")).min(new BigDecimal("100000"));
-        } else if ("GIAM50K".equals(voucher)) {
-            discountAmount = new BigDecimal("50000");
-        } else if ("FREESHIP".equals(voucher)) {
-            shippingFee = BigDecimal.ZERO;
+        if (!voucherCode.isEmpty()) {
+            appliedVoucher = voucherService.validateAndApply(voucherCode, subtotal);
+            if (appliedVoucher != null) {
+                discountAmount = voucherService.calculateDiscount(appliedVoucher, subtotal);
+                BigDecimal shipDiscount = voucherService.calculateShippingDiscount(appliedVoucher, shippingFee);
+                shippingFee = shippingFee.subtract(shipDiscount).max(BigDecimal.ZERO);
+            }
         }
         BigDecimal totalAmount = subtotal.subtract(discountAmount).add(shippingFee).max(BigDecimal.ZERO);
 
@@ -243,6 +250,7 @@ public class OrderServiceImpl implements OrderService {
                 .ward(ward)
                 .district(district)
                 .province(province)
+                .voucher(appliedVoucher)
                 .subtotal(subtotal)
                 .discountAmount(discountAmount)
                 .shippingFee(shippingFee)
@@ -252,6 +260,11 @@ public class OrderServiceImpl implements OrderService {
                 .note(request.getNote())
                 .build();
         order = orderRepository.save(order);
+
+        // Record voucher usage if voucher was applied
+        if (appliedVoucher != null) {
+            voucherService.incrementUsage(appliedVoucher);
+        }
 
         // Sort items by SKU ID to prevent deadlocks across concurrent orders
         List<CartItemEntity> sortedCartItems = new ArrayList<>(cartItems);
@@ -355,17 +368,26 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal discountAmount = BigDecimal.ZERO;
         BigDecimal freeShippingThreshold = new BigDecimal("500000");
         BigDecimal shippingFee = subtotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : new BigDecimal("30000");
+        Long voucherId = null;
 
-        if ("LUNEA10".equals(voucher)) {
-            discountAmount = subtotal.multiply(new BigDecimal("0.10")).min(new BigDecimal("100000"));
-        } else if ("GIAM50K".equals(voucher)) {
-            discountAmount = new BigDecimal("50000");
-        } else if ("FREESHIP".equals(voucher)) {
-            shippingFee = BigDecimal.ZERO;
+        if (!voucher.isEmpty()) {
+            var validation = voucherService.validateVoucher(voucher, subtotal, shippingFee);
+            if (validation.isValid()) {
+                discountAmount = validation.getDiscountAmount();
+                shippingFee = shippingFee.subtract(validation.getShippingDiscountAmount()).max(BigDecimal.ZERO);
+                var vOpt = voucherRepository.findByCodeIgnoreCase(voucher);
+                if (vOpt.isPresent()) {
+                    voucherId = vOpt.get().getId();
+                }
+            } else {
+                throw new BusinessException(ErrorCode.VOUCHER_INVALID, validation.getMessage());
+            }
         }
         BigDecimal totalAmount = subtotal.subtract(discountAmount).add(shippingFee).max(BigDecimal.ZERO);
 
         return OrderResponse.builder()
+                .voucherId(voucherId)
+                .voucherCode(!voucher.isEmpty() ? voucher : null)
                 .subtotal(subtotal)
                 .discountAmount(discountAmount)
                 .shippingFee(shippingFee)
@@ -517,6 +539,10 @@ public class OrderServiceImpl implements OrderService {
             }
         } else if (status == OrderStatus.CANCELLED) {
             order.setCancelledAt(LocalDateTime.now());
+            // Release voucher usage count if one was applied
+            if (order.getVoucher() != null) {
+                voucherService.releaseUsage(order.getVoucher());
+            }
             // Release stock hold
             List<OrderReservationEntity> holds = stockHoldRepository.findByOrderId(id);
             for (OrderReservationEntity hold : holds) {
@@ -603,6 +629,8 @@ public class OrderServiceImpl implements OrderService {
                 .district(o.getDistrict())
                 .province(o.getProvince())
                 .deliveryMethod(o.getDeliveryMethod())
+                .voucherId(o.getVoucher() != null ? o.getVoucher().getId() : null)
+                .voucherCode(o.getVoucher() != null ? o.getVoucher().getCode() : null)
                 .subtotal(o.getSubtotal())
                 .discountAmount(o.getDiscountAmount())
                 .shippingFee(o.getShippingFee())

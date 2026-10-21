@@ -28,12 +28,13 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -100,20 +101,24 @@ public class SecurityConfig {
                         // ─── Module Quản lý Nhân sự & Phân quyền (Chỉ Admin / EMPLOYEE_MANAGE) ───
                         .requestMatchers("/admin/employees", "/admin/employees/**",
                                 "/api/employees", "/api/employees/**",
-                                "/api/roles", "/api/roles/**").hasAnyAuthority("EMPLOYEE_MANAGE", "ROLE_ADMIN")
+                                "/api/roles", "/api/roles/**").access(new WebExpressionAuthorizationManager("authentication.name == 'admin' or hasAnyAuthority('EMPLOYEE_MANAGE', 'ROLE_ADMIN', 'ADMIN')"))
 
                         // ─── Module Quản lý Đơn hàng (Admin / Nhân viên đơn hàng) ───
-                        .requestMatchers("/admin/orders", "/admin/orders/**").hasAnyAuthority("ORDER_VIEW", "ORDER_PROCESS", "ROLE_ORDER_STAFF", "ROLE_ADMIN")
-                        .requestMatchers("/api/orders/{id}/status").hasAnyAuthority("ORDER_PROCESS", "ROLE_ORDER_STAFF", "ROLE_ADMIN")
+                        .requestMatchers("/admin/orders", "/admin/orders/**").access(new WebExpressionAuthorizationManager("authentication.name == 'admin' or hasAnyAuthority('ORDER_VIEW', 'ORDER_PROCESS', 'ROLE_ORDER_STAFF', 'ROLE_ADMIN', 'ADMIN')"))
+                        .requestMatchers("/api/orders/{id}/status").hasAnyAuthority("ORDER_PROCESS", "ROLE_ORDER_STAFF", "ROLE_ADMIN", "ADMIN")
 
                         // ─── Module Quản lý Tồn kho & Nhập hàng (Admin / Quản lý kho / Thủ kho) ───
-                        .requestMatchers("/admin/inventory", "/admin/inventory/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
-                        .requestMatchers("/api/inventory/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
-                        .requestMatchers("/api/purchase-orders/**", "/api/suppliers/**").hasAnyAuthority("PURCHASE_MANAGE", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
-                        .requestMatchers("/api/stock-transfers/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN")
+                        .requestMatchers("/admin/inventory", "/admin/inventory/**",
+                                "/admin/suppliers", "/admin/suppliers/**",
+                                "/admin/purchase-orders", "/admin/purchase-orders/**",
+                                "/admin/stock-transfers", "/admin/stock-transfers/**",
+                                "/admin/vouchers", "/admin/vouchers/**").access(new WebExpressionAuthorizationManager("authentication.name == 'admin' or hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'PURCHASE_MANAGE', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')"))
+                        .requestMatchers("/api/inventory/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN", "ADMIN")
+                        .requestMatchers("/api/purchase-orders/**", "/api/suppliers/**").hasAnyAuthority("PURCHASE_MANAGE", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN", "ADMIN")
+                        .requestMatchers("/api/stock-transfers/**").hasAnyAuthority("INVENTORY_VIEW", "INVENTORY_ADJUST", "ROLE_WAREHOUSE_STAFF", "ROLE_ADMIN", "ADMIN")
 
                         // ─── Module Quản lý Sản phẩm, Danh mục & Chi nhánh ───
-                        .requestMatchers("/admin/products", "/admin/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
+                        .requestMatchers("/admin/products", "/admin/products/**").access(new WebExpressionAuthorizationManager("authentication.name == 'admin' or hasAnyAuthority('CATALOG_MANAGE', 'ROLE_PRODUCT_MANAGER', 'ROLE_ADMIN', 'ADMIN')"))
                         .requestMatchers(HttpMethod.POST, "/api/products", "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("CATALOG_MANAGE", "ROLE_PRODUCT_MANAGER", "ROLE_ADMIN")

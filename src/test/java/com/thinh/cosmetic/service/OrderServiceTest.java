@@ -63,6 +63,8 @@ class OrderServiceTest {
     @Mock private InventoryRepository inventoryRepository;
     @Mock private ProductImageRepository productImageRepository;
     @Mock private StoreScope storeScope;
+    @Mock private com.thinh.cosmetic.service.order.VoucherService voucherService;
+    @Mock private com.thinh.cosmetic.repository.order.VoucherRepository voucherRepository;
 
     @InjectMocks
     private OrderServiceImpl orderService;
@@ -185,6 +187,16 @@ class OrderServiceTest {
             return o;
         });
         when(orderItemRepository.save(any(OrderItemEntity.class))).thenAnswer(i -> i.getArgument(0));
+
+        com.thinh.cosmetic.domain.entity.sales.VoucherEntity mockVoucher = com.thinh.cosmetic.domain.entity.sales.VoucherEntity.builder()
+                .id(1L)
+                .code("LUNEA10")
+                .discountType(com.thinh.cosmetic.domain.enums.VoucherType.PERCENT)
+                .discountValue(new BigDecimal("10.00"))
+                .build();
+        when(voucherService.validateAndApply(eq("LUNEA10"), any(BigDecimal.class))).thenReturn(mockVoucher);
+        when(voucherService.calculateDiscount(eq(mockVoucher), any(BigDecimal.class))).thenReturn(new BigDecimal("40000.00"));
+        when(voucherService.calculateShippingDiscount(eq(mockVoucher), any(BigDecimal.class))).thenReturn(BigDecimal.ZERO);
 
         OrderRequest request = OrderRequest.builder()
                 .customerAddressId(10L)

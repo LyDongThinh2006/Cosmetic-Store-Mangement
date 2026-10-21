@@ -22,7 +22,7 @@ import java.util.List;
 public class StockTransferRestController {
     private final StockTransferService stockTransferService;
 
-    @PreAuthorize("hasAuthority('INVENTORY_ADJUST')")
+    @PreAuthorize("hasAnyAuthority('INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @PostMapping
     public ResponseEntity<StockTransferResponse> create(
             @Valid @RequestBody StockTransferRequest request,
@@ -38,25 +38,25 @@ public class StockTransferRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(stockTransferService.create(request, empId));
     }
 
-    @PreAuthorize("hasAuthority('INVENTORY_VIEW') or hasAuthority('INVENTORY_ADJUST')")
+    @PreAuthorize("hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<StockTransferResponse> getById(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(stockTransferService.getById(id));
     }
 
-    @PreAuthorize("hasAuthority('INVENTORY_VIEW') or hasAuthority('INVENTORY_ADJUST')")
+    @PreAuthorize("hasAnyAuthority('INVENTORY_VIEW', 'INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<StockTransferResponse>> getAll() {
         return ResponseEntity.ok(stockTransferService.getAll());
     }
 
-    @PreAuthorize("hasAuthority('INVENTORY_ADJUST')")
+    @PreAuthorize("hasAnyAuthority('INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @PutMapping("/{id}/ship")
     public ResponseEntity<StockTransferResponse> confirmShipment(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(stockTransferService.confirmShipment(id));
     }
 
-    @PreAuthorize("hasAuthority('INVENTORY_ADJUST')")
+    @PreAuthorize("hasAnyAuthority('INVENTORY_ADJUST', 'ROLE_WAREHOUSE_STAFF', 'ROLE_ADMIN', 'ADMIN')")
     @PutMapping("/{id}/receive")
     public ResponseEntity<StockTransferResponse> confirmReceipt(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(stockTransferService.confirmReceipt(id));
